@@ -1,13 +1,16 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react-native';
+import { Alert } from 'react-native';
 import { ItemFormScreen } from './ItemFormScreen';
 import { createItem, getItem, listItems, listLocations, updateItem } from '../services/pantryApi';
 import { scanBarcodeFromCamera } from '../services/barcodeScanner';
+import { scanExpiryDateFromCamera } from '../services/dateOcrScanner';
 import { useHomeStore } from '../../../store/useHomeStore';
 import type { PantryStackScreenProps } from '../../../app/navigation/types';
 
 jest.mock('../services/pantryApi');
 jest.mock('../services/barcodeScanner');
+jest.mock('../services/dateOcrScanner');
 
 const mockLocations = [{ id: 'loc-fridge', name: 'Buzdolabı', type: 'fridge', order: 0 }];
 
@@ -139,5 +142,28 @@ describe('ItemFormScreen', () => {
     fireEvent.press(screen.getByTestId('scan-barcode-button'));
 
     expect(await screen.findByDisplayValue('Yoğurt')).toBeTruthy();
+  });
+
+  it('fills the expiry date after a successful OCR scan', async () => {
+    (scanExpiryDateFromCamera as jest.Mock).mockResolvedValue(new Date(2026, 9, 10));
+
+    renderScreen();
+
+    await screen.findByTestId('location-chip-loc-fridge');
+    fireEvent.press(screen.getByTestId('scan-expiry-date-button'));
+
+    expect(await screen.findByText('10.10.2026')).toBeTruthy();
+  });
+
+  it('warns when the OCR scan finds no date', async () => {
+    const alertSpy = jest.spyOn(Alert, 'alert').mockImplementation(() => {});
+    (scanExpiryDateFromCamera as jest.Mock).mockResolvedValue(null);
+
+    renderScreen();
+
+    await screen.findByTestId('location-chip-loc-fridge');
+    fireEvent.press(screen.getByTestId('scan-expiry-date-button'));
+
+    await waitFor(() => expect(alertSpy).toHaveBeenCalled());
   });
 });

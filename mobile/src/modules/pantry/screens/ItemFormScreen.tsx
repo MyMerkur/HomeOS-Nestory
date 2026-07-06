@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import {
   ActivityIndicator,
+  Alert,
   Platform,
   Pressable,
   ScrollView,
@@ -19,6 +20,7 @@ import { useLocationsQuery } from '../hooks/useLocationsQuery';
 import { INVENTORY_ITEMS_QUERY_KEY } from '../hooks/useInventoryItemsQuery';
 import { createItem, getItem, listItems, updateItem } from '../services/pantryApi';
 import { scanBarcodeFromCamera } from '../services/barcodeScanner';
+import { scanExpiryDateFromCamera } from '../services/dateOcrScanner';
 import { itemFormSchema, type ItemFormValues } from '../schemas/itemSchema';
 import type { PantryStackScreenProps } from '../../../app/navigation/types';
 
@@ -39,6 +41,7 @@ export function ItemFormScreen({ navigation, route }: PantryStackScreenProps<'It
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [isScanningBarcode, setIsScanningBarcode] = useState(false);
+  const [isScanningExpiryDate, setIsScanningExpiryDate] = useState(false);
 
   const {
     control,
@@ -89,6 +92,20 @@ export function ItemFormScreen({ navigation, route }: PantryStackScreenProps<'It
       }
     } finally {
       setIsScanningBarcode(false);
+    }
+  };
+
+  const handleScanExpiryDate = async () => {
+    setIsScanningExpiryDate(true);
+    try {
+      const date = await scanExpiryDateFromCamera();
+      if (!date) {
+        Alert.alert('Tarih bulunamadı', 'Fotoğrafta bir SKT tarihi tanınamadı, elle girebilirsin.');
+        return;
+      }
+      setValue('expiryDate', date);
+    } finally {
+      setIsScanningExpiryDate(false);
     }
   };
 
@@ -262,32 +279,46 @@ export function ItemFormScreen({ navigation, route }: PantryStackScreenProps<'It
       {errors.unit && <Text style={styles.error}>{errors.unit.message}</Text>}
 
       <Text style={styles.label}>Son kullanma tarihi (opsiyonel)</Text>
-      <Controller
-        control={control}
-        name="expiryDate"
-        render={({ field: { onChange, value } }) => (
-          <>
-            <Pressable
-              testID="expiry-date-button"
-              style={styles.input}
-              onPress={() => setShowDatePicker(true)}
-            >
-              <Text>{value ? value.toLocaleDateString('tr-TR') : 'Tarih seç'}</Text>
-            </Pressable>
-            {showDatePicker && (
-              <DateTimePicker
-                value={value ?? new Date()}
-                mode="date"
-                display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-                onChange={(_event, selectedDate) => {
-                  setShowDatePicker(Platform.OS === 'ios');
-                  if (selectedDate) onChange(selectedDate);
-                }}
-              />
-            )}
-          </>
-        )}
-      />
+      <View style={styles.barcodeRow}>
+        <Controller
+          control={control}
+          name="expiryDate"
+          render={({ field: { onChange, value } }) => (
+            <>
+              <Pressable
+                testID="expiry-date-button"
+                style={[styles.input, styles.barcodeInput]}
+                onPress={() => setShowDatePicker(true)}
+              >
+                <Text>{value ? value.toLocaleDateString('tr-TR') : 'Tarih seç'}</Text>
+              </Pressable>
+              {showDatePicker && (
+                <DateTimePicker
+                  value={value ?? new Date()}
+                  mode="date"
+                  display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+                  onChange={(_event, selectedDate) => {
+                    setShowDatePicker(Platform.OS === 'ios');
+                    if (selectedDate) onChange(selectedDate);
+                  }}
+                />
+              )}
+            </>
+          )}
+        />
+        <Pressable
+          testID="scan-expiry-date-button"
+          style={[styles.scanButton, isScanningExpiryDate && styles.buttonDisabled]}
+          onPress={handleScanExpiryDate}
+          disabled={isScanningExpiryDate}
+        >
+          {isScanningExpiryDate ? (
+            <ActivityIndicator color="#1d76db" />
+          ) : (
+            <Text style={styles.scanButtonText}>SKT Tara</Text>
+          )}
+        </Pressable>
+      </View>
 
       {serverError && <Text style={styles.error}>{serverError}</Text>}
 
