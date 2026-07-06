@@ -99,3 +99,21 @@ alındığında yeni bir bölüm eklenir; eskiler değiştirilmez, "superseded" 
   ile MongoDB + API + Nginx çalıştırılır.
 - **Consequences**: Backup, SSL yenileme ve log rotation manuel/otomatik script ile
   yönetilmesi gerekir (bkz. docs/Deployment.md).
+
+---
+
+## Decision: SKT hatırlatmaları için yerel bildirim (OneSignal değil)
+
+- **Date**: 2026-07-07
+- **Status**: Accepted
+- **Context**: Sprint 4 planlamasında kullanıcı OneSignal'ı önerdi. Ancak SKT
+  hatırlatmaları tamamen `InventoryItem.expiryDate` + `reminderDaysBefore`'dan
+  önceden hesaplanabiliyor — sunucudan tetiklenen bir push'a ihtiyaç yok.
+- **Decision**: `@notifee/react-native` ile tamamen cihazda zamanlanan yerel bildirim
+  kullanılır (`mobile/src/services/notificationScheduler.ts`). Aktif ürün listesi
+  her değiştiğinde (`useNotificationSync` hook'u) tüm zamanlanmış bildirimler iptal
+  edilip yeniden oluşturulur (basit "cancel-all + reschedule" stratejisi).
+- **Consequences**: Dış hesap/API key/gizli anahtar yönetimi yok; backend'e cron/job
+  runner eklenmedi. İleride family/social bildirimler (örn. "Ahmet ürünü tüketti")
+  gerekirse push altyapısı (OneSignal veya benzeri) o zaman ayrıca değerlendirilecek —
+  bu karar yalnızca SKT hatırlatmalarını kapsar.

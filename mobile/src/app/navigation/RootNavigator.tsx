@@ -15,6 +15,7 @@ import { DashboardScreen } from '../../modules/dashboard/screens/DashboardScreen
 import { PantryScreen } from '../../modules/pantry/screens/PantryScreen';
 import { ItemFormScreen } from '../../modules/pantry/screens/ItemFormScreen';
 import { ShoppingScreen } from '../../modules/shopping/screens/ShoppingScreen';
+import { useNotificationSync } from '../../modules/pantry/hooks/useNotificationSync';
 import type {
   AuthStackParamList,
   DashboardStackParamList,
@@ -87,17 +88,25 @@ function ShoppingTabNavigator() {
   );
 }
 
+function NotificationSync() {
+  useNotificationSync();
+  return null;
+}
+
 function MainNavigator() {
   return (
-    <MainTab.Navigator screenOptions={{ headerShown: false }}>
-      <MainTab.Screen name="DashboardTab" component={DashboardTabNavigator} options={{ title: 'Özet' }} />
-      <MainTab.Screen name="PantryTab" component={PantryTabNavigator} options={{ title: 'Dolap' }} />
-      <MainTab.Screen
-        name="ShoppingTab"
-        component={ShoppingTabNavigator}
-        options={{ title: 'Alışveriş' }}
-      />
-    </MainTab.Navigator>
+    <>
+      <NotificationSync />
+      <MainTab.Navigator screenOptions={{ headerShown: false }}>
+        <MainTab.Screen name="DashboardTab" component={DashboardTabNavigator} options={{ title: 'Özet' }} />
+        <MainTab.Screen name="PantryTab" component={PantryTabNavigator} options={{ title: 'Dolap' }} />
+        <MainTab.Screen
+          name="ShoppingTab"
+          component={ShoppingTabNavigator}
+          options={{ title: 'Alışveriş' }}
+        />
+      </MainTab.Navigator>
+    </>
   );
 }
 
