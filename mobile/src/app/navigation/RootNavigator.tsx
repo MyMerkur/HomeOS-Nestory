@@ -12,6 +12,7 @@ import { CreateHomeScreen } from '../../modules/home/screens/CreateHomeScreen';
 import { JoinHomeScreen } from '../../modules/home/screens/JoinHomeScreen';
 import { useHomesQuery } from '../../modules/home/hooks/useHomesQuery';
 import { DashboardScreen } from '../../modules/dashboard/screens/DashboardScreen';
+import { BadgesScreen } from '../../modules/dashboard/screens/BadgesScreen';
 import { PantryScreen } from '../../modules/pantry/screens/PantryScreen';
 import { ItemFormScreen } from '../../modules/pantry/screens/ItemFormScreen';
 import { ShoppingScreen } from '../../modules/shopping/screens/ShoppingScreen';
@@ -71,6 +72,7 @@ function DashboardTabNavigator() {
   return (
     <DashboardStack.Navigator>
       <DashboardStack.Screen name="Dashboard" component={DashboardScreen} options={{ title: 'Özet' }} />
+      <DashboardStack.Screen name="Badges" component={BadgesScreen} options={{ title: 'Rozetlerim' }} />
     </DashboardStack.Navigator>
   );
 }

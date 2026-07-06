@@ -1,4 +1,4 @@
-import { ActivityIndicator, FlatList, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import { ItemCard } from '../../pantry/components/ItemCard';
 import { useDashboardQuery } from '../hooks/useDashboardQuery';
 import type { DashboardStackScreenProps } from '../../../app/navigation/types';
@@ -24,6 +24,14 @@ export function DashboardScreen({ navigation }: DashboardStackScreenProps<'Dashb
 
   return (
     <View style={styles.container}>
+      <Pressable
+        testID="go-to-badges"
+        style={styles.badgesButton}
+        onPress={() => navigation.navigate('Badges')}
+      >
+        <Text style={styles.badgesButtonText}>Rozetlerim</Text>
+      </Pressable>
+
       <View style={styles.summaryRow}>
         <View style={[styles.summaryCard, styles.today]}>
           <Text style={styles.summaryValue}>{data.expiringToday}</Text>
@@ -87,4 +95,13 @@ const styles = StyleSheet.create({
   week: { backgroundColor: '#f1c40f' },
   total: { backgroundColor: '#1d76db' },
   sectionTitle: { fontSize: 15, fontWeight: '600', paddingHorizontal: 16, marginBottom: 4 },
+  badgesButton: {
+    margin: 12,
+    alignSelf: 'flex-start',
+    backgroundColor: '#f0f0f0',
+    borderRadius: 16,
+    paddingHorizontal: 14,
+    paddingVertical: 8,
+  },
+  badgesButtonText: { fontSize: 13, fontWeight: '600', color: '#333' },
 });

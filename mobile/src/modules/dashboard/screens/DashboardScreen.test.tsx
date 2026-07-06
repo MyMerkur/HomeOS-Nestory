@@ -74,4 +74,12 @@ describe('DashboardScreen', () => {
       params: { itemId: 'item-1' },
     });
   });
+
+  it('navigates to the Badges screen when the Rozetlerim button is pressed', async () => {
+    renderScreen();
+
+    fireEvent.press(await screen.findByTestId('go-to-badges'));
+
+    expect(mockNavigation.navigate).toHaveBeenCalledWith('Badges');
+  });
 });
