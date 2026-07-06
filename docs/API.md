@@ -38,7 +38,7 @@ Route -> authenticate -> validateParams -> requireHomeMembership(role?) -> valid
 | Locations | PATCH/DELETE /api/homes/:homeId/locations/:locationId | Lokasyon güncelle / sil | ✅ |
 | Inventory | GET/POST /api/homes/:homeId/items | Filtreli liste / ekleme | ✅ |
 | Inventory | GET/PATCH/DELETE /api/homes/:homeId/items/:itemId | Detay / güncelle / sil | ✅ |
-| Inventory | POST /api/homes/:homeId/items/:itemId/{consume,discard,freeze,add-to-shopping} | Durum aksiyonları (Sprint 3) | ⏳ |
+| Inventory | POST /api/homes/:homeId/items/:itemId/{consume,discard,freeze,add-to-shopping} | Durum aksiyonları | ✅ |
 | Shopping | GET/POST /api/homes/:homeId/shopping/items | Filtreli liste / ekleme | ✅ |
 | Shopping | PATCH/DELETE /api/homes/:homeId/shopping/items/:itemId | Güncelle / sil | ✅ |
 | Shopping | PATCH /api/homes/:homeId/shopping/items/:itemId/check | İşaretle/kaldır (toggle) | ✅ |
@@ -167,9 +167,9 @@ Body'deki her alan opsiyonel (partial update). `404 LOCATION_NOT_FOUND` — id b
 ## Inventory endpoint detayları
 
 Tüm inventory endpointleri `requireHomeMembership` ile korunur: GET için `viewer`,
-POST/PATCH/DELETE için `member`. Sprint 2 kapsamı yalnızca CRUD + filtreleme; durum
-aksiyonları (consume/discard/freeze/add-to-shopping) ve audit log Sprint 3'te gelecek —
-şimdilik `status` alanı genel PATCH ile serbestçe değiştirilebilir.
+POST/PATCH/DELETE için `member`. `status` alanı genel PATCH'te **yoktur** — status
+değişiklikleri yalnızca aşağıdaki aksiyon endpointleri üzerinden yapılabilir, böylece her
+status değişikliği garantili bir `AuditLog` kaydı üretir.
 
 ### GET /api/homes/:homeId/items
 
@@ -201,6 +201,27 @@ aksiyonları (consume/discard/freeze/add-to-shopping) ve audit log Sprint 3'te g
 Body'deki her alan PATCH'te opsiyoneldir. Başka home'un ürününe erişim (veya olmayan id)
 `404 ITEM_NOT_FOUND` döner — izolasyon `homeId` filtresiyle sağlanır. DELETE şu an hard
 delete'tir (audit log Sprint 3'te eklenecek, `docs/Database.md`'de not düşülmüş).
+
+## Expiry Actions endpoint detayları
+
+`requireHomeMembership('member')` ile korunur. Hepsi body almaz.
+
+```
+POST /api/homes/:homeId/items/:itemId/consume
+POST /api/homes/:homeId/items/:itemId/discard
+POST /api/homes/:homeId/items/:itemId/freeze
+POST /api/homes/:homeId/items/:itemId/add-to-shopping
+```
+
+- `consume/discard/freeze`: item'ın `status`'unu sırasıyla `consumed/discarded/frozen` yapar,
+  `AuditLog` kaydı üretir. Item zaten hedef status'taysa `400 INVALID_STATUS_TRANSITION`.
+- `freeze`: yalnızca `status` değişir, `locationId` **değişmez** (kullanıcı kararı — MVP'de
+  otomatik lokasyon taşıma yok).
+- `add-to-shopping`: item'ın `status`'unu **değiştirmez**; ürün adı/birim/kategorisiyle
+  home'un varsayılan alışveriş listesine yeni bir `ShoppingItem` ekler (bkz. Shopping
+  endpointleri) ve `metadata.shoppingItemId` ile ilişkilendirilmiş bir `AuditLog` kaydı üretir.
+
+Response: `{ "item": {...} }` (add-to-shopping'de ayrıca `"shoppingItem": {...}`).
 
 ## Dashboard endpoint detayı
 

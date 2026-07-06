@@ -80,7 +80,7 @@ export async function createItem(
   return toSummary(item);
 }
 
-async function findItemOrThrow(homeId: string, itemId: string) {
+export async function findItemOrThrow(homeId: string, itemId: string) {
   const item = await InventoryItem.findOne({ _id: itemId, homeId });
   if (!item) {
     throw new AppError('Item not found', 404, 'ITEM_NOT_FOUND');
@@ -118,7 +118,6 @@ export async function updateItem(
   if (input.notes !== undefined) item.notes = input.notes;
   if (input.imageUrl !== undefined) item.imageUrl = input.imageUrl;
   if (input.reminderDaysBefore !== undefined) item.reminderDaysBefore = input.reminderDaysBefore;
-  if (input.status !== undefined) item.status = input.status;
 
   await item.save();
   return toSummary(item);

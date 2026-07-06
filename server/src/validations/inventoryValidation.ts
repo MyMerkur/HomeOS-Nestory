@@ -17,9 +17,10 @@ export const createItemSchema = z.object({
   reminderDaysBefore: z.array(z.number().int().min(0)).optional(),
 });
 
-export const updateItemSchema = createItemSchema.partial().extend({
-  status: z.enum(INVENTORY_ITEM_STATUSES).optional(),
-});
+// status kasıtlı olarak burada yok — status değişiklikleri yalnızca
+// inventoryActionService'teki consume/discard/freeze aksiyonları üzerinden
+// yapılabilir, böylece her status değişikliği garantili audit log üretir.
+export const updateItemSchema = createItemSchema.partial();
 
 export const listItemsQuerySchema = z.object({
   locationId: objectId.optional(),

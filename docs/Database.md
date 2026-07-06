@@ -180,5 +180,24 @@ index: `(homeId, listId, status)`.
 indexler: `(homeId, status)`, `(homeId, expiryDate)`, `(homeId, locationId)`, `(homeId, normalizedName)`.
 Sabitler `server/src/constants/inventory.ts`'de tutulur (mobile tarafından da referans alınabilir).
 
-Kalan şemalar (`Recipe`, `NotificationJob`, `AuditLog`) ilgili modül implementasyonu
-sırasında buraya eklenecektir — kod ile bu doküman senkron tutulmalıdır.
+### AuditLog (`server/src/models/AuditLog.ts`) ✅
+
+```
+{
+  homeId: ObjectId (ref Home, indexed),
+  itemId: ObjectId (ref InventoryItem),
+  userId: ObjectId (ref User),
+  action: 'consumed' | 'discarded' | 'frozen' | 'added_to_shopping',
+  previousStatus: string,
+  newStatus?: string (add-to-shopping'de item status değişmediği için yok),
+  metadata?: Mixed (örn. { shoppingItemId }),
+  createdAt (updatedAt yok — timestamps: { createdAt: true, updatedAt: false })
+}
+```
+
+index: `(homeId, createdAt)`. Her `inventoryActionService` aksiyonu (consume/discard/freeze/
+add-to-shopping) bir `AuditLog` kaydı üretir; `InventoryItem.status` artık yalnızca bu
+servis üzerinden değişebilir (genel PATCH'ten çıkarıldı).
+
+Kalan şemalar (`Recipe`, `NotificationJob`) ilgili modül implementasyonu sırasında buraya
+eklenecektir — kod ile bu doküman senkron tutulmalıdır.

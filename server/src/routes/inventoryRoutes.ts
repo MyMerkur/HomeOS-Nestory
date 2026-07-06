@@ -6,6 +6,12 @@ import {
   listItemsHandler,
   updateItemHandler,
 } from '../controllers/inventoryController';
+import {
+  addToShoppingHandler,
+  consumeItemHandler,
+  discardItemHandler,
+  freezeItemHandler,
+} from '../controllers/inventoryActionController';
 import { requireHomeMembership } from '../middlewares/requireHomeMembership';
 import { validateBody, validateParams, validateQuery } from '../middlewares/validate';
 import { homeIdParamSchema, homeItemIdParamSchema } from '../validations/paramsValidation';
@@ -54,6 +60,34 @@ router.delete(
   validateParams(homeItemIdParamSchema),
   requireHomeMembership('member'),
   catchAsync(deleteItemHandler),
+);
+
+router.post(
+  '/:itemId/consume',
+  validateParams(homeItemIdParamSchema),
+  requireHomeMembership('member'),
+  catchAsync(consumeItemHandler),
+);
+
+router.post(
+  '/:itemId/discard',
+  validateParams(homeItemIdParamSchema),
+  requireHomeMembership('member'),
+  catchAsync(discardItemHandler),
+);
+
+router.post(
+  '/:itemId/freeze',
+  validateParams(homeItemIdParamSchema),
+  requireHomeMembership('member'),
+  catchAsync(freezeItemHandler),
+);
+
+router.post(
+  '/:itemId/add-to-shopping',
+  validateParams(homeItemIdParamSchema),
+  requireHomeMembership('member'),
+  catchAsync(addToShoppingHandler),
 );
 
 export default router;

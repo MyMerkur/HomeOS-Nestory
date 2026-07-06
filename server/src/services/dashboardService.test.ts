@@ -4,6 +4,7 @@ import * as authService from './authService';
 import * as homeService from './homeService';
 import * as locationService from './locationService';
 import * as inventoryService from './inventoryService';
+import * as inventoryActionService from './inventoryActionService';
 import * as dashboardService from './dashboardService';
 
 let mongo: MongoMemoryServer;
@@ -108,7 +109,7 @@ describe('dashboardService', () => {
       unit: 'piece',
       expiryDate: daysFromNow(0),
     });
-    await inventoryService.updateItem(homeId, item.id, { status: 'consumed' });
+    await inventoryActionService.consumeItem(homeId, userId, item.id);
 
     const dashboard = await dashboardService.getDashboard(homeId);
 
