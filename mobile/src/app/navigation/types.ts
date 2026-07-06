@@ -1,6 +1,7 @@
 import type { CompositeScreenProps, NavigatorScreenParams } from '@react-navigation/native';
 import type { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
+import type { RecipeSuggestion } from '../../modules/recipes/services/recipeApi';
 
 export type AuthStackParamList = {
   Login: undefined;
@@ -26,10 +27,16 @@ export type ShoppingStackParamList = {
   Shopping: undefined;
 };
 
+export type RecipesStackParamList = {
+  Recipes: undefined;
+  RecipeDetail: { recipe: RecipeSuggestion };
+};
+
 export type MainTabParamList = {
   DashboardTab: NavigatorScreenParams<DashboardStackParamList> | undefined;
   PantryTab: NavigatorScreenParams<PantryStackParamList> | undefined;
   ShoppingTab: NavigatorScreenParams<ShoppingStackParamList> | undefined;
+  RecipesTab: NavigatorScreenParams<RecipesStackParamList> | undefined;
 };
 
 export type AuthStackScreenProps<T extends keyof AuthStackParamList> = NativeStackScreenProps<
@@ -55,5 +62,10 @@ export type PantryStackScreenProps<T extends keyof PantryStackParamList> = Compo
 
 export type ShoppingStackScreenProps<T extends keyof ShoppingStackParamList> = CompositeScreenProps<
   NativeStackScreenProps<ShoppingStackParamList, T>,
+  BottomTabScreenProps<MainTabParamList>
+>;
+
+export type RecipesStackScreenProps<T extends keyof RecipesStackParamList> = CompositeScreenProps<
+  NativeStackScreenProps<RecipesStackParamList, T>,
   BottomTabScreenProps<MainTabParamList>
 >;

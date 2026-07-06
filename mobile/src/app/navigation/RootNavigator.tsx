@@ -15,6 +15,8 @@ import { DashboardScreen } from '../../modules/dashboard/screens/DashboardScreen
 import { PantryScreen } from '../../modules/pantry/screens/PantryScreen';
 import { ItemFormScreen } from '../../modules/pantry/screens/ItemFormScreen';
 import { ShoppingScreen } from '../../modules/shopping/screens/ShoppingScreen';
+import { RecipesScreen } from '../../modules/recipes/screens/RecipesScreen';
+import { RecipeDetailScreen } from '../../modules/recipes/screens/RecipeDetailScreen';
 import { useNotificationSync } from '../../modules/pantry/hooks/useNotificationSync';
 import type {
   AuthStackParamList,
@@ -22,6 +24,7 @@ import type {
   HomeSetupStackParamList,
   MainTabParamList,
   PantryStackParamList,
+  RecipesStackParamList,
   ShoppingStackParamList,
 } from './types';
 
@@ -31,6 +34,7 @@ const MainTab = createBottomTabNavigator<MainTabParamList>();
 const DashboardStack = createNativeStackNavigator<DashboardStackParamList>();
 const PantryStack = createNativeStackNavigator<PantryStackParamList>();
 const ShoppingStack = createNativeStackNavigator<ShoppingStackParamList>();
+const RecipesStack = createNativeStackNavigator<RecipesStackParamList>();
 
 function AuthNavigator() {
   return (
@@ -88,6 +92,15 @@ function ShoppingTabNavigator() {
   );
 }
 
+function RecipesTabNavigator() {
+  return (
+    <RecipesStack.Navigator>
+      <RecipesStack.Screen name="Recipes" component={RecipesScreen} options={{ title: 'Tarifler' }} />
+      <RecipesStack.Screen name="RecipeDetail" component={RecipeDetailScreen} />
+    </RecipesStack.Navigator>
+  );
+}
+
 function NotificationSync() {
   useNotificationSync();
   return null;
@@ -104,6 +117,11 @@ function MainNavigator() {
           name="ShoppingTab"
           component={ShoppingTabNavigator}
           options={{ title: 'Alışveriş' }}
+        />
+        <MainTab.Screen
+          name="RecipesTab"
+          component={RecipesTabNavigator}
+          options={{ title: 'Tarifler' }}
         />
       </MainTab.Navigator>
     </>
