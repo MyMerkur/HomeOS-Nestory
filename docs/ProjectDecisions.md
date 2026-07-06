@@ -71,6 +71,25 @@ alındığında yeni bir bölüm eklenir; eskiler değiştirilmez, "superseded" 
 
 ---
 
+## Decision: Tekil kaynak endpointleri iç içe (nested), handbook'un düz önerisinden sapma
+
+- **Date**: 2026-07-06
+- **Status**: Accepted
+- **Context**: Handbook, tekil ürün endpointlerini düz `/api/items/:itemId` şeklinde öneriyordu.
+  Ancak Sprint 1'de yazılan `requireHomeMembership(minRole?)` middleware'i (bkz. Decision
+  yukarıda, `server/src/middlewares/requireHomeMembership.ts`) `req.params.homeId` üzerinden
+  çalışıyor; düz URL'de homeId bulunmadığı için ayrı bir "önce item'ı çek, sonra homeId'sini
+  bul, sonra üyeliği kontrol et" akışı gerekirdi.
+- **Decision**: Tekil kaynak endpointleri ilgili home'un altında iç içe kurgulanır:
+  `/api/homes/:homeId/items/:itemId` (düz `/api/items/:itemId` değil). Aynı desen ileride
+  Shopping/Recipes gibi modüllerde de tekrarlanacak.
+- **Consequences**: `requireHomeMembership` hiçbir değişiklik gerekmeden tüm route'larda
+  (liste + tekil kaynak) aynı şekilde kullanılabiliyor — tek bir yetkilendirme yolu. Handbook'un
+  API tablosuyla birebir örtüşmüyor; `docs/API.md` gerçek (iç içe) şekli yansıtacak şekilde
+  güncellendi.
+
+---
+
 ## Decision: VPS + Docker Compose + Nginx deploy
 
 - **Date**: 2026-07-05

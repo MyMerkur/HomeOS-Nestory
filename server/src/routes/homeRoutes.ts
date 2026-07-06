@@ -5,6 +5,7 @@ import { validateBody } from '../middlewares/validate';
 import { createHomeSchema, joinHomeSchema } from '../validations/homeValidation';
 import { catchAsync } from '../utils/catchAsync';
 import locationRoutes from './locationRoutes';
+import inventoryRoutes from './inventoryRoutes';
 
 const router = Router();
 
@@ -15,5 +16,6 @@ router.get('/', catchAsync(listHomesHandler));
 router.post('/join', validateBody(joinHomeSchema), catchAsync(joinHomeHandler));
 
 router.use('/:homeId/locations', locationRoutes);
+router.use('/:homeId/items', inventoryRoutes);
 
 export default router;

@@ -36,8 +36,8 @@ Route -> authenticate -> validateParams -> requireHomeMembership(role?) -> valid
 | Members | PATCH /api/homes/:homeId/members/:memberId | Rol güncelleme | ⏳ |
 | Locations | GET/POST /api/homes/:homeId/locations | Lokasyon listele / oluştur | ✅ |
 | Locations | PATCH/DELETE /api/homes/:homeId/locations/:locationId | Lokasyon güncelle / sil | ✅ |
-| Inventory | GET/POST /api/homes/:homeId/items | Filtreli liste / ekleme | ⏳ |
-| Inventory | GET/PATCH/DELETE /api/homes/:homeId/items/:itemId | Detay / güncelle / sil | ⏳ |
+| Inventory | GET/POST /api/homes/:homeId/items | Filtreli liste / ekleme | ✅ |
+| Inventory | GET/PATCH/DELETE /api/homes/:homeId/items/:itemId | Detay / güncelle / sil | ✅ |
 | Inventory | POST /api/homes/:homeId/items/:itemId/{consume,discard,freeze,add-to-shopping} | Durum aksiyonları (Sprint 3) | ⏳ |
 | Shopping | GET /api/homes/:homeId/shopping | Liste | ⏳ |
 | Shopping | POST /api/homes/:homeId/shopping/items | Ürün ekle | ⏳ |
@@ -163,6 +163,44 @@ Body'deki her alan opsiyonel (partial update). `404 LOCATION_NOT_FOUND` — id b
 ### DELETE /api/homes/:homeId/locations/:locationId
 
 İçinde en az bir `InventoryItem` varsa `409 LOCATION_NOT_EMPTY` (veri kaybını önlemek için).
+
+## Inventory endpoint detayları
+
+Tüm inventory endpointleri `requireHomeMembership` ile korunur: GET için `viewer`,
+POST/PATCH/DELETE için `member`. Sprint 2 kapsamı yalnızca CRUD + filtreleme; durum
+aksiyonları (consume/discard/freeze/add-to-shopping) ve audit log Sprint 3'te gelecek —
+şimdilik `status` alanı genel PATCH ile serbestçe değiştirilebilir.
+
+### GET /api/homes/:homeId/items
+
+```
+?locationId=&category=&status=active&expiryWindow=7d&search=milk&page=1&limit=20&sort=expiryDate:asc
+```
+
+```json
+{ "items": [{ "id", "name", "category", "quantity", "unit", "locationId", "expiryDate", "status", "..." }],
+  "pagination": { "page": 1, "limit": 20, "total": 143, "totalPages": 8 } }
+```
+
+- `expiryWindow`: `"7d"` formatında — `expiryDate <= now + 7 gün` olan ürünleri getirir.
+- `search`: Türkçe karakter normalize edilerek `normalizedName` üzerinde regex araması yapar.
+- `sort`: `"<alan>:asc|desc"` formatında, verilmezse `createdAt:desc`.
+
+### POST /api/homes/:homeId/items
+
+```json
+// Request
+{ "name": "Kaşar Peyniri", "locationId": "...", "category": "Dairy", "quantity": 1, "unit": "piece", "expiryDate": "2026-07-10" }
+```
+
+`category` ve `unit` sabit enum'lardır (`server/src/constants/inventory.ts`).
+`locationId` bu home'a ait değilse `400 INVALID_LOCATION`.
+
+### GET/PATCH/DELETE /api/homes/:homeId/items/:itemId
+
+Body'deki her alan PATCH'te opsiyoneldir. Başka home'un ürününe erişim (veya olmayan id)
+`404 ITEM_NOT_FOUND` döner — izolasyon `homeId` filtresiyle sağlanır. DELETE şu an hard
+delete'tir (audit log Sprint 3'te eklenecek, `docs/Database.md`'de not düşülmüş).
 
 ## Pagination
 

@@ -128,7 +128,7 @@ index: `(homeId, type)`.
 }
 ```
 
-### InventoryItem (`server/src/models/InventoryItem.ts`) ✅ (model hazır, CRUD Sprint 2 Adım 2'de)
+### InventoryItem (`server/src/models/InventoryItem.ts`) ✅
 
 ```
 {
