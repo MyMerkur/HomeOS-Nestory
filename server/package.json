@@ -10,7 +10,8 @@
     "start": "node dist/server.js",
     "lint": "eslint src --ext .ts",
     "test": "jest",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "seed:recipes": "tsx src/scripts/seedRecipes.ts"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

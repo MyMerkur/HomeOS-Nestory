@@ -199,5 +199,23 @@ index: `(homeId, createdAt)`. Her `inventoryActionService` aksiyonu (consume/dis
 add-to-shopping) bir `AuditLog` kaydı üretir; `InventoryItem.status` artık yalnızca bu
 servis üzerinden değişebilir (genel PATCH'ten çıkarıldı).
 
-Kalan şemalar (`Recipe`, `NotificationJob`) ilgili modül implementasyonu sırasında buraya
-eklenecektir — kod ile bu doküman senkron tutulmalıdır.
+### Recipe (`server/src/models/Recipe.ts`) ✅
+
+```
+{
+  name: string (unique),
+  category?: string (serbest metin, örn. 'Çorba' | 'Ana Yemek' | 'Kahvaltı' | 'Salata' | 'Tatlı'),
+  ingredients: [{ name: string, normalizedName: string (indexed), optional: boolean (default false) }],
+  instructions: string[],
+  imageUrl?: string,
+  createdAt, updatedAt
+}
+```
+
+`homeId` yok — ev bazlı değil, global bir katalog. Seed verisi
+`server/src/scripts/recipesSeedData.ts`'de tutulur, `npm run seed:recipes`
+(`server/src/scripts/seedRecipes.ts`) ile `name` alanına göre idempotent upsert edilir.
+
+Kalan şemalar (`NotificationJob`) ilgili modül implementasyonu sırasında buraya
+eklenecektir — kod ile bu doküman senkron tutulmalıdır. Bildirimler v1'de tamamen
+cihazda zamanlandığı için (`docs/ProjectDecisions.md`) `NotificationJob` şu an planlanmıyor.
