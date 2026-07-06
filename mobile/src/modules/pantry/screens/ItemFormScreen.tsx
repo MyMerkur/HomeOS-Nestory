@@ -17,7 +17,8 @@ import { useHomeStore } from '../../../store/useHomeStore';
 import { CATEGORIES, CATEGORY_LABELS, UNITS, UNIT_LABELS } from '../constants';
 import { useLocationsQuery } from '../hooks/useLocationsQuery';
 import { INVENTORY_ITEMS_QUERY_KEY } from '../hooks/useInventoryItemsQuery';
-import { createItem, getItem, updateItem } from '../services/pantryApi';
+import { createItem, getItem, listItems, updateItem } from '../services/pantryApi';
+import { scanBarcodeFromCamera } from '../services/barcodeScanner';
 import { itemFormSchema, type ItemFormValues } from '../schemas/itemSchema';
 import type { PantryStackScreenProps } from '../../../app/navigation/types';
 
@@ -37,11 +38,14 @@ export function ItemFormScreen({ navigation, route }: PantryStackScreenProps<'It
   const [serverError, setServerError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const [isScanningBarcode, setIsScanningBarcode] = useState(false);
 
   const {
     control,
     handleSubmit,
     reset,
+    setValue,
+    getValues,
     formState: { errors },
   } = useForm<ItemFormValues>({
     resolver: zodResolver(itemFormSchema),
@@ -61,9 +65,32 @@ export function ItemFormScreen({ navigation, route }: PantryStackScreenProps<'It
         quantity: existingItem.quantity,
         unit: existingItem.unit,
         expiryDate: existingItem.expiryDate ? new Date(existingItem.expiryDate) : undefined,
+        barcode: existingItem.barcode ?? undefined,
       });
     }
   }, [existingItem, reset]);
+
+  const handleScanBarcode = async () => {
+    setIsScanningBarcode(true);
+    try {
+      const code = await scanBarcodeFromCamera();
+      if (!code) return;
+
+      setValue('barcode', code);
+
+      if (!isEditMode) {
+        const result = await listItems(homeId, { barcode: code, limit: 1 });
+        const match = result.items[0];
+        if (match) {
+          if (!getValues('name')) setValue('name', match.name);
+          if (!getValues('category')) setValue('category', match.category);
+          if (!getValues('unit')) setValue('unit', match.unit);
+        }
+      }
+    } finally {
+      setIsScanningBarcode(false);
+    }
+  };
 
   const onSubmit = async (values: ItemFormValues) => {
     setServerError(null);
@@ -76,6 +103,7 @@ export function ItemFormScreen({ navigation, route }: PantryStackScreenProps<'It
         quantity: values.quantity,
         unit: values.unit,
         expiryDate: values.expiryDate?.toISOString(),
+        barcode: values.barcode,
       };
 
       if (isEditMode) {
@@ -118,6 +146,35 @@ export function ItemFormScreen({ navigation, route }: PantryStackScreenProps<'It
         )}
       />
       {errors.name && <Text style={styles.error}>{errors.name.message}</Text>}
+
+      <Text style={styles.label}>Barkod (opsiyonel)</Text>
+      <View style={styles.barcodeRow}>
+        <Controller
+          control={control}
+          name="barcode"
+          render={({ field: { onChange, onBlur, value } }) => (
+            <TextInput
+              style={[styles.input, styles.barcodeInput]}
+              placeholder="Barkod numarası"
+              value={value ?? ''}
+              onChangeText={onChange}
+              onBlur={onBlur}
+            />
+          )}
+        />
+        <Pressable
+          testID="scan-barcode-button"
+          style={[styles.scanButton, isScanningBarcode && styles.buttonDisabled]}
+          onPress={handleScanBarcode}
+          disabled={isScanningBarcode}
+        >
+          {isScanningBarcode ? (
+            <ActivityIndicator color="#1d76db" />
+          ) : (
+            <Text style={styles.scanButtonText}>Barkod Tara</Text>
+          )}
+        </Pressable>
+      </View>
 
       <Text style={styles.label}>Lokasyon</Text>
       <Controller
@@ -263,6 +320,16 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   error: { color: '#c0392b', fontSize: 13 },
+  barcodeRow: { flexDirection: 'row', gap: 8, alignItems: 'center' },
+  barcodeInput: { flex: 1 },
+  scanButton: {
+    borderWidth: 1,
+    borderColor: '#1d76db',
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+  },
+  scanButtonText: { color: '#1d76db', fontWeight: '600', fontSize: 13 },
   chipsRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
   chip: { paddingHorizontal: 12, paddingVertical: 6, borderRadius: 16, backgroundColor: '#f0f0f0' },
   chipActive: { backgroundColor: '#1d76db' },

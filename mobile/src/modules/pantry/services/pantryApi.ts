@@ -32,6 +32,7 @@ export type ListItemsParams = {
   category?: string;
   status?: string;
   search?: string;
+  barcode?: string;
   page?: number;
   limit?: number;
 };
@@ -74,6 +75,7 @@ export type ItemInput = {
   quantity: number;
   unit: Unit;
   expiryDate?: string;
+  barcode?: string;
 };
 
 export async function createItem(homeId: string, input: ItemInput): Promise<InventoryItem> {

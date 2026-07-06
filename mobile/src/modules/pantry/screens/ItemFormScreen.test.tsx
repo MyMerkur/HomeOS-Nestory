@@ -1,11 +1,13 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react-native';
 import { ItemFormScreen } from './ItemFormScreen';
-import { createItem, getItem, listLocations, updateItem } from '../services/pantryApi';
+import { createItem, getItem, listItems, listLocations, updateItem } from '../services/pantryApi';
+import { scanBarcodeFromCamera } from '../services/barcodeScanner';
 import { useHomeStore } from '../../../store/useHomeStore';
 import type { PantryStackScreenProps } from '../../../app/navigation/types';
 
 jest.mock('../services/pantryApi');
+jest.mock('../services/barcodeScanner');
 
 const mockLocations = [{ id: 'loc-fridge', name: 'Buzdolabı', type: 'fridge', order: 0 }];
 
@@ -96,5 +98,46 @@ describe('ItemFormScreen', () => {
         expect.objectContaining({ name: 'Süt (yağlı)' }),
       ),
     );
+  });
+
+  it('fills the barcode field after a successful scan', async () => {
+    (scanBarcodeFromCamera as jest.Mock).mockResolvedValue('8690000000001');
+    (listItems as jest.Mock).mockResolvedValue({
+      items: [],
+      pagination: { page: 1, limit: 1, total: 0, totalPages: 1 },
+    });
+
+    renderScreen();
+
+    await screen.findByTestId('location-chip-loc-fridge');
+    fireEvent.press(screen.getByTestId('scan-barcode-button'));
+
+    expect(await screen.findByDisplayValue('8690000000001')).toBeTruthy();
+    expect(listItems).toHaveBeenCalledWith('home-1', { barcode: '8690000000001', limit: 1 });
+  });
+
+  it('prefills name/category/unit when the scanned barcode matches an existing item', async () => {
+    (scanBarcodeFromCamera as jest.Mock).mockResolvedValue('8690000000001');
+    (listItems as jest.Mock).mockResolvedValue({
+      items: [
+        {
+          id: 'existing-item',
+          name: 'Yoğurt',
+          category: 'Dairy',
+          quantity: 1,
+          unit: 'piece',
+          locationId: 'loc-fridge',
+          barcode: '8690000000001',
+        },
+      ],
+      pagination: { page: 1, limit: 1, total: 1, totalPages: 1 },
+    });
+
+    renderScreen();
+
+    await screen.findByTestId('location-chip-loc-fridge');
+    fireEvent.press(screen.getByTestId('scan-barcode-button'));
+
+    expect(await screen.findByDisplayValue('Yoğurt')).toBeTruthy();
   });
 });

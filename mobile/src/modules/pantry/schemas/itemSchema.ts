@@ -8,6 +8,7 @@ export const itemFormSchema = z.object({
   quantity: z.number().positive('Miktar 0’dan büyük olmalı'),
   unit: z.enum(UNITS, { message: 'Birim seç' }),
   expiryDate: z.date().optional(),
+  barcode: z.string().trim().optional(),
 });
 
 export type ItemFormValues = z.infer<typeof itemFormSchema>;

@@ -117,3 +117,24 @@ alındığında yeni bir bölüm eklenir; eskiler değiştirilmez, "superseded" 
   runner eklenmedi. İleride family/social bildirimler (örn. "Ahmet ürünü tüketti")
   gerekirse push altyapısı (OneSignal veya benzeri) o zaman ayrıca değerlendirilecek —
   bu karar yalnızca SKT hatırlatmalarını kapsar.
+
+---
+
+## Decision: Barkod/OCR POC'leri için statik foto + ML Kit (canlı kamera değil)
+
+- **Date**: 2026-07-07
+- **Status**: Accepted
+- **Context**: Roadmap Sprint 5, kart 9.1/9.2'yi açıkça "POC" olarak adlandırıyor —
+  tam özellik v1.2'de. `react-native-vision-camera` + frame-processor + Reanimated/
+  worklets ile gerçek zamanlı tarama "production-like" olurdu ama bir POC için
+  orantısız kurulum riski/efor taşır.
+- **Decision**: `react-native-image-picker`'ın `launchCamera`'ı ile statik foto
+  çekilir, `@react-native-ml-kit/barcode-scanning` ve `@react-native-ml-kit/
+  text-recognition` bu foto üzerinde çalışır (`mobile/src/services/cameraCapture.ts`
+  ortak yardımcısı ikisi tarafından da kullanılır). Gerçek zamanlı kamera önizlemesi/
+  frame-processor UX'i yok.
+- **Consequences**: `RNMLKitBarcodeScanning` iOS 15.5+ gerektirdiği için
+  `mobile/ios/Podfile`'daki `platform :ios` satırı RN 0.86'nın varsayılanı olan
+  `min_ios_version_supported` (15.1) yerine sabit `'15.5'` olarak ayarlandı. OCR
+  tarih tanıma basit bir regex ile yapılır, %100 güvenilir değildir — bu kabul
+  edilen bir POC sınırlamasıdır, kullanıcı SKT'yi elle de girebilir.
