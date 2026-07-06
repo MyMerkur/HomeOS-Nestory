@@ -56,6 +56,21 @@ alındığında yeni bir bölüm eklenir; eskiler değiştirilmez, "superseded" 
 
 ---
 
+## Decision: Refresh token'ı mobilde AsyncStorage'da sakla (Keychain değil)
+
+- **Date**: 2026-07-06
+- **Status**: Accepted
+- **Context**: Sprint 1 mobile auth için refresh token'ın cihazda nerede saklanacağına karar
+  verilmesi gerekiyordu. react-native-keychain daha güvenli (iOS Keychain/Android Keystore)
+  ama ek native paket + `pod install` gerektiriyor.
+- **Decision**: MVP hızı için `@react-native-async-storage/async-storage` kullanılır
+  (zaten kurulu). Erişim `mobile/src/services/secureStorage.ts` üzerinden soyutlanır.
+- **Consequences**: Token düz (şifrelenmemiş) saklanır — rootlu/jailbreak cihazda okunabilir
+  risk taşır. `secureStorage.ts` tek dosya olduğu için ileride react-native-keychain'e geçiş
+  düşük maliyetli olacak şekilde tasarlandı.
+
+---
+
 ## Decision: VPS + Docker Compose + Nginx deploy
 
 - **Date**: 2026-07-05

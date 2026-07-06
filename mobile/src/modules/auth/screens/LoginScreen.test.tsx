@@ -1,0 +1,45 @@
+import { fireEvent, render, screen, waitFor } from '@testing-library/react-native';
+import { LoginScreen } from './LoginScreen';
+import { loginRequest } from '../services/authApi';
+import { useAuthStore } from '../../../store/useAuthStore';
+import type { AuthStackScreenProps } from '../../../app/navigation/types';
+
+jest.mock('../services/authApi');
+
+const mockNavigation = { navigate: jest.fn() } as unknown as AuthStackScreenProps<'Login'>['navigation'];
+
+describe('LoginScreen', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it('shows validation errors for empty submission', async () => {
+    render(<LoginScreen navigation={mockNavigation} route={{} as never} />);
+
+    fireEvent.press(screen.getByTestId('login-submit-button'));
+
+    expect(await screen.findByText('Geçerli bir e-posta girin')).toBeTruthy();
+    expect(loginRequest).not.toHaveBeenCalled();
+  });
+
+  it('submits valid credentials and starts a session', async () => {
+    (loginRequest as jest.Mock).mockResolvedValue({
+      user: { id: '1', name: 'Test', email: 'test@example.com' },
+      accessToken: 'access',
+      refreshToken: 'refresh',
+    });
+
+    render(<LoginScreen navigation={mockNavigation} route={{} as never} />);
+
+    fireEvent.changeText(screen.getByPlaceholderText('E-posta'), 'test@example.com');
+    fireEvent.changeText(screen.getByPlaceholderText('Şifre'), 'Min8Chars!');
+    fireEvent.press(screen.getByTestId('login-submit-button'));
+
+    await waitFor(() => expect(loginRequest).toHaveBeenCalledWith({
+      email: 'test@example.com',
+      password: 'Min8Chars!',
+    }));
+
+    await waitFor(() => expect(useAuthStore.getState().accessToken).toBe('access'));
+  });
+});
