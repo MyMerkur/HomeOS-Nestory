@@ -1,5 +1,6 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { useEffect } from 'react';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import { useAuthStore } from '../../store/useAuthStore';
@@ -10,14 +11,25 @@ import { HomeSetupChoiceScreen } from '../../modules/home/screens/HomeSetupChoic
 import { CreateHomeScreen } from '../../modules/home/screens/CreateHomeScreen';
 import { JoinHomeScreen } from '../../modules/home/screens/JoinHomeScreen';
 import { useHomesQuery } from '../../modules/home/hooks/useHomesQuery';
-import { DashboardPlaceholderScreen } from '../../modules/dashboard/screens/DashboardPlaceholderScreen';
+import { DashboardScreen } from '../../modules/dashboard/screens/DashboardScreen';
 import { PantryScreen } from '../../modules/pantry/screens/PantryScreen';
 import { ItemFormScreen } from '../../modules/pantry/screens/ItemFormScreen';
-import type { AuthStackParamList, HomeSetupStackParamList, MainStackParamList } from './types';
+import { ShoppingPlaceholderScreen } from '../../modules/shopping/screens/ShoppingPlaceholderScreen';
+import type {
+  AuthStackParamList,
+  DashboardStackParamList,
+  HomeSetupStackParamList,
+  MainTabParamList,
+  PantryStackParamList,
+  ShoppingStackParamList,
+} from './types';
 
 const AuthStack = createNativeStackNavigator<AuthStackParamList>();
 const HomeSetupStack = createNativeStackNavigator<HomeSetupStackParamList>();
-const MainStack = createNativeStackNavigator<MainStackParamList>();
+const MainTab = createBottomTabNavigator<MainTabParamList>();
+const DashboardStack = createNativeStackNavigator<DashboardStackParamList>();
+const PantryStack = createNativeStackNavigator<PantryStackParamList>();
+const ShoppingStack = createNativeStackNavigator<ShoppingStackParamList>();
 
 function AuthNavigator() {
   return (
@@ -50,17 +62,46 @@ function HomeSetupNavigator() {
   );
 }
 
+function DashboardTabNavigator() {
+  return (
+    <DashboardStack.Navigator>
+      <DashboardStack.Screen name="Dashboard" component={DashboardScreen} options={{ title: 'Özet' }} />
+    </DashboardStack.Navigator>
+  );
+}
+
+function PantryTabNavigator() {
+  return (
+    <PantryStack.Navigator>
+      <PantryStack.Screen name="Pantry" component={PantryScreen} options={{ title: 'Dolap' }} />
+      <PantryStack.Screen name="ItemForm" component={ItemFormScreen} />
+    </PantryStack.Navigator>
+  );
+}
+
+function ShoppingTabNavigator() {
+  return (
+    <ShoppingStack.Navigator>
+      <ShoppingStack.Screen
+        name="Shopping"
+        component={ShoppingPlaceholderScreen}
+        options={{ title: 'Alışveriş' }}
+      />
+    </ShoppingStack.Navigator>
+  );
+}
+
 function MainNavigator() {
   return (
-    <MainStack.Navigator>
-      <MainStack.Screen
-        name="Dashboard"
-        component={DashboardPlaceholderScreen}
-        options={{ title: 'HomeOS' }}
+    <MainTab.Navigator screenOptions={{ headerShown: false }}>
+      <MainTab.Screen name="DashboardTab" component={DashboardTabNavigator} options={{ title: 'Özet' }} />
+      <MainTab.Screen name="PantryTab" component={PantryTabNavigator} options={{ title: 'Dolap' }} />
+      <MainTab.Screen
+        name="ShoppingTab"
+        component={ShoppingTabNavigator}
+        options={{ title: 'Alışveriş' }}
       />
-      <MainStack.Screen name="Pantry" component={PantryScreen} options={{ title: 'Dolap' }} />
-      <MainStack.Screen name="ItemForm" component={ItemFormScreen} />
-    </MainStack.Navigator>
+    </MainTab.Navigator>
   );
 }
 

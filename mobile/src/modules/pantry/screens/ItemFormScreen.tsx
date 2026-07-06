@@ -19,9 +19,9 @@ import { useLocationsQuery } from '../hooks/useLocationsQuery';
 import { INVENTORY_ITEMS_QUERY_KEY } from '../hooks/useInventoryItemsQuery';
 import { createItem, getItem, updateItem } from '../services/pantryApi';
 import { itemFormSchema, type ItemFormValues } from '../schemas/itemSchema';
-import type { MainStackScreenProps } from '../../../app/navigation/types';
+import type { PantryStackScreenProps } from '../../../app/navigation/types';
 
-export function ItemFormScreen({ navigation, route }: MainStackScreenProps<'ItemForm'>) {
+export function ItemFormScreen({ navigation, route }: PantryStackScreenProps<'ItemForm'>) {
   const itemId = route.params?.itemId;
   const isEditMode = !!itemId;
   const homeId = useHomeStore((state) => state.selectedHomeId) as string;

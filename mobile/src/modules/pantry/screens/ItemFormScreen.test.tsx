@@ -3,7 +3,7 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react-nativ
 import { ItemFormScreen } from './ItemFormScreen';
 import { createItem, getItem, listLocations, updateItem } from '../services/pantryApi';
 import { useHomeStore } from '../../../store/useHomeStore';
-import type { MainStackScreenProps } from '../../../app/navigation/types';
+import type { PantryStackScreenProps } from '../../../app/navigation/types';
 
 jest.mock('../services/pantryApi');
 
@@ -13,7 +13,7 @@ const mockNavigation = {
   navigate: jest.fn(),
   goBack: jest.fn(),
   setOptions: jest.fn(),
-} as unknown as MainStackScreenProps<'ItemForm'>['navigation'];
+} as unknown as PantryStackScreenProps<'ItemForm'>['navigation'];
 
 function renderScreen(itemId?: string) {
   const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
@@ -21,7 +21,7 @@ function renderScreen(itemId?: string) {
     <QueryClientProvider client={queryClient}>
       <ItemFormScreen
         navigation={mockNavigation}
-        route={{ params: { itemId } } as MainStackScreenProps<'ItemForm'>['route']}
+        route={{ params: { itemId } } as PantryStackScreenProps<'ItemForm'>['route']}
       />
     </QueryClientProvider>,
   );

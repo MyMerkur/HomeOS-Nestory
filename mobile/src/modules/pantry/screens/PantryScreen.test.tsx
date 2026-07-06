@@ -3,13 +3,13 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react-nativ
 import { PantryScreen } from './PantryScreen';
 import { listItems, listLocations } from '../services/pantryApi';
 import { useHomeStore } from '../../../store/useHomeStore';
-import type { MainStackScreenProps } from '../../../app/navigation/types';
+import type { PantryStackScreenProps } from '../../../app/navigation/types';
 
 jest.mock('../services/pantryApi');
 
 const mockNavigation = {
   navigate: jest.fn(),
-} as unknown as MainStackScreenProps<'Pantry'>['navigation'];
+} as unknown as PantryStackScreenProps<'Pantry'>['navigation'];
 
 const mockLocations = [
   { id: 'loc-fridge', name: 'Buzdolabı', type: 'fridge', order: 0 },

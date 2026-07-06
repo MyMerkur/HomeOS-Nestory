@@ -11,11 +11,11 @@ import {
 import { ItemCard } from '../components/ItemCard';
 import { useLocationsQuery } from '../hooks/useLocationsQuery';
 import { useInventoryItemsQuery } from '../hooks/useInventoryItemsQuery';
-import type { MainStackScreenProps } from '../../../app/navigation/types';
+import type { PantryStackScreenProps } from '../../../app/navigation/types';
 
 const ALL_LOCATIONS = null;
 
-export function PantryScreen({ navigation }: MainStackScreenProps<'Pantry'>) {
+export function PantryScreen({ navigation }: PantryStackScreenProps<'Pantry'>) {
   const [selectedLocationId, setSelectedLocationId] = useState<string | null>(ALL_LOCATIONS);
   const [search, setSearch] = useState('');
 
