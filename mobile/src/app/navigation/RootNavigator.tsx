@@ -11,6 +11,7 @@ import { CreateHomeScreen } from '../../modules/home/screens/CreateHomeScreen';
 import { JoinHomeScreen } from '../../modules/home/screens/JoinHomeScreen';
 import { useHomesQuery } from '../../modules/home/hooks/useHomesQuery';
 import { DashboardPlaceholderScreen } from '../../modules/dashboard/screens/DashboardPlaceholderScreen';
+import { PantryScreen } from '../../modules/pantry/screens/PantryScreen';
 import type { AuthStackParamList, HomeSetupStackParamList, MainStackParamList } from './types';
 
 const AuthStack = createNativeStackNavigator<AuthStackParamList>();
@@ -56,6 +57,7 @@ function MainNavigator() {
         component={DashboardPlaceholderScreen}
         options={{ title: 'HomeOS' }}
       />
+      <MainStack.Screen name="Pantry" component={PantryScreen} options={{ title: 'Dolap' }} />
     </MainStack.Navigator>
   );
 }
