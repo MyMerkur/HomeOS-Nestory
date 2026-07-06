@@ -128,5 +128,33 @@ index: `(homeId, type)`.
 }
 ```
 
-Kalan şemalar (`InventoryItem`, `ShoppingItem`, `Recipe`, `NotificationJob`, `AuditLog`) ilgili
-modül implementasyonu sırasında buraya eklenecektir — kod ile bu doküman senkron tutulmalıdır.
+### InventoryItem (`server/src/models/InventoryItem.ts`) ✅ (model hazır, CRUD Sprint 2 Adım 2'de)
+
+```
+{
+  homeId: ObjectId (ref Home, indexed),
+  locationId: ObjectId (ref PantryLocation, indexed),
+  createdBy: ObjectId (ref User),
+  name: string (max 120),
+  normalizedName: string (indexed — bkz. normalizeName utility),
+  category: 'Dairy' | 'Meat' | 'Vegetable' | 'Fruit' | 'Bakery' | 'Drink' | 'Frozen' |
+            'Cleaning' | 'Medicine' | 'Other',
+  quantity: number (>= 0),
+  unit: 'piece' | 'gram' | 'kg' | 'ml' | 'liter' | 'pack' | 'bottle' | 'box',
+  expiryDate?: Date,
+  purchaseDate?: Date,
+  barcode?: string,
+  brand?: string,
+  status: 'active' | 'consumed' | 'expired' | 'discarded' | 'frozen' (default 'active'),
+  notes?: string (max 500),
+  imageUrl?: string,
+  reminderDaysBefore: number[] (default [7,3,1,0]),
+  createdAt, updatedAt
+}
+```
+
+indexler: `(homeId, status)`, `(homeId, expiryDate)`, `(homeId, locationId)`, `(homeId, normalizedName)`.
+Sabitler `server/src/constants/inventory.ts`'de tutulur (mobile tarafından da referans alınabilir).
+
+Kalan şemalar (`ShoppingItem`, `Recipe`, `NotificationJob`, `AuditLog`) ilgili modül
+implementasyonu sırasında buraya eklenecektir — kod ile bu doküman senkron tutulmalıdır.

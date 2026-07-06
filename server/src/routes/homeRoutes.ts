@@ -4,6 +4,7 @@ import { authenticate } from '../middlewares/authenticate';
 import { validateBody } from '../middlewares/validate';
 import { createHomeSchema, joinHomeSchema } from '../validations/homeValidation';
 import { catchAsync } from '../utils/catchAsync';
+import locationRoutes from './locationRoutes';
 
 const router = Router();
 
@@ -12,5 +13,7 @@ router.use(authenticate);
 router.post('/', validateBody(createHomeSchema), catchAsync(createHomeHandler));
 router.get('/', catchAsync(listHomesHandler));
 router.post('/join', validateBody(joinHomeSchema), catchAsync(joinHomeHandler));
+
+router.use('/:homeId/locations', locationRoutes);
 
 export default router;

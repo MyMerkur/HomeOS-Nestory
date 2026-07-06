@@ -34,10 +34,11 @@ Route -> authenticate -> validateParams -> requireHomeMembership(role?) -> valid
 | Home | GET /api/homes/:homeId/dashboard | Özet bilgiler | ⏳ |
 | Members | GET /api/homes/:homeId/members | Ev üyeleri | ⏳ |
 | Members | PATCH /api/homes/:homeId/members/:memberId | Rol güncelleme | ⏳ |
-| Locations | GET/POST /api/homes/:homeId/locations | Lokasyon CRUD | ⏳ |
+| Locations | GET/POST /api/homes/:homeId/locations | Lokasyon listele / oluştur | ✅ |
+| Locations | PATCH/DELETE /api/homes/:homeId/locations/:locationId | Lokasyon güncelle / sil | ✅ |
 | Inventory | GET/POST /api/homes/:homeId/items | Filtreli liste / ekleme | ⏳ |
-| Inventory | GET/PATCH/DELETE /api/items/:itemId | Detay / güncelle / sil | ⏳ |
-| Inventory | POST /api/items/:itemId/{consume,discard,freeze,add-to-shopping} | Durum aksiyonları | ⏳ |
+| Inventory | GET/PATCH/DELETE /api/homes/:homeId/items/:itemId | Detay / güncelle / sil | ⏳ |
+| Inventory | POST /api/homes/:homeId/items/:itemId/{consume,discard,freeze,add-to-shopping} | Durum aksiyonları (Sprint 3) | ⏳ |
 | Shopping | GET /api/homes/:homeId/shopping | Liste | ⏳ |
 | Shopping | POST /api/homes/:homeId/shopping/items | Ürün ekle | ⏳ |
 | Shopping | PATCH /api/shopping/items/:itemId(/check) | Güncelle / işaretle | ⏳ |
@@ -135,6 +136,33 @@ Kullanıcının aktif üyeliği olan evleri döner: `{ "homes": [{ id, name, tim
 
 Geçersiz kod: `404 INVALID_INVITE_CODE`. Zaten üye: `409 ALREADY_MEMBER`.
 Daha önce `removed` olan üyelik varsa `active` role `member` olarak yeniden etkinleşir.
+
+## Location endpoint detayları
+
+Tüm location endpointleri `requireHomeMembership` ile korunur: GET için `viewer`,
+POST/PATCH/DELETE için `member` yeterlidir (`docs/Security.md`'deki rol tablosu).
+
+### GET /api/homes/:homeId/locations
+
+`{ "locations": [{ id, name, type, order }] }` — `order` alanına göre sıralı döner.
+
+### POST /api/homes/:homeId/locations
+
+```json
+// Request
+{ "name": "Temizlik Dolabı", "type": "cabinet" }
+```
+
+`type`: `fridge | freezer | pantry | cabinet | medicine | other`. `order` verilmezse
+otomatik (mevcut lokasyon sayısı) atanır.
+
+### PATCH /api/homes/:homeId/locations/:locationId
+
+Body'deki her alan opsiyonel (partial update). `404 LOCATION_NOT_FOUND` — id başka home'a aitse de aynı hata döner (izolasyon).
+
+### DELETE /api/homes/:homeId/locations/:locationId
+
+İçinde en az bir `InventoryItem` varsa `409 LOCATION_NOT_EMPTY` (veri kaybını önlemek için).
 
 ## Pagination
 
