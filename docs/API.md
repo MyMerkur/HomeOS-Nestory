@@ -44,6 +44,7 @@ Route -> authenticate -> validateParams -> requireHomeMembership(role?) -> valid
 | Shopping | PATCH /api/homes/:homeId/shopping/items/:itemId/check | İşaretle/kaldır (toggle) | ✅ |
 | Recipes | GET /api/homes/:homeId/recipes/suggestions | Tarif eşleşmeleri | ✅ |
 | Notifications | — | Yerel bildirim (mobile-only, backend endpoint yok — bkz. docs/ProjectDecisions.md) | ✅ |
+| Gamification | GET /api/homes/:homeId/badges | Rozet ilerlemesi (canlı hesaplanır) | ✅ |
 
 ## Auth endpoint detayları
 
@@ -312,6 +313,25 @@ Hard delete.
 - Sadece `coveragePercent > 0` olan tarifler döner, `coveragePercent` azalan sırada,
   en fazla 10 tarif.
 - Tam malzeme/talimat listesi yanıta dahildir — ayrı bir detay endpoint'i yoktur.
+
+## Gamification endpoint detayı
+
+### GET /api/homes/:homeId/badges
+
+`requireHomeMembership('viewer')` ile korunur.
+
+```json
+{
+  "badges": [
+    { "id": "first-item", "name": "İlk Ürün", "description": "Dolabına ilk ürününü ekle.", "target": 1, "progress": 1, "earned": true },
+    { "id": "regular-tracker", "name": "Düzenli Takipçi", "description": "10 ürün ekle.", "target": 10, "progress": 3, "earned": false }
+  ]
+}
+```
+
+5 rozet (`server/src/constants/badges.ts`) var olan koleksiyonlardan (InventoryItem/
+AuditLog/ShoppingItem/Membership) **canlı hesaplanır** — kalıcı bir "kazanılan rozet"
+kaydı tutulmaz (`docs/Database.md`).
 
 ## Pagination
 

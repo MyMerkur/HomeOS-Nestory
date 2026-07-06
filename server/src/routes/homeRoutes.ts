@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { createHomeHandler, joinHomeHandler, listHomesHandler } from '../controllers/homeController';
 import { getDashboardHandler } from '../controllers/dashboardController';
 import { getSuggestionsHandler } from '../controllers/recipeController';
+import { getBadgesHandler } from '../controllers/badgeController';
 import { authenticate } from '../middlewares/authenticate';
 import { validateBody, validateParams } from '../middlewares/validate';
 import { requireHomeMembership } from '../middlewares/requireHomeMembership';
@@ -30,6 +31,12 @@ router.get(
   validateParams(homeIdParamSchema),
   requireHomeMembership('viewer'),
   catchAsync(getSuggestionsHandler),
+);
+router.get(
+  '/:homeId/badges',
+  validateParams(homeIdParamSchema),
+  requireHomeMembership('viewer'),
+  catchAsync(getBadgesHandler),
 );
 
 router.use('/:homeId/locations', locationRoutes);

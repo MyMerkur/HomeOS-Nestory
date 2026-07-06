@@ -219,3 +219,11 @@ servis üzerinden değişebilir (genel PATCH'ten çıkarıldı).
 Kalan şemalar (`NotificationJob`) ilgili modül implementasyonu sırasında buraya
 eklenecektir — kod ile bu doküman senkron tutulmalıdır. Bildirimler v1'de tamamen
 cihazda zamanlandığı için (`docs/ProjectDecisions.md`) `NotificationJob` şu an planlanmıyor.
+
+### Gamification (model yok)
+
+5 temel rozet (`server/src/constants/badges.ts`) için **kalıcı bir model yok** —
+`server/src/services/badgeService.ts`, `InventoryItem`/`AuditLog`/`ShoppingItem`/
+`Membership` koleksiyonlarından her istekte canlı sayım yaparak ilerlemeyi hesaplar
+(v1 "Temel rozetler" kapsamı; kalıcı "kazanılan rozet" geçmişi/streak sistemi v2.1'e
+bırakıldı).
