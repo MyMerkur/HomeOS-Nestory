@@ -106,6 +106,35 @@ describe('inventoryService', () => {
     expect(bySearch.items[0].name).toBe('Milk');
   });
 
+  it('filters by barcode', async () => {
+    const { homeId, userId, fridgeId } = await setupHome();
+
+    await inventoryService.createItem(homeId, userId, {
+      name: 'Milk',
+      locationId: fridgeId,
+      category: 'Dairy',
+      quantity: 1,
+      unit: 'liter',
+      barcode: '8690000000001',
+    });
+    await inventoryService.createItem(homeId, userId, {
+      name: 'Rice',
+      locationId: fridgeId,
+      category: 'Other',
+      quantity: 1,
+      unit: 'kg',
+      barcode: '8690000000002',
+    });
+
+    const result = await inventoryService.listItems(homeId, {
+      ...baseQuery,
+      barcode: '8690000000001',
+    });
+
+    expect(result.items).toHaveLength(1);
+    expect(result.items[0].name).toBe('Milk');
+  });
+
   it('filters by expiryWindow', async () => {
     const { homeId, userId, fridgeId } = await setupHome();
     const soon = new Date();

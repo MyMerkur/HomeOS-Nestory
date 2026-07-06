@@ -175,7 +175,7 @@ status değişikliği garantili bir `AuditLog` kaydı üretir.
 ### GET /api/homes/:homeId/items
 
 ```
-?locationId=&category=&status=active&expiryWindow=7d&search=milk&page=1&limit=20&sort=expiryDate:asc
+?locationId=&category=&status=active&expiryWindow=7d&search=milk&barcode=&page=1&limit=20&sort=expiryDate:asc
 ```
 
 ```json
@@ -185,6 +185,8 @@ status değişikliği garantili bir `AuditLog` kaydı üretir.
 
 - `expiryWindow`: `"7d"` formatında — `expiryDate <= now + 7 gün` olan ürünleri getirir.
 - `search`: Türkçe karakter normalize edilerek `normalizedName` üzerinde regex araması yapar.
+- `barcode`: tam eşleşme — mobile'ın barkod tarama POC'unda daha önce aynı barkodla
+  eklenmiş bir ürünü bulup ad/kategori/birim önermek için kullanılır.
 - `sort`: `"<alan>:asc|desc"` formatında, verilmezse `createdAt:desc`.
 
 ### POST /api/homes/:homeId/items

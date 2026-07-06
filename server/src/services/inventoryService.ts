@@ -139,6 +139,7 @@ export async function listItems(homeId: string, query: ListItemsQuery): Promise<
   if (query.locationId) filter.locationId = query.locationId;
   if (query.category) filter.category = query.category;
   if (query.status) filter.status = query.status;
+  if (query.barcode) filter.barcode = query.barcode;
 
   if (query.expiryWindow) {
     const days = Number(query.expiryWindow.replace('d', ''));
