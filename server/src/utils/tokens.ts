@@ -28,3 +28,15 @@ export function generateRefreshToken(): { token: string; tokenHash: string; expi
 export function hashToken(token: string): string {
   return crypto.createHash('sha256').update(token).digest('hex');
 }
+
+const INVITE_CODE_ALPHABET = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789'; // 0/O, 1/I hariç
+const INVITE_CODE_LENGTH = 8;
+
+export function generateInviteCode(): { code: string; codeHash: string } {
+  const bytes = crypto.randomBytes(INVITE_CODE_LENGTH);
+  let code = '';
+  for (let i = 0; i < INVITE_CODE_LENGTH; i += 1) {
+    code += INVITE_CODE_ALPHABET[bytes[i] % INVITE_CODE_ALPHABET.length];
+  }
+  return { code, codeHash: hashToken(code) };
+}

@@ -28,9 +28,9 @@ Route -> authenticate -> validateParams -> requireHomeMembership(role?) -> valid
 | Auth | POST /api/auth/login | Access + refresh token | ✅ |
 | Auth | POST /api/auth/refresh | Access token yeniler (rotation) | ✅ |
 | Auth | POST /api/auth/logout | Refresh token invalid eder | ✅ |
-| Home | POST /api/homes | Yeni ev oluşturur | ⏳ |
-| Home | GET /api/homes | Kullanıcının evlerini listeler | ⏳ |
-| Home | POST /api/homes/join | Davet koduyla eve katılır | ⏳ |
+| Home | POST /api/homes | Yeni ev oluşturur (owner + default locations/shopping list) | ✅ |
+| Home | GET /api/homes | Kullanıcının evlerini listeler | ✅ |
+| Home | POST /api/homes/join | Davet koduyla eve katılır | ✅ |
 | Home | GET /api/homes/:homeId/dashboard | Özet bilgiler | ⏳ |
 | Members | GET /api/homes/:homeId/members | Ev üyeleri | ⏳ |
 | Members | PATCH /api/homes/:homeId/members/:memberId | Rol güncelleme | ⏳ |
@@ -96,6 +96,45 @@ Kullanılmış/süresi geçmiş/geçersiz token: `401 INVALID_REFRESH_TOKEN`.
 İlgili refresh token'ı `revokedAt` ile işaretler. `data: null` döner.
 
 Auth endpointleri ayrı bir rate limiter ile korunur (15 dakikada IP başına 20 istek).
+
+## Home endpoint detayları
+
+### POST /api/homes
+
+Auth gerekir (`Authorization: Bearer <accessToken>`).
+
+```json
+// Request
+{ "name": "My Home", "timezone": "Europe/Istanbul", "defaultCurrency": "TRY" }
+
+// Response 201
+{
+  "success": true,
+  "data": {
+    "home": { "id": "...", "name": "My Home", "timezone": "Europe/Istanbul", "defaultCurrency": "TRY", "role": "owner" },
+    "inviteCode": "PLFN6LEE"
+  },
+  "message": "Home created successfully"
+}
+```
+
+`inviteCode` yalnızca oluşturma anında düz metin olarak döner (DB'de sadece hash'i tutulur).
+Otomatik oluşturulanlar: owner Membership, 3 default PantryLocation (Buzdolabı/Dondurucu/Kiler),
+1 default ShoppingList.
+
+### GET /api/homes
+
+Kullanıcının aktif üyeliği olan evleri döner: `{ "homes": [{ id, name, timezone, defaultCurrency, role }] }`.
+
+### POST /api/homes/join
+
+```json
+// Request
+{ "inviteCode": "PLFN6LEE" }
+```
+
+Geçersiz kod: `404 INVALID_INVITE_CODE`. Zaten üye: `409 ALREADY_MEMBER`.
+Daha önce `removed` olan üyelik varsa `active` role `member` olarak yeniden etkinleşir.
 
 ## Pagination
 
