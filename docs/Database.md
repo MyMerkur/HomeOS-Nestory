@@ -44,6 +44,37 @@ audit_logs: homeId, createdAt
 
 ## Şema detayları
 
-Şema alanları (`User`, `Home`, `Membership`, `PantryLocation`, `InventoryItem`, `ShoppingList`,
+### User (`server/src/models/User.ts`) ✅
+
+```
+{
+  name: string (2-80),
+  email: string (unique, lowercase),
+  passwordHash: string,
+  avatarUrl?: string,
+  settings: {
+    language: string (default 'tr'),
+    theme: 'light' | 'dark' | 'system',
+    notificationPreferences: { expiryReminders, shoppingUpdates, weeklySummary: boolean }
+  },
+  createdAt, updatedAt
+}
+```
+
+### RefreshToken (`server/src/models/RefreshToken.ts`) ✅
+
+```
+{
+  userId: ObjectId (ref User, indexed),
+  tokenHash: string (unique, sha256 — düz token asla saklanmaz),
+  expiresAt: Date,
+  revokedAt?: Date,
+  createdAt, updatedAt
+}
+```
+
+Rotation: her `refresh` çağrısında mevcut kayıt `revokedAt` ile işaretlenir, yeni bir kayıt oluşturulur.
+
+Kalan şemalar (`Home`, `Membership`, `PantryLocation`, `InventoryItem`, `ShoppingList`,
 `ShoppingItem`, `Recipe`, `NotificationJob`, `AuditLog`) ilgili modül implementasyonu sırasında
 buraya eklenecektir — kod ile bu doküman senkron tutulmalıdır.
