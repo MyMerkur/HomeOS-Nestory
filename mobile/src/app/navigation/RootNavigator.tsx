@@ -14,7 +14,7 @@ import { useHomesQuery } from '../../modules/home/hooks/useHomesQuery';
 import { DashboardScreen } from '../../modules/dashboard/screens/DashboardScreen';
 import { PantryScreen } from '../../modules/pantry/screens/PantryScreen';
 import { ItemFormScreen } from '../../modules/pantry/screens/ItemFormScreen';
-import { ShoppingPlaceholderScreen } from '../../modules/shopping/screens/ShoppingPlaceholderScreen';
+import { ShoppingScreen } from '../../modules/shopping/screens/ShoppingScreen';
 import type {
   AuthStackParamList,
   DashboardStackParamList,
@@ -82,11 +82,7 @@ function PantryTabNavigator() {
 function ShoppingTabNavigator() {
   return (
     <ShoppingStack.Navigator>
-      <ShoppingStack.Screen
-        name="Shopping"
-        component={ShoppingPlaceholderScreen}
-        options={{ title: 'Alışveriş' }}
-      />
+      <ShoppingStack.Screen name="Shopping" component={ShoppingScreen} options={{ title: 'Alışveriş' }} />
     </ShoppingStack.Navigator>
   );
 }
