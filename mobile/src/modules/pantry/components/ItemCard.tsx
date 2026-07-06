@@ -6,11 +6,17 @@ import { ExpiryBadge } from './ExpiryBadge';
 type Props = {
   item: InventoryItem;
   onPress?: () => void;
+  onLongPress?: () => void;
 };
 
-export function ItemCard({ item, onPress }: Props) {
+export function ItemCard({ item, onPress, onLongPress }: Props) {
   return (
-    <Pressable testID={`item-card-${item.id}`} style={styles.card} onPress={onPress}>
+    <Pressable
+      testID={`item-card-${item.id}`}
+      style={styles.card}
+      onPress={onPress}
+      onLongPress={onLongPress}
+    >
       <View style={styles.info}>
         <Text style={styles.name}>{item.name}</Text>
         <Text style={styles.meta}>

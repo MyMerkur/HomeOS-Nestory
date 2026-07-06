@@ -1,6 +1,8 @@
+import { useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import {
   ActivityIndicator,
+  Alert,
   FlatList,
   Pressable,
   StyleSheet,
@@ -8,14 +10,25 @@ import {
   TextInput,
   View,
 } from 'react-native';
+import { useHomeStore } from '../../../store/useHomeStore';
 import { ItemCard } from '../components/ItemCard';
 import { useLocationsQuery } from '../hooks/useLocationsQuery';
-import { useInventoryItemsQuery } from '../hooks/useInventoryItemsQuery';
+import { INVENTORY_ITEMS_QUERY_KEY, useInventoryItemsQuery } from '../hooks/useInventoryItemsQuery';
+import { SHOPPING_ITEMS_QUERY_KEY } from '../../shopping/hooks/useShoppingItemsQuery';
+import {
+  addToShopping,
+  consumeItem,
+  discardItem,
+  freezeItem,
+  type InventoryItem,
+} from '../services/pantryApi';
 import type { PantryStackScreenProps } from '../../../app/navigation/types';
 
 const ALL_LOCATIONS = null;
 
 export function PantryScreen({ navigation }: PantryStackScreenProps<'Pantry'>) {
+  const homeId = useHomeStore((state) => state.selectedHomeId) as string;
+  const queryClient = useQueryClient();
   const [selectedLocationId, setSelectedLocationId] = useState<string | null>(ALL_LOCATIONS);
   const [search, setSearch] = useState('');
 
@@ -29,6 +42,40 @@ export function PantryScreen({ navigation }: PantryStackScreenProps<'Pantry'>) {
     search: search.trim() || undefined,
     limit: 50,
   });
+
+  const handleItemAction = (item: InventoryItem) => {
+    Alert.alert(item.name, undefined, [
+      {
+        text: 'Tükettim',
+        onPress: async () => {
+          await consumeItem(homeId, item.id);
+          await queryClient.invalidateQueries({ queryKey: [INVENTORY_ITEMS_QUERY_KEY] });
+        },
+      },
+      {
+        text: 'Attım',
+        onPress: async () => {
+          await discardItem(homeId, item.id);
+          await queryClient.invalidateQueries({ queryKey: [INVENTORY_ITEMS_QUERY_KEY] });
+        },
+      },
+      {
+        text: 'Dondurdum',
+        onPress: async () => {
+          await freezeItem(homeId, item.id);
+          await queryClient.invalidateQueries({ queryKey: [INVENTORY_ITEMS_QUERY_KEY] });
+        },
+      },
+      {
+        text: 'Alışveriş listesine ekle',
+        onPress: async () => {
+          await addToShopping(homeId, item.id);
+          await queryClient.invalidateQueries({ queryKey: [SHOPPING_ITEMS_QUERY_KEY] });
+        },
+      },
+      { text: 'İptal', style: 'cancel' },
+    ]);
+  };
 
   return (
     <View style={styles.container}>
@@ -91,7 +138,11 @@ export function PantryScreen({ navigation }: PantryStackScreenProps<'Pantry'>) {
           data={itemsResult?.items}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => (
-            <ItemCard item={item} onPress={() => navigation.navigate('ItemForm', { itemId: item.id })} />
+            <ItemCard
+              item={item}
+              onPress={() => navigation.navigate('ItemForm', { itemId: item.id })}
+              onLongPress={() => handleItemAction(item)}
+            />
           )}
         />
       )}

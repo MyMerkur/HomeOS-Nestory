@@ -1,7 +1,15 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react-native';
+import { Alert } from 'react-native';
 import { PantryScreen } from './PantryScreen';
-import { listItems, listLocations } from '../services/pantryApi';
+import {
+  addToShopping,
+  consumeItem,
+  discardItem,
+  freezeItem,
+  listItems,
+  listLocations,
+} from '../services/pantryApi';
 import { useHomeStore } from '../../../store/useHomeStore';
 import type { PantryStackScreenProps } from '../../../app/navigation/types';
 
@@ -93,5 +101,53 @@ describe('PantryScreen', () => {
         expect.objectContaining({ search: 'süt' }),
       ),
     );
+  });
+
+  it('consumes an item via the long-press action menu', async () => {
+    (consumeItem as jest.Mock).mockResolvedValue({});
+    jest.spyOn(Alert, 'alert').mockImplementation((_title, _message, buttons) => {
+      buttons?.find((button) => button.text === 'Tükettim')?.onPress?.();
+    });
+
+    renderScreen();
+    fireEvent(await screen.findByTestId('item-card-item-1'), 'longPress');
+
+    await waitFor(() => expect(consumeItem).toHaveBeenCalledWith('home-1', 'item-1'));
+  });
+
+  it('discards an item via the long-press action menu', async () => {
+    (discardItem as jest.Mock).mockResolvedValue({});
+    jest.spyOn(Alert, 'alert').mockImplementation((_title, _message, buttons) => {
+      buttons?.find((button) => button.text === 'Attım')?.onPress?.();
+    });
+
+    renderScreen();
+    fireEvent(await screen.findByTestId('item-card-item-1'), 'longPress');
+
+    await waitFor(() => expect(discardItem).toHaveBeenCalledWith('home-1', 'item-1'));
+  });
+
+  it('freezes an item via the long-press action menu', async () => {
+    (freezeItem as jest.Mock).mockResolvedValue({});
+    jest.spyOn(Alert, 'alert').mockImplementation((_title, _message, buttons) => {
+      buttons?.find((button) => button.text === 'Dondurdum')?.onPress?.();
+    });
+
+    renderScreen();
+    fireEvent(await screen.findByTestId('item-card-item-1'), 'longPress');
+
+    await waitFor(() => expect(freezeItem).toHaveBeenCalledWith('home-1', 'item-1'));
+  });
+
+  it('adds an item to the shopping list via the long-press action menu', async () => {
+    (addToShopping as jest.Mock).mockResolvedValue({});
+    jest.spyOn(Alert, 'alert').mockImplementation((_title, _message, buttons) => {
+      buttons?.find((button) => button.text === 'Alışveriş listesine ekle')?.onPress?.();
+    });
+
+    renderScreen();
+    fireEvent(await screen.findByTestId('item-card-item-1'), 'longPress');
+
+    await waitFor(() => expect(addToShopping).toHaveBeenCalledWith('home-1', 'item-1'));
   });
 });

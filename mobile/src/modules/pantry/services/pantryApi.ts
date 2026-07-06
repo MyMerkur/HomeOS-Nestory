@@ -95,3 +95,31 @@ export async function updateItem(
   );
   return data.data.item;
 }
+
+export async function consumeItem(homeId: string, itemId: string): Promise<InventoryItem> {
+  const { data } = await apiClient.post<ApiEnvelope<{ item: InventoryItem }>>(
+    `/homes/${homeId}/items/${itemId}/consume`,
+  );
+  return data.data.item;
+}
+
+export async function discardItem(homeId: string, itemId: string): Promise<InventoryItem> {
+  const { data } = await apiClient.post<ApiEnvelope<{ item: InventoryItem }>>(
+    `/homes/${homeId}/items/${itemId}/discard`,
+  );
+  return data.data.item;
+}
+
+export async function freezeItem(homeId: string, itemId: string): Promise<InventoryItem> {
+  const { data } = await apiClient.post<ApiEnvelope<{ item: InventoryItem }>>(
+    `/homes/${homeId}/items/${itemId}/freeze`,
+  );
+  return data.data.item;
+}
+
+export async function addToShopping(homeId: string, itemId: string): Promise<InventoryItem> {
+  const { data } = await apiClient.post<ApiEnvelope<{ item: InventoryItem }>>(
+    `/homes/${homeId}/items/${itemId}/add-to-shopping`,
+  );
+  return data.data.item;
+}
