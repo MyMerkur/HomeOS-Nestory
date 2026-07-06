@@ -14,6 +14,7 @@ export type HomeSetupStackParamList = {
 export type MainStackParamList = {
   Dashboard: undefined;
   Pantry: undefined;
+  ItemForm: { itemId?: string } | undefined;
 };
 
 export type AuthStackScreenProps<T extends keyof AuthStackParamList> = NativeStackScreenProps<

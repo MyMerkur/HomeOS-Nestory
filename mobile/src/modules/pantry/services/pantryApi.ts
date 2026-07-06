@@ -59,3 +59,39 @@ export async function listItems(
   });
   return data.data;
 }
+
+export async function getItem(homeId: string, itemId: string): Promise<InventoryItem> {
+  const { data } = await apiClient.get<ApiEnvelope<{ item: InventoryItem }>>(
+    `/homes/${homeId}/items/${itemId}`,
+  );
+  return data.data.item;
+}
+
+export type ItemInput = {
+  name: string;
+  locationId: string;
+  category: Category;
+  quantity: number;
+  unit: Unit;
+  expiryDate?: string;
+};
+
+export async function createItem(homeId: string, input: ItemInput): Promise<InventoryItem> {
+  const { data } = await apiClient.post<ApiEnvelope<{ item: InventoryItem }>>(
+    `/homes/${homeId}/items`,
+    input,
+  );
+  return data.data.item;
+}
+
+export async function updateItem(
+  homeId: string,
+  itemId: string,
+  input: Partial<ItemInput>,
+): Promise<InventoryItem> {
+  const { data } = await apiClient.patch<ApiEnvelope<{ item: InventoryItem }>>(
+    `/homes/${homeId}/items/${itemId}`,
+    input,
+  );
+  return data.data.item;
+}

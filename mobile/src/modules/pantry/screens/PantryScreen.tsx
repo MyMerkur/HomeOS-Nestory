@@ -11,10 +11,11 @@ import {
 import { ItemCard } from '../components/ItemCard';
 import { useLocationsQuery } from '../hooks/useLocationsQuery';
 import { useInventoryItemsQuery } from '../hooks/useInventoryItemsQuery';
+import type { MainStackScreenProps } from '../../../app/navigation/types';
 
 const ALL_LOCATIONS = null;
 
-export function PantryScreen() {
+export function PantryScreen({ navigation }: MainStackScreenProps<'Pantry'>) {
   const [selectedLocationId, setSelectedLocationId] = useState<string | null>(ALL_LOCATIONS);
   const [search, setSearch] = useState('');
 
@@ -89,9 +90,19 @@ export function PantryScreen() {
         <FlatList
           data={itemsResult?.items}
           keyExtractor={(item) => item.id}
-          renderItem={({ item }) => <ItemCard item={item} />}
+          renderItem={({ item }) => (
+            <ItemCard item={item} onPress={() => navigation.navigate('ItemForm', { itemId: item.id })} />
+          )}
         />
       )}
+
+      <Pressable
+        testID="add-item-button"
+        style={styles.fab}
+        onPress={() => navigation.navigate('ItemForm', undefined)}
+      >
+        <Text style={styles.fabText}>+</Text>
+      </Pressable>
     </View>
   );
 }
@@ -119,4 +130,17 @@ const styles = StyleSheet.create({
   centered: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24 },
   error: { color: '#c0392b' },
   empty: { color: '#666' },
+  fab: {
+    position: 'absolute',
+    right: 20,
+    bottom: 24,
+    width: 56,
+    height: 56,
+    borderRadius: 28,
+    backgroundColor: '#1d76db',
+    alignItems: 'center',
+    justifyContent: 'center',
+    elevation: 4,
+  },
+  fabText: { color: '#fff', fontSize: 28, lineHeight: 30 },
 });

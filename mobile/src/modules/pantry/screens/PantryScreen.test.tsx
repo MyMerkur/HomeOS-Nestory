@@ -3,8 +3,13 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react-nativ
 import { PantryScreen } from './PantryScreen';
 import { listItems, listLocations } from '../services/pantryApi';
 import { useHomeStore } from '../../../store/useHomeStore';
+import type { MainStackScreenProps } from '../../../app/navigation/types';
 
 jest.mock('../services/pantryApi');
+
+const mockNavigation = {
+  navigate: jest.fn(),
+} as unknown as MainStackScreenProps<'Pantry'>['navigation'];
 
 const mockLocations = [
   { id: 'loc-fridge', name: 'Buzdolabı', type: 'fridge', order: 0 },
@@ -36,7 +41,7 @@ function renderScreen() {
   const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   return render(
     <QueryClientProvider client={queryClient}>
-      <PantryScreen />
+      <PantryScreen navigation={mockNavigation} route={{} as never} />
     </QueryClientProvider>,
   );
 }
