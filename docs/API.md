@@ -42,8 +42,8 @@ Route -> authenticate -> validateParams -> requireHomeMembership(role?) -> valid
 | Shopping | GET/POST /api/homes/:homeId/shopping/items | Filtreli liste / ekleme | ✅ |
 | Shopping | PATCH/DELETE /api/homes/:homeId/shopping/items/:itemId | Güncelle / sil | ✅ |
 | Shopping | PATCH /api/homes/:homeId/shopping/items/:itemId/check | İşaretle/kaldır (toggle) | ✅ |
-| Recipes | GET /api/homes/:homeId/recipes/suggestions | Tarif eşleşmeleri | ⏳ |
-| Notifications | GET/PATCH /api/homes/:homeId/notifications/settings | Bildirim ayarları | ⏳ |
+| Recipes | GET /api/homes/:homeId/recipes/suggestions | Tarif eşleşmeleri | ✅ |
+| Notifications | — | Yerel bildirim (mobile-only, backend endpoint yok — bkz. docs/ProjectDecisions.md) | ✅ |
 
 ## Auth endpoint detayları
 
@@ -281,6 +281,37 @@ Body almaz; `status`'u `pending<->checked` arasında toggle'lar, `checkedAt`'i s
 ### DELETE /api/homes/:homeId/shopping/items/:itemId
 
 Hard delete.
+
+## Recipes endpoint detayı
+
+### GET /api/homes/:homeId/recipes/suggestions
+
+`requireHomeMembership('viewer')` ile korunur.
+
+```json
+{
+  "recipes": [
+    {
+      "id": "...",
+      "name": "Menemen",
+      "category": "Kahvaltı",
+      "imageUrl": null,
+      "coveragePercent": 100,
+      "missingIngredients": [],
+      "ingredients": [{ "name": "Yumurta", "optional": false }, "..."],
+      "instructions": ["Biber ve domatesi zeytinyağında kavurun.", "..."]
+    }
+  ]
+}
+```
+
+- Kapsama, evin `status: 'active'` `InventoryItem`'larının `normalizedName`'i ile tarifin
+  **zorunlu** (`optional: false`) malzemelerinin normalizedName'i karşılaştırılarak
+  hesaplanır — AI/LLM kullanılmaz (`docs/Roadmap.md`: "AI olmadan tarif önerisi").
+  `optional: true` malzemeler kapsama hesabına dahil edilmez, eksik olsa da listelenmez.
+- Sadece `coveragePercent > 0` olan tarifler döner, `coveragePercent` azalan sırada,
+  en fazla 10 tarif.
+- Tam malzeme/talimat listesi yanıta dahildir — ayrı bir detay endpoint'i yoktur.
 
 ## Pagination
 

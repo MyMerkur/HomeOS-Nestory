@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { createHomeHandler, joinHomeHandler, listHomesHandler } from '../controllers/homeController';
 import { getDashboardHandler } from '../controllers/dashboardController';
+import { getSuggestionsHandler } from '../controllers/recipeController';
 import { authenticate } from '../middlewares/authenticate';
 import { validateBody, validateParams } from '../middlewares/validate';
 import { requireHomeMembership } from '../middlewares/requireHomeMembership';
@@ -23,6 +24,12 @@ router.get(
   validateParams(homeIdParamSchema),
   requireHomeMembership('viewer'),
   catchAsync(getDashboardHandler),
+);
+router.get(
+  '/:homeId/recipes/suggestions',
+  validateParams(homeIdParamSchema),
+  requireHomeMembership('viewer'),
+  catchAsync(getSuggestionsHandler),
 );
 
 router.use('/:homeId/locations', locationRoutes);
