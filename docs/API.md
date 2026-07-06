@@ -31,7 +31,7 @@ Route -> authenticate -> validateParams -> requireHomeMembership(role?) -> valid
 | Home | POST /api/homes | Yeni ev oluşturur (owner + default locations/shopping list) | ✅ |
 | Home | GET /api/homes | Kullanıcının evlerini listeler | ✅ |
 | Home | POST /api/homes/join | Davet koduyla eve katılır | ✅ |
-| Home | GET /api/homes/:homeId/dashboard | Özet bilgiler | ⏳ |
+| Home | GET /api/homes/:homeId/dashboard | Özet bilgiler | ✅ |
 | Members | GET /api/homes/:homeId/members | Ev üyeleri | ⏳ |
 | Members | PATCH /api/homes/:homeId/members/:memberId | Rol güncelleme | ⏳ |
 | Locations | GET/POST /api/homes/:homeId/locations | Lokasyon listele / oluştur | ✅ |
@@ -201,6 +201,28 @@ aksiyonları (consume/discard/freeze/add-to-shopping) ve audit log Sprint 3'te g
 Body'deki her alan PATCH'te opsiyoneldir. Başka home'un ürününe erişim (veya olmayan id)
 `404 ITEM_NOT_FOUND` döner — izolasyon `homeId` filtresiyle sağlanır. DELETE şu an hard
 delete'tir (audit log Sprint 3'te eklenecek, `docs/Database.md`'de not düşülmüş).
+
+## Dashboard endpoint detayı
+
+### GET /api/homes/:homeId/dashboard
+
+`requireHomeMembership('viewer')` ile korunur.
+
+```json
+{
+  "dashboard": {
+    "expiringToday": 2,
+    "expiringIn3Days": 5,
+    "expiringInWeek": 9,
+    "totalActive": 41,
+    "upcomingItems": [{ "id", "name", "category", "quantity", "unit", "locationId", "expiryDate", "status", "..." }]
+  }
+}
+```
+
+- Sayaçlar yalnızca `status: 'active'` ürünleri kapsar.
+- `expiringToday/expiringIn3Days/expiringInWeek` kümülatiftir (`expiringInWeek`, `expiringIn3Days`'i de içerir).
+- `upcomingItems`: SKT'si en yakın (ve SKT'si tanımlı) 5 aktif ürün, `expiryDate` artan sırada.
 
 ## Pagination
 

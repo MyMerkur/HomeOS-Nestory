@@ -5,7 +5,7 @@ import { AppError } from '../middlewares/errorHandler';
 import { normalizeName } from '../utils/normalize';
 import type { CreateItemInput, ListItemsQuery, UpdateItemInput } from '../validations/inventoryValidation';
 
-type ItemSummary = {
+export type ItemSummary = {
   id: string;
   name: string;
   category: string;
@@ -24,7 +24,7 @@ type ItemSummary = {
   updatedAt: Date;
 };
 
-function toSummary(item: InventoryItemDocument & { _id: unknown }): ItemSummary {
+export function toSummary(item: InventoryItemDocument & { _id: unknown }): ItemSummary {
   return {
     id: (item._id as { toString(): string }).toString(),
     name: item.name,

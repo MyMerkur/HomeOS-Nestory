@@ -1,8 +1,11 @@
 import { Router } from 'express';
 import { createHomeHandler, joinHomeHandler, listHomesHandler } from '../controllers/homeController';
+import { getDashboardHandler } from '../controllers/dashboardController';
 import { authenticate } from '../middlewares/authenticate';
-import { validateBody } from '../middlewares/validate';
+import { validateBody, validateParams } from '../middlewares/validate';
+import { requireHomeMembership } from '../middlewares/requireHomeMembership';
 import { createHomeSchema, joinHomeSchema } from '../validations/homeValidation';
+import { homeIdParamSchema } from '../validations/paramsValidation';
 import { catchAsync } from '../utils/catchAsync';
 import locationRoutes from './locationRoutes';
 import inventoryRoutes from './inventoryRoutes';
@@ -14,6 +17,12 @@ router.use(authenticate);
 router.post('/', validateBody(createHomeSchema), catchAsync(createHomeHandler));
 router.get('/', catchAsync(listHomesHandler));
 router.post('/join', validateBody(joinHomeSchema), catchAsync(joinHomeHandler));
+router.get(
+  '/:homeId/dashboard',
+  validateParams(homeIdParamSchema),
+  requireHomeMembership('viewer'),
+  catchAsync(getDashboardHandler),
+);
 
 router.use('/:homeId/locations', locationRoutes);
 router.use('/:homeId/items', inventoryRoutes);
