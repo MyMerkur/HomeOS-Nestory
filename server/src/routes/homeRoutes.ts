@@ -9,6 +9,7 @@ import { homeIdParamSchema } from '../validations/paramsValidation';
 import { catchAsync } from '../utils/catchAsync';
 import locationRoutes from './locationRoutes';
 import inventoryRoutes from './inventoryRoutes';
+import shoppingRoutes from './shoppingRoutes';
 
 const router = Router();
 
@@ -26,5 +27,6 @@ router.get(
 
 router.use('/:homeId/locations', locationRoutes);
 router.use('/:homeId/items', inventoryRoutes);
+router.use('/:homeId/shopping', shoppingRoutes);
 
 export default router;

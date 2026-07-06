@@ -18,3 +18,8 @@ export const homeItemIdParamSchema = z.object({
   homeId: objectId,
   itemId: objectId,
 });
+
+export const homeShoppingItemIdParamSchema = z.object({
+  homeId: objectId,
+  itemId: objectId,
+});

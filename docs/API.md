@@ -39,9 +39,9 @@ Route -> authenticate -> validateParams -> requireHomeMembership(role?) -> valid
 | Inventory | GET/POST /api/homes/:homeId/items | Filtreli liste / ekleme | ✅ |
 | Inventory | GET/PATCH/DELETE /api/homes/:homeId/items/:itemId | Detay / güncelle / sil | ✅ |
 | Inventory | POST /api/homes/:homeId/items/:itemId/{consume,discard,freeze,add-to-shopping} | Durum aksiyonları (Sprint 3) | ⏳ |
-| Shopping | GET /api/homes/:homeId/shopping | Liste | ⏳ |
-| Shopping | POST /api/homes/:homeId/shopping/items | Ürün ekle | ⏳ |
-| Shopping | PATCH /api/shopping/items/:itemId(/check) | Güncelle / işaretle | ⏳ |
+| Shopping | GET/POST /api/homes/:homeId/shopping/items | Filtreli liste / ekleme | ✅ |
+| Shopping | PATCH/DELETE /api/homes/:homeId/shopping/items/:itemId | Güncelle / sil | ✅ |
+| Shopping | PATCH /api/homes/:homeId/shopping/items/:itemId/check | İşaretle/kaldır (toggle) | ✅ |
 | Recipes | GET /api/homes/:homeId/recipes/suggestions | Tarif eşleşmeleri | ⏳ |
 | Notifications | GET/PATCH /api/homes/:homeId/notifications/settings | Bildirim ayarları | ⏳ |
 
@@ -223,6 +223,43 @@ delete'tir (audit log Sprint 3'te eklenecek, `docs/Database.md`'de not düşülm
 - Sayaçlar yalnızca `status: 'active'` ürünleri kapsar.
 - `expiringToday/expiringIn3Days/expiringInWeek` kümülatiftir (`expiringInWeek`, `expiringIn3Days`'i de içerir).
 - `upcomingItems`: SKT'si en yakın (ve SKT'si tanımlı) 5 aktif ürün, `expiryDate` artan sırada.
+
+## Shopping endpoint detayları
+
+Tüm shopping endpointleri `requireHomeMembership` ile korunur: GET için `viewer`,
+POST/PATCH/DELETE için `member`. Client `listId` göndermez — service, home'un
+`isDefault:true` `ShoppingList`'ini otomatik bulur/oluşturur (MVP: ev başına tek ortak liste).
+
+### GET /api/homes/:homeId/shopping/items
+
+```
+?status=pending
+```
+
+```json
+{ "items": [{ "id", "name", "quantity", "unit", "category", "status", "checkedAt", "createdAt", "updatedAt" }] }
+```
+
+### POST /api/homes/:homeId/shopping/items
+
+```json
+// Request
+{ "name": "Süt", "quantity": 2, "unit": "liter", "category": "Dairy" }
+```
+
+`quantity/unit/category` opsiyoneldir; `quantity` verilmezse `1` varsayılır.
+
+### PATCH /api/homes/:homeId/shopping/items/:itemId
+
+Body'deki her alan opsiyoneldir (partial update). `404 SHOPPING_ITEM_NOT_FOUND`.
+
+### PATCH /api/homes/:homeId/shopping/items/:itemId/check
+
+Body almaz; `status`'u `pending<->checked` arasında toggle'lar, `checkedAt`'i set/clear eder.
+
+### DELETE /api/homes/:homeId/shopping/items/:itemId
+
+Hard delete.
 
 ## Pagination
 

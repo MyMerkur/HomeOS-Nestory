@@ -117,7 +117,7 @@ unique index: `(homeId, userId)`.
 
 index: `(homeId, type)`.
 
-### ShoppingList (`server/src/models/ShoppingList.ts`) ✅ (minimal — Sprint 3'te genişleyecek)
+### ShoppingList (`server/src/models/ShoppingList.ts`) ✅
 
 ```
 {
@@ -127,6 +127,30 @@ index: `(homeId, type)`.
   createdAt, updatedAt
 }
 ```
+
+Ev başına tek `isDefault: true` liste kullanılır (home create sırasında otomatik açılır);
+liste CRUD API'si yok, `ShoppingItem` API'si listId'yi client'tan hiç istemez.
+
+### ShoppingItem (`server/src/models/ShoppingItem.ts`) ✅
+
+```
+{
+  homeId: ObjectId (ref Home, indexed),
+  listId: ObjectId (ref ShoppingList, indexed),
+  name: string (max 120),
+  normalizedName: string (indexed),
+  quantity: number (default 1),
+  unit?: 'piece' | 'gram' | 'kg' | 'ml' | 'liter' | 'pack' | 'bottle' | 'box',
+  category?: aynı InventoryItem kategori enum'u,
+  status: 'pending' | 'checked' (default 'pending', indexed),
+  addedBy: ObjectId (ref User),
+  sourceItemId?: ObjectId (ref InventoryItem — add-to-shopping aksiyonundan geldiyse),
+  checkedAt?: Date,
+  createdAt, updatedAt
+}
+```
+
+index: `(homeId, listId, status)`.
 
 ### InventoryItem (`server/src/models/InventoryItem.ts`) ✅
 
@@ -156,5 +180,5 @@ index: `(homeId, type)`.
 indexler: `(homeId, status)`, `(homeId, expiryDate)`, `(homeId, locationId)`, `(homeId, normalizedName)`.
 Sabitler `server/src/constants/inventory.ts`'de tutulur (mobile tarafından da referans alınabilir).
 
-Kalan şemalar (`ShoppingItem`, `Recipe`, `NotificationJob`, `AuditLog`) ilgili modül
-implementasyonu sırasında buraya eklenecektir — kod ile bu doküman senkron tutulmalıdır.
+Kalan şemalar (`Recipe`, `NotificationJob`, `AuditLog`) ilgili modül implementasyonu
+sırasında buraya eklenecektir — kod ile bu doküman senkron tutulmalıdır.
