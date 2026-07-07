@@ -76,13 +76,17 @@ export function ItemFormScreen({ navigation, route }: PantryStackScreenProps<'It
   const handleScanBarcode = async () => {
     setIsScanningBarcode(true);
     try {
-      const code = await scanBarcodeFromCamera();
-      if (!code) return;
+      const outcome = await scanBarcodeFromCamera();
+      if (outcome.status === 'cancelled') return;
+      if (outcome.status === 'not-found') {
+        Alert.alert('Barkod bulunamadı', 'Fotoğrafta bir barkod tanınamadı, tekrar dene veya elle gir.');
+        return;
+      }
 
-      setValue('barcode', code);
+      setValue('barcode', outcome.value);
 
       if (!isEditMode) {
-        const result = await listItems(homeId, { barcode: code, limit: 1 });
+        const result = await listItems(homeId, { barcode: outcome.value, limit: 1 });
         const match = result.items[0];
         if (match) {
           if (!getValues('name')) setValue('name', match.name);
@@ -98,12 +102,13 @@ export function ItemFormScreen({ navigation, route }: PantryStackScreenProps<'It
   const handleScanExpiryDate = async () => {
     setIsScanningExpiryDate(true);
     try {
-      const date = await scanExpiryDateFromCamera();
-      if (!date) {
+      const outcome = await scanExpiryDateFromCamera();
+      if (outcome.status === 'cancelled') return;
+      if (outcome.status === 'not-found') {
         Alert.alert('Tarih bulunamadı', 'Fotoğrafta bir SKT tarihi tanınamadı, elle girebilirsin.');
         return;
       }
-      setValue('expiryDate', date);
+      setValue('expiryDate', outcome.date);
     } finally {
       setIsScanningExpiryDate(false);
     }

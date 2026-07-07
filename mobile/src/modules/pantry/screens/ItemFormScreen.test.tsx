@@ -104,7 +104,10 @@ describe('ItemFormScreen', () => {
   });
 
   it('fills the barcode field after a successful scan', async () => {
-    (scanBarcodeFromCamera as jest.Mock).mockResolvedValue('8690000000001');
+    (scanBarcodeFromCamera as jest.Mock).mockResolvedValue({
+      status: 'found',
+      value: '8690000000001',
+    });
     (listItems as jest.Mock).mockResolvedValue({
       items: [],
       pagination: { page: 1, limit: 1, total: 0, totalPages: 1 },
@@ -119,8 +122,37 @@ describe('ItemFormScreen', () => {
     expect(listItems).toHaveBeenCalledWith('home-1', { barcode: '8690000000001', limit: 1 });
   });
 
+  it('warns when the barcode scan finds no barcode', async () => {
+    const alertSpy = jest.spyOn(Alert, 'alert').mockImplementation(() => {});
+    (scanBarcodeFromCamera as jest.Mock).mockResolvedValue({ status: 'not-found' });
+
+    renderScreen();
+
+    await screen.findByTestId('location-chip-loc-fridge');
+    fireEvent.press(screen.getByTestId('scan-barcode-button'));
+
+    await waitFor(() => expect(alertSpy).toHaveBeenCalled());
+    expect(listItems).not.toHaveBeenCalled();
+  });
+
+  it('does not warn when the barcode scan camera is cancelled', async () => {
+    const alertSpy = jest.spyOn(Alert, 'alert').mockImplementation(() => {});
+    (scanBarcodeFromCamera as jest.Mock).mockResolvedValue({ status: 'cancelled' });
+
+    renderScreen();
+
+    await screen.findByTestId('location-chip-loc-fridge');
+    fireEvent.press(screen.getByTestId('scan-barcode-button'));
+
+    await waitFor(() => expect(scanBarcodeFromCamera).toHaveBeenCalled());
+    expect(alertSpy).not.toHaveBeenCalled();
+  });
+
   it('prefills name/category/unit when the scanned barcode matches an existing item', async () => {
-    (scanBarcodeFromCamera as jest.Mock).mockResolvedValue('8690000000001');
+    (scanBarcodeFromCamera as jest.Mock).mockResolvedValue({
+      status: 'found',
+      value: '8690000000001',
+    });
     (listItems as jest.Mock).mockResolvedValue({
       items: [
         {
@@ -145,7 +177,10 @@ describe('ItemFormScreen', () => {
   });
 
   it('fills the expiry date after a successful OCR scan', async () => {
-    (scanExpiryDateFromCamera as jest.Mock).mockResolvedValue(new Date(2026, 9, 10));
+    (scanExpiryDateFromCamera as jest.Mock).mockResolvedValue({
+      status: 'found',
+      date: new Date(2026, 9, 10),
+    });
 
     renderScreen();
 
@@ -157,7 +192,7 @@ describe('ItemFormScreen', () => {
 
   it('warns when the OCR scan finds no date', async () => {
     const alertSpy = jest.spyOn(Alert, 'alert').mockImplementation(() => {});
-    (scanExpiryDateFromCamera as jest.Mock).mockResolvedValue(null);
+    (scanExpiryDateFromCamera as jest.Mock).mockResolvedValue({ status: 'not-found' });
 
     renderScreen();
 
@@ -165,5 +200,18 @@ describe('ItemFormScreen', () => {
     fireEvent.press(screen.getByTestId('scan-expiry-date-button'));
 
     await waitFor(() => expect(alertSpy).toHaveBeenCalled());
+  });
+
+  it('does not warn when the OCR scan camera is cancelled', async () => {
+    const alertSpy = jest.spyOn(Alert, 'alert').mockImplementation(() => {});
+    (scanExpiryDateFromCamera as jest.Mock).mockResolvedValue({ status: 'cancelled' });
+
+    renderScreen();
+
+    await screen.findByTestId('location-chip-loc-fridge');
+    fireEvent.press(screen.getByTestId('scan-expiry-date-button'));
+
+    await waitFor(() => expect(scanExpiryDateFromCamera).toHaveBeenCalled());
+    expect(alertSpy).not.toHaveBeenCalled();
   });
 });

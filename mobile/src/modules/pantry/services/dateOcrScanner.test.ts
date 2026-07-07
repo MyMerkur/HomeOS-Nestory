@@ -15,6 +15,16 @@ describe('parseExpiryDateFromText', () => {
     expect(date).toEqual(new Date(2027, 2, 5));
   });
 
+  it('parses a dd-mm-yyyy date', () => {
+    const date = parseExpiryDateFromText('SKT 15-08-2026');
+    expect(date).toEqual(new Date(2026, 7, 15));
+  });
+
+  it('parses an ISO yyyy-mm-dd date', () => {
+    const date = parseExpiryDateFromText('SKT 2026-09-30');
+    expect(date).toEqual(new Date(2026, 8, 30));
+  });
+
   it('returns null when no date-like pattern is present', () => {
     expect(parseExpiryDateFromText('Süt 1 Litre Yağlı')).toBeNull();
   });
@@ -23,9 +33,14 @@ describe('parseExpiryDateFromText', () => {
     expect(parseExpiryDateFromText('35.13.2026')).toBeNull();
   });
 
-  it('picks the first match when multiple date-like strings exist', () => {
+  it('picks the date nearest an expiry keyword when multiple dates exist', () => {
     const date = parseExpiryDateFromText('Üretim: 01.01.2026 SKT: 01.06.2026');
-    expect(date).toEqual(new Date(2026, 0, 1));
+    expect(date).toEqual(new Date(2026, 5, 1));
+  });
+
+  it('falls back to the chronologically latest date when there is no keyword', () => {
+    const date = parseExpiryDateFromText('01.01.2026 01.06.2026');
+    expect(date).toEqual(new Date(2026, 5, 1));
   });
 });
 
@@ -34,13 +49,24 @@ describe('scanExpiryDateFromCamera', () => {
     jest.clearAllMocks();
   });
 
-  it('returns null when the camera capture is cancelled', async () => {
+  it('returns cancelled when the camera capture is cancelled', async () => {
     (launchCamera as jest.Mock).mockResolvedValue({ didCancel: true });
 
     const result = await scanExpiryDateFromCamera();
 
-    expect(result).toBeNull();
+    expect(result).toEqual({ status: 'cancelled' });
     expect(TextRecognition.recognize).not.toHaveBeenCalled();
+  });
+
+  it('returns not-found when no date is recognized in the photo', async () => {
+    (launchCamera as jest.Mock).mockResolvedValue({
+      assets: [{ uri: 'file://photo.jpg' }],
+    });
+    (TextRecognition.recognize as jest.Mock).mockResolvedValue({ text: 'Süt', blocks: [] });
+
+    const result = await scanExpiryDateFromCamera();
+
+    expect(result).toEqual({ status: 'not-found' });
   });
 
   it('recognizes text from the captured photo and extracts a date', async () => {
@@ -55,6 +81,6 @@ describe('scanExpiryDateFromCamera', () => {
     const result = await scanExpiryDateFromCamera();
 
     expect(TextRecognition.recognize).toHaveBeenCalledWith('file://photo.jpg');
-    expect(result).toEqual(new Date(2026, 9, 10));
+    expect(result).toEqual({ status: 'found', date: new Date(2026, 9, 10) });
   });
 });
