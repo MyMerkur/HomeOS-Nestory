@@ -100,4 +100,20 @@ describe('DashboardScreen', () => {
 
     expect(mockNavigation.navigate).toHaveBeenCalledWith('Assets');
   });
+
+  it('navigates to the Family screen when the Ailem button is pressed', async () => {
+    renderScreen();
+
+    fireEvent.press(await screen.findByTestId('go-to-family'));
+
+    expect(mockNavigation.navigate).toHaveBeenCalledWith('Family');
+  });
+
+  it('navigates to the Settings screen when the Ayarlar button is pressed', async () => {
+    renderScreen();
+
+    fireEvent.press(await screen.findByTestId('go-to-settings'));
+
+    expect(mockNavigation.navigate).toHaveBeenCalledWith('Settings');
+  });
 });

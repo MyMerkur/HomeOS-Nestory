@@ -300,3 +300,40 @@ font dosyaları + `mobile/src/ui/` bileşen kütüphanesi
   "tofu" (boş kutu) olarak gösterdi, temiz bir `xcodebuild` + yeniden kurulum
   sorunu çözdü. Mevcut 16 ekranın hiçbiri henüz bu bileşenlere taşınmadı —
   taşıma ayrı bir sprintte (Ekran Geçişi) yapılacak, bu adım sadece altyapı.
+
+---
+
+## Decision: Aile & Ayarlar — yeni bottom tab değil, Dashboard altına nested;
+davet kodu tekrar üretilebilir ama asla tekrar görüntülenemez
+
+- **Date**: 2026-07-07
+- **Status**: Accepted
+- **Context**: Tasarım dokümanı 4 sekmeden birini "Aile" olarak öngörmüştü,
+  ama uygulama zaten Tarifler'i 4. sekme yapmıştı ve Aile/Ayarlar kodda hiç
+  yoktu. Ayrıca `Home.inviteCodeHash` sadece hash saklıyor — davet kodu
+  yalnızca `createHome` response'unda bir kere düz metin olarak dönüyordu,
+  sonrasında hiçbir şekilde geri getirilemiyordu (var olan evler için Aile
+  ekranının "davet et" özelliği çalışamazdı).
+- **Decision**: (1) Aile ve Ayarlar, Varlıklar'da olduğu gibi Dashboard
+  tab'ının altına nested ekranlar olarak eklendi — mevcut 4 sekme
+  (Özet/Dolap/Alışveriş/Tarifler) korunuyor. (2)
+  `POST /:homeId/invite-code/regenerate` eklendi — eski kodu geri getirmek
+  yerine yenisini üretip eskisinin hash'inin yerine koyuyor; mobile'da
+  "Davet Et" butonu her basışta yeni bir kod üretip native `Share` sheet'i
+  açıyor (kopyalama için ayrı bir clipboard kütüphanesi eklenmedi — paylaşım
+  sheet'i ve seçilebilir metin yeterli, gereksiz bağımlılık kaçınıldı). (3)
+  Owner kendini `removeMember` ile çıkaramaz ve `leaveHome` ile de yalnızca
+  evde başka aktif üye yoksa ayrılabilir (`OWNER_CANNOT_LEAVE`) — ownership
+  devri özelliği yok, bu yüzden owner'ın evi "yetim" bırakması engelleniyor.
+  (4) `User.settings` şeması v1'den beri kodda duruyordu ama hiç
+  kullanılmıyordu; `PATCH /users/me/settings` ile ilk kez aktif hale
+  getirildi — `theme` alanı v1 sınırı gereği yalnızca `'light'` kabul ediyor.
+  (5) Bu iki ekran, henüz hiçbir ekranın kullanmadığı Sprint 10'un
+  `mobile/src/ui/` bileşen kütüphanesini (Button/TextField/Card/Chip/
+  EmptyState) doğrudan kullanan ilk ekranlar oldu — restyle edilip sonra
+  yeniden yazılmak yerine baştan yeni sistemle inşa edildiler.
+- **Consequences**: Ekran Geçişi sprintinde (Sprint 12) geri kalan 16 ekran
+  bu iki ekranın kurduğu component-kullanım desenini örnek alacak. Gerçek
+  cihazda dokunma testi (Simulator'de otomatik tap) bu ortamda Accessibility
+  izni olmadığı için yapılamadı — ekran görüntüsü + Jest navigasyon testleriyle
+  doğrulandı, tam dokunmatik akış manuel teyit gerektiriyor.

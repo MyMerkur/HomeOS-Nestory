@@ -46,6 +46,20 @@ export function DashboardScreen({ navigation }: DashboardStackScreenProps<'Dashb
         >
           <Text style={styles.badgesButtonText}>Varlıklarım</Text>
         </Pressable>
+        <Pressable
+          testID="go-to-family"
+          style={styles.badgesButton}
+          onPress={() => navigation.navigate('Family')}
+        >
+          <Text style={styles.badgesButtonText}>Ailem</Text>
+        </Pressable>
+        <Pressable
+          testID="go-to-settings"
+          style={styles.badgesButton}
+          onPress={() => navigation.navigate('Settings')}
+        >
+          <Text style={styles.badgesButtonText}>Ayarlar</Text>
+        </Pressable>
       </View>
 
       <View style={styles.summaryRow}>
