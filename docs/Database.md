@@ -216,6 +216,23 @@ servis üzerinden değişebilir (genel PATCH'ten çıkarıldı).
 `server/src/scripts/recipesSeedData.ts`'de tutulur, `npm run seed:recipes`
 (`server/src/scripts/seedRecipes.ts`) ile `name` alanına göre idempotent upsert edilir.
 
+### SavedRecipe (`server/src/models/SavedRecipe.ts`) ✅
+
+```
+{
+  homeId: ObjectId (ref Home, indexed),
+  recipeId: ObjectId (ref Recipe, indexed),
+  createdBy: ObjectId (ref User),
+  createdAt, updatedAt
+}
+```
+
+`{homeId, recipeId}` üzerinde unique compound index — bir ev bir tarifi yalnızca bir
+kez kaydedebilir (`Membership`'in `{homeId, userId}` deseniyle aynı yaklaşım).
+Kaydetme **ev geneli/paylaşımlı**dır — kullanıcıya özel değil, uygulamadaki diğer tüm
+ev-kapsamlı kaynaklarla (envanter, alışveriş listesi, rozetler) tutarlı bir tasarım
+kararı (bkz. `docs/ProjectDecisions.md`).
+
 Kalan şemalar (`NotificationJob`) ilgili modül implementasyonu sırasında buraya
 eklenecektir — kod ile bu doküman senkron tutulmalıdır. Bildirimler v1'de tamamen
 cihazda zamanlandığı için (`docs/ProjectDecisions.md`) `NotificationJob` şu an planlanmıyor.

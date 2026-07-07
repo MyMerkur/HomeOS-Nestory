@@ -43,6 +43,8 @@ Route -> authenticate -> validateParams -> requireHomeMembership(role?) -> valid
 | Shopping | PATCH/DELETE /api/homes/:homeId/shopping/items/:itemId | Güncelle / sil | ✅ |
 | Shopping | PATCH /api/homes/:homeId/shopping/items/:itemId/check | İşaretle/kaldır (toggle) | ✅ |
 | Recipes | GET /api/homes/:homeId/recipes/suggestions | Tarif eşleşmeleri | ✅ |
+| Recipes | GET /api/homes/:homeId/recipes/saved | Kaydedilen tarifler (ev geneli) | ✅ |
+| Recipes | POST/DELETE /api/homes/:homeId/recipes/:recipeId/save | Tarif kaydet / kaldır | ✅ |
 | Notifications | — | Yerel bildirim (mobile-only, backend endpoint yok — bkz. docs/ProjectDecisions.md) | ✅ |
 | Gamification | GET /api/homes/:homeId/badges | Rozet ilerlemesi (canlı hesaplanır) | ✅ |
 
@@ -302,7 +304,8 @@ Hard delete.
       "coveragePercent": 100,
       "missingIngredients": [],
       "ingredients": [{ "name": "Yumurta", "optional": false }, "..."],
-      "instructions": ["Biber ve domatesi zeytinyağında kavurun.", "..."]
+      "instructions": ["Biber ve domatesi zeytinyağında kavurun.", "..."],
+      "isSaved": false
     }
   ]
 }
@@ -315,6 +318,22 @@ Hard delete.
 - Sadece `coveragePercent > 0` olan tarifler döner, `coveragePercent` azalan sırada,
   en fazla 10 tarif.
 - Tam malzeme/talimat listesi yanıta dahildir — ayrı bir detay endpoint'i yoktur.
+- `isSaved`, evin `SavedRecipe` kayıtlarına bakılarak hesaplanır.
+
+### GET /api/homes/:homeId/recipes/saved
+
+`requireHomeMembership('viewer')` ile korunur. Aynı `recipes` şeklini döner
+(`isSaved` her zaman `true`), ancak `coveragePercent > 0` filtresi **uygulanmaz** —
+kaydedilen bir tarif, o an malzemesi evde olmasa da listede kalır. Sıralama isme göre
+alfabetiktir (kapsama sırası değil).
+
+### POST/DELETE /api/homes/:homeId/recipes/:recipeId/save
+
+`requireHomeMembership('member')` ile korunur (yazma aksiyonu — diğer
+`POST`/`PATCH`/`DELETE` endpoint'leriyle aynı rol eşiği). Her iki uç da idempotenttir:
+zaten kaydedilmiş bir tarifi tekrar kaydetmek veya kaydedilmemiş bir tarifi kaldırmak
+hata döndürmez. Kaydetme **ev geneli/paylaşımlıdır** — kullanıcıya özel değildir, ev
+üyelerinden biri kaydettiğinde tüm üyeler görür.
 
 ## Gamification endpoint detayı
 

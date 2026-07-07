@@ -141,4 +141,95 @@ describe('recipeService', () => {
 
     expect(suggestions).toHaveLength(0);
   });
+
+  it('marks a suggestion as saved after saveRecipe and reflects it in getSuggestions', async () => {
+    const { homeId, userId, fridgeId } = await setupHome();
+
+    const recipe = await Recipe.create({
+      name: 'Menemen',
+      category: 'Kahvaltı',
+      ingredients: [ingredient('Yumurta')],
+      instructions: ['Pişirin.'],
+    });
+    await inventoryService.createItem(homeId, userId, {
+      name: 'Yumurta',
+      locationId: fridgeId,
+      category: 'Other',
+      quantity: 6,
+      unit: 'piece',
+    });
+
+    let suggestions = await recipeService.getSuggestions(homeId);
+    expect(suggestions[0].isSaved).toBe(false);
+
+    await recipeService.saveRecipe(homeId, recipe.id, userId);
+
+    suggestions = await recipeService.getSuggestions(homeId);
+    expect(suggestions[0].isSaved).toBe(true);
+  });
+
+  it('is idempotent when saving the same recipe twice', async () => {
+    const { homeId, userId } = await setupHome();
+    const recipe = await Recipe.create({
+      name: 'Süt Muhallebisi',
+      ingredients: [ingredient('Süt')],
+      instructions: ['Pişirin.'],
+    });
+
+    await recipeService.saveRecipe(homeId, recipe.id, userId);
+    await expect(recipeService.saveRecipe(homeId, recipe.id, userId)).resolves.not.toThrow();
+
+    const saved = await recipeService.getSavedRecipes(homeId);
+    expect(saved).toHaveLength(1);
+  });
+
+  it('throws when saving a recipe that does not exist', async () => {
+    const { homeId, userId } = await setupHome();
+    const missingId = new mongoose.Types.ObjectId().toString();
+
+    await expect(recipeService.saveRecipe(homeId, missingId, userId)).rejects.toThrow(
+      'Recipe not found',
+    );
+  });
+
+  it('getSavedRecipes returns saved recipes even with zero coverage, and excludes unsaved ones', async () => {
+    const { homeId, userId } = await setupHome();
+
+    const saved = await Recipe.create({
+      name: 'Süt Muhallebisi',
+      ingredients: [ingredient('Süt'), ingredient('Nişasta')],
+      instructions: ['Pişirin.'],
+    });
+    await Recipe.create({
+      name: 'Menemen',
+      ingredients: [ingredient('Yumurta')],
+      instructions: ['Pişirin.'],
+    });
+
+    await recipeService.saveRecipe(homeId, saved.id, userId);
+
+    const savedRecipes = await recipeService.getSavedRecipes(homeId);
+
+    expect(savedRecipes).toHaveLength(1);
+    expect(savedRecipes[0].name).toBe('Süt Muhallebisi');
+    expect(savedRecipes[0].coveragePercent).toBe(0);
+    expect(savedRecipes[0].isSaved).toBe(true);
+  });
+
+  it('unsaveRecipe removes a recipe from the saved list and is idempotent', async () => {
+    const { homeId, userId } = await setupHome();
+    const recipe = await Recipe.create({
+      name: 'Menemen',
+      ingredients: [ingredient('Yumurta')],
+      instructions: ['Pişirin.'],
+    });
+
+    await recipeService.saveRecipe(homeId, recipe.id, userId);
+    expect(await recipeService.getSavedRecipes(homeId)).toHaveLength(1);
+
+    await recipeService.unsaveRecipe(homeId, recipe.id);
+    expect(await recipeService.getSavedRecipes(homeId)).toHaveLength(0);
+
+    await expect(recipeService.unsaveRecipe(homeId, recipe.id)).resolves.not.toThrow();
+  });
 });

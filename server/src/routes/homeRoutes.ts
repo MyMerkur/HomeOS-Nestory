@@ -1,13 +1,18 @@
 import { Router } from 'express';
 import { createHomeHandler, joinHomeHandler, listHomesHandler } from '../controllers/homeController';
 import { getDashboardHandler } from '../controllers/dashboardController';
-import { getSuggestionsHandler } from '../controllers/recipeController';
+import {
+  getSuggestionsHandler,
+  getSavedRecipesHandler,
+  saveRecipeHandler,
+  unsaveRecipeHandler,
+} from '../controllers/recipeController';
 import { getBadgesHandler } from '../controllers/badgeController';
 import { authenticate } from '../middlewares/authenticate';
 import { validateBody, validateParams } from '../middlewares/validate';
 import { requireHomeMembership } from '../middlewares/requireHomeMembership';
 import { createHomeSchema, joinHomeSchema } from '../validations/homeValidation';
-import { homeIdParamSchema } from '../validations/paramsValidation';
+import { homeIdParamSchema, homeRecipeIdParamSchema } from '../validations/paramsValidation';
 import { catchAsync } from '../utils/catchAsync';
 import locationRoutes from './locationRoutes';
 import inventoryRoutes from './inventoryRoutes';
@@ -31,6 +36,24 @@ router.get(
   validateParams(homeIdParamSchema),
   requireHomeMembership('viewer'),
   catchAsync(getSuggestionsHandler),
+);
+router.get(
+  '/:homeId/recipes/saved',
+  validateParams(homeIdParamSchema),
+  requireHomeMembership('viewer'),
+  catchAsync(getSavedRecipesHandler),
+);
+router.post(
+  '/:homeId/recipes/:recipeId/save',
+  validateParams(homeRecipeIdParamSchema),
+  requireHomeMembership('member'),
+  catchAsync(saveRecipeHandler),
+);
+router.delete(
+  '/:homeId/recipes/:recipeId/save',
+  validateParams(homeRecipeIdParamSchema),
+  requireHomeMembership('member'),
+  catchAsync(unsaveRecipeHandler),
 );
 router.get(
   '/:homeId/badges',
