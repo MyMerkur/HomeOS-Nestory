@@ -1,8 +1,10 @@
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { IconChefHat, IconFridge, IconHome2, IconShoppingCart } from '@tabler/icons-react-native';
 import { useEffect } from 'react';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
+import { colors } from '../../theme/theme';
 import { useAuthStore } from '../../store/useAuthStore';
 import { useHomeStore } from '../../store/useHomeStore';
 import { LoginScreen } from '../../modules/auth/screens/LoginScreen';
@@ -124,22 +126,53 @@ function NotificationSync() {
   return null;
 }
 
+function DashboardTabIcon({ color, size }: { color: string; size: number }) {
+  return <IconHome2 color={color} size={size} />;
+}
+
+function PantryTabIcon({ color, size }: { color: string; size: number }) {
+  return <IconFridge color={color} size={size} />;
+}
+
+function ShoppingTabIcon({ color, size }: { color: string; size: number }) {
+  return <IconShoppingCart color={color} size={size} />;
+}
+
+function RecipesTabIcon({ color, size }: { color: string; size: number }) {
+  return <IconChefHat color={color} size={size} />;
+}
+
 function MainNavigator() {
   return (
     <>
       <NotificationSync />
-      <MainTab.Navigator screenOptions={{ headerShown: false }}>
-        <MainTab.Screen name="DashboardTab" component={DashboardTabNavigator} options={{ title: 'Özet' }} />
-        <MainTab.Screen name="PantryTab" component={PantryTabNavigator} options={{ title: 'Dolap' }} />
+      <MainTab.Navigator
+        screenOptions={{
+          headerShown: false,
+          tabBarActiveTintColor: colors.primary,
+          tabBarInactiveTintColor: colors.textMuted,
+          tabBarStyle: { backgroundColor: colors.surface, borderTopColor: colors.border },
+        }}
+      >
+        <MainTab.Screen
+          name="DashboardTab"
+          component={DashboardTabNavigator}
+          options={{ title: 'Özet', tabBarIcon: DashboardTabIcon }}
+        />
+        <MainTab.Screen
+          name="PantryTab"
+          component={PantryTabNavigator}
+          options={{ title: 'Dolap', tabBarIcon: PantryTabIcon }}
+        />
         <MainTab.Screen
           name="ShoppingTab"
           component={ShoppingTabNavigator}
-          options={{ title: 'Alışveriş' }}
+          options={{ title: 'Alışveriş', tabBarIcon: ShoppingTabIcon }}
         />
         <MainTab.Screen
           name="RecipesTab"
           component={RecipesTabNavigator}
-          options={{ title: 'Tarifler' }}
+          options={{ title: 'Tarifler', tabBarIcon: RecipesTabIcon }}
         />
       </MainTab.Navigator>
     </>

@@ -254,3 +254,49 @@ alındığında yeni bir bölüm eklenir; eskiler değiştirilmez, "superseded" 
   cihaz/simulator'de elle test gerekir. `server/uploads/` diskte tutulur —
   `docs/Deployment.md`'nin backup politikasına artık gerçekten dahil edilmesi
   gerekiyor (VPS'e taşınırken hatırlanmalı).
+
+---
+
+## Decision: Tasarım sistemi — `@tabler/icons-react-native` + statik Baloo2/Inter
+font dosyaları + `mobile/src/ui/` bileşen kütüphanesi
+
+- **Date**: 2026-07-07
+- **Status**: Accepted
+- **Context**: Uygulama v1→v2 boyunca tamamen fonksiyonel önceliklendirmeyle
+  yazıldı — hiçbir ekranda ortak bir tema/bileşen dosyası yoktu, her ekran
+  kendi `StyleSheet.create` + ham hex renk değerleriyle (`#1d76db`, `#c0392b`...)
+  duplicate stil tanımlıyordu. Alt tab bar'da hiçbir `MainTab.Screen`
+  `tabBarIcon` tanımlamadığı için React Navigation'ın "ikon yok" fallback'i
+  olan `MissingIcon` (⏷ ters üçgen glifi) görünüyordu — kullanıcının fark
+  ettiği bug buydu. Kullanıcı önceki bir oturumda hazırlanmış bir tasarım
+  spesifikasyonu ve `theme.ts` token dosyası (yeşil/moss marka rengi, Baloo 2 +
+  Inter font sistemi, `FreshnessRing` imza bileşeni, Tabler ikon şartı) verdi.
+- **Decision**: (1) `mobile/src/theme/theme.ts` tek kaynak token dosyası olarak
+  eklendi (colors/typography/fontSize/spacing/radius/`freshnessColor()`),
+  hiçbir top-level klasörde (`services/`, `store/`) index.ts barrel
+  bulunmadığından aynı konvansiyonla doğrudan relative import kullanılıyor.
+  (2) Baloo2-Bold/SemiBold ve Inter-Regular/Medium fontları
+  `@expo-google-fonts/*` npm paketlerinden (sadece statik `.ttf` dosya kaynağı
+  olarak, bağımlılık olarak değil — Google Fonts deposu artık yalnızca
+  variable font barındırıyor, RN statik ağırlık dosyası istiyor)
+  `mobile/assets/fonts/`'a kopyalanıp `react-native-asset` ile iOS/Android'e
+  bağlandı; her fontun PostScript adı (`fonttools` ile doğrulandı) `theme.ts`
+  değerleriyle birebir eşleşiyor. (3) `react-native-svg` + `@tabler/icons-react-native`
+  kuruldu (ikincisi ilkini peer dependency olarak istiyor —
+  `FreshnessRing`'in de `react-native-svg` ihtiyacıyla örtüşüyor). Özel bir
+  ikon font/glyph sistemi yerine SVG tabanlı bileşen ikonları tercih edildi.
+  (4) `RootNavigator.tsx`'teki `MainTab.Navigator`'a 4 sabit `tabBarIcon`
+  (`IconHome2`/`IconFridge`/`IconShoppingCart`/`IconChefHat`) ve
+  `tabBarActiveTintColor`/`tabBarInactiveTintColor` eklendi — React
+  Navigation'ın yerleşik tab bar'ı yeniden temalandı, özel bir `BottomTabBar`
+  bileşeni yazılmadı. (5) `mobile/src/ui/` altında `theme.ts`'ye dayanan,
+  hiçbir ekranda henüz kullanılmayan (bu ayrı bir sonraki iş kalemi) bir
+  bileşen kütüphanesi kuruldu: `Button`, `TextField`, `Card`, `Chip`,
+  `SegmentedControl`, `FAB`, `EmptyState`, `SummaryCard`, `PantryItemRow`,
+  `FreshnessRing`.
+- **Consequences**: Native bağımlılık eklendiğinde (`react-native-svg`)
+  Xcode'un DerivedData'sının yeniden build edilmesi gerektiği doğrulandı —
+  `pod install` sonrası eski binary ile çalışan simulator kurulumu ikonları
+  "tofu" (boş kutu) olarak gösterdi, temiz bir `xcodebuild` + yeniden kurulum
+  sorunu çözdü. Mevcut 16 ekranın hiçbiri henüz bu bileşenlere taşınmadı —
+  taşıma ayrı bir sprintte (Ekran Geçişi) yapılacak, bu adım sadece altyapı.

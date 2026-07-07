@@ -11,6 +11,7 @@
 | v2 | Warranty/documents, receipt scan | Envanteri gıda dışına taşımak |
 | v2.1 | Analytics, budget, badges, streaks | Retention ve motivasyon |
 | v3 | On-device AI/ML, widgets | Kontrollü akıllı özellikler |
+| — | Tasarım sistemi + Aile/Ayarlar | Görsel tasarım geçişi ve eksik ekranlar (roadmap sürüm numarası dışı, ayrı bir iş kalemi) |
 
 ## v1'de kesin olacaklar
 
@@ -45,5 +46,8 @@ dolap fotoğrafı analizi.
 | Sprint 7 | v1.1 Completion | 12.1 Saved Recipes Backend, 12.2 Saved Recipes Mobile |
 | Sprint 8 | v1.3 Medicine Module | 13.1 Medicine Backend, 13.2 Medicine Mobile |
 | Sprint 9 | v2 Warranty/Documents | 14.1 Asset Backend + Uploads, 14.2 Asset Mobile + Receipt Scan |
+| Sprint 10 | Tasarım Sistemi Temeli | 16.1 Token/Font/İkon Altyapısı, 16.2 Ortak Component Library |
+| Sprint 11 | Aile & Ayarlar | 17.1 Backend (membership/user endpoints), 17.2 Mobile (Family/Settings ekranları) |
+| Sprint 12 | Ekran Geçişi | 18.1 Auth+Onboarding+Dashboard+Pantry restyle, 18.2 Shopping+Recipes+Dashboard-nested restyle |
 
 Kapsam büyümeye başlarsa buradaki v1 sınırlarına geri dönülür.
