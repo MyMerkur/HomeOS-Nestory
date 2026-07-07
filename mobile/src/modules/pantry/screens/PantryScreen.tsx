@@ -148,6 +148,14 @@ export function PantryScreen({ navigation }: PantryStackScreenProps<'Pantry'>) {
       )}
 
       <Pressable
+        testID="quick-add-barcode-button"
+        style={styles.fabSecondary}
+        onPress={() => navigation.navigate('QuickAddItem')}
+      >
+        <Text style={styles.fabSecondaryText}>Barkod</Text>
+      </Pressable>
+
+      <Pressable
         testID="add-item-button"
         style={styles.fab}
         onPress={() => navigation.navigate('ItemForm', undefined)}
@@ -194,4 +202,18 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   fabText: { color: '#fff', fontSize: 28, lineHeight: 30 },
+  fabSecondary: {
+    position: 'absolute',
+    right: 20,
+    bottom: 88,
+    paddingHorizontal: 16,
+    paddingVertical: 10,
+    borderRadius: 20,
+    backgroundColor: '#fff',
+    borderWidth: 1,
+    borderColor: '#1d76db',
+    alignItems: 'center',
+    elevation: 4,
+  },
+  fabSecondaryText: { color: '#1d76db', fontSize: 13, fontWeight: '600' },
 });

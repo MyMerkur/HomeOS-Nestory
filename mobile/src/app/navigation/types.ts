@@ -21,7 +21,8 @@ export type DashboardStackParamList = {
 
 export type PantryStackParamList = {
   Pantry: undefined;
-  ItemForm: { itemId?: string } | undefined;
+  ItemForm: { itemId?: string; initialBarcode?: string } | undefined;
+  QuickAddItem: undefined;
 };
 
 export type ShoppingStackParamList = {

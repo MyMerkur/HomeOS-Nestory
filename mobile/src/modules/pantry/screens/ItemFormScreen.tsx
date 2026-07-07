@@ -26,6 +26,7 @@ import type { PantryStackScreenProps } from '../../../app/navigation/types';
 
 export function ItemFormScreen({ navigation, route }: PantryStackScreenProps<'ItemForm'>) {
   const itemId = route.params?.itemId;
+  const initialBarcode = route.params?.initialBarcode;
   const isEditMode = !!itemId;
   const homeId = useHomeStore((state) => state.selectedHomeId) as string;
   const queryClient = useQueryClient();
@@ -52,7 +53,14 @@ export function ItemFormScreen({ navigation, route }: PantryStackScreenProps<'It
     formState: { errors },
   } = useForm<ItemFormValues>({
     resolver: zodResolver(itemFormSchema),
-    defaultValues: { name: '', locationId: '', category: undefined, quantity: 1, unit: undefined },
+    defaultValues: {
+      name: '',
+      locationId: '',
+      category: undefined,
+      quantity: 1,
+      unit: undefined,
+      barcode: initialBarcode,
+    },
   });
 
   useEffect(() => {
@@ -73,6 +81,24 @@ export function ItemFormScreen({ navigation, route }: PantryStackScreenProps<'It
     }
   }, [existingItem, reset]);
 
+  const applyBarcodeMatch = async (code: string) => {
+    const result = await listItems(homeId, { barcode: code, limit: 1 });
+    const match = result.items[0];
+    if (match) {
+      if (!getValues('name')) setValue('name', match.name);
+      if (!getValues('category')) setValue('category', match.category);
+      if (!getValues('unit')) setValue('unit', match.unit);
+    }
+  };
+
+  useEffect(() => {
+    if (initialBarcode && !isEditMode) {
+      applyBarcodeMatch(initialBarcode);
+    }
+    // Only meant to run once on mount with the barcode the screen was opened with.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const handleScanBarcode = async () => {
     setIsScanningBarcode(true);
     try {
@@ -86,13 +112,7 @@ export function ItemFormScreen({ navigation, route }: PantryStackScreenProps<'It
       setValue('barcode', outcome.value);
 
       if (!isEditMode) {
-        const result = await listItems(homeId, { barcode: outcome.value, limit: 1 });
-        const match = result.items[0];
-        if (match) {
-          if (!getValues('name')) setValue('name', match.name);
-          if (!getValues('category')) setValue('category', match.category);
-          if (!getValues('unit')) setValue('unit', match.unit);
-        }
+        await applyBarcodeMatch(outcome.value);
       }
     } finally {
       setIsScanningBarcode(false);

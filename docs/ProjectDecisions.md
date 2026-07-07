@@ -138,3 +138,36 @@ alındığında yeni bir bölüm eklenir; eskiler değiştirilmez, "superseded" 
   `min_ios_version_supported` (15.1) yerine sabit `'15.5'` olarak ayarlandı. OCR
   tarih tanıma basit bir regex ile yapılır, %100 güvenilir değildir — bu kabul
   edilen bir POC sınırlamasıdır, kullanıcı SKT'yi elle de girebilir.
+
+---
+
+## Decision: v1.2 için statik-foto mimarisi korunur; sağlamlaştırma + Quick Add ile üretime taşınır
+
+- **Date**: 2026-07-07
+- **Status**: Accepted
+- **Context**: v1 roadmap tamamlandıktan sonra sıradaki adım v1.2 ("Barcode scan, OCR
+  date extraction, quick add"). Sprint 5'in POC'u canlı kamera + frame-processor'ı
+  bilinçli olarak ertelemişti. Bu turda `react-native-vision-camera` + Reanimated
+  worklets'e geçmek yerine mevcut statik-foto + ML Kit mimarisi korunmaya karar
+  verildi — RN 0.86 + New Architecture ile canlı kamera kurulumu ve Jest'te test
+  edilemeyen frame-processor kodu, bu aşama için orantısız risk taşır.
+- **Decision**: Bunun yerine iki şey yapıldı: (1) tarayıcı servisleri "found/
+  not-found/cancelled" outcome tipine geçirildi (`barcodeScanner.ts`,
+  `dateOcrScanner.ts`) — önceden kamera iptali ile "hiçbir şey tanınmadı" aynı
+  `null` değerine düşüyordu, bu da OCR uyarısının kullanıcı sadece kamerayı iptal
+  ettiğinde bile hatalı şekilde tetiklenmesine yol açıyordu (düzeltildi). OCR tarih
+  ayrıştırma artık `.`/`-`/`/` ayraçlarını ve ISO `yyyy-mm-dd` formatını destekliyor,
+  birden fazla tarih bulunursa SKT/EXP anahtar kelimesine en yakın olanı, yoksa
+  kronolojik olarak en geç tarihi seçiyor (üretim tarihi genelde SKT'den önce basılır).
+  (2) roadmap'in daha önce hiç yapılmamış "quick add" maddesi için yeni bir
+  `QuickAddItemScreen` eklendi: barkod taranır, aynı barkodla daha önce eklenmiş bir
+  ürün varsa (ad/kategori/birim salt-okunur, miktar düzenlenebilir) lokasyon
+  **eşleşen ürünün en son eklendiği lokasyona varsayılan olarak ayarlanır** (aynı
+  ürün genelde aynı yere konur — ör. süt her zaman buzdolabına), opsiyonel bir SKT
+  taraması ile birlikte tek dokunuşla eklenir. Eşleşme yoksa kullanıcıya barkodu
+  önceden dolu şekilde tam forma geçme seçeneği sunulur (`initialBarcode` route
+  parametresi).
+- **Consequences**: Gerçek kamera/ML Kit tanıma kalitesi (fotoğraf netliği, gerçek
+  barkod/tarih okunabilirliği) yine Jest ile doğrulanamaz — simulator/cihazda elle
+  test gerekir. Canlı kamera UX'i hâlâ ertelenmiş durumda; ileride gerçek zamanlı
+  tarama gerekirse bu karar yeniden değerlendirilecek.

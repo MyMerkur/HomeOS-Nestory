@@ -20,13 +20,13 @@ const mockNavigation = {
   setOptions: jest.fn(),
 } as unknown as PantryStackScreenProps<'ItemForm'>['navigation'];
 
-function renderScreen(itemId?: string) {
+function renderScreen(params?: { itemId?: string; initialBarcode?: string }) {
   const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   return render(
     <QueryClientProvider client={queryClient}>
       <ItemFormScreen
         navigation={mockNavigation}
-        route={{ params: { itemId } } as PantryStackScreenProps<'ItemForm'>['route']}
+        route={{ params } as PantryStackScreenProps<'ItemForm'>['route']}
       />
     </QueryClientProvider>,
   );
@@ -87,7 +87,7 @@ describe('ItemFormScreen', () => {
     });
     (updateItem as jest.Mock).mockResolvedValue({ id: 'item-1' });
 
-    renderScreen('item-1');
+    renderScreen({ itemId: 'item-1' });
 
     expect(await screen.findByDisplayValue('Süt')).toBeTruthy();
 
@@ -213,5 +213,30 @@ describe('ItemFormScreen', () => {
 
     await waitFor(() => expect(scanExpiryDateFromCamera).toHaveBeenCalled());
     expect(alertSpy).not.toHaveBeenCalled();
+  });
+
+  it('prefills the barcode field and matching item when opened with an initialBarcode', async () => {
+    (listItems as jest.Mock).mockResolvedValue({
+      items: [
+        {
+          id: 'existing-item',
+          name: 'Yoğurt',
+          category: 'Dairy',
+          quantity: 1,
+          unit: 'piece',
+          locationId: 'loc-fridge',
+          barcode: '8690000000001',
+        },
+      ],
+      pagination: { page: 1, limit: 1, total: 1, totalPages: 1 },
+    });
+
+    renderScreen({ initialBarcode: '8690000000001' });
+
+    await screen.findByTestId('location-chip-loc-fridge');
+
+    expect(await screen.findByDisplayValue('8690000000001')).toBeTruthy();
+    expect(await screen.findByDisplayValue('Yoğurt')).toBeTruthy();
+    expect(listItems).toHaveBeenCalledWith('home-1', { barcode: '8690000000001', limit: 1 });
   });
 });

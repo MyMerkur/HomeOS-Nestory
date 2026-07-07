@@ -15,6 +15,7 @@ import { DashboardScreen } from '../../modules/dashboard/screens/DashboardScreen
 import { BadgesScreen } from '../../modules/dashboard/screens/BadgesScreen';
 import { PantryScreen } from '../../modules/pantry/screens/PantryScreen';
 import { ItemFormScreen } from '../../modules/pantry/screens/ItemFormScreen';
+import { QuickAddItemScreen } from '../../modules/pantry/screens/QuickAddItemScreen';
 import { ShoppingScreen } from '../../modules/shopping/screens/ShoppingScreen';
 import { RecipesScreen } from '../../modules/recipes/screens/RecipesScreen';
 import { RecipeDetailScreen } from '../../modules/recipes/screens/RecipeDetailScreen';
@@ -82,6 +83,11 @@ function PantryTabNavigator() {
     <PantryStack.Navigator>
       <PantryStack.Screen name="Pantry" component={PantryScreen} options={{ title: 'Dolap' }} />
       <PantryStack.Screen name="ItemForm" component={ItemFormScreen} />
+      <PantryStack.Screen
+        name="QuickAddItem"
+        component={QuickAddItemScreen}
+        options={{ title: 'Barkodla Hızlı Ekle' }}
+      />
     </PantryStack.Navigator>
   );
 }

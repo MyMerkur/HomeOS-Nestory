@@ -41,5 +41,6 @@ dolap fotoğrafı analizi.
 | Sprint 3 | Dashboard + Shopping | 4.1 Expiration Dashboard, 4.2 Expiry Actions, 5.1 Shopping API, 5.2 Shopping Mobile |
 | Sprint 4 | Notifications + Recipes | 6.1 Notifications, 7.1 Recipe Seed, 7.2 Recipe Matching |
 | Sprint 5 | Gamification + OCR POC + release | 8.1 Gamification v1, 9.1 Barcode POC, 9.2 OCR Date POC, 10.1 Release Polish |
+| Sprint 6 | v1.2 Barcode/OCR Production | 11.1 Scanner Hardening, 11.2 Quick Add Flow |
 
 Kapsam büyümeye başlarsa buradaki v1 sınırlarına geri dönülür.

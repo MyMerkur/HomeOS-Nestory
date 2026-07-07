@@ -150,4 +150,13 @@ describe('PantryScreen', () => {
 
     await waitFor(() => expect(addToShopping).toHaveBeenCalledWith('home-1', 'item-1'));
   });
+
+  it('navigates to QuickAddItem when the barcode FAB is pressed', async () => {
+    renderScreen();
+    await screen.findByText('Süt');
+
+    fireEvent.press(screen.getByTestId('quick-add-barcode-button'));
+
+    expect(mockNavigation.navigate).toHaveBeenCalledWith('QuickAddItem');
+  });
 });
