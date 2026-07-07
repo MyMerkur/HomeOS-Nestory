@@ -14,6 +14,8 @@ import { useHomesQuery } from '../../modules/home/hooks/useHomesQuery';
 import { DashboardScreen } from '../../modules/dashboard/screens/DashboardScreen';
 import { BadgesScreen } from '../../modules/dashboard/screens/BadgesScreen';
 import { MedicinesScreen } from '../../modules/dashboard/screens/MedicinesScreen';
+import { AssetsScreen } from '../../modules/assets/screens/AssetsScreen';
+import { AssetFormScreen } from '../../modules/assets/screens/AssetFormScreen';
 import { PantryScreen } from '../../modules/pantry/screens/PantryScreen';
 import { ItemFormScreen } from '../../modules/pantry/screens/ItemFormScreen';
 import { QuickAddItemScreen } from '../../modules/pantry/screens/QuickAddItemScreen';
@@ -80,6 +82,8 @@ function DashboardTabNavigator() {
         component={MedicinesScreen}
         options={{ title: 'İlaçlarım' }}
       />
+      <DashboardStack.Screen name="Assets" component={AssetsScreen} options={{ title: 'Varlıklarım' }} />
+      <DashboardStack.Screen name="AssetForm" component={AssetFormScreen} />
     </DashboardStack.Navigator>
   );
 }

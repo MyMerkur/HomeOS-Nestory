@@ -92,4 +92,12 @@ describe('DashboardScreen', () => {
 
     expect(mockNavigation.navigate).toHaveBeenCalledWith('Medicines');
   });
+
+  it('navigates to the Assets screen when the Varlıklarım button is pressed', async () => {
+    renderScreen();
+
+    fireEvent.press(await screen.findByTestId('go-to-assets'));
+
+    expect(mockNavigation.navigate).toHaveBeenCalledWith('Assets');
+  });
 });

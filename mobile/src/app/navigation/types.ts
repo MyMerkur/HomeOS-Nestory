@@ -18,6 +18,8 @@ export type DashboardStackParamList = {
   Dashboard: undefined;
   Badges: undefined;
   Medicines: undefined;
+  Assets: undefined;
+  AssetForm: { assetId?: string } | undefined;
 };
 
 export type PantryStackParamList = {

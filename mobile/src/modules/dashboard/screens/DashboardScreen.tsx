@@ -39,6 +39,13 @@ export function DashboardScreen({ navigation }: DashboardStackScreenProps<'Dashb
         >
           <Text style={styles.badgesButtonText}>İlaçlarım</Text>
         </Pressable>
+        <Pressable
+          testID="go-to-assets"
+          style={styles.badgesButton}
+          onPress={() => navigation.navigate('Assets')}
+        >
+          <Text style={styles.badgesButtonText}>Varlıklarım</Text>
+        </Pressable>
       </View>
 
       <View style={styles.summaryRow}>
@@ -104,7 +111,7 @@ const styles = StyleSheet.create({
   week: { backgroundColor: '#f1c40f' },
   total: { backgroundColor: '#1d76db' },
   sectionTitle: { fontSize: 15, fontWeight: '600', paddingHorizontal: 16, marginBottom: 4 },
-  shortcutsRow: { flexDirection: 'row', gap: 8, margin: 12 },
+  shortcutsRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, margin: 12 },
   badgesButton: {
     backgroundColor: '#f0f0f0',
     borderRadius: 16,
