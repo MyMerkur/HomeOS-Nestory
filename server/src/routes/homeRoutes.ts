@@ -17,6 +17,7 @@ import { catchAsync } from '../utils/catchAsync';
 import locationRoutes from './locationRoutes';
 import inventoryRoutes from './inventoryRoutes';
 import shoppingRoutes from './shoppingRoutes';
+import assetRoutes from './assetRoutes';
 
 const router = Router();
 
@@ -65,5 +66,6 @@ router.get(
 router.use('/:homeId/locations', locationRoutes);
 router.use('/:homeId/items', inventoryRoutes);
 router.use('/:homeId/shopping', shoppingRoutes);
+router.use('/:homeId/assets', assetRoutes);
 
 export default router;
