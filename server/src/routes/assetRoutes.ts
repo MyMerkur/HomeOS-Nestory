@@ -5,8 +5,11 @@ import {
   getAssetHandler,
   listAssetsHandler,
   updateAssetHandler,
+  uploadReceiptHandler,
+  uploadWarrantyDocumentHandler,
 } from '../controllers/assetController';
 import { requireHomeMembership } from '../middlewares/requireHomeMembership';
+import { uploadSingleImage } from '../middlewares/upload';
 import { validateBody, validateParams, validateQuery } from '../middlewares/validate';
 import { homeAssetIdParamSchema, homeIdParamSchema } from '../validations/paramsValidation';
 import { createAssetSchema, listAssetsQuerySchema, updateAssetSchema } from '../validations/assetValidation';
@@ -50,6 +53,22 @@ router.delete(
   validateParams(homeAssetIdParamSchema),
   requireHomeMembership('member'),
   catchAsync(deleteAssetHandler),
+);
+
+router.post(
+  '/:assetId/receipt',
+  validateParams(homeAssetIdParamSchema),
+  requireHomeMembership('member'),
+  uploadSingleImage('file'),
+  catchAsync(uploadReceiptHandler),
+);
+
+router.post(
+  '/:assetId/warranty-document',
+  validateParams(homeAssetIdParamSchema),
+  requireHomeMembership('member'),
+  uploadSingleImage('file'),
+  catchAsync(uploadWarrantyDocumentHandler),
 );
 
 export default router;

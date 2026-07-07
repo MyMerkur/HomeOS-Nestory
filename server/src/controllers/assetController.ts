@@ -1,11 +1,19 @@
 import type { Request, Response } from 'express';
 import * as assetService from '../services/assetService';
+import { AppError } from '../middlewares/errorHandler';
 import { sendSuccess } from '../utils/apiResponse';
 import type {
   CreateAssetInput,
   ListAssetsQuery,
   UpdateAssetInput,
 } from '../validations/assetValidation';
+
+function requireUploadedFile(req: Request): string {
+  if (!req.file) {
+    throw new AppError('A file is required', 400, 'FILE_REQUIRED');
+  }
+  return `/uploads/receipts/${req.file.filename}`;
+}
 
 export async function listAssetsHandler(req: Request, res: Response) {
   const result = await assetService.listAssets(req.params.homeId, req.query as unknown as ListAssetsQuery);
@@ -38,4 +46,20 @@ export async function updateAssetHandler(req: Request, res: Response) {
 export async function deleteAssetHandler(req: Request, res: Response) {
   await assetService.deleteAsset(req.params.homeId, req.params.assetId);
   sendSuccess(res, null, 'Asset deleted successfully');
+}
+
+export async function uploadReceiptHandler(req: Request, res: Response) {
+  const receiptImageUrl = requireUploadedFile(req);
+  const asset = await assetService.setReceiptImage(req.params.homeId, req.params.assetId, receiptImageUrl);
+  sendSuccess(res, { asset }, 'Receipt uploaded successfully');
+}
+
+export async function uploadWarrantyDocumentHandler(req: Request, res: Response) {
+  const warrantyDocumentUrl = requireUploadedFile(req);
+  const asset = await assetService.setWarrantyDocument(
+    req.params.homeId,
+    req.params.assetId,
+    warrantyDocumentUrl,
+  );
+  sendSuccess(res, { asset }, 'Warranty document uploaded successfully');
 }

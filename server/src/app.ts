@@ -1,3 +1,4 @@
+import path from 'path';
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
@@ -15,6 +16,7 @@ export function createApp() {
   app.use(cors({ origin: env.CORS_ORIGIN, credentials: true }));
   app.use(express.json({ limit: '1mb' }));
   app.use(pinoHttp({ logger }));
+  app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
   const apiLimiter = rateLimit({ windowMs: 15 * 60 * 1000, limit: 300 });
   app.use('/api', apiLimiter);

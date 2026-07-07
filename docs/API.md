@@ -47,6 +47,9 @@ Route -> authenticate -> validateParams -> requireHomeMembership(role?) -> valid
 | Recipes | POST/DELETE /api/homes/:homeId/recipes/:recipeId/save | Tarif kaydet / kaldır | ✅ |
 | Notifications | — | Yerel bildirim (mobile-only, backend endpoint yok — bkz. docs/ProjectDecisions.md) | ✅ |
 | Gamification | GET /api/homes/:homeId/badges | Rozet ilerlemesi (canlı hesaplanır) | ✅ |
+| Assets | GET/POST /api/homes/:homeId/assets | Filtreli liste / ekleme (v2, gıda dışı envanter) | ✅ |
+| Assets | GET/PATCH/DELETE /api/homes/:homeId/assets/:assetId | Detay / güncelle / sil | ✅ |
+| Assets | POST /api/homes/:homeId/assets/:assetId/{receipt,warranty-document} | Fiş/garanti belgesi fotoğrafı yükleme | ✅ |
 
 ## Auth endpoint detayları
 
@@ -364,6 +367,49 @@ hata döndürmez. Kaydetme **ev geneli/paylaşımlıdır** — kullanıcıya öz
 5 rozet (`server/src/constants/badges.ts`) var olan koleksiyonlardan (InventoryItem/
 AuditLog/ShoppingItem/Membership) **canlı hesaplanır** — kalıcı bir "kazanılan rozet"
 kaydı tutulmaz (`docs/Database.md`).
+
+## Asset (v2 Warranty/Documents) endpoint detayları
+
+Tüm asset endpointleri `requireHomeMembership` ile korunur: GET için `viewer`,
+POST/PATCH/DELETE için `member`.
+
+### GET /api/homes/:homeId/assets
+
+```
+?status=active&category=Electronics&page=1&limit=20&sort=warrantyEndDate:asc
+```
+
+```json
+{ "assets": [{ "id", "name", "category", "room", "brand", "purchaseDate", "price", "warrantyEndDate", "receiptImageUrl", "warrantyDocumentUrl", "status", "..." }],
+  "pagination": { "page": 1, "limit": 20, "total": 5, "totalPages": 1 } }
+```
+
+### POST /api/homes/:homeId/assets
+
+```json
+{ "name": "Televizyon", "category": "Electronics", "room": "Oturma Odası", "warrantyEndDate": "2028-01-01" }
+```
+
+`category` sabit bir enum'dur (`server/src/constants/asset.ts`). `room` serbest
+metindir — ayrı bir lokasyon modeli/CRUD'u yok.
+
+### GET/PATCH/DELETE /api/homes/:homeId/assets/:assetId
+
+Body'deki her alan PATCH'te opsiyoneldir. `status` (`active`/`archived`) genel
+PATCH'e dahildir — Inventory'nin aksine assets için audit log yok, bu yüzden
+ayrı bir aksiyon endpoint'i gerekmiyor. `receiptImageUrl`/`warrantyDocumentUrl`
+bu endpoint'ten **ayarlanamaz** — yalnızca aşağıdaki upload endpoint'leri
+üzerinden set edilir.
+
+### POST /api/homes/:homeId/assets/:assetId/receipt
+### POST /api/homes/:homeId/assets/:assetId/warranty-document
+
+`multipart/form-data`, dosya alanı adı `file`. Yalnızca `image/*` mimetype kabul
+edilir, 5MB üst sınır (`server/src/middlewares/upload.ts`). Dosya
+`server/uploads/receipts/` altına kaydedilir ve `/uploads/receipts/<dosya>`
+yoluyla statik olarak sunulur (`server/src/app.ts`). Geçersiz dosya türü/boyutu
+`400 UPLOAD_ERROR`, dosya eksikse `400 FILE_REQUIRED` döner. Response:
+`{ "asset": {...} }` (güncellenmiş `receiptImageUrl`/`warrantyDocumentUrl` ile).
 
 ## Pagination
 

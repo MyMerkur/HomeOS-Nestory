@@ -44,5 +44,11 @@ mobile/.expo/
 backups/
 mongo-data/
 
+# Uploaded files (receipts/warranty documents)
+server/uploads/*
+!server/uploads/receipts/
+server/uploads/receipts/*
+!server/uploads/receipts/.gitkeep
+
 # Claude
 .claude/settings.local.json

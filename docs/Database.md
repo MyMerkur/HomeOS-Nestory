@@ -240,6 +240,37 @@ Kaydetme **ev geneli/paylaşımlı**dır — kullanıcıya özel değil, uygulam
 ev-kapsamlı kaynaklarla (envanter, alışveriş listesi, rozetler) tutarlı bir tasarım
 kararı (bkz. `docs/ProjectDecisions.md`).
 
+### Asset (`server/src/models/Asset.ts`) ✅
+
+```
+{
+  homeId: ObjectId (ref Home, indexed),
+  createdBy: ObjectId (ref User),
+  name: string (max 120),
+  category: 'Electronics' | 'Appliance' | 'Furniture' | 'Other',
+  room?: string (serbest metin, ör. "Oturma Odası"),
+  brand?: string,
+  serialNumber?: string,
+  purchaseDate?: Date,
+  price?: number (>= 0),
+  warrantyEndDate?: Date,
+  receiptImageUrl?: string (yalnızca upload endpoint'i ile ayarlanır),
+  warrantyDocumentUrl?: string (yalnızca upload endpoint'i ile ayarlanır),
+  notes?: string (max 500),
+  reminderDaysBefore: number[] (default [30,7,1,0]),
+  status: 'active' | 'archived' (default 'active'),
+  createdAt, updatedAt
+}
+```
+
+indexler: `(homeId, status)`, `(homeId, warrantyEndDate)`. v2 "Warranty/documents"
+kapsamı — `InventoryItem`'ın aksine ayrı bir model: quantity/unit/pantry-lokasyonu
+kavramları bir TV/beyaz eşya için anlamlı değil (bkz. `docs/ProjectDecisions.md`).
+`room` basit bir serbest metin alanıdır, `PantryLocation` gibi ayrı bir model/CRUD
+değil. `receiptImageUrl`/`warrantyDocumentUrl` genel PATCH ile ayarlanamaz —
+yalnızca `POST /:assetId/receipt` ve `POST /:assetId/warranty-document` upload
+endpoint'leri bu alanları set eder (bkz. `docs/API.md`).
+
 Kalan şemalar (`NotificationJob`) ilgili modül implementasyonu sırasında buraya
 eklenecektir — kod ile bu doküman senkron tutulmalıdır. Bildirimler v1'de tamamen
 cihazda zamanlandığı için (`docs/ProjectDecisions.md`) `NotificationJob` şu an planlanmıyor.

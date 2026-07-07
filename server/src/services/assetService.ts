@@ -101,6 +101,28 @@ export async function updateAsset(
   return toSummary(asset);
 }
 
+export async function setReceiptImage(
+  homeId: string,
+  assetId: string,
+  receiptImageUrl: string,
+): Promise<AssetSummary> {
+  const asset = await findAssetOrThrow(homeId, assetId);
+  asset.receiptImageUrl = receiptImageUrl;
+  await asset.save();
+  return toSummary(asset);
+}
+
+export async function setWarrantyDocument(
+  homeId: string,
+  assetId: string,
+  warrantyDocumentUrl: string,
+): Promise<AssetSummary> {
+  const asset = await findAssetOrThrow(homeId, assetId);
+  asset.warrantyDocumentUrl = warrantyDocumentUrl;
+  await asset.save();
+  return toSummary(asset);
+}
+
 export async function deleteAsset(homeId: string, assetId: string): Promise<void> {
   const asset = await findAssetOrThrow(homeId, assetId);
   await asset.deleteOne();
