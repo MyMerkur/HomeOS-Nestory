@@ -23,6 +23,8 @@ export type InventoryItem = {
   notes: string | null;
   imageUrl: string | null;
   reminderDaysBefore: number[];
+  doseAmount: number | null;
+  doseTimes: string[];
   createdAt: string;
   updatedAt: string;
 };
@@ -76,6 +78,8 @@ export type ItemInput = {
   unit: Unit;
   expiryDate?: string;
   barcode?: string;
+  doseAmount?: number;
+  doseTimes?: string[];
 };
 
 export async function createItem(homeId: string, input: ItemInput): Promise<InventoryItem> {
@@ -122,6 +126,13 @@ export async function freezeItem(homeId: string, itemId: string): Promise<Invent
 export async function addToShopping(homeId: string, itemId: string): Promise<InventoryItem> {
   const { data } = await apiClient.post<ApiEnvelope<{ item: InventoryItem }>>(
     `/homes/${homeId}/items/${itemId}/add-to-shopping`,
+  );
+  return data.data.item;
+}
+
+export async function takeDose(homeId: string, itemId: string): Promise<InventoryItem> {
+  const { data } = await apiClient.post<ApiEnvelope<{ item: InventoryItem }>>(
+    `/homes/${homeId}/items/${itemId}/take-dose`,
   );
   return data.data.item;
 }

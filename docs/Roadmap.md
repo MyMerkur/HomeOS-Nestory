@@ -43,5 +43,6 @@ dolap fotoğrafı analizi.
 | Sprint 5 | Gamification + OCR POC + release | 8.1 Gamification v1, 9.1 Barcode POC, 9.2 OCR Date POC, 10.1 Release Polish |
 | Sprint 6 | v1.2 Barcode/OCR Production | 11.1 Scanner Hardening, 11.2 Quick Add Flow |
 | Sprint 7 | v1.1 Completion | 12.1 Saved Recipes Backend, 12.2 Saved Recipes Mobile |
+| Sprint 8 | v1.3 Medicine Module | 13.1 Medicine Backend, 13.2 Medicine Mobile |
 
 Kapsam büyümeye başlarsa buradaki v1 sınırlarına geri dönülür.

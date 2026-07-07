@@ -1,10 +1,12 @@
-import notifee, { TriggerType } from '@notifee/react-native';
+import notifee, { RepeatFrequency, TriggerType } from '@notifee/react-native';
 import type { InventoryItem } from '../modules/pantry/services/pantryApi';
 
 const CHANNEL_ID = 'expiry-reminders';
+const DOSE_CHANNEL_ID = 'medicine-doses';
 
 export async function ensureNotificationChannel(): Promise<void> {
   await notifee.createChannel({ id: CHANNEL_ID, name: 'SKT Hatırlatmaları' });
+  await notifee.createChannel({ id: DOSE_CHANNEL_ID, name: 'İlaç Hatırlatmaları' });
 }
 
 export async function ensurePermission(): Promise<void> {
@@ -26,14 +28,34 @@ function bodyFor(itemName: string, daysBefore: number): string {
   return `${itemName} için son kullanma tarihine ${remaining} kaldı.`;
 }
 
+function buildDoseNotificationId(itemId: string, time: string): string {
+  return `dose:${itemId}:${time}`;
+}
+
+function buildDoseTriggerDate(time: string, now: Date): Date {
+  const [hours, minutes] = time.split(':').map(Number);
+  const triggerDate = new Date(now);
+  triggerDate.setHours(hours, minutes, 0, 0);
+  if (triggerDate.getTime() <= now.getTime()) {
+    triggerDate.setDate(triggerDate.getDate() + 1);
+  }
+  return triggerDate;
+}
+
+function doseBodyFor(item: InventoryItem): string {
+  const amount = item.doseAmount ?? 1;
+  return `${item.name} alma vakti (${amount} ${item.unit}).`;
+}
+
 export async function syncItemReminders(items: InventoryItem[]): Promise<void> {
   const scheduledIds: string[] = await notifee.getTriggerNotificationIds();
   await Promise.all(scheduledIds.map((id) => notifee.cancelTriggerNotification(id)));
 
   const now = new Date();
+  const activeItems = items.filter((item) => item.status === 'active');
 
-  const notifications = items
-    .filter((item) => item.status === 'active' && item.expiryDate)
+  const expiryNotifications = activeItems
+    .filter((item) => item.expiryDate)
     .flatMap((item) => {
       const expiryDate = new Date(item.expiryDate as string);
       return item.reminderDaysBefore
@@ -42,8 +64,14 @@ export async function syncItemReminders(items: InventoryItem[]): Promise<void> {
         .map(({ daysBefore, triggerDate }) => ({ item, daysBefore, triggerDate }));
     });
 
-  await Promise.all(
-    notifications.map(({ item, daysBefore, triggerDate }) =>
+  const doseNotifications = activeItems
+    .filter((item) => item.category === 'Medicine' && item.doseTimes.length > 0)
+    .flatMap((item) =>
+      item.doseTimes.map((time) => ({ item, time, triggerDate: buildDoseTriggerDate(time, now) })),
+    );
+
+  await Promise.all([
+    ...expiryNotifications.map(({ item, daysBefore, triggerDate }) =>
       notifee.createTriggerNotification(
         {
           id: buildNotificationId(item.id, daysBefore),
@@ -54,5 +82,20 @@ export async function syncItemReminders(items: InventoryItem[]): Promise<void> {
         { type: TriggerType.TIMESTAMP, timestamp: triggerDate.getTime() },
       ),
     ),
-  );
+    ...doseNotifications.map(({ item, time, triggerDate }) =>
+      notifee.createTriggerNotification(
+        {
+          id: buildDoseNotificationId(item.id, time),
+          title: 'İlaç Zamanı',
+          body: doseBodyFor(item),
+          android: { channelId: DOSE_CHANNEL_ID },
+        },
+        {
+          type: TriggerType.TIMESTAMP,
+          timestamp: triggerDate.getTime(),
+          repeatFrequency: RepeatFrequency.DAILY,
+        },
+      ),
+    ),
+  ]);
 }

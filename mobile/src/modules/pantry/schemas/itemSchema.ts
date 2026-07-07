@@ -9,6 +9,8 @@ export const itemFormSchema = z.object({
   unit: z.enum(UNITS, { message: 'Birim seç' }),
   expiryDate: z.date().optional(),
   barcode: z.string().trim().optional(),
+  doseAmount: z.number().positive().optional(),
+  doseTimes: z.array(z.string()).optional(),
 });
 
 export type ItemFormValues = z.infer<typeof itemFormSchema>;

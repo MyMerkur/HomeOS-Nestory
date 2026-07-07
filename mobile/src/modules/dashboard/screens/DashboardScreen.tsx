@@ -24,13 +24,22 @@ export function DashboardScreen({ navigation }: DashboardStackScreenProps<'Dashb
 
   return (
     <View style={styles.container}>
-      <Pressable
-        testID="go-to-badges"
-        style={styles.badgesButton}
-        onPress={() => navigation.navigate('Badges')}
-      >
-        <Text style={styles.badgesButtonText}>Rozetlerim</Text>
-      </Pressable>
+      <View style={styles.shortcutsRow}>
+        <Pressable
+          testID="go-to-badges"
+          style={styles.badgesButton}
+          onPress={() => navigation.navigate('Badges')}
+        >
+          <Text style={styles.badgesButtonText}>Rozetlerim</Text>
+        </Pressable>
+        <Pressable
+          testID="go-to-medicines"
+          style={styles.badgesButton}
+          onPress={() => navigation.navigate('Medicines')}
+        >
+          <Text style={styles.badgesButtonText}>İlaçlarım</Text>
+        </Pressable>
+      </View>
 
       <View style={styles.summaryRow}>
         <View style={[styles.summaryCard, styles.today]}>
@@ -95,9 +104,8 @@ const styles = StyleSheet.create({
   week: { backgroundColor: '#f1c40f' },
   total: { backgroundColor: '#1d76db' },
   sectionTitle: { fontSize: 15, fontWeight: '600', paddingHorizontal: 16, marginBottom: 4 },
+  shortcutsRow: { flexDirection: 'row', gap: 8, margin: 12 },
   badgesButton: {
-    margin: 12,
-    alignSelf: 'flex-start',
     backgroundColor: '#f0f0f0',
     borderRadius: 16,
     paddingHorizontal: 14,

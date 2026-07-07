@@ -24,6 +24,8 @@ function buildItem(overrides: Partial<InventoryItem>): InventoryItem {
     notes: null,
     imageUrl: null,
     reminderDaysBefore: [7, 3, 1, 0],
+    doseAmount: null,
+    doseTimes: [],
     createdAt: '2026-01-01T00:00:00.000Z',
     updatedAt: '2026-01-01T00:00:00.000Z',
     ...overrides,
@@ -77,5 +79,55 @@ describe('notificationScheduler', () => {
 
     expect(notifee.cancelTriggerNotification).toHaveBeenCalledWith('old-1');
     expect(notifee.cancelTriggerNotification).toHaveBeenCalledWith('old-2');
+  });
+
+  it('schedules a daily-repeating dose reminder for each dose time of an active medicine', async () => {
+    const item = buildItem({
+      id: 'med-1',
+      category: 'Medicine',
+      doseAmount: 2,
+      doseTimes: ['09:00', '21:00'],
+    });
+
+    await syncItemReminders([item]);
+
+    expect(notifee.createTriggerNotification).toHaveBeenCalledTimes(2);
+    expect(notifee.createTriggerNotification).toHaveBeenCalledWith(
+      expect.objectContaining({ id: 'dose:med-1:09:00' }),
+      expect.objectContaining({ type: 0, repeatFrequency: 1 }),
+    );
+    expect(notifee.createTriggerNotification).toHaveBeenCalledWith(
+      expect.objectContaining({ id: 'dose:med-1:21:00' }),
+      expect.objectContaining({ type: 0, repeatFrequency: 1 }),
+    );
+  });
+
+  it('does not schedule dose reminders for non-Medicine items even with doseTimes set', async () => {
+    const item = buildItem({ id: 'item-4', category: 'Dairy', doseTimes: ['09:00'] });
+
+    await syncItemReminders([item]);
+
+    expect(notifee.createTriggerNotification).not.toHaveBeenCalled();
+  });
+
+  it('does not schedule dose reminders for a medicine with no doseTimes', async () => {
+    const item = buildItem({ id: 'med-2', category: 'Medicine', doseTimes: [] });
+
+    await syncItemReminders([item]);
+
+    expect(notifee.createTriggerNotification).not.toHaveBeenCalled();
+  });
+
+  it('does not schedule dose reminders for an inactive medicine', async () => {
+    const item = buildItem({
+      id: 'med-3',
+      category: 'Medicine',
+      status: 'consumed',
+      doseTimes: ['09:00'],
+    });
+
+    await syncItemReminders([item]);
+
+    expect(notifee.createTriggerNotification).not.toHaveBeenCalled();
   });
 });

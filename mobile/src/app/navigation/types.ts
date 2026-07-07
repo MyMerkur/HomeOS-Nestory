@@ -17,6 +17,7 @@ export type HomeSetupStackParamList = {
 export type DashboardStackParamList = {
   Dashboard: undefined;
   Badges: undefined;
+  Medicines: undefined;
 };
 
 export type PantryStackParamList = {

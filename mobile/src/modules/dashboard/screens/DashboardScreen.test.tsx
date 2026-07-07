@@ -32,6 +32,8 @@ const mockDashboard = {
       notes: null,
       imageUrl: null,
       reminderDaysBefore: [],
+      doseAmount: null,
+      doseTimes: [],
       createdAt: '2026-01-01T00:00:00.000Z',
       updatedAt: '2026-01-01T00:00:00.000Z',
     },
@@ -81,5 +83,13 @@ describe('DashboardScreen', () => {
     fireEvent.press(await screen.findByTestId('go-to-badges'));
 
     expect(mockNavigation.navigate).toHaveBeenCalledWith('Badges');
+  });
+
+  it('navigates to the Medicines screen when the İlaçlarım button is pressed', async () => {
+    renderScreen();
+
+    fireEvent.press(await screen.findByTestId('go-to-medicines'));
+
+    expect(mockNavigation.navigate).toHaveBeenCalledWith('Medicines');
   });
 });

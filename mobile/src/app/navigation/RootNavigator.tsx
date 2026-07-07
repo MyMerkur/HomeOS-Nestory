@@ -13,6 +13,7 @@ import { JoinHomeScreen } from '../../modules/home/screens/JoinHomeScreen';
 import { useHomesQuery } from '../../modules/home/hooks/useHomesQuery';
 import { DashboardScreen } from '../../modules/dashboard/screens/DashboardScreen';
 import { BadgesScreen } from '../../modules/dashboard/screens/BadgesScreen';
+import { MedicinesScreen } from '../../modules/dashboard/screens/MedicinesScreen';
 import { PantryScreen } from '../../modules/pantry/screens/PantryScreen';
 import { ItemFormScreen } from '../../modules/pantry/screens/ItemFormScreen';
 import { QuickAddItemScreen } from '../../modules/pantry/screens/QuickAddItemScreen';
@@ -74,6 +75,11 @@ function DashboardTabNavigator() {
     <DashboardStack.Navigator>
       <DashboardStack.Screen name="Dashboard" component={DashboardScreen} options={{ title: 'Özet' }} />
       <DashboardStack.Screen name="Badges" component={BadgesScreen} options={{ title: 'Rozetlerim' }} />
+      <DashboardStack.Screen
+        name="Medicines"
+        component={MedicinesScreen}
+        options={{ title: 'İlaçlarım' }}
+      />
     </DashboardStack.Navigator>
   );
 }

@@ -239,4 +239,57 @@ describe('ItemFormScreen', () => {
     expect(await screen.findByDisplayValue('Yoğurt')).toBeTruthy();
     expect(listItems).toHaveBeenCalledWith('home-1', { barcode: '8690000000001', limit: 1 });
   });
+
+  it('does not show dose fields for a non-Medicine category', async () => {
+    renderScreen();
+
+    await screen.findByTestId('location-chip-loc-fridge');
+    fireEvent.press(screen.getByTestId('category-chip-Dairy'));
+
+    expect(screen.queryByTestId('dose-amount-input')).toBeNull();
+  });
+
+  it('shows dose fields when the Medicine category is selected', async () => {
+    renderScreen();
+
+    await screen.findByTestId('location-chip-loc-fridge');
+    fireEvent.press(screen.getByTestId('category-chip-Medicine'));
+
+    expect(screen.getByTestId('dose-amount-input')).toBeTruthy();
+    expect(screen.getByTestId('add-dose-time-button')).toBeTruthy();
+  });
+
+  it('includes doseAmount/doseTimes in the submit payload and removes a dose time chip', async () => {
+    (getItem as jest.Mock).mockResolvedValue({
+      id: 'item-1',
+      name: 'Parol',
+      category: 'Medicine',
+      quantity: 10,
+      unit: 'piece',
+      locationId: 'loc-fridge',
+      expiryDate: null,
+      doseAmount: 2,
+      doseTimes: ['09:00', '21:00'],
+    });
+    (updateItem as jest.Mock).mockResolvedValue({ id: 'item-1' });
+
+    renderScreen({ itemId: 'item-1' });
+
+    expect(await screen.findByDisplayValue('2')).toBeTruthy();
+    expect(screen.getByTestId('dose-time-chip-09:00')).toBeTruthy();
+    expect(screen.getByTestId('dose-time-chip-21:00')).toBeTruthy();
+
+    fireEvent.press(screen.getByTestId('dose-time-chip-09:00'));
+    expect(screen.queryByTestId('dose-time-chip-09:00')).toBeNull();
+
+    fireEvent.press(screen.getByTestId('item-form-submit'));
+
+    await waitFor(() =>
+      expect(updateItem).toHaveBeenCalledWith(
+        'home-1',
+        'item-1',
+        expect.objectContaining({ doseAmount: 2, doseTimes: ['21:00'] }),
+      ),
+    );
+  });
 });

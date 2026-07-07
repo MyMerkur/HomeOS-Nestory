@@ -171,3 +171,40 @@ alındığında yeni bir bölüm eklenir; eskiler değiştirilmez, "superseded" 
   barkod/tarih okunabilirliği) yine Jest ile doğrulanamaz — simulator/cihazda elle
   test gerekir. Canlı kamera UX'i hâlâ ertelenmiş durumda; ileride gerçek zamanlı
   tarama gerekirse bu karar yeniden değerlendirilecek.
+
+---
+
+## Decision: v1.3 İlaç modülü — mevcut InventoryItem'ı genişletme + tek bildirim döngüsü
+
+- **Date**: 2026-07-07
+- **Status**: Accepted
+- **Context**: Roadmap'in v1.3 maddesi "Medicine module — İlaç hatırlatma ve SKT
+  takibi". `InventoryItem.category` zaten `'Medicine'` değerine sahipti ama hiçbir
+  özel davranışı yoktu. SKT takibi zaten `InventoryItem`'dan geliyor; ayrıca
+  `mobile/src/services/notificationScheduler.ts`'in `syncItemReminders`'ı **tüm**
+  zamanlanmış bildirimleri iptal edip yeniden kuruyor (`getTriggerNotificationIds()`
+  uygulamanın sahip olduğu her id'yi döner, kanal/önek filtresi yok) — bağımsız
+  ikinci bir "doz hatırlatma" scheduler'ı bu döngüyle çakışıp birbirinin
+  bildirimlerini silerdi.
+- **Decision**: (1) Yeni bir model yerine `InventoryItem`'a opsiyonel `doseAmount`/
+  `doseTimes` alanları eklendi — stok hâlâ mevcut `quantity`/`unit` ile tutuluyor,
+  yeni bir "doz birimi" enum'u yok. (2) `consumeItem`/`discardItem`/`freezeItem`'ın
+  aksine yeni `takeDose` aksiyonu `status`'u **değiştirmez**, yalnızca `quantity`'yi
+  `doseAmount` kadar azaltır (0'da durur) — ilaç tükenmeyip yenilenebildiği için
+  tek seferlik bir durum geçişi yerine tekrarlanabilir bir aksiyon olarak modellendi.
+  (3) Doz hatırlatmaları **ayrı bir scheduler yerine** `syncItemReminders`'ın
+  mevcut tek iptal-et-yeniden-kur döngüsüne eklendi; ayrı bir id önekiyle
+  (`dose:${itemId}:${time}`) SKT hatırlatmalarından ayrıştırılır, Notifee'nin
+  `repeatFrequency: DAILY` özelliğiyle günlük tekrar native olarak yönetilir (uygulama
+  her gün yeniden zamanlamaz). (4) UI, Pantry listesini genişletmek yerine Dashboard
+  altına (Badges ile aynı yerleşim) ayrı bir "İlaçlarım" ekranı olarak eklendi —
+  asıl kullanım senaryosu ("bugün hangi ilaçları almalıyım") Pantry'nin lokasyon
+  bazlı gezinme modeline uymuyor. Ürün ekleme/düzenleme yine mevcut
+  `ItemFormScreen` üzerinden yapılır (doz alanları yalnızca `category === 'Medicine'`
+  seçiliyken görünür) — CRUD tekrarlanmadı.
+- **Consequences**: Stok `0`'a düştüğünde otomatik `consumed` durumuna geçiş **yok**
+  — kullanıcı "Alışverişe ekle" kısayoluyla (mevcut `addToShopping` aksiyonu)
+  manuel olarak yeniden stoklar. Günlük tekrarlayan bildirimin gerçek zamanda
+  ateşlenmesi Jest ile doğrulanamaz, cihaz/simulator'de elle test gerekir. Uygulama
+  yine tıbbi tavsiye vermez — `docs/legal/TermsOfService.md`'de belirtildiği gibi
+  yalnızca hatırlatma/kayıt amaçlıdır.

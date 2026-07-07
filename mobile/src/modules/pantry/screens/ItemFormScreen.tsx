@@ -2,7 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useEffect, useState } from 'react';
-import { Controller, useForm } from 'react-hook-form';
+import { Controller, useForm, useWatch } from 'react-hook-form';
 import {
   ActivityIndicator,
   Alert,
@@ -41,6 +41,7 @@ export function ItemFormScreen({ navigation, route }: PantryStackScreenProps<'It
   const [serverError, setServerError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showDatePicker, setShowDatePicker] = useState(false);
+  const [showDoseTimePicker, setShowDoseTimePicker] = useState(false);
   const [isScanningBarcode, setIsScanningBarcode] = useState(false);
   const [isScanningExpiryDate, setIsScanningExpiryDate] = useState(false);
 
@@ -60,8 +61,11 @@ export function ItemFormScreen({ navigation, route }: PantryStackScreenProps<'It
       quantity: 1,
       unit: undefined,
       barcode: initialBarcode,
+      doseTimes: [],
     },
   });
+
+  const isMedicine = useWatch({ control, name: 'category' }) === 'Medicine';
 
   useEffect(() => {
     navigation.setOptions({ title: isEditMode ? 'Ürünü düzenle' : 'Ürün ekle' });
@@ -77,6 +81,8 @@ export function ItemFormScreen({ navigation, route }: PantryStackScreenProps<'It
         unit: existingItem.unit,
         expiryDate: existingItem.expiryDate ? new Date(existingItem.expiryDate) : undefined,
         barcode: existingItem.barcode ?? undefined,
+        doseAmount: existingItem.doseAmount ?? undefined,
+        doseTimes: existingItem.doseTimes ?? [],
       });
     }
   }, [existingItem, reset]);
@@ -146,6 +152,8 @@ export function ItemFormScreen({ navigation, route }: PantryStackScreenProps<'It
         unit: values.unit,
         expiryDate: values.expiryDate?.toISOString(),
         barcode: values.barcode,
+        doseAmount: values.doseAmount,
+        doseTimes: values.doseTimes,
       };
 
       if (isEditMode) {
@@ -302,6 +310,73 @@ export function ItemFormScreen({ navigation, route }: PantryStackScreenProps<'It
         )}
       />
       {errors.unit && <Text style={styles.error}>{errors.unit.message}</Text>}
+
+      {isMedicine && (
+        <>
+          <Text style={styles.label}>Doz miktarı (opsiyonel)</Text>
+          <Controller
+            control={control}
+            name="doseAmount"
+            render={({ field: { onChange, onBlur, value } }) => (
+              <TextInput
+                testID="dose-amount-input"
+                style={styles.input}
+                keyboardType="numeric"
+                placeholder="ör. 1"
+                value={value === undefined ? '' : String(value)}
+                onChangeText={(text) => onChange(text === '' ? undefined : Number(text))}
+                onBlur={onBlur}
+              />
+            )}
+          />
+
+          <Text style={styles.label}>Doz saatleri (opsiyonel)</Text>
+          <Controller
+            control={control}
+            name="doseTimes"
+            render={({ field: { onChange, value } }) => {
+              const times = value ?? [];
+              return (
+                <>
+                  <View style={styles.chipsRow}>
+                    {times.map((time) => (
+                      <Pressable
+                        key={time}
+                        testID={`dose-time-chip-${time}`}
+                        style={styles.chip}
+                        onPress={() => onChange(times.filter((t) => t !== time))}
+                      >
+                        <Text style={styles.chipText}>{time} ✕</Text>
+                      </Pressable>
+                    ))}
+                    <Pressable
+                      testID="add-dose-time-button"
+                      style={styles.scanButton}
+                      onPress={() => setShowDoseTimePicker(true)}
+                    >
+                      <Text style={styles.scanButtonText}>+ Saat Ekle</Text>
+                    </Pressable>
+                  </View>
+                  {showDoseTimePicker && (
+                    <DateTimePicker
+                      value={new Date()}
+                      mode="time"
+                      display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+                      onChange={(_event, selectedTime) => {
+                        setShowDoseTimePicker(Platform.OS === 'ios');
+                        if (selectedTime) {
+                          const formatted = selectedTime.toTimeString().slice(0, 5);
+                          if (!times.includes(formatted)) onChange([...times, formatted]);
+                        }
+                      }}
+                    />
+                  )}
+                </>
+              );
+            }}
+          />
+        </>
+      )}
 
       <Text style={styles.label}>Son kullanma tarihi (opsiyonel)</Text>
       <View style={styles.barcodeRow}>

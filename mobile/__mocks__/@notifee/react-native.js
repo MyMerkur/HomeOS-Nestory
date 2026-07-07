@@ -9,3 +9,4 @@ const notifee = {
 module.exports = notifee;
 module.exports.default = notifee;
 module.exports.TriggerType = { TIMESTAMP: 0, INTERVAL: 1 };
+module.exports.RepeatFrequency = { NONE: -1, HOURLY: 0, DAILY: 1, WEEKLY: 2 };
