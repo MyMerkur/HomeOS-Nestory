@@ -1,6 +1,11 @@
-import { render, screen } from '@testing-library/react-native';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react-native';
 import { RecipeDetailScreen } from './RecipeDetailScreen';
+import { saveRecipe, unsaveRecipe } from '../services/recipeApi';
+import { useHomeStore } from '../../../store/useHomeStore';
 import type { RecipesStackScreenProps } from '../../../app/navigation/types';
+
+jest.mock('../services/recipeApi');
 
 const mockNavigation = {
   setOptions: jest.fn(),
@@ -19,18 +24,29 @@ const recipe = {
     { name: 'Havuç', optional: false },
   ],
   instructions: ['Sebzeleri kavurun.', 'Kaynatın.'],
+  isSaved: false,
 };
 
-function renderScreen() {
+function renderScreen(overrides: Partial<typeof recipe> = {}) {
+  const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   return render(
-    <RecipeDetailScreen
-      navigation={mockNavigation}
-      route={{ params: { recipe } } as RecipesStackScreenProps<'RecipeDetail'>['route']}
-    />,
+    <QueryClientProvider client={queryClient}>
+      <RecipeDetailScreen
+        navigation={mockNavigation}
+        route={
+          { params: { recipe: { ...recipe, ...overrides } } } as RecipesStackScreenProps<'RecipeDetail'>['route']
+        }
+      />
+    </QueryClientProvider>,
   );
 }
 
 describe('RecipeDetailScreen', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    useHomeStore.setState({ selectedHomeId: 'home-1' });
+  });
+
   it('renders ingredients with missing markers and instructions', () => {
     renderScreen();
 
@@ -45,5 +61,27 @@ describe('RecipeDetailScreen', () => {
     renderScreen();
 
     expect(mockNavigation.setOptions).toHaveBeenCalledWith({ title: 'Mercimek Çorbası' });
+  });
+
+  it('shows "Kaydet" and saves the recipe when pressed', async () => {
+    (saveRecipe as jest.Mock).mockResolvedValue(undefined);
+    renderScreen({ isSaved: false });
+
+    expect(screen.getByText('Kaydet')).toBeTruthy();
+    fireEvent.press(screen.getByTestId('recipe-detail-save-button'));
+
+    await waitFor(() => expect(saveRecipe).toHaveBeenCalledWith('home-1', 'recipe-1'));
+    expect(await screen.findByText('Kaydedildi ✓')).toBeTruthy();
+  });
+
+  it('shows "Kaydedildi ✓" and unsaves the recipe when pressed', async () => {
+    (unsaveRecipe as jest.Mock).mockResolvedValue(undefined);
+    renderScreen({ isSaved: true });
+
+    expect(screen.getByText('Kaydedildi ✓')).toBeTruthy();
+    fireEvent.press(screen.getByTestId('recipe-detail-save-button'));
+
+    await waitFor(() => expect(unsaveRecipe).toHaveBeenCalledWith('home-1', 'recipe-1'));
+    expect(await screen.findByText('Kaydet')).toBeTruthy();
   });
 });

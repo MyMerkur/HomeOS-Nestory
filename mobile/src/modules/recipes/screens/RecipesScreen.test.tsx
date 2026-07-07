@@ -1,7 +1,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { fireEvent, render, screen } from '@testing-library/react-native';
 import { RecipesScreen } from './RecipesScreen';
-import { getSuggestions } from '../services/recipeApi';
+import { getSavedRecipes, getSuggestions } from '../services/recipeApi';
 import { useHomeStore } from '../../../store/useHomeStore';
 import type { RecipesStackScreenProps } from '../../../app/navigation/types';
 
@@ -21,6 +21,21 @@ const mockRecipes = [
     missingIngredients: [],
     ingredients: [{ name: 'Yumurta', optional: false }],
     instructions: ['Pişirin.'],
+    isSaved: false,
+  },
+];
+
+const mockSavedRecipes = [
+  {
+    id: 'recipe-2',
+    name: 'Mercimek Çorbası',
+    category: 'Çorba',
+    imageUrl: null,
+    coveragePercent: 0,
+    missingIngredients: ['Soğan'],
+    ingredients: [{ name: 'Soğan', optional: false }],
+    instructions: ['Kaynatın.'],
+    isSaved: true,
   },
 ];
 
@@ -38,6 +53,7 @@ describe('RecipesScreen', () => {
     jest.clearAllMocks();
     useHomeStore.setState({ selectedHomeId: 'home-1' });
     (getSuggestions as jest.Mock).mockResolvedValue(mockRecipes);
+    (getSavedRecipes as jest.Mock).mockResolvedValue(mockSavedRecipes);
   });
 
   it('shows recipe cards with coverage percent', async () => {
@@ -61,5 +77,24 @@ describe('RecipesScreen', () => {
     renderScreen();
 
     expect(await screen.findByText('Şu an evdeki ürünlerle eşleşen bir tarif yok.')).toBeTruthy();
+  });
+
+  it('switches to the saved-recipes list when the Kaydedilenler tab is pressed', async () => {
+    renderScreen();
+
+    await screen.findByText('Menemen');
+    fireEvent.press(screen.getByTestId('recipes-tab-saved'));
+
+    expect(await screen.findByText('Mercimek Çorbası')).toBeTruthy();
+    expect(screen.queryByText('Menemen')).toBeNull();
+  });
+
+  it('shows an empty state for the saved tab when there are no saved recipes', async () => {
+    (getSavedRecipes as jest.Mock).mockResolvedValue([]);
+    renderScreen();
+
+    fireEvent.press(screen.getByTestId('recipes-tab-saved'));
+
+    expect(await screen.findByText('Henüz kaydedilmiş bir tarif yok.')).toBeTruthy();
   });
 });

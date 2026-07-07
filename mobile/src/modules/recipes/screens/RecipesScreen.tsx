@@ -1,7 +1,11 @@
+import { useState } from 'react';
 import { ActivityIndicator, FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import { useRecipeSuggestionsQuery } from '../hooks/useRecipeSuggestionsQuery';
+import { useSavedRecipesQuery } from '../hooks/useSavedRecipesQuery';
 import type { RecipeSuggestion } from '../services/recipeApi';
 import type { RecipesStackScreenProps } from '../../../app/navigation/types';
+
+type Tab = 'suggestions' | 'saved';
 
 function coverageStyle(coveragePercent: number) {
   if (coveragePercent >= 80) return styles.coverageHigh;
@@ -28,44 +32,75 @@ function RecipeCard({ recipe, onPress }: { recipe: RecipeSuggestion; onPress: ()
 }
 
 export function RecipesScreen({ navigation }: RecipesStackScreenProps<'Recipes'>) {
-  const { data: recipes, isLoading, isError } = useRecipeSuggestionsQuery();
-
-  if (isLoading) {
-    return (
-      <View style={styles.centered}>
-        <ActivityIndicator />
-      </View>
-    );
-  }
-
-  if (isError) {
-    return (
-      <View style={styles.centered}>
-        <Text style={styles.error}>Tarifler yüklenemedi.</Text>
-      </View>
-    );
-  }
-
-  if (!recipes || recipes.length === 0) {
-    return (
-      <View style={styles.centered}>
-        <Text style={styles.empty}>Şu an evdeki ürünlerle eşleşen bir tarif yok.</Text>
-      </View>
-    );
-  }
+  const [tab, setTab] = useState<Tab>('suggestions');
+  const suggestionsQuery = useRecipeSuggestionsQuery();
+  const savedQuery = useSavedRecipesQuery();
+  const { data: recipes, isLoading, isError } = tab === 'suggestions' ? suggestionsQuery : savedQuery;
 
   return (
-    <FlatList
-      data={recipes}
-      keyExtractor={(recipe) => recipe.id}
-      renderItem={({ item }) => (
-        <RecipeCard recipe={item} onPress={() => navigation.navigate('RecipeDetail', { recipe: item })} />
+    <View style={styles.container}>
+      <View style={styles.tabsRow}>
+        <Pressable
+          testID="recipes-tab-suggestions"
+          style={[styles.tab, tab === 'suggestions' && styles.tabActive]}
+          onPress={() => setTab('suggestions')}
+        >
+          <Text style={[styles.tabText, tab === 'suggestions' && styles.tabTextActive]}>Öneriler</Text>
+        </Pressable>
+        <Pressable
+          testID="recipes-tab-saved"
+          style={[styles.tab, tab === 'saved' && styles.tabActive]}
+          onPress={() => setTab('saved')}
+        >
+          <Text style={[styles.tabText, tab === 'saved' && styles.tabTextActive]}>Kaydedilenler</Text>
+        </Pressable>
+      </View>
+
+      {isLoading && (
+        <View style={styles.centered}>
+          <ActivityIndicator />
+        </View>
       )}
-    />
+
+      {!isLoading && isError && (
+        <View style={styles.centered}>
+          <Text style={styles.error}>Tarifler yüklenemedi.</Text>
+        </View>
+      )}
+
+      {!isLoading && !isError && (recipes?.length ?? 0) === 0 && (
+        <View style={styles.centered}>
+          <Text style={styles.empty}>
+            {tab === 'suggestions'
+              ? 'Şu an evdeki ürünlerle eşleşen bir tarif yok.'
+              : 'Henüz kaydedilmiş bir tarif yok.'}
+          </Text>
+        </View>
+      )}
+
+      {!isLoading && !isError && (recipes?.length ?? 0) > 0 && (
+        <FlatList
+          data={recipes}
+          keyExtractor={(recipe) => recipe.id}
+          renderItem={({ item }) => (
+            <RecipeCard
+              recipe={item}
+              onPress={() => navigation.navigate('RecipeDetail', { recipe: item })}
+            />
+          )}
+        />
+      )}
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  container: { flex: 1 },
+  tabsRow: { flexDirection: 'row', flexWrap: 'wrap', paddingHorizontal: 12, paddingTop: 12, gap: 8 },
+  tab: { paddingHorizontal: 12, paddingVertical: 6, borderRadius: 16, backgroundColor: '#f0f0f0' },
+  tabActive: { backgroundColor: '#1d76db' },
+  tabText: { fontSize: 13, color: '#333' },
+  tabTextActive: { color: '#fff', fontWeight: '600' },
   centered: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24 },
   error: { color: '#c0392b' },
   empty: { color: '#666', textAlign: 'center' },
