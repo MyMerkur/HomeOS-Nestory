@@ -33,3 +33,8 @@ export const homeAssetIdParamSchema = z.object({
   homeId: objectId,
   assetId: objectId,
 });
+
+export const homeUserIdParamSchema = z.object({
+  homeId: objectId,
+  userId: objectId,
+});

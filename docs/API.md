@@ -411,6 +411,80 @@ yoluyla statik olarak sunulur (`server/src/app.ts`). Geçersiz dosya türü/boyu
 `400 UPLOAD_ERROR`, dosya eksikse `400 FILE_REQUIRED` döner. Response:
 `{ "asset": {...} }` (güncellenmiş `receiptImageUrl`/`warrantyDocumentUrl` ile).
 
+## Membership (Aile) endpoint detayları
+
+`GET` için `viewer`, üye çıkarma için `admin`, ev adı/davet kodu değişikliği
+için `owner` rolü gerekir (`requireHomeMembership`).
+
+### GET /api/homes/:homeId/members
+
+```json
+{ "members": [{ "membershipId", "userId", "name", "email", "avatarUrl", "role", "joinedAt" }] }
+```
+
+### DELETE /api/homes/:homeId/members/:userId
+
+Owner rolündeki üye çıkarılamaz — `400 CANNOT_REMOVE_OWNER`. Hedef üye aktif
+değilse `404 MEMBER_NOT_FOUND`.
+
+### POST /api/homes/:homeId/leave
+
+Kendi üyeliğinden ayrılma. Owner, evde başka aktif üye varken ayrılamaz —
+`400 OWNER_CANNOT_LEAVE` (ownership devri özelliği yok). Owner tek aktif üyeyse
+ayrılabilir.
+
+### PATCH /api/homes/:homeId
+
+```json
+{ "name": "Yeni Ev Adı" }
+```
+
+Sadece owner. Response: `{ "home": { "id", "name" } }`.
+
+### POST /api/homes/:homeId/invite-code/regenerate
+
+Sadece owner. Eski kod hash'i geri getirilemediği için (yalnızca hash
+saklanıyor) yeni bir kod üretilip eskisinin yerine geçer. Response:
+`{ "inviteCode": "..." }` (düz metin, sadece bu response'ta görünür).
+
+## Kullanıcı (Ayarlar) endpoint detayları
+
+Tümü `authenticate` ile korunur, `:userId` yerine her zaman oturum sahibi
+(`req.userId`) kullanılır — başka bir kullanıcının profilini görüntüleme/
+düzenleme endpoint'i yoktur.
+
+### GET /api/users/me
+
+```json
+{ "user": { "id", "name", "email", "avatarUrl", "settings": { "language", "theme", "notificationPreferences": { "expiryReminders", "shoppingUpdates", "weeklySummary" } } } }
+```
+
+### PATCH /api/users/me
+
+```json
+{ "name": "Yeni İsim", "avatarUrl": "https://..." }
+```
+
+Her iki alan da opsiyoneldir.
+
+### PATCH /api/users/me/password
+
+```json
+{ "currentPassword": "...", "newPassword": "..." }
+```
+
+Yanlış mevcut şifre `401 INVALID_CURRENT_PASSWORD` döner.
+
+### PATCH /api/users/me/settings
+
+```json
+{ "language": "tr", "theme": "light", "notificationPreferences": { "expiryReminders": false } }
+```
+
+`theme` v1 sınırı gereği yalnızca `"light"` kabul edilir — başka bir değer
+(`dark`/`system`) zod validasyonunda `422 VALIDATION_ERROR` ile reddedilir.
+`notificationPreferences` kısmi güncellenebilir (verilmeyen alanlar korunur).
+
 ## Pagination
 
 ```

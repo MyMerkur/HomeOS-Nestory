@@ -61,6 +61,11 @@ audit_logs: homeId, createdAt
 }
 ```
 
+`settings` alanı `PATCH /api/users/me/settings` ile aktif olarak okunup
+yazılıyor (`server/src/services/userService.ts`) — `theme` v1 sınırı gereği bu
+endpoint üzerinden yalnızca `'light'` kabul edilir, `dark`/`system` şema
+seviyesinde saklanabilir olsa da API üzerinden set edilemez.
+
 ### RefreshToken (`server/src/models/RefreshToken.ts`) ✅
 
 ```
@@ -81,7 +86,7 @@ Rotation: her `refresh` çağrısında mevcut kayıt `revokedAt` ile işaretleni
 {
   name: string (1-80),
   ownerId: ObjectId (ref User, indexed),
-  inviteCodeHash: string (unique, sha256 — düz kod yalnızca create response'unda döner),
+  inviteCodeHash: string (unique, sha256 — düz kod yalnızca create/regenerate response'unda döner),
   defaultCurrency: string (default 'TRY'),
   timezone: string (default 'Europe/Istanbul'),
   createdAt, updatedAt
@@ -101,7 +106,10 @@ Rotation: her `refresh` çağrısında mevcut kayıt `revokedAt` ile işaretleni
 }
 ```
 
-unique index: `(homeId, userId)`.
+unique index: `(homeId, userId)`. Family ekranının üye listesi
+(`GET /api/homes/:homeId/members`) bu koleksiyonu `userId` populate ederek
+okur; ayrı bir "davet" kaydı/tablosu yok, `status: 'removed'` soft-delete
+olarak kullanılıyor (çıkarma/ayrılma bu alanı günceller, doküman silinmez).
 
 ### PantryLocation (`server/src/models/PantryLocation.ts`) ✅ (minimal — Sprint 2'de genişleyecek)
 

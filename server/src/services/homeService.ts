@@ -118,3 +118,25 @@ export async function joinHome(userId: string, inviteCode: string): Promise<Home
     role: 'member',
   };
 }
+
+export async function updateHomeName(homeId: string, name: string): Promise<{ id: string; name: string }> {
+  const home = await Home.findByIdAndUpdate(homeId, { name }, { new: true });
+
+  if (!home) {
+    throw new AppError('Home not found', 404, 'HOME_NOT_FOUND');
+  }
+
+  return { id: home._id.toString(), name: home.name };
+}
+
+export async function regenerateInviteCode(homeId: string): Promise<{ inviteCode: string }> {
+  const { code, codeHash } = generateInviteCode();
+
+  const home = await Home.findByIdAndUpdate(homeId, { inviteCodeHash: codeHash }, { new: true });
+
+  if (!home) {
+    throw new AppError('Home not found', 404, 'HOME_NOT_FOUND');
+  }
+
+  return { inviteCode: code };
+}

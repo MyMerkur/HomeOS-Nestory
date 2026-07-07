@@ -1,5 +1,11 @@
 import { Router } from 'express';
-import { createHomeHandler, joinHomeHandler, listHomesHandler } from '../controllers/homeController';
+import {
+  createHomeHandler,
+  joinHomeHandler,
+  listHomesHandler,
+  regenerateInviteCodeHandler,
+  updateHomeHandler,
+} from '../controllers/homeController';
 import { getDashboardHandler } from '../controllers/dashboardController';
 import {
   getSuggestionsHandler,
@@ -8,11 +14,20 @@ import {
   unsaveRecipeHandler,
 } from '../controllers/recipeController';
 import { getBadgesHandler } from '../controllers/badgeController';
+import {
+  leaveHomeHandler,
+  listMembersHandler,
+  removeMemberHandler,
+} from '../controllers/membershipController';
 import { authenticate } from '../middlewares/authenticate';
 import { validateBody, validateParams } from '../middlewares/validate';
 import { requireHomeMembership } from '../middlewares/requireHomeMembership';
-import { createHomeSchema, joinHomeSchema } from '../validations/homeValidation';
-import { homeIdParamSchema, homeRecipeIdParamSchema } from '../validations/paramsValidation';
+import { createHomeSchema, joinHomeSchema, updateHomeSchema } from '../validations/homeValidation';
+import {
+  homeIdParamSchema,
+  homeRecipeIdParamSchema,
+  homeUserIdParamSchema,
+} from '../validations/paramsValidation';
 import { catchAsync } from '../utils/catchAsync';
 import locationRoutes from './locationRoutes';
 import inventoryRoutes from './inventoryRoutes';
@@ -61,6 +76,37 @@ router.get(
   validateParams(homeIdParamSchema),
   requireHomeMembership('viewer'),
   catchAsync(getBadgesHandler),
+);
+router.patch(
+  '/:homeId',
+  validateParams(homeIdParamSchema),
+  validateBody(updateHomeSchema),
+  requireHomeMembership('owner'),
+  catchAsync(updateHomeHandler),
+);
+router.post(
+  '/:homeId/invite-code/regenerate',
+  validateParams(homeIdParamSchema),
+  requireHomeMembership('owner'),
+  catchAsync(regenerateInviteCodeHandler),
+);
+router.get(
+  '/:homeId/members',
+  validateParams(homeIdParamSchema),
+  requireHomeMembership('viewer'),
+  catchAsync(listMembersHandler),
+);
+router.delete(
+  '/:homeId/members/:userId',
+  validateParams(homeUserIdParamSchema),
+  requireHomeMembership('admin'),
+  catchAsync(removeMemberHandler),
+);
+router.post(
+  '/:homeId/leave',
+  validateParams(homeIdParamSchema),
+  requireHomeMembership('viewer'),
+  catchAsync(leaveHomeHandler),
 );
 
 router.use('/:homeId/locations', locationRoutes);
