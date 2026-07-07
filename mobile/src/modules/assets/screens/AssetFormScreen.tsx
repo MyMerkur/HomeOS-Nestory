@@ -4,18 +4,13 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import TextRecognition from '@react-native-ml-kit/text-recognition';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import {
-  ActivityIndicator,
-  Platform,
-  Pressable,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from 'react-native';
+import { ActivityIndicator, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useHomeStore } from '../../../store/useHomeStore';
 import { captureImage } from '../../../services/cameraCapture';
+import { Button } from '../../../ui/Button';
+import { Chip } from '../../../ui/Chip';
+import { TextField } from '../../../ui/TextField';
+import { colors, fontSize, spacing, typography } from '../../../theme/theme';
 import { parseExpiryDateFromText } from '../../pantry/services/dateOcrScanner';
 import { ASSET_CATEGORIES, ASSET_CATEGORY_LABELS } from '../constants';
 import { ASSETS_QUERY_KEY } from '../hooks/useAssetsQuery';
@@ -165,28 +160,27 @@ export function AssetFormScreen({ navigation, route }: DashboardStackScreenProps
   if (isEditMode && isLoadingAsset) {
     return (
       <View style={styles.centered}>
-        <ActivityIndicator />
+        <ActivityIndicator color={colors.primary} />
       </View>
     );
   }
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.label}>Eşya adı</Text>
       <Controller
         control={control}
         name="name"
         render={({ field: { onChange, onBlur, value } }) => (
-          <TextInput
-            style={styles.input}
+          <TextField
+            label="Eşya adı"
             placeholder="ör. Televizyon"
             value={value}
             onChangeText={onChange}
             onBlur={onBlur}
+            error={errors.name?.message}
           />
         )}
       />
-      {errors.name && <Text style={styles.error}>{errors.name.message}</Text>}
 
       <Text style={styles.label}>Kategori</Text>
       <Controller
@@ -195,29 +189,25 @@ export function AssetFormScreen({ navigation, route }: DashboardStackScreenProps
         render={({ field: { onChange, value } }) => (
           <View style={styles.chipsRow}>
             {ASSET_CATEGORIES.map((category) => (
-              <Pressable
+              <Chip
                 key={category}
                 testID={`asset-category-chip-${category}`}
-                style={[styles.chip, value === category && styles.chipActive]}
+                label={ASSET_CATEGORY_LABELS[category]}
+                selected={value === category}
                 onPress={() => onChange(category)}
-              >
-                <Text style={[styles.chipText, value === category && styles.chipTextActive]}>
-                  {ASSET_CATEGORY_LABELS[category]}
-                </Text>
-              </Pressable>
+              />
             ))}
           </View>
         )}
       />
-      {errors.category && <Text style={styles.error}>{errors.category.message}</Text>}
+      {errors.category ? <Text style={styles.error}>{errors.category.message}</Text> : null}
 
-      <Text style={styles.label}>Oda (opsiyonel)</Text>
       <Controller
         control={control}
         name="room"
         render={({ field: { onChange, onBlur, value } }) => (
-          <TextInput
-            style={styles.input}
+          <TextField
+            label="Oda (opsiyonel)"
             placeholder="ör. Oturma Odası"
             value={value ?? ''}
             onChangeText={onChange}
@@ -226,27 +216,20 @@ export function AssetFormScreen({ navigation, route }: DashboardStackScreenProps
         )}
       />
 
-      <Text style={styles.label}>Marka (opsiyonel)</Text>
       <Controller
         control={control}
         name="brand"
         render={({ field: { onChange, onBlur, value } }) => (
-          <TextInput
-            style={styles.input}
-            value={value ?? ''}
-            onChangeText={onChange}
-            onBlur={onBlur}
-          />
+          <TextField label="Marka (opsiyonel)" value={value ?? ''} onChangeText={onChange} onBlur={onBlur} />
         )}
       />
 
-      <Text style={styles.label}>Seri numarası (opsiyonel)</Text>
       <Controller
         control={control}
         name="serialNumber"
         render={({ field: { onChange, onBlur, value } }) => (
-          <TextInput
-            style={styles.input}
+          <TextField
+            label="Seri numarası (opsiyonel)"
             value={value ?? ''}
             onChangeText={onChange}
             onBlur={onBlur}
@@ -254,13 +237,12 @@ export function AssetFormScreen({ navigation, route }: DashboardStackScreenProps
         )}
       />
 
-      <Text style={styles.label}>Fiyat (opsiyonel)</Text>
       <Controller
         control={control}
         name="price"
         render={({ field: { onChange, onBlur, value } }) => (
-          <TextInput
-            style={styles.input}
+          <TextField
+            label="Fiyat (opsiyonel)"
             keyboardType="numeric"
             value={value === undefined ? '' : String(value)}
             onChangeText={(text) => onChange(text === '' ? undefined : Number(text))}
@@ -277,12 +259,14 @@ export function AssetFormScreen({ navigation, route }: DashboardStackScreenProps
           <>
             <Pressable
               testID="purchase-date-button"
-              style={styles.input}
+              style={styles.dateButton}
               onPress={() => setShowPurchaseDatePicker(true)}
             >
-              <Text>{value ? value.toLocaleDateString('tr-TR') : 'Tarih seç'}</Text>
+              <Text style={styles.dateButtonText}>
+                {value ? value.toLocaleDateString('tr-TR') : 'Tarih seç'}
+              </Text>
             </Pressable>
-            {showPurchaseDatePicker && (
+            {showPurchaseDatePicker ? (
               <DateTimePicker
                 value={value ?? new Date()}
                 mode="date"
@@ -292,7 +276,7 @@ export function AssetFormScreen({ navigation, route }: DashboardStackScreenProps
                   if (selectedDate) onChange(selectedDate);
                 }}
               />
-            )}
+            ) : null}
           </>
         )}
       />
@@ -305,12 +289,14 @@ export function AssetFormScreen({ navigation, route }: DashboardStackScreenProps
           <>
             <Pressable
               testID="warranty-end-date-button"
-              style={styles.input}
+              style={styles.dateButton}
               onPress={() => setShowWarrantyDatePicker(true)}
             >
-              <Text>{value ? value.toLocaleDateString('tr-TR') : 'Tarih seç'}</Text>
+              <Text style={styles.dateButtonText}>
+                {value ? value.toLocaleDateString('tr-TR') : 'Tarih seç'}
+              </Text>
             </Pressable>
-            {showWarrantyDatePicker && (
+            {showWarrantyDatePicker ? (
               <DateTimePicker
                 value={value ?? new Date()}
                 mode="date"
@@ -320,48 +306,35 @@ export function AssetFormScreen({ navigation, route }: DashboardStackScreenProps
                   if (selectedDate) onChange(selectedDate);
                 }}
               />
-            )}
+            ) : null}
           </>
         )}
       />
 
       <Text style={styles.label}>Fiş / Garanti Belgesi (opsiyonel)</Text>
       <View style={styles.chipsRow}>
-        <Pressable
+        <Button
           testID="scan-receipt-button"
-          style={[styles.scanButton, isScanningReceipt && styles.buttonDisabled]}
+          label={hasReceipt ? 'Fiş Eklendi ✓' : 'Fişi Tara'}
           onPress={handleScanReceipt}
-          disabled={isScanningReceipt}
-        >
-          {isScanningReceipt ? (
-            <ActivityIndicator color="#1d76db" />
-          ) : (
-            <Text style={styles.scanButtonText}>{hasReceipt ? 'Fiş Eklendi ✓' : 'Fişi Tara'}</Text>
-          )}
-        </Pressable>
-        <Pressable
+          loading={isScanningReceipt}
+          variant="outline"
+        />
+        <Button
           testID="add-warranty-document-button"
-          style={[styles.scanButton, isAddingWarrantyDocument && styles.buttonDisabled]}
+          label={hasWarrantyDocument ? 'Belge Eklendi ✓' : 'Garanti Belgesi Ekle'}
           onPress={handleAddWarrantyDocument}
-          disabled={isAddingWarrantyDocument}
-        >
-          {isAddingWarrantyDocument ? (
-            <ActivityIndicator color="#1d76db" />
-          ) : (
-            <Text style={styles.scanButtonText}>
-              {hasWarrantyDocument ? 'Belge Eklendi ✓' : 'Garanti Belgesi Ekle'}
-            </Text>
-          )}
-        </Pressable>
+          loading={isAddingWarrantyDocument}
+          variant="outline"
+        />
       </View>
 
-      <Text style={styles.label}>Notlar (opsiyonel)</Text>
       <Controller
         control={control}
         name="notes"
         render={({ field: { onChange, onBlur, value } }) => (
-          <TextInput
-            style={styles.input}
+          <TextField
+            label="Notlar (opsiyonel)"
             multiline
             value={value ?? ''}
             onChangeText={onChange}
@@ -370,58 +343,48 @@ export function AssetFormScreen({ navigation, route }: DashboardStackScreenProps
         )}
       />
 
-      {serverError && <Text style={styles.error}>{serverError}</Text>}
+      {serverError ? <Text style={styles.error}>{serverError}</Text> : null}
 
-      <Pressable
-        testID="asset-form-submit"
-        style={[styles.button, isSubmitting && styles.buttonDisabled]}
-        onPress={handleSubmit(onSubmit)}
-        disabled={isSubmitting}
-      >
-        {isSubmitting ? (
-          <ActivityIndicator color="#fff" />
-        ) : (
-          <Text style={styles.buttonText}>{isEditMode ? 'Güncelle' : 'Ekle'}</Text>
-        )}
-      </Pressable>
+      <View style={styles.submitButton}>
+        <Button
+          testID="asset-form-submit"
+          label={isEditMode ? 'Güncelle' : 'Ekle'}
+          onPress={handleSubmit(onSubmit)}
+          loading={isSubmitting}
+        />
+      </View>
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { padding: 16, gap: 4 },
+  container: { padding: spacing.lg, gap: spacing.md, backgroundColor: colors.background },
   centered: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  label: { fontSize: 13, fontWeight: '600', color: '#333', marginTop: 12 },
-  input: {
+  label: {
+    fontSize: fontSize.bodyMd,
+    fontFamily: typography.bodyMedium.fontFamily,
+    fontWeight: typography.bodyMedium.fontWeight,
+    color: colors.textPrimary,
+  },
+  error: {
+    fontSize: fontSize.bodySm,
+    fontFamily: typography.caption.fontFamily,
+    color: colors.dangerDark,
+  },
+  chipsRow: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
+  dateButton: {
+    minHeight: 44,
     borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
+    borderColor: colors.borderStrong,
+    borderRadius: 12,
+    paddingHorizontal: spacing.md,
     justifyContent: 'center',
+    backgroundColor: colors.surface,
   },
-  error: { color: '#c0392b', fontSize: 13 },
-  chipsRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  chip: { paddingHorizontal: 12, paddingVertical: 6, borderRadius: 16, backgroundColor: '#f0f0f0' },
-  chipActive: { backgroundColor: '#1d76db' },
-  chipText: { fontSize: 13, color: '#333' },
-  chipTextActive: { color: '#fff', fontWeight: '600' },
-  scanButton: {
-    borderWidth: 1,
-    borderColor: '#1d76db',
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
+  dateButtonText: {
+    fontSize: fontSize.bodyLg,
+    fontFamily: typography.body.fontFamily,
+    color: colors.textPrimary,
   },
-  scanButtonText: { color: '#1d76db', fontWeight: '600', fontSize: 13 },
-  button: {
-    backgroundColor: '#1d76db',
-    borderRadius: 8,
-    paddingVertical: 14,
-    alignItems: 'center',
-    marginTop: 24,
-    marginBottom: 40,
-  },
-  buttonDisabled: { opacity: 0.6 },
-  buttonText: { color: '#fff', fontWeight: '600' },
+  submitButton: { marginTop: spacing.lg, marginBottom: spacing.xxl },
 });

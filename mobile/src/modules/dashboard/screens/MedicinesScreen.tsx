@@ -1,5 +1,10 @@
 import { useQueryClient } from '@tanstack/react-query';
-import { ActivityIndicator, FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, FlatList, StyleSheet, Text, View } from 'react-native';
+import { IconPill } from '@tabler/icons-react-native';
+import { Button } from '../../../ui/Button';
+import { Card } from '../../../ui/Card';
+import { EmptyState } from '../../../ui/EmptyState';
+import { colors, fontSize, spacing, typography } from '../../../theme/theme';
 import { useHomeStore } from '../../../store/useHomeStore';
 import { UNIT_LABELS } from '../../pantry/constants';
 import { INVENTORY_ITEMS_QUERY_KEY, useInventoryItemsQuery } from '../../pantry/hooks/useInventoryItemsQuery';
@@ -16,35 +21,33 @@ function MedicineRow({ item, onTakeDose, onAddToShopping }: MedicineRowProps) {
   const outOfStock = item.quantity <= 0;
 
   return (
-    <View testID={`medicine-card-${item.id}`} style={styles.card}>
+    <Card testID={`medicine-card-${item.id}`} style={styles.card}>
       <View style={styles.info}>
         <Text style={styles.name}>{item.name}</Text>
         <Text style={styles.meta}>
           {item.quantity} {UNIT_LABELS[item.unit]}
           {outOfStock ? ' · Stokta yok' : ''}
         </Text>
-        {item.doseTimes.length > 0 && (
+        {item.doseTimes.length > 0 ? (
           <Text style={styles.doseTimes}>Saatler: {item.doseTimes.join(', ')}</Text>
-        )}
+        ) : null}
       </View>
       {outOfStock ? (
-        <Pressable
+        <Button
           testID={`add-to-shopping-${item.id}`}
-          style={styles.shoppingButton}
+          label="Alışverişe ekle"
           onPress={() => onAddToShopping(item.id)}
-        >
-          <Text style={styles.shoppingButtonText}>Alışverişe ekle</Text>
-        </Pressable>
+          variant="warningOutline"
+        />
       ) : (
-        <Pressable
+        <Button
           testID={`take-dose-${item.id}`}
-          style={styles.doseButton}
+          label="Doz Aldım"
           onPress={() => onTakeDose(item.id)}
-        >
-          <Text style={styles.doseButtonText}>Doz Aldım</Text>
-        </Pressable>
+          variant="secondary"
+        />
       )}
-    </View>
+    </Card>
   );
 }
 
@@ -70,7 +73,7 @@ export function MedicinesScreen() {
   if (isLoading) {
     return (
       <View style={styles.centered}>
-        <ActivityIndicator />
+        <ActivityIndicator color={colors.primary} />
       </View>
     );
   }
@@ -84,17 +87,14 @@ export function MedicinesScreen() {
   }
 
   if (data.items.length === 0) {
-    return (
-      <View style={styles.centered}>
-        <Text style={styles.empty}>Henüz kayıtlı bir ilaç yok.</Text>
-      </View>
-    );
+    return <EmptyState icon={IconPill} title="Henüz kayıtlı bir ilaç yok." />;
   }
 
   return (
     <FlatList
       data={data.items}
       keyExtractor={(item) => item.id}
+      contentContainerStyle={styles.list}
       renderItem={({ item }) => (
         <MedicineRow item={item} onTakeDose={handleTakeDose} onAddToShopping={handleAddToShopping} />
       )}
@@ -103,35 +103,29 @@ export function MedicinesScreen() {
 }
 
 const styles = StyleSheet.create({
-  centered: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24 },
-  error: { color: '#c0392b' },
-  empty: { color: '#666', textAlign: 'center' },
-  card: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: 12,
-    paddingHorizontal: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee',
+  centered: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: spacing.xl },
+  error: {
+    fontSize: fontSize.bodyMd,
+    fontFamily: typography.body.fontFamily,
+    color: colors.textSecondary,
   },
+  list: { padding: spacing.lg },
+  card: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: spacing.sm },
   info: { flex: 1, gap: 2 },
-  name: { fontSize: 16, fontWeight: '600' },
-  meta: { fontSize: 13, color: '#666' },
-  doseTimes: { fontSize: 12, color: '#999' },
-  doseButton: {
-    backgroundColor: '#1d76db',
-    borderRadius: 16,
-    paddingHorizontal: 14,
-    paddingVertical: 8,
+  name: {
+    fontSize: fontSize.bodyMd,
+    fontFamily: typography.bodyMedium.fontFamily,
+    fontWeight: typography.bodyMedium.fontWeight,
+    color: colors.textPrimary,
   },
-  doseButtonText: { color: '#fff', fontWeight: '600', fontSize: 13 },
-  shoppingButton: {
-    borderWidth: 1,
-    borderColor: '#e67e22',
-    borderRadius: 16,
-    paddingHorizontal: 14,
-    paddingVertical: 8,
+  meta: {
+    fontSize: fontSize.bodySm,
+    fontFamily: typography.caption.fontFamily,
+    color: colors.textSecondary,
   },
-  shoppingButtonText: { color: '#e67e22', fontWeight: '600', fontSize: 13 },
+  doseTimes: {
+    fontSize: fontSize.caption,
+    fontFamily: typography.caption.fontFamily,
+    color: colors.textMuted,
+  },
 });

@@ -1,6 +1,8 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
-import { ActivityIndicator, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Button } from '../../../ui/Button';
+import { colors, fontSize, radius, spacing, typography } from '../../../theme/theme';
 import { useHomeStore } from '../../../store/useHomeStore';
 import { RECIPE_SUGGESTIONS_QUERY_KEY } from '../hooks/useRecipeSuggestionsQuery';
 import { SAVED_RECIPES_QUERY_KEY } from '../hooks/useSavedRecipesQuery';
@@ -40,29 +42,27 @@ export function RecipeDetailScreen({ navigation, route }: RecipesStackScreenProp
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Pressable
+      <Button
         testID="recipe-detail-save-button"
-        style={[styles.saveButton, isSaved && styles.saveButtonActive]}
+        label={isSaved ? 'Kaydedildi ✓' : 'Kaydet'}
         onPress={handleToggleSave}
-        disabled={isTogglingSave}
-      >
-        {isTogglingSave ? (
-          <ActivityIndicator color={isSaved ? '#fff' : '#1d76db'} />
-        ) : (
-          <Text style={[styles.saveButtonText, isSaved && styles.saveButtonTextActive]}>
-            {isSaved ? 'Kaydedildi ✓' : 'Kaydet'}
-          </Text>
-        )}
-      </Pressable>
+        loading={isTogglingSave}
+        variant={isSaved ? 'primary' : 'outline'}
+      />
 
       <Text style={styles.coverage}>Evdeki malzemelerle kapsama: %{recipe.coveragePercent}</Text>
 
       <Text style={styles.sectionTitle}>Malzemeler</Text>
       {recipe.ingredients.map((ingredient) => (
-        <Text key={ingredient.name} style={styles.ingredient}>
-          {missing.has(ingredient.name) ? '✗' : '✓'} {ingredient.name}
-          {ingredient.optional ? ' (opsiyonel)' : ''}
-        </Text>
+        <View
+          key={ingredient.name}
+          style={[styles.ingredientRow, missing.has(ingredient.name) && styles.ingredientRowMissing]}
+        >
+          <Text style={styles.ingredient}>
+            {missing.has(ingredient.name) ? '✗' : '✓'} {ingredient.name}
+            {ingredient.optional ? ' (opsiyonel)' : ''}
+          </Text>
+        </View>
       ))}
 
       <Text style={styles.sectionTitle}>Talimatlar</Text>
@@ -77,22 +77,40 @@ export function RecipeDetailScreen({ navigation, route }: RecipesStackScreenProp
 }
 
 const styles = StyleSheet.create({
-  container: { padding: 16, gap: 4 },
-  coverage: { fontSize: 14, color: '#666', marginBottom: 8 },
-  sectionTitle: { fontSize: 16, fontWeight: '700', marginTop: 16, marginBottom: 4 },
-  ingredient: { fontSize: 15, paddingVertical: 2 },
-  stepRow: { flexDirection: 'row', gap: 6, paddingVertical: 4 },
-  stepNumber: { fontWeight: '600' },
-  stepText: { flex: 1 },
-  saveButton: {
-    borderWidth: 1,
-    borderColor: '#1d76db',
-    borderRadius: 8,
-    paddingVertical: 12,
-    alignItems: 'center',
-    marginBottom: 12,
+  container: { padding: spacing.lg, gap: spacing.xs, backgroundColor: colors.background },
+  coverage: {
+    fontSize: fontSize.bodyMd,
+    fontFamily: typography.body.fontFamily,
+    color: colors.textSecondary,
+    marginTop: spacing.md,
+    marginBottom: spacing.sm,
   },
-  saveButtonActive: { backgroundColor: '#1d76db' },
-  saveButtonText: { color: '#1d76db', fontWeight: '600' },
-  saveButtonTextActive: { color: '#fff' },
+  sectionTitle: {
+    fontSize: fontSize.bodyMd,
+    fontFamily: typography.heading.fontFamily,
+    fontWeight: typography.heading.fontWeight,
+    color: colors.textPrimary,
+    marginTop: spacing.lg,
+    marginBottom: spacing.xs,
+  },
+  ingredientRow: { paddingVertical: spacing.xs, paddingHorizontal: spacing.sm, borderRadius: radius.sm },
+  ingredientRowMissing: { backgroundColor: colors.dangerTint },
+  ingredient: {
+    fontSize: fontSize.bodyLg,
+    fontFamily: typography.body.fontFamily,
+    color: colors.textPrimary,
+  },
+  stepRow: { flexDirection: 'row', gap: spacing.xs, paddingVertical: spacing.xs },
+  stepNumber: {
+    fontSize: fontSize.bodyLg,
+    fontFamily: typography.bodyMedium.fontFamily,
+    fontWeight: typography.bodyMedium.fontWeight,
+    color: colors.textPrimary,
+  },
+  stepText: {
+    flex: 1,
+    fontSize: fontSize.bodyLg,
+    fontFamily: typography.body.fontFamily,
+    color: colors.textPrimary,
+  },
 });

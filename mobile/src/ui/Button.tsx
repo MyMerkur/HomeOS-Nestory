@@ -1,7 +1,7 @@
 import { ActivityIndicator, Pressable, StyleSheet, Text } from 'react-native';
 import { colors, fontSize, radius, spacing, typography } from '../theme/theme';
 
-type Variant = 'primary' | 'secondary' | 'outline';
+type Variant = 'primary' | 'secondary' | 'outline' | 'warningOutline';
 
 type Props = {
   label: string;
@@ -37,9 +37,9 @@ export function Button({
       ]}
     >
       {loading ? (
-        <ActivityIndicator color={variant === 'primary' ? colors.white : colors.primary} />
+        <ActivityIndicator color={variant === 'primary' ? colors.white : labelColor[variant]} />
       ) : (
-        <Text style={[styles.label, variant === 'primary' ? styles.labelOnPrimary : styles.labelOnLight]}>
+        <Text style={[styles.label, { color: variant === 'primary' ? colors.white : labelColor[variant] }]}>
           {label}
         </Text>
       )}
@@ -67,13 +67,14 @@ const styles = StyleSheet.create({
     fontFamily: typography.bodyMedium.fontFamily,
     fontWeight: typography.bodyMedium.fontWeight,
   },
-  labelOnPrimary: {
-    color: colors.white,
-  },
-  labelOnLight: {
-    color: colors.primary,
-  },
 });
+
+const labelColor: Record<Variant, string> = {
+  primary: colors.white,
+  secondary: colors.primary,
+  outline: colors.primary,
+  warningOutline: colors.warningDark,
+};
 
 const variantStyles = StyleSheet.create({
   primary: {
@@ -86,5 +87,10 @@ const variantStyles = StyleSheet.create({
     backgroundColor: 'transparent',
     borderWidth: 1,
     borderColor: colors.primary,
+  },
+  warningOutline: {
+    backgroundColor: 'transparent',
+    borderWidth: 1,
+    borderColor: colors.warning,
   },
 });

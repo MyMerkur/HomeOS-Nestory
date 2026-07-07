@@ -4,6 +4,7 @@ import { colors, fontSize, radius, spacing, typography } from '../theme/theme';
 type Option = {
   value: string;
   label: string;
+  testID?: string;
 };
 
 type Props = {
@@ -20,6 +21,7 @@ export function SegmentedControl({ options, value, onChange }: Props) {
         return (
           <Pressable
             key={option.value}
+            testID={option.testID}
             accessibilityRole="button"
             accessibilityState={{ selected: isActive }}
             onPress={() => onChange(option.value)}

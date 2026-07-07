@@ -1,9 +1,13 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { ActivityIndicator, Alert, FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
+import { IconDevicesOff, IconPlus } from '@tabler/icons-react-native';
 import { ASSET_CATEGORY_LABELS } from '../constants';
 import { WarrantyBadge } from '../components/WarrantyBadge';
 import { ASSETS_QUERY_KEY, useAssetsQuery } from '../hooks/useAssetsQuery';
 import { deleteAsset, updateAsset, type Asset } from '../services/assetApi';
+import { EmptyState } from '../../../ui/EmptyState';
+import { FAB } from '../../../ui/FAB';
+import { colors, fontSize, spacing, typography } from '../../../theme/theme';
 import { useHomeStore } from '../../../store/useHomeStore';
 import type { DashboardStackScreenProps } from '../../../app/navigation/types';
 
@@ -56,7 +60,7 @@ export function AssetsScreen({ navigation }: DashboardStackScreenProps<'Assets'>
   if (isLoading) {
     return (
       <View style={styles.centered}>
-        <ActivityIndicator />
+        <ActivityIndicator color={colors.primary} />
       </View>
     );
   }
@@ -72,13 +76,12 @@ export function AssetsScreen({ navigation }: DashboardStackScreenProps<'Assets'>
   return (
     <View style={styles.container}>
       {data.assets.length === 0 ? (
-        <View style={styles.centered}>
-          <Text style={styles.empty}>Henüz kayıtlı bir eşya yok.</Text>
-        </View>
+        <EmptyState icon={IconDevicesOff} title="Henüz kayıtlı bir eşya yok." />
       ) : (
         <FlatList
           data={data.assets}
           keyExtractor={(asset) => asset.id}
+          contentContainerStyle={styles.list}
           renderItem={({ item }) => (
             <AssetCard
               asset={item}
@@ -89,45 +92,44 @@ export function AssetsScreen({ navigation }: DashboardStackScreenProps<'Assets'>
         />
       )}
 
-      <Pressable
+      <FAB
         testID="add-asset-button"
-        style={styles.fab}
+        icon={IconPlus}
+        accessibilityLabel="Eşya ekle"
         onPress={() => navigation.navigate('AssetForm', undefined)}
-      >
-        <Text style={styles.fabText}>+</Text>
-      </Pressable>
+      />
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
-  centered: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24 },
-  error: { color: '#c0392b' },
-  empty: { color: '#666' },
+  container: { flex: 1, backgroundColor: colors.background },
+  centered: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: spacing.xl },
+  error: {
+    fontSize: fontSize.bodyMd,
+    fontFamily: typography.body.fontFamily,
+    color: colors.textSecondary,
+  },
+  list: { paddingHorizontal: spacing.lg },
   card: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingVertical: 12,
-    paddingHorizontal: 16,
+    paddingVertical: spacing.sm,
+    minHeight: 44,
     borderBottomWidth: 1,
-    borderBottomColor: '#eee',
+    borderBottomColor: colors.border,
   },
   info: { flex: 1, gap: 2 },
-  name: { fontSize: 16, fontWeight: '600' },
-  meta: { fontSize: 13, color: '#666' },
-  fab: {
-    position: 'absolute',
-    right: 20,
-    bottom: 24,
-    width: 56,
-    height: 56,
-    borderRadius: 28,
-    backgroundColor: '#1d76db',
-    alignItems: 'center',
-    justifyContent: 'center',
-    elevation: 4,
+  name: {
+    fontSize: fontSize.bodyMd,
+    fontFamily: typography.bodyMedium.fontFamily,
+    fontWeight: typography.bodyMedium.fontWeight,
+    color: colors.textPrimary,
   },
-  fabText: { color: '#fff', fontSize: 28, lineHeight: 30 },
+  meta: {
+    fontSize: fontSize.bodySm,
+    fontFamily: typography.caption.fontFamily,
+    color: colors.textSecondary,
+  },
 });

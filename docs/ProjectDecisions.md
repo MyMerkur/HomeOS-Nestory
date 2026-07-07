@@ -374,3 +374,33 @@ navigasyon başlıkları da tema fontuna taşındı
   tasarlanmalı. Simulator'de gerçek görünüm (Dashboard ekran görüntüsüyle)
   doğrulandı — chip'ler, tint'li özet kartları, boş durum ikonu ve Baloo2
   başlık fontu birlikte çalışıyor.
+
+---
+
+## Decision: Ekran Geçişi (18.2) — kalan ekranlar tamamlandı, `Button`'a
+`warningOutline` varyantı eklendi
+
+- **Date**: 2026-07-08
+- **Status**: Accepted
+- **Context**: Sprint 12'nin ikinci yarısı — Shopping, Recipes, Dashboard'a
+  nested (Badges/Medicines/Assets/AssetForm) ekranlar taşınıyor. Medicine
+  modülünün "stokta yok, alışverişe ekle" aksiyonu orijinalde turuncu
+  (`#e67e22`, tasarım tokenlarındaki `warning` rengiyle örtüşüyor) bir
+  vurgu kullanıyordu — mevcut `Button` bileşeninin `primary/secondary/outline`
+  varyantlarının hiçbiri bunu karşılamıyordu.
+- **Decision**: (1) `ui/Button`'a dördüncü bir varyant, `warningOutline`,
+  eklendi (`colors.warning` kenarlık + `colors.warningDark` metin) — bu,
+  gerçek bir tasarım-token karşılığı olan tek kullanımlık bir ihtiyaçtı,
+  yeni bir bileşen değil. (2) `ui/SegmentedControl`'e opsiyonel `testID`
+  per-option desteği eklendi (Recipes ekranının Öneriler/Kaydedilenler
+  sekmeleri için). (3) `WarrantyBadge` (Assets) kendi 5 kademeli aciliyet
+  skalasını koruyarak (FreshnessRing'in 3 kademeli eşiğinden farklı, çünkü
+  garanti pencereleri ay/yıl mertebesinde) tema token'larına taşındı — ayrı
+  bir bileşen olarak kaldı, `FreshnessRing`'e birleştirilmedi (farklı görsel
+  dil: metin rozeti vs. halka). (4) Family/Settings ekranları zaten Sprint
+  11'de bu bileşen kütüphanesiyle inşa edildiği için bu geçişte değişiklik
+  gerekmedi — bu, "yeni ekranları restyle beklemeden baştan yeni sistemle
+  yazma" kararının (17.2) doğru sonuç verdiğinin doğrulaması.
+- **Consequences**: `mobile/src/ui/` artık uygulamanın **tüm** 18 ekranında
+  kullanılıyor — hiçbir ekranda ham hex/StyleSheet-per-screen kalmadı.
+  Tasarım sistemi geçişi (Sprint 10-12) tamamlandı.

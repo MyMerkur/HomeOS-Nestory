@@ -1,10 +1,12 @@
 import { ActivityIndicator, FlatList, StyleSheet, Text, View } from 'react-native';
+import { Card } from '../../../ui/Card';
+import { colors, fontSize, spacing, typography } from '../../../theme/theme';
 import { useBadgesQuery } from '../hooks/useBadgesQuery';
 import type { Badge } from '../services/badgeApi';
 
 function BadgeCard({ badge }: { badge: Badge }) {
   return (
-    <View style={[styles.card, badge.earned && styles.cardEarned]}>
+    <Card tint={badge.earned ? 'primary' : 'default'} style={styles.card}>
       <View style={styles.info}>
         <Text style={[styles.name, badge.earned && styles.nameEarned]}>
           {badge.earned ? '✓ ' : ''}
@@ -15,7 +17,7 @@ function BadgeCard({ badge }: { badge: Badge }) {
       <Text style={styles.progress}>
         {badge.progress}/{badge.target}
       </Text>
-    </View>
+    </Card>
   );
 }
 
@@ -25,7 +27,7 @@ export function BadgesScreen() {
   if (isLoading) {
     return (
       <View style={styles.centered}>
-        <ActivityIndicator />
+        <ActivityIndicator color={colors.primary} />
       </View>
     );
   }
@@ -42,28 +44,38 @@ export function BadgesScreen() {
     <FlatList
       data={badges}
       keyExtractor={(badge) => badge.id}
+      contentContainerStyle={styles.list}
       renderItem={({ item }) => <BadgeCard badge={item} />}
     />
   );
 }
 
 const styles = StyleSheet.create({
-  centered: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24 },
-  error: { color: '#c0392b' },
-  card: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: 14,
-    paddingHorizontal: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#eee',
-    backgroundColor: '#f7f7f7',
+  centered: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: spacing.xl },
+  error: {
+    fontSize: fontSize.bodyMd,
+    fontFamily: typography.body.fontFamily,
+    color: colors.textSecondary,
   },
-  cardEarned: { backgroundColor: '#eafaf1' },
+  list: { padding: spacing.lg, gap: spacing.sm },
+  card: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: spacing.sm },
   info: { flex: 1, gap: 2 },
-  name: { fontSize: 16, fontWeight: '600', color: '#999' },
-  nameEarned: { color: '#27ae60' },
-  description: { fontSize: 13, color: '#666' },
-  progress: { fontSize: 13, fontWeight: '600', color: '#333' },
+  name: {
+    fontSize: fontSize.bodyMd,
+    fontFamily: typography.bodyMedium.fontFamily,
+    fontWeight: typography.bodyMedium.fontWeight,
+    color: colors.textMuted,
+  },
+  nameEarned: { color: colors.primaryDark },
+  description: {
+    fontSize: fontSize.bodySm,
+    fontFamily: typography.caption.fontFamily,
+    color: colors.textSecondary,
+  },
+  progress: {
+    fontSize: fontSize.bodySm,
+    fontFamily: typography.bodyMedium.fontFamily,
+    fontWeight: typography.bodyMedium.fontWeight,
+    color: colors.textPrimary,
+  },
 });

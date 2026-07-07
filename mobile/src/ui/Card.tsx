@@ -6,10 +6,15 @@ import { colors, radius, spacing } from '../theme/theme';
 type Props = PropsWithChildren<{
   style?: ViewStyle;
   tint?: 'default' | 'primary' | 'danger' | 'warning';
+  testID?: string;
 }>;
 
-export function Card({ children, style, tint = 'default' }: Props) {
-  return <View style={[styles.base, tintStyles[tint], style]}>{children}</View>;
+export function Card({ children, style, tint = 'default', testID }: Props) {
+  return (
+    <View testID={testID} style={[styles.base, tintStyles[tint], style]}>
+      {children}
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({

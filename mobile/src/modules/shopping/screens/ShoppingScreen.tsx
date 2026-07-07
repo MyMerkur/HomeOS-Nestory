@@ -1,15 +1,12 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
-import {
-  ActivityIndicator,
-  FlatList,
-  Pressable,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from 'react-native';
+import { ActivityIndicator, FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
+import { IconCheck, IconShoppingCartOff, IconTrash } from '@tabler/icons-react-native';
 import { useHomeStore } from '../../../store/useHomeStore';
+import { Button } from '../../../ui/Button';
+import { EmptyState } from '../../../ui/EmptyState';
+import { TextField } from '../../../ui/TextField';
+import { colors, fontSize, radius, spacing, typography } from '../../../theme/theme';
 import { useShoppingItemsQuery, SHOPPING_ITEMS_QUERY_KEY } from '../hooks/useShoppingItemsQuery';
 import {
   addShoppingItem,
@@ -31,21 +28,22 @@ function ShoppingRow({
 
   return (
     <View style={styles.row}>
-      <Pressable
-        testID={`shopping-item-toggle-${item.id}`}
-        style={styles.rowMain}
-        onPress={onToggle}
-      >
+      <Pressable testID={`shopping-item-toggle-${item.id}`} style={styles.rowMain} onPress={onToggle}>
         <View style={[styles.checkbox, isChecked && styles.checkboxChecked]}>
-          {isChecked && <Text style={styles.checkboxMark}>✓</Text>}
+          {isChecked ? <IconCheck color={colors.white} size={14} /> : null}
         </View>
         <Text style={[styles.rowText, isChecked && styles.rowTextChecked]}>
           {item.name}
           {item.quantity > 1 ? ` (${item.quantity})` : ''}
         </Text>
       </Pressable>
-      <Pressable testID={`shopping-item-delete-${item.id}`} onPress={onDelete}>
-        <Text style={styles.deleteText}>Sil</Text>
+      <Pressable
+        testID={`shopping-item-delete-${item.id}`}
+        onPress={onDelete}
+        accessibilityLabel={`${item.name} sil`}
+        hitSlop={8}
+      >
+        <IconTrash color={colors.dangerDark} size={20} />
       </Pressable>
     </View>
   );
@@ -91,27 +89,28 @@ export function ShoppingScreen() {
   return (
     <View style={styles.container}>
       <View style={styles.addRow}>
-        <TextInput
-          testID="shopping-add-input"
-          style={styles.input}
-          placeholder="Ürün ekle"
-          value={name}
-          onChangeText={setName}
-          onSubmitEditing={handleAdd}
-        />
-        <Pressable
+        <View style={styles.addInput}>
+          <TextField
+            testID="shopping-add-input"
+            label="Ürün ekle"
+            hideLabel
+            placeholder="Ürün ekle"
+            value={name}
+            onChangeText={setName}
+            onSubmitEditing={handleAdd}
+          />
+        </View>
+        <Button
           testID="shopping-add-button"
-          style={[styles.addButton, isSubmitting && styles.addButtonDisabled]}
+          label="Ekle"
           onPress={handleAdd}
-          disabled={isSubmitting}
-        >
-          <Text style={styles.addButtonText}>Ekle</Text>
-        </Pressable>
+          loading={isSubmitting}
+        />
       </View>
 
       {isLoading && (
         <View style={styles.centered}>
-          <ActivityIndicator />
+          <ActivityIndicator color={colors.primary} />
         </View>
       )}
 
@@ -125,10 +124,9 @@ export function ShoppingScreen() {
         <FlatList
           data={[...pendingItems, ...checkedItems]}
           keyExtractor={(item) => item.id}
+          contentContainerStyle={styles.list}
           ListEmptyComponent={
-            <View style={styles.centered}>
-              <Text style={styles.empty}>Alışveriş listesi boş.</Text>
-            </View>
+            <EmptyState icon={IconShoppingCartOff} title="Alışveriş listesi boş." />
           }
           renderItem={({ item }) => (
             <ShoppingRow
@@ -144,49 +142,43 @@ export function ShoppingScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
-  addRow: { flexDirection: 'row', padding: 12, gap: 8 },
-  input: {
-    flex: 1,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 8,
+  container: { flex: 1, backgroundColor: colors.background },
+  addRow: { flexDirection: 'row', padding: spacing.lg, gap: spacing.sm, alignItems: 'flex-end' },
+  addInput: { flex: 1 },
+  centered: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: spacing.xl },
+  error: {
+    fontSize: fontSize.bodyMd,
+    fontFamily: typography.body.fontFamily,
+    color: colors.textSecondary,
   },
-  addButton: {
-    backgroundColor: '#1d76db',
-    borderRadius: 8,
-    paddingHorizontal: 16,
-    justifyContent: 'center',
-  },
-  addButtonDisabled: { opacity: 0.6 },
-  addButtonText: { color: '#fff', fontWeight: '600' },
-  centered: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24 },
-  error: { color: '#c0392b' },
-  empty: { color: '#666' },
+  list: { paddingHorizontal: spacing.lg },
   row: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingVertical: 12,
-    paddingHorizontal: 16,
+    paddingVertical: spacing.sm,
+    minHeight: 44,
     borderBottomWidth: 1,
-    borderBottomColor: '#eee',
+    borderBottomColor: colors.border,
   },
-  rowMain: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: 12 },
+  rowMain: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: spacing.md },
   checkbox: {
     width: 22,
     height: 22,
-    borderRadius: 11,
+    borderRadius: radius.pill,
     borderWidth: 2,
-    borderColor: '#1d76db',
+    borderColor: colors.primary,
     alignItems: 'center',
     justifyContent: 'center',
   },
-  checkboxChecked: { backgroundColor: '#1d76db' },
-  checkboxMark: { color: '#fff', fontSize: 12, fontWeight: '700' },
-  rowText: { fontSize: 16 },
-  rowTextChecked: { color: '#999', textDecorationLine: 'line-through' },
-  deleteText: { color: '#c0392b', fontSize: 13 },
+  checkboxChecked: { backgroundColor: colors.primary },
+  rowText: {
+    fontSize: fontSize.bodyLg,
+    fontFamily: typography.body.fontFamily,
+    color: colors.textPrimary,
+  },
+  rowTextChecked: {
+    color: colors.textMuted,
+    textDecorationLine: 'line-through',
+  },
 });
