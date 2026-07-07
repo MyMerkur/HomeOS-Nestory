@@ -2,7 +2,10 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { ActivityIndicator, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
+import { Button } from '../../../ui/Button';
+import { TextField } from '../../../ui/TextField';
+import { colors, fontSize, spacing, typography } from '../../../theme/theme';
 import { useHomeStore } from '../../../store/useHomeStore';
 import { joinHomeRequest, type HomeSummary } from '../services/homeApi';
 import { HOMES_QUERY_KEY } from '../hooks/useHomesQuery';
@@ -44,53 +47,53 @@ export function JoinHomeScreen() {
     <View style={styles.container}>
       <Text style={styles.title}>Davet koduyla katıl</Text>
 
-      <Controller
-        control={control}
-        name="inviteCode"
-        render={({ field: { onChange, onBlur, value } }) => (
-          <TextInput
-            style={styles.input}
-            placeholder="Davet kodu"
-            autoCapitalize="characters"
-            value={value}
-            onChangeText={onChange}
-            onBlur={onBlur}
-          />
-        )}
-      />
-      {errors.inviteCode && <Text style={styles.error}>{errors.inviteCode.message}</Text>}
-      {serverError && <Text style={styles.error}>{serverError}</Text>}
+      <View style={styles.form}>
+        <Controller
+          control={control}
+          name="inviteCode"
+          render={({ field: { onChange, onBlur, value } }) => (
+            <TextField
+              label="Davet kodu"
+              autoCapitalize="characters"
+              value={value}
+              onChangeText={onChange}
+              onBlur={onBlur}
+              error={errors.inviteCode?.message}
+              style={styles.codeInput}
+            />
+          )}
+        />
+        {serverError ? <Text style={styles.error}>{serverError}</Text> : null}
 
-      <Pressable
-        testID="join-home-submit"
-        style={[styles.button, isSubmitting && styles.buttonDisabled]}
-        onPress={handleSubmit(onSubmit)}
-        disabled={isSubmitting}
-      >
-        {isSubmitting ? <ActivityIndicator color="#fff" /> : <Text style={styles.buttonText}>Katıl</Text>}
-      </Pressable>
+        <Button
+          testID="join-home-submit"
+          label="Katıl"
+          onPress={handleSubmit(onSubmit)}
+          loading={isSubmitting}
+        />
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'center', padding: 24, gap: 12 },
-  title: { fontSize: 24, fontWeight: '700' },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
+  container: { flex: 1, justifyContent: 'center', padding: spacing.xl, backgroundColor: colors.background },
+  title: {
+    fontSize: fontSize.displayLg,
+    fontFamily: typography.display.fontFamily,
+    fontWeight: typography.display.fontWeight,
+    color: colors.textPrimary,
+    marginBottom: spacing.xxl,
   },
-  error: { color: '#c0392b', fontSize: 13 },
-  button: {
-    backgroundColor: '#1d76db',
-    borderRadius: 8,
-    paddingVertical: 14,
-    alignItems: 'center',
-    marginTop: 8,
+  form: { gap: spacing.md },
+  codeInput: {
+    fontSize: fontSize.displayMd,
+    letterSpacing: 4,
+    textAlign: 'center',
   },
-  buttonDisabled: { opacity: 0.6 },
-  buttonText: { color: '#fff', fontWeight: '600' },
+  error: {
+    fontSize: fontSize.bodySm,
+    fontFamily: typography.caption.fontFamily,
+    color: colors.dangerDark,
+  },
 });

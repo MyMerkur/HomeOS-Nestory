@@ -1,7 +1,12 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
-import { ActivityIndicator, Alert, Pressable, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useHomeStore } from '../../../store/useHomeStore';
+import { Button } from '../../../ui/Button';
+import { Card } from '../../../ui/Card';
+import { Chip } from '../../../ui/Chip';
+import { TextField } from '../../../ui/TextField';
+import { colors, fontSize, spacing, typography } from '../../../theme/theme';
 import { CATEGORY_LABELS, UNIT_LABELS } from '../constants';
 import { useLocationsQuery } from '../hooks/useLocationsQuery';
 import { INVENTORY_ITEMS_QUERY_KEY } from '../hooks/useInventoryItemsQuery';
@@ -108,30 +113,24 @@ export function QuickAddItemScreen({ navigation }: PantryStackScreenProps<'Quick
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Pressable
+      <Button
         testID="quick-add-scan-barcode-button"
-        style={[styles.scanButton, isScanningBarcode && styles.buttonDisabled]}
+        label="Barkodu Tara"
         onPress={handleScanBarcode}
-        disabled={isScanningBarcode}
-      >
-        {isScanningBarcode ? (
-          <ActivityIndicator color="#1d76db" />
-        ) : (
-          <Text style={styles.scanButtonText}>Barkodu Tara</Text>
-        )}
-      </Pressable>
+        loading={isScanningBarcode}
+        variant="outline"
+      />
 
-      {matchedItem && (
-        <View style={styles.matchCard}>
+      {matchedItem ? (
+        <Card style={styles.matchCard}>
           <Text style={styles.matchName}>{matchedItem.name}</Text>
           <Text style={styles.matchMeta}>
             {CATEGORY_LABELS[matchedItem.category]} · {UNIT_LABELS[matchedItem.unit]}
           </Text>
 
-          <Text style={styles.label}>Miktar</Text>
-          <TextInput
+          <TextField
             testID="quick-add-quantity"
-            style={styles.input}
+            label="Miktar"
             keyboardType="numeric"
             value={quantity}
             onChangeText={setQuantity}
@@ -140,104 +139,86 @@ export function QuickAddItemScreen({ navigation }: PantryStackScreenProps<'Quick
           <Text style={styles.label}>Lokasyon</Text>
           <View style={styles.chipsRow}>
             {(locations ?? []).map((location) => (
-              <Pressable
+              <Chip
                 key={location.id}
                 testID={`quick-add-location-chip-${location.id}`}
-                style={[styles.chip, locationId === location.id && styles.chipActive]}
+                label={location.name}
+                selected={locationId === location.id}
                 onPress={() => setLocationId(location.id)}
-              >
-                <Text style={[styles.chipText, locationId === location.id && styles.chipTextActive]}>
-                  {location.name}
-                </Text>
-              </Pressable>
+              />
             ))}
           </View>
 
           <Text style={styles.label}>Son kullanma tarihi (opsiyonel)</Text>
-          <View style={styles.barcodeRow}>
-            <View style={[styles.input, styles.barcodeInput]}>
-              <Text>{expiryDate ? expiryDate.toLocaleDateString('tr-TR') : 'Taranmadı'}</Text>
+          <View style={styles.row}>
+            <View style={styles.expiryDisplay}>
+              <Text style={styles.expiryDisplayText}>
+                {expiryDate ? expiryDate.toLocaleDateString('tr-TR') : 'Taranmadı'}
+              </Text>
             </View>
-            <Pressable
+            <Button
               testID="quick-add-scan-expiry-date-button"
-              style={[styles.scanButtonSmall, isScanningExpiryDate && styles.buttonDisabled]}
+              label="SKT Tara"
               onPress={handleScanExpiryDate}
-              disabled={isScanningExpiryDate}
-            >
-              {isScanningExpiryDate ? (
-                <ActivityIndicator color="#1d76db" />
-              ) : (
-                <Text style={styles.scanButtonText}>SKT Tara</Text>
-              )}
-            </Pressable>
+              loading={isScanningExpiryDate}
+              variant="outline"
+            />
           </View>
 
-          {serverError && <Text style={styles.error}>{serverError}</Text>}
+          {serverError ? <Text style={styles.error}>{serverError}</Text> : null}
 
-          <Pressable
+          <Button
             testID="quick-add-submit"
-            style={[styles.button, isSubmitting && styles.buttonDisabled]}
+            label="Hızlı Ekle"
             onPress={handleSubmit}
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? <ActivityIndicator color="#fff" /> : <Text style={styles.buttonText}>Hızlı Ekle</Text>}
-          </Pressable>
-        </View>
-      )}
+            loading={isSubmitting}
+          />
+        </Card>
+      ) : null}
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { padding: 16, gap: 4 },
-  label: { fontSize: 13, fontWeight: '600', color: '#333', marginTop: 12 },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    justifyContent: 'center',
+  container: { padding: spacing.lg, gap: spacing.md, backgroundColor: colors.background },
+  label: {
+    fontSize: fontSize.bodyMd,
+    fontFamily: typography.bodyMedium.fontFamily,
+    fontWeight: typography.bodyMedium.fontWeight,
+    color: colors.textPrimary,
   },
-  error: { color: '#c0392b', fontSize: 13, marginTop: 8 },
-  barcodeRow: { flexDirection: 'row', gap: 8, alignItems: 'center' },
-  barcodeInput: { flex: 1 },
-  scanButton: {
-    borderWidth: 1,
-    borderColor: '#1d76db',
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 14,
-    alignItems: 'center',
+  error: {
+    fontSize: fontSize.bodySm,
+    fontFamily: typography.caption.fontFamily,
+    color: colors.dangerDark,
   },
-  scanButtonSmall: {
+  row: { flexDirection: 'row', gap: spacing.sm, alignItems: 'center' },
+  expiryDisplay: {
+    flex: 1,
+    minHeight: 44,
     borderWidth: 1,
-    borderColor: '#1d76db',
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-  },
-  scanButtonText: { color: '#1d76db', fontWeight: '600', fontSize: 13 },
-  matchCard: {
-    marginTop: 20,
-    padding: 16,
+    borderColor: colors.borderStrong,
     borderRadius: 12,
-    backgroundColor: '#f6f8fa',
+    paddingHorizontal: spacing.md,
+    justifyContent: 'center',
+    backgroundColor: colors.surface,
   },
-  matchName: { fontSize: 18, fontWeight: '700', color: '#222' },
-  matchMeta: { fontSize: 13, color: '#666', marginTop: 2 },
-  chipsRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  chip: { paddingHorizontal: 12, paddingVertical: 6, borderRadius: 16, backgroundColor: '#e8e8e8' },
-  chipActive: { backgroundColor: '#1d76db' },
-  chipText: { fontSize: 13, color: '#333' },
-  chipTextActive: { color: '#fff', fontWeight: '600' },
-  button: {
-    backgroundColor: '#1d76db',
-    borderRadius: 8,
-    paddingVertical: 14,
-    alignItems: 'center',
-    marginTop: 20,
+  expiryDisplayText: {
+    fontSize: fontSize.bodyLg,
+    fontFamily: typography.body.fontFamily,
+    color: colors.textPrimary,
   },
-  buttonDisabled: { opacity: 0.6 },
-  buttonText: { color: '#fff', fontWeight: '600' },
+  matchCard: { marginTop: spacing.xl, gap: spacing.md },
+  matchName: {
+    fontSize: fontSize.displayMd,
+    fontFamily: typography.display.fontFamily,
+    fontWeight: typography.display.fontWeight,
+    color: colors.textPrimary,
+  },
+  matchMeta: {
+    fontSize: fontSize.bodySm,
+    fontFamily: typography.caption.fontFamily,
+    color: colors.textSecondary,
+  },
+  chipsRow: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
 });

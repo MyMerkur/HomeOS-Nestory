@@ -4,7 +4,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { IconChefHat, IconFridge, IconHome2, IconShoppingCart } from '@tabler/icons-react-native';
 import { useEffect } from 'react';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
-import { colors } from '../../theme/theme';
+import { colors, typography } from '../../theme/theme';
 import { useAuthStore } from '../../store/useAuthStore';
 import { useHomeStore } from '../../store/useHomeStore';
 import { LoginScreen } from '../../modules/auth/screens/LoginScreen';
@@ -37,6 +37,16 @@ import type {
   ShoppingStackParamList,
 } from './types';
 
+const stackHeaderScreenOptions = {
+  headerStyle: { backgroundColor: colors.surface },
+  headerTintColor: colors.primary,
+  headerTitleStyle: {
+    fontFamily: typography.heading.fontFamily,
+    fontWeight: typography.heading.fontWeight,
+    color: colors.textPrimary,
+  },
+};
+
 const AuthStack = createNativeStackNavigator<AuthStackParamList>();
 const HomeSetupStack = createNativeStackNavigator<HomeSetupStackParamList>();
 const MainTab = createBottomTabNavigator<MainTabParamList>();
@@ -56,7 +66,7 @@ function AuthNavigator() {
 
 function HomeSetupNavigator() {
   return (
-    <HomeSetupStack.Navigator>
+    <HomeSetupStack.Navigator screenOptions={stackHeaderScreenOptions}>
       <HomeSetupStack.Screen
         name="HomeSetupChoice"
         component={HomeSetupChoiceScreen}
@@ -78,7 +88,7 @@ function HomeSetupNavigator() {
 
 function DashboardTabNavigator() {
   return (
-    <DashboardStack.Navigator>
+    <DashboardStack.Navigator screenOptions={stackHeaderScreenOptions}>
       <DashboardStack.Screen name="Dashboard" component={DashboardScreen} options={{ title: 'Özet' }} />
       <DashboardStack.Screen name="Badges" component={BadgesScreen} options={{ title: 'Rozetlerim' }} />
       <DashboardStack.Screen
@@ -96,7 +106,7 @@ function DashboardTabNavigator() {
 
 function PantryTabNavigator() {
   return (
-    <PantryStack.Navigator>
+    <PantryStack.Navigator screenOptions={stackHeaderScreenOptions}>
       <PantryStack.Screen name="Pantry" component={PantryScreen} options={{ title: 'Dolap' }} />
       <PantryStack.Screen name="ItemForm" component={ItemFormScreen} />
       <PantryStack.Screen
@@ -110,7 +120,7 @@ function PantryTabNavigator() {
 
 function ShoppingTabNavigator() {
   return (
-    <ShoppingStack.Navigator>
+    <ShoppingStack.Navigator screenOptions={stackHeaderScreenOptions}>
       <ShoppingStack.Screen name="Shopping" component={ShoppingScreen} options={{ title: 'Alışveriş' }} />
     </ShoppingStack.Navigator>
   );
@@ -118,7 +128,7 @@ function ShoppingTabNavigator() {
 
 function RecipesTabNavigator() {
   return (
-    <RecipesStack.Navigator>
+    <RecipesStack.Navigator screenOptions={stackHeaderScreenOptions}>
       <RecipesStack.Screen name="Recipes" component={RecipesScreen} options={{ title: 'Tarifler' }} />
       <RecipesStack.Screen name="RecipeDetail" component={RecipeDetailScreen} />
     </RecipesStack.Navigator>

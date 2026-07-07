@@ -1,5 +1,10 @@
-import { ActivityIndicator, FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, FlatList, StyleSheet, Text, View } from 'react-native';
+import { IconMoodEmpty } from '@tabler/icons-react-native';
 import { ItemCard } from '../../pantry/components/ItemCard';
+import { Chip } from '../../../ui/Chip';
+import { EmptyState } from '../../../ui/EmptyState';
+import { SummaryCard } from '../../../ui/SummaryCard';
+import { colors, fontSize, spacing, typography } from '../../../theme/theme';
 import { useDashboardQuery } from '../hooks/useDashboardQuery';
 import type { DashboardStackScreenProps } from '../../../app/navigation/types';
 
@@ -9,7 +14,7 @@ export function DashboardScreen({ navigation }: DashboardStackScreenProps<'Dashb
   if (isLoading) {
     return (
       <View style={styles.centered}>
-        <ActivityIndicator />
+        <ActivityIndicator color={colors.primary} />
       </View>
     );
   }
@@ -25,72 +30,33 @@ export function DashboardScreen({ navigation }: DashboardStackScreenProps<'Dashb
   return (
     <View style={styles.container}>
       <View style={styles.shortcutsRow}>
-        <Pressable
-          testID="go-to-badges"
-          style={styles.badgesButton}
-          onPress={() => navigation.navigate('Badges')}
-        >
-          <Text style={styles.badgesButtonText}>Rozetlerim</Text>
-        </Pressable>
-        <Pressable
+        <Chip testID="go-to-badges" label="Rozetlerim" onPress={() => navigation.navigate('Badges')} />
+        <Chip
           testID="go-to-medicines"
-          style={styles.badgesButton}
+          label="İlaçlarım"
           onPress={() => navigation.navigate('Medicines')}
-        >
-          <Text style={styles.badgesButtonText}>İlaçlarım</Text>
-        </Pressable>
-        <Pressable
-          testID="go-to-assets"
-          style={styles.badgesButton}
-          onPress={() => navigation.navigate('Assets')}
-        >
-          <Text style={styles.badgesButtonText}>Varlıklarım</Text>
-        </Pressable>
-        <Pressable
-          testID="go-to-family"
-          style={styles.badgesButton}
-          onPress={() => navigation.navigate('Family')}
-        >
-          <Text style={styles.badgesButtonText}>Ailem</Text>
-        </Pressable>
-        <Pressable
-          testID="go-to-settings"
-          style={styles.badgesButton}
-          onPress={() => navigation.navigate('Settings')}
-        >
-          <Text style={styles.badgesButtonText}>Ayarlar</Text>
-        </Pressable>
+        />
+        <Chip testID="go-to-assets" label="Varlıklarım" onPress={() => navigation.navigate('Assets')} />
+        <Chip testID="go-to-family" label="Ailem" onPress={() => navigation.navigate('Family')} />
+        <Chip testID="go-to-settings" label="Ayarlar" onPress={() => navigation.navigate('Settings')} />
       </View>
 
       <View style={styles.summaryRow}>
-        <View style={[styles.summaryCard, styles.today]}>
-          <Text style={styles.summaryValue}>{data.expiringToday}</Text>
-          <Text style={styles.summaryLabel}>Bugün</Text>
-        </View>
-        <View style={[styles.summaryCard, styles.soon]}>
-          <Text style={styles.summaryValue}>{data.expiringIn3Days}</Text>
-          <Text style={styles.summaryLabel}>3 gün</Text>
-        </View>
-        <View style={[styles.summaryCard, styles.week]}>
-          <Text style={styles.summaryValue}>{data.expiringInWeek}</Text>
-          <Text style={styles.summaryLabel}>Hafta</Text>
-        </View>
-        <View style={[styles.summaryCard, styles.total]}>
-          <Text style={styles.summaryValue}>{data.totalActive}</Text>
-          <Text style={styles.summaryLabel}>Toplam</Text>
-        </View>
+        <SummaryCard value={data.expiringToday} caption="Bugün" tint="danger" />
+        <SummaryCard value={data.expiringIn3Days} caption="3 gün" tint="warning" />
+        <SummaryCard value={data.expiringInWeek} caption="Hafta" tint="warning" />
+        <SummaryCard value={data.totalActive} caption="Toplam" tint="primary" />
       </View>
 
       <Text style={styles.sectionTitle}>Yaklaşan ürünler</Text>
 
       {data.upcomingItems.length === 0 ? (
-        <View style={styles.centered}>
-          <Text style={styles.empty}>Yaklaşan SKT'si olan ürün yok.</Text>
-        </View>
+        <EmptyState icon={IconMoodEmpty} title="Yaklaşan SKT'si olan ürün yok." />
       ) : (
         <FlatList
           data={data.upcomingItems}
           keyExtractor={(item) => item.id}
+          contentContainerStyle={styles.list}
           renderItem={({ item }) => (
             <ItemCard
               item={item}
@@ -106,31 +72,28 @@ export function DashboardScreen({ navigation }: DashboardStackScreenProps<'Dashb
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
-  centered: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 24 },
-  error: { color: '#c0392b' },
-  empty: { color: '#666' },
-  summaryRow: { flexDirection: 'row', padding: 12, gap: 8 },
-  summaryCard: {
-    flex: 1,
-    borderRadius: 12,
-    paddingVertical: 16,
-    alignItems: 'center',
-    gap: 4,
+  container: { flex: 1, backgroundColor: colors.background },
+  centered: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: spacing.xl },
+  error: {
+    fontSize: fontSize.bodyMd,
+    fontFamily: typography.body.fontFamily,
+    color: colors.textSecondary,
   },
-  summaryValue: { fontSize: 22, fontWeight: '700', color: '#fff' },
-  summaryLabel: { fontSize: 12, color: '#fff' },
-  today: { backgroundColor: '#c0392b' },
-  soon: { backgroundColor: '#e67e22' },
-  week: { backgroundColor: '#f1c40f' },
-  total: { backgroundColor: '#1d76db' },
-  sectionTitle: { fontSize: 15, fontWeight: '600', paddingHorizontal: 16, marginBottom: 4 },
-  shortcutsRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8, margin: 12 },
-  badgesButton: {
-    backgroundColor: '#f0f0f0',
-    borderRadius: 16,
-    paddingHorizontal: 14,
-    paddingVertical: 8,
+  shortcutsRow: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: spacing.sm,
+    margin: spacing.md,
   },
-  badgesButtonText: { fontSize: 13, fontWeight: '600', color: '#333' },
+  summaryRow: { flexDirection: 'row', paddingHorizontal: spacing.md, gap: spacing.sm },
+  sectionTitle: {
+    fontSize: fontSize.bodyMd,
+    fontFamily: typography.heading.fontFamily,
+    fontWeight: typography.heading.fontWeight,
+    color: colors.textPrimary,
+    paddingHorizontal: spacing.lg,
+    marginTop: spacing.lg,
+    marginBottom: spacing.xs,
+  },
+  list: { paddingHorizontal: spacing.lg },
 });

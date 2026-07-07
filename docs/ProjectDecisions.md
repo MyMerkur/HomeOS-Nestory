@@ -337,3 +337,40 @@ davet kodu tekrar üretilebilir ama asla tekrar görüntülenemez
   cihazda dokunma testi (Simulator'de otomatik tap) bu ortamda Accessibility
   izni olmadığı için yapılamadı — ekran görüntüsü + Jest navigasyon testleriyle
   doğrulandı, tam dokunmatik akış manuel teyit gerektiriyor.
+
+---
+
+## Decision: Ekran Geçişi (18.1) — ItemCard/ExpiryBadge birleştirildi,
+navigasyon başlıkları da tema fontuna taşındı
+
+- **Date**: 2026-07-08
+- **Status**: Accepted
+- **Context**: Sprint 12'nin ilk yarısı — Auth, Onboarding, Dashboard, Pantry
+  ekranları `mobile/src/ui/` bileşenlerine taşınıyor. `ItemCard` (Dashboard +
+  Pantry'de ortak kullanılan ürün satırı) kendi `ExpiryBadge` bileşenini
+  kullanıyordu — bu, tasarım dokümanının imza bileşeni `FreshnessRing`'in
+  öncülüydü ve aynı gün-sayısı eşiklerini ham hex ile tekrarlıyordu.
+- **Decision**: (1) `ItemCard`, `ui/PantryItemRow` + `ui/FreshnessRing`
+  kullanacak şekilde yeniden yazıldı; `ExpiryBadge.tsx` tek kullanıcısını
+  kaybettiği için tamamen silindi (yeniden adlandırma/uyumluluk katmanı
+  eklenmedi). `PantryItemRow`'a `onLongPress`/`testID` desteği eklendi
+  (Pantry'nin uzun-basma aksiyon menüsü için gerekliydi). (2) `ui/Button`,
+  `ui/Chip`, `ui/FAB` bileşenlerine `testID` prop'u eklendi — mevcut ekran
+  testlerinin `getByTestId` sorgularını bozmadan geçiş yapabilmek için. (3)
+  `ui/TextField`'a `hideLabel` prop'u eklendi — arama kutusu gibi görünür
+  etiket istemeyen ama yine de `accessibilityLabel` üzerinden erişilebilir
+  kalması gereken alanlar için (`label` hâlâ zorunlu, sadece görsel olarak
+  gizleniyor). (4) Ekran içi metin/renklerin yanında, `RootNavigator.tsx`'teki
+  her `Stack.Navigator`'a ortak bir `stackHeaderScreenOptions`
+  (`headerTitleStyle` → Baloo2, `headerTintColor` → primary yeşil) eklendi —
+  aksi halde native header başlıkları ("Özet", "Dolap"...) tema dışında
+  kalıp sistem fontunda görünmeye devam ederdi (ekran içeriği temalansa
+  bile). (5) Test sorgularında `getByPlaceholderText` yerine `getByLabelText`
+  kullanılmaya başlandı (TextField artık `accessibilityLabel` varsayılan
+  olarak `label`'a eşitliyor) — daha kararlı, placeholder metnine bağımlı
+  olmayan sorgular.
+- **Consequences**: Bundan sonraki her yeni ekran/bileşen `testID` ve
+  `accessibilityLabel` prop'larını en baştan destekleyecek şekilde
+  tasarlanmalı. Simulator'de gerçek görünüm (Dashboard ekran görüntüsüyle)
+  doğrulandı — chip'ler, tint'li özet kartları, boş durum ikonu ve Baloo2
+  başlık fontu birlikte çalışıyor.

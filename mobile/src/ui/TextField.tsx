@@ -5,12 +5,13 @@ import { colors, fontSize, radius, spacing, typography } from '../theme/theme';
 type Props = TextInputProps & {
   label: string;
   error?: string;
+  hideLabel?: boolean;
 };
 
-export function TextField({ label, error, style, ...inputProps }: Props) {
+export function TextField({ label, error, hideLabel = false, style, ...inputProps }: Props) {
   return (
     <View style={styles.container}>
-      <Text style={styles.label}>{label}</Text>
+      {hideLabel ? null : <Text style={styles.label}>{label}</Text>}
       <TextInput
         style={[styles.input, error ? styles.inputError : null, style]}
         placeholderTextColor={colors.textMuted}

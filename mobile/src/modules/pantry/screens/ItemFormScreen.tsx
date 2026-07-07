@@ -11,10 +11,13 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  TextInput,
   View,
 } from 'react-native';
 import { useHomeStore } from '../../../store/useHomeStore';
+import { Button } from '../../../ui/Button';
+import { Chip } from '../../../ui/Chip';
+import { TextField } from '../../../ui/TextField';
+import { colors, fontSize, spacing, typography } from '../../../theme/theme';
 import { CATEGORIES, CATEGORY_LABELS, UNITS, UNIT_LABELS } from '../constants';
 import { useLocationsQuery } from '../hooks/useLocationsQuery';
 import { INVENTORY_ITEMS_QUERY_KEY } from '../hooks/useInventoryItemsQuery';
@@ -174,56 +177,53 @@ export function ItemFormScreen({ navigation, route }: PantryStackScreenProps<'It
   if (isEditMode && isLoadingItem) {
     return (
       <View style={styles.centered}>
-        <ActivityIndicator />
+        <ActivityIndicator color={colors.primary} />
       </View>
     );
   }
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      <Text style={styles.label}>Ürün adı</Text>
       <Controller
         control={control}
         name="name"
         render={({ field: { onChange, onBlur, value } }) => (
-          <TextInput
-            style={styles.input}
+          <TextField
+            label="Ürün adı"
             placeholder="ör. Süt"
             value={value}
             onChangeText={onChange}
             onBlur={onBlur}
+            error={errors.name?.message}
           />
         )}
       />
-      {errors.name && <Text style={styles.error}>{errors.name.message}</Text>}
 
       <Text style={styles.label}>Barkod (opsiyonel)</Text>
-      <View style={styles.barcodeRow}>
+      <View style={styles.row}>
         <Controller
           control={control}
           name="barcode"
           render={({ field: { onChange, onBlur, value } }) => (
-            <TextInput
-              style={[styles.input, styles.barcodeInput]}
-              placeholder="Barkod numarası"
-              value={value ?? ''}
-              onChangeText={onChange}
-              onBlur={onBlur}
-            />
+            <View style={styles.rowInput}>
+              <TextField
+                label="Barkod"
+                hideLabel
+                placeholder="Barkod numarası"
+                value={value ?? ''}
+                onChangeText={onChange}
+                onBlur={onBlur}
+              />
+            </View>
           )}
         />
-        <Pressable
+        <Button
           testID="scan-barcode-button"
-          style={[styles.scanButton, isScanningBarcode && styles.buttonDisabled]}
+          label="Barkod Tara"
           onPress={handleScanBarcode}
-          disabled={isScanningBarcode}
-        >
-          {isScanningBarcode ? (
-            <ActivityIndicator color="#1d76db" />
-          ) : (
-            <Text style={styles.scanButtonText}>Barkod Tara</Text>
-          )}
-        </Pressable>
+          loading={isScanningBarcode}
+          variant="outline"
+        />
       </View>
 
       <Text style={styles.label}>Lokasyon</Text>
@@ -233,21 +233,18 @@ export function ItemFormScreen({ navigation, route }: PantryStackScreenProps<'It
         render={({ field: { onChange, value } }) => (
           <View style={styles.chipsRow}>
             {(locations ?? []).map((location) => (
-              <Pressable
+              <Chip
                 key={location.id}
                 testID={`location-chip-${location.id}`}
-                style={[styles.chip, value === location.id && styles.chipActive]}
+                label={location.name}
+                selected={value === location.id}
                 onPress={() => onChange(location.id)}
-              >
-                <Text style={[styles.chipText, value === location.id && styles.chipTextActive]}>
-                  {location.name}
-                </Text>
-              </Pressable>
+              />
             ))}
           </View>
         )}
       />
-      {errors.locationId && <Text style={styles.error}>{errors.locationId.message}</Text>}
+      {errors.locationId ? <Text style={styles.error}>{errors.locationId.message}</Text> : null}
 
       <Text style={styles.label}>Kategori</Text>
       <Controller
@@ -256,37 +253,33 @@ export function ItemFormScreen({ navigation, route }: PantryStackScreenProps<'It
         render={({ field: { onChange, value } }) => (
           <View style={styles.chipsRow}>
             {CATEGORIES.map((category) => (
-              <Pressable
+              <Chip
                 key={category}
                 testID={`category-chip-${category}`}
-                style={[styles.chip, value === category && styles.chipActive]}
+                label={CATEGORY_LABELS[category]}
+                selected={value === category}
                 onPress={() => onChange(category)}
-              >
-                <Text style={[styles.chipText, value === category && styles.chipTextActive]}>
-                  {CATEGORY_LABELS[category]}
-                </Text>
-              </Pressable>
+              />
             ))}
           </View>
         )}
       />
-      {errors.category && <Text style={styles.error}>{errors.category.message}</Text>}
+      {errors.category ? <Text style={styles.error}>{errors.category.message}</Text> : null}
 
-      <Text style={styles.label}>Miktar</Text>
       <Controller
         control={control}
         name="quantity"
         render={({ field: { onChange, onBlur, value } }) => (
-          <TextInput
-            style={styles.input}
+          <TextField
+            label="Miktar"
             keyboardType="numeric"
             value={value === undefined ? '' : String(value)}
             onChangeText={(text) => onChange(text === '' ? undefined : Number(text))}
             onBlur={onBlur}
+            error={errors.quantity?.message}
           />
         )}
       />
-      {errors.quantity && <Text style={styles.error}>{errors.quantity.message}</Text>}
 
       <Text style={styles.label}>Birim</Text>
       <Controller
@@ -295,32 +288,28 @@ export function ItemFormScreen({ navigation, route }: PantryStackScreenProps<'It
         render={({ field: { onChange, value } }) => (
           <View style={styles.chipsRow}>
             {UNITS.map((unit) => (
-              <Pressable
+              <Chip
                 key={unit}
                 testID={`unit-chip-${unit}`}
-                style={[styles.chip, value === unit && styles.chipActive]}
+                label={UNIT_LABELS[unit]}
+                selected={value === unit}
                 onPress={() => onChange(unit)}
-              >
-                <Text style={[styles.chipText, value === unit && styles.chipTextActive]}>
-                  {UNIT_LABELS[unit]}
-                </Text>
-              </Pressable>
+              />
             ))}
           </View>
         )}
       />
-      {errors.unit && <Text style={styles.error}>{errors.unit.message}</Text>}
+      {errors.unit ? <Text style={styles.error}>{errors.unit.message}</Text> : null}
 
-      {isMedicine && (
+      {isMedicine ? (
         <>
-          <Text style={styles.label}>Doz miktarı (opsiyonel)</Text>
           <Controller
             control={control}
             name="doseAmount"
             render={({ field: { onChange, onBlur, value } }) => (
-              <TextInput
+              <TextField
                 testID="dose-amount-input"
-                style={styles.input}
+                label="Doz miktarı (opsiyonel)"
                 keyboardType="numeric"
                 placeholder="ör. 1"
                 value={value === undefined ? '' : String(value)}
@@ -340,24 +329,21 @@ export function ItemFormScreen({ navigation, route }: PantryStackScreenProps<'It
                 <>
                   <View style={styles.chipsRow}>
                     {times.map((time) => (
-                      <Pressable
+                      <Chip
                         key={time}
                         testID={`dose-time-chip-${time}`}
-                        style={styles.chip}
+                        label={`${time} ✕`}
                         onPress={() => onChange(times.filter((t) => t !== time))}
-                      >
-                        <Text style={styles.chipText}>{time} ✕</Text>
-                      </Pressable>
+                      />
                     ))}
-                    <Pressable
+                    <Button
                       testID="add-dose-time-button"
-                      style={styles.scanButton}
+                      label="+ Saat Ekle"
                       onPress={() => setShowDoseTimePicker(true)}
-                    >
-                      <Text style={styles.scanButtonText}>+ Saat Ekle</Text>
-                    </Pressable>
+                      variant="outline"
+                    />
                   </View>
-                  {showDoseTimePicker && (
+                  {showDoseTimePicker ? (
                     <DateTimePicker
                       value={new Date()}
                       mode="time"
@@ -370,16 +356,16 @@ export function ItemFormScreen({ navigation, route }: PantryStackScreenProps<'It
                         }
                       }}
                     />
-                  )}
+                  ) : null}
                 </>
               );
             }}
           />
         </>
-      )}
+      ) : null}
 
       <Text style={styles.label}>Son kullanma tarihi (opsiyonel)</Text>
-      <View style={styles.barcodeRow}>
+      <View style={styles.row}>
         <Controller
           control={control}
           name="expiryDate"
@@ -387,12 +373,14 @@ export function ItemFormScreen({ navigation, route }: PantryStackScreenProps<'It
             <>
               <Pressable
                 testID="expiry-date-button"
-                style={[styles.input, styles.barcodeInput]}
+                style={styles.dateButton}
                 onPress={() => setShowDatePicker(true)}
               >
-                <Text>{value ? value.toLocaleDateString('tr-TR') : 'Tarih seç'}</Text>
+                <Text style={styles.dateButtonText}>
+                  {value ? value.toLocaleDateString('tr-TR') : 'Tarih seç'}
+                </Text>
               </Pressable>
-              {showDatePicker && (
+              {showDatePicker ? (
                 <DateTimePicker
                   value={value ?? new Date()}
                   mode="date"
@@ -402,78 +390,64 @@ export function ItemFormScreen({ navigation, route }: PantryStackScreenProps<'It
                     if (selectedDate) onChange(selectedDate);
                   }}
                 />
-              )}
+              ) : null}
             </>
           )}
         />
-        <Pressable
+        <Button
           testID="scan-expiry-date-button"
-          style={[styles.scanButton, isScanningExpiryDate && styles.buttonDisabled]}
+          label="SKT Tara"
           onPress={handleScanExpiryDate}
-          disabled={isScanningExpiryDate}
-        >
-          {isScanningExpiryDate ? (
-            <ActivityIndicator color="#1d76db" />
-          ) : (
-            <Text style={styles.scanButtonText}>SKT Tara</Text>
-          )}
-        </Pressable>
+          loading={isScanningExpiryDate}
+          variant="outline"
+        />
       </View>
 
-      {serverError && <Text style={styles.error}>{serverError}</Text>}
+      {serverError ? <Text style={styles.error}>{serverError}</Text> : null}
 
-      <Pressable
-        testID="item-form-submit"
-        style={[styles.button, isSubmitting && styles.buttonDisabled]}
-        onPress={handleSubmit(onSubmit)}
-        disabled={isSubmitting}
-      >
-        {isSubmitting ? (
-          <ActivityIndicator color="#fff" />
-        ) : (
-          <Text style={styles.buttonText}>{isEditMode ? 'Güncelle' : 'Ekle'}</Text>
-        )}
-      </Pressable>
+      <View style={styles.submitButton}>
+        <Button
+          testID="item-form-submit"
+          label={isEditMode ? 'Güncelle' : 'Ekle'}
+          onPress={handleSubmit(onSubmit)}
+          loading={isSubmitting}
+        />
+      </View>
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { padding: 16, gap: 4 },
+  container: { padding: spacing.lg, gap: spacing.md, backgroundColor: colors.background },
   centered: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  label: { fontSize: 13, fontWeight: '600', color: '#333', marginTop: 12 },
-  input: {
+  label: {
+    fontSize: fontSize.bodyMd,
+    fontFamily: typography.bodyMedium.fontFamily,
+    fontWeight: typography.bodyMedium.fontWeight,
+    color: colors.textPrimary,
+  },
+  error: {
+    fontSize: fontSize.bodySm,
+    fontFamily: typography.caption.fontFamily,
+    color: colors.dangerDark,
+  },
+  row: { flexDirection: 'row', gap: spacing.sm, alignItems: 'flex-end' },
+  rowInput: { flex: 1 },
+  dateButton: {
+    flex: 1,
+    minHeight: 44,
     borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
+    borderColor: colors.borderStrong,
+    borderRadius: 12,
+    paddingHorizontal: spacing.md,
     justifyContent: 'center',
+    backgroundColor: colors.surface,
   },
-  error: { color: '#c0392b', fontSize: 13 },
-  barcodeRow: { flexDirection: 'row', gap: 8, alignItems: 'center' },
-  barcodeInput: { flex: 1 },
-  scanButton: {
-    borderWidth: 1,
-    borderColor: '#1d76db',
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
+  dateButtonText: {
+    fontSize: fontSize.bodyLg,
+    fontFamily: typography.body.fontFamily,
+    color: colors.textPrimary,
   },
-  scanButtonText: { color: '#1d76db', fontWeight: '600', fontSize: 13 },
-  chipsRow: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
-  chip: { paddingHorizontal: 12, paddingVertical: 6, borderRadius: 16, backgroundColor: '#f0f0f0' },
-  chipActive: { backgroundColor: '#1d76db' },
-  chipText: { fontSize: 13, color: '#333' },
-  chipTextActive: { color: '#fff', fontWeight: '600' },
-  button: {
-    backgroundColor: '#1d76db',
-    borderRadius: 8,
-    paddingVertical: 14,
-    alignItems: 'center',
-    marginTop: 24,
-    marginBottom: 40,
-  },
-  buttonDisabled: { opacity: 0.6 },
-  buttonText: { color: '#fff', fontWeight: '600' },
+  chipsRow: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
+  submitButton: { marginTop: spacing.lg, marginBottom: spacing.xxl },
 });

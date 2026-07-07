@@ -8,11 +8,13 @@ type Props = {
   icon: ComponentType<IconProps>;
   onPress: () => void;
   accessibilityLabel: string;
+  testID?: string;
 };
 
-export function FAB({ icon: Icon, onPress, accessibilityLabel }: Props) {
+export function FAB({ icon: Icon, onPress, accessibilityLabel, testID }: Props) {
   return (
     <Pressable
+      testID={testID}
       accessibilityRole="button"
       accessibilityLabel={accessibilityLabel}
       onPress={onPress}

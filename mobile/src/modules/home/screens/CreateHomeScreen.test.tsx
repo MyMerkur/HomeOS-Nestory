@@ -38,7 +38,7 @@ describe('CreateHomeScreen', () => {
 
     renderWithQueryClient();
 
-    fireEvent.changeText(screen.getByPlaceholderText('Ev adı (ör. Ev, Yazlık)'), 'My Home');
+    fireEvent.changeText(screen.getByLabelText('Ev adı (ör. Ev, Yazlık)'), 'My Home');
     fireEvent.press(screen.getByTestId('create-home-submit'));
 
     expect(await screen.findByTestId('invite-code')).toHaveTextContent('ABCD1234');

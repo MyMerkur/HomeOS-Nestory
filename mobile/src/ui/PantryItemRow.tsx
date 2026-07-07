@@ -8,13 +8,24 @@ type Props = {
   subtitle: string;
   daysUntilExpiry: number | null;
   onPress?: () => void;
+  onLongPress?: () => void;
+  testID?: string;
 };
 
-export function PantryItemRow({ name, subtitle, daysUntilExpiry, onPress }: Props) {
+export function PantryItemRow({
+  name,
+  subtitle,
+  daysUntilExpiry,
+  onPress,
+  onLongPress,
+  testID,
+}: Props) {
   return (
     <Pressable
+      testID={testID}
       accessibilityRole={onPress ? 'button' : undefined}
       onPress={onPress}
+      onLongPress={onLongPress}
       style={({ pressed }) => [styles.row, pressed && onPress && styles.pressed]}
     >
       {daysUntilExpiry !== null ? (

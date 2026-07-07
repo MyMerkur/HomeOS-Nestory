@@ -5,11 +5,13 @@ type Props = {
   label: string;
   selected?: boolean;
   onPress?: () => void;
+  testID?: string;
 };
 
-export function Chip({ label, selected = false, onPress }: Props) {
+export function Chip({ label, selected = false, onPress, testID }: Props) {
   return (
     <Pressable
+      testID={testID}
       accessibilityRole={onPress ? 'button' : 'text'}
       accessibilityState={{ selected }}
       onPress={onPress}

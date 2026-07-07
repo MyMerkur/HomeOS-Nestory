@@ -1,4 +1,6 @@
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
+import { Button } from '../../../ui/Button';
+import { colors, fontSize, spacing, typography } from '../../../theme/theme';
 import type { HomeSetupScreenProps } from '../../../app/navigation/types';
 
 export function HomeSetupChoiceScreen({ navigation }: HomeSetupScreenProps<'HomeSetupChoice'>) {
@@ -7,36 +9,37 @@ export function HomeSetupChoiceScreen({ navigation }: HomeSetupScreenProps<'Home
       <Text style={styles.title}>Henüz bir evin yok</Text>
       <Text style={styles.subtitle}>Yeni bir ev oluştur ya da davet koduyla mevcut bir eve katıl.</Text>
 
-      <Pressable
-        testID="go-to-create-home"
-        style={styles.button}
-        onPress={() => navigation.navigate('CreateHome')}
-      >
-        <Text style={styles.buttonText}>Ev oluştur</Text>
-      </Pressable>
-
-      <Pressable
-        testID="go-to-join-home"
-        style={[styles.button, styles.secondaryButton]}
-        onPress={() => navigation.navigate('JoinHome')}
-      >
-        <Text style={[styles.buttonText, styles.secondaryButtonText]}>Davet koduyla katıl</Text>
-      </Pressable>
+      <View style={styles.actions}>
+        <Button
+          testID="go-to-create-home"
+          label="Ev oluştur"
+          onPress={() => navigation.navigate('CreateHome')}
+        />
+        <Button
+          testID="go-to-join-home"
+          label="Davet koduyla katıl"
+          onPress={() => navigation.navigate('JoinHome')}
+          variant="outline"
+        />
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'center', padding: 24, gap: 12 },
-  title: { fontSize: 24, fontWeight: '700' },
-  subtitle: { fontSize: 14, color: '#666', marginBottom: 12 },
-  button: {
-    backgroundColor: '#1d76db',
-    borderRadius: 8,
-    paddingVertical: 14,
-    alignItems: 'center',
+  container: { flex: 1, justifyContent: 'center', padding: spacing.xl, backgroundColor: colors.background },
+  title: {
+    fontSize: fontSize.displayLg,
+    fontFamily: typography.display.fontFamily,
+    fontWeight: typography.display.fontWeight,
+    color: colors.textPrimary,
   },
-  secondaryButton: { backgroundColor: '#fff', borderWidth: 1, borderColor: '#1d76db' },
-  buttonText: { color: '#fff', fontWeight: '600' },
-  secondaryButtonText: { color: '#1d76db' },
+  subtitle: {
+    fontSize: fontSize.bodyMd,
+    fontFamily: typography.body.fontFamily,
+    color: colors.textSecondary,
+    marginTop: spacing.xs,
+    marginBottom: spacing.xxl,
+  },
+  actions: { gap: spacing.md },
 });

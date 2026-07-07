@@ -1,14 +1,10 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import {
-  ActivityIndicator,
-  Pressable,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Button } from '../../../ui/Button';
+import { TextField } from '../../../ui/TextField';
+import { colors, fontSize, spacing, typography } from '../../../theme/theme';
 import { useAuthStore } from '../../../store/useAuthStore';
 import { loginRequest } from '../services/authApi';
 import { loginSchema, type LoginFormValues } from '../schemas/authSchema';
@@ -43,55 +39,50 @@ export function LoginScreen({ navigation }: AuthStackScreenProps<'Login'>) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Giriş yap</Text>
+      <Text style={styles.wordmark}>HomeOS</Text>
+      <Text style={styles.tagline}>Evindeki her şey tek yerde.</Text>
 
-      <Controller
-        control={control}
-        name="email"
-        render={({ field: { onChange, onBlur, value } }) => (
-          <TextInput
-            style={styles.input}
-            placeholder="E-posta"
-            autoCapitalize="none"
-            keyboardType="email-address"
-            value={value}
-            onChangeText={onChange}
-            onBlur={onBlur}
-          />
-        )}
-      />
-      {errors.email && <Text style={styles.error}>{errors.email.message}</Text>}
+      <View style={styles.form}>
+        <Controller
+          control={control}
+          name="email"
+          render={({ field: { onChange, onBlur, value } }) => (
+            <TextField
+              label="E-posta"
+              autoCapitalize="none"
+              keyboardType="email-address"
+              value={value}
+              onChangeText={onChange}
+              onBlur={onBlur}
+              error={errors.email?.message}
+            />
+          )}
+        />
 
-      <Controller
-        control={control}
-        name="password"
-        render={({ field: { onChange, onBlur, value } }) => (
-          <TextInput
-            style={styles.input}
-            placeholder="Şifre"
-            secureTextEntry
-            value={value}
-            onChangeText={onChange}
-            onBlur={onBlur}
-          />
-        )}
-      />
-      {errors.password && <Text style={styles.error}>{errors.password.message}</Text>}
+        <Controller
+          control={control}
+          name="password"
+          render={({ field: { onChange, onBlur, value } }) => (
+            <TextField
+              label="Şifre"
+              secureTextEntry
+              value={value}
+              onChangeText={onChange}
+              onBlur={onBlur}
+              error={errors.password?.message}
+            />
+          )}
+        />
 
-      {serverError && <Text style={styles.error}>{serverError}</Text>}
+        {serverError ? <Text style={styles.error}>{serverError}</Text> : null}
 
-      <Pressable
-        testID="login-submit-button"
-        style={[styles.button, isSubmitting && styles.buttonDisabled]}
-        onPress={handleSubmit(onSubmit)}
-        disabled={isSubmitting}
-      >
-        {isSubmitting ? (
-          <ActivityIndicator color="#fff" />
-        ) : (
-          <Text style={styles.buttonText}>Giriş yap</Text>
-        )}
-      </Pressable>
+        <Button
+          testID="login-submit-button"
+          label="Giriş yap"
+          onPress={handleSubmit(onSubmit)}
+          loading={isSubmitting}
+        />
+      </View>
 
       <Pressable onPress={() => navigation.navigate('Register')}>
         <Text style={styles.link}>Hesabın yok mu? Kayıt ol</Text>
@@ -101,24 +92,33 @@ export function LoginScreen({ navigation }: AuthStackScreenProps<'Login'>) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'center', padding: 24, gap: 12 },
-  title: { fontSize: 28, fontWeight: '700', marginBottom: 12 },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
+  container: { flex: 1, justifyContent: 'center', padding: spacing.xl, backgroundColor: colors.background },
+  wordmark: {
+    fontSize: fontSize.displayLg,
+    fontFamily: typography.display.fontFamily,
+    fontWeight: typography.display.fontWeight,
+    color: colors.textPrimary,
+    textAlign: 'center',
   },
-  error: { color: '#c0392b', fontSize: 13 },
-  button: {
-    backgroundColor: '#1d76db',
-    borderRadius: 8,
-    paddingVertical: 14,
-    alignItems: 'center',
-    marginTop: 8,
+  tagline: {
+    fontSize: fontSize.bodyMd,
+    fontFamily: typography.body.fontFamily,
+    color: colors.textSecondary,
+    textAlign: 'center',
+    marginTop: spacing.xs,
+    marginBottom: spacing.xxl,
   },
-  buttonDisabled: { opacity: 0.6 },
-  buttonText: { color: '#fff', fontWeight: '600' },
-  link: { textAlign: 'center', marginTop: 16, color: '#1d76db' },
+  form: { gap: spacing.md },
+  error: {
+    fontSize: fontSize.bodySm,
+    fontFamily: typography.caption.fontFamily,
+    color: colors.dangerDark,
+  },
+  link: {
+    textAlign: 'center',
+    marginTop: spacing.xl,
+    fontSize: fontSize.bodyMd,
+    fontFamily: typography.bodyMedium.fontFamily,
+    color: colors.primary,
+  },
 });

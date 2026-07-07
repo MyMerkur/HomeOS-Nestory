@@ -9,13 +9,22 @@ type Props = {
   variant?: Variant;
   disabled?: boolean;
   loading?: boolean;
+  testID?: string;
 };
 
-export function Button({ label, onPress, variant = 'primary', disabled = false, loading = false }: Props) {
+export function Button({
+  label,
+  onPress,
+  variant = 'primary',
+  disabled = false,
+  loading = false,
+  testID,
+}: Props) {
   const isDisabled = disabled || loading;
 
   return (
     <Pressable
+      testID={testID}
       accessibilityRole="button"
       accessibilityState={{ disabled: isDisabled }}
       onPress={onPress}

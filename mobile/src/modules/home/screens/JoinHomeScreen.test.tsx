@@ -41,7 +41,7 @@ describe('JoinHomeScreen', () => {
 
     renderWithQueryClient();
 
-    fireEvent.changeText(screen.getByPlaceholderText('Davet kodu'), 'ABCD1234');
+    fireEvent.changeText(screen.getByLabelText('Davet kodu'), 'ABCD1234');
     fireEvent.press(screen.getByTestId('join-home-submit'));
 
     await waitFor(() => expect(joinHomeRequest).toHaveBeenCalledWith({ inviteCode: 'ABCD1234' }));

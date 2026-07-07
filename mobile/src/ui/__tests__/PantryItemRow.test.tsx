@@ -25,4 +25,21 @@ describe('PantryItemRow', () => {
 
     expect(screen.getByText('Tuz')).toBeTruthy();
   });
+
+  it('calls onLongPress when long-pressed', () => {
+    const onLongPress = jest.fn();
+    render(
+      <PantryItemRow
+        testID="row"
+        name="Süt"
+        subtitle="1 litre"
+        daysUntilExpiry={3}
+        onLongPress={onLongPress}
+      />,
+    );
+
+    fireEvent(screen.getByTestId('row'), 'longPress');
+
+    expect(onLongPress).toHaveBeenCalledTimes(1);
+  });
 });

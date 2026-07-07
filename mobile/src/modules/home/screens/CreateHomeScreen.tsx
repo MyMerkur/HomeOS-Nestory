@@ -2,7 +2,11 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { ActivityIndicator, Pressable, StyleSheet, Text, TextInput, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
+import { IconConfetti } from '@tabler/icons-react-native';
+import { Button } from '../../../ui/Button';
+import { TextField } from '../../../ui/TextField';
+import { colors, fontSize, spacing, typography } from '../../../theme/theme';
 import { useHomeStore } from '../../../store/useHomeStore';
 import { createHomeRequest, type HomeSummary } from '../services/homeApi';
 import { HOMES_QUERY_KEY } from '../hooks/useHomesQuery';
@@ -49,16 +53,15 @@ export function CreateHomeScreen() {
   if (created) {
     return (
       <View style={styles.container}>
-        <Text style={styles.title}>Ev oluşturuldu 🎉</Text>
+        <IconConfetti color={colors.primary} size={40} style={styles.centeredIcon} />
+        <Text style={styles.title}>Ev oluşturuldu</Text>
         <Text style={styles.subtitle}>
           Aile üyelerini davet etmek için bu kodu paylaş. Bu kod yalnızca burada gösterilir.
         </Text>
-        <Text testID="invite-code" style={styles.inviteCode}>
+        <Text testID="invite-code" style={styles.inviteCode} selectable>
           {created.inviteCode}
         </Text>
-        <Pressable testID="continue-button" style={styles.button} onPress={handleContinue}>
-          <Text style={styles.buttonText}>Devam et</Text>
-        </Pressable>
+        <Button testID="continue-button" label="Devam et" onPress={handleContinue} />
       </View>
     );
   }
@@ -67,60 +70,63 @@ export function CreateHomeScreen() {
     <View style={styles.container}>
       <Text style={styles.title}>Ev oluştur</Text>
 
-      <Controller
-        control={control}
-        name="name"
-        render={({ field: { onChange, onBlur, value } }) => (
-          <TextInput
-            style={styles.input}
-            placeholder="Ev adı (ör. Ev, Yazlık)"
-            value={value}
-            onChangeText={onChange}
-            onBlur={onBlur}
-          />
-        )}
-      />
-      {errors.name && <Text style={styles.error}>{errors.name.message}</Text>}
-      {serverError && <Text style={styles.error}>{serverError}</Text>}
+      <View style={styles.form}>
+        <Controller
+          control={control}
+          name="name"
+          render={({ field: { onChange, onBlur, value } }) => (
+            <TextField
+              label="Ev adı (ör. Ev, Yazlık)"
+              value={value}
+              onChangeText={onChange}
+              onBlur={onBlur}
+              error={errors.name?.message}
+            />
+          )}
+        />
+        {serverError ? <Text style={styles.error}>{serverError}</Text> : null}
 
-      <Pressable
-        testID="create-home-submit"
-        style={[styles.button, isSubmitting && styles.buttonDisabled]}
-        onPress={handleSubmit(onSubmit)}
-        disabled={isSubmitting}
-      >
-        {isSubmitting ? <ActivityIndicator color="#fff" /> : <Text style={styles.buttonText}>Oluştur</Text>}
-      </Pressable>
+        <Button
+          testID="create-home-submit"
+          label="Oluştur"
+          onPress={handleSubmit(onSubmit)}
+          loading={isSubmitting}
+        />
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'center', padding: 24, gap: 12 },
-  title: { fontSize: 24, fontWeight: '700' },
-  subtitle: { fontSize: 14, color: '#666' },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
+  container: { flex: 1, justifyContent: 'center', padding: spacing.xl, backgroundColor: colors.background },
+  centeredIcon: { alignSelf: 'center', marginBottom: spacing.sm },
+  title: {
+    fontSize: fontSize.displayLg,
+    fontFamily: typography.display.fontFamily,
+    fontWeight: typography.display.fontWeight,
+    color: colors.textPrimary,
+    textAlign: 'center',
   },
-  error: { color: '#c0392b', fontSize: 13 },
+  subtitle: {
+    fontSize: fontSize.bodyMd,
+    fontFamily: typography.body.fontFamily,
+    color: colors.textSecondary,
+    textAlign: 'center',
+    marginTop: spacing.xs,
+  },
+  form: { gap: spacing.md, marginTop: spacing.xxl },
+  error: {
+    fontSize: fontSize.bodySm,
+    fontFamily: typography.caption.fontFamily,
+    color: colors.dangerDark,
+  },
   inviteCode: {
-    fontSize: 32,
-    fontWeight: '700',
+    fontSize: fontSize.displayLg * 1.4,
+    fontFamily: typography.display.fontFamily,
+    fontWeight: typography.display.fontWeight,
+    color: colors.textPrimary,
     textAlign: 'center',
     letterSpacing: 4,
-    marginVertical: 16,
+    marginVertical: spacing.xl,
   },
-  button: {
-    backgroundColor: '#1d76db',
-    borderRadius: 8,
-    paddingVertical: 14,
-    alignItems: 'center',
-    marginTop: 8,
-  },
-  buttonDisabled: { opacity: 0.6 },
-  buttonText: { color: '#fff', fontWeight: '600' },
 });

@@ -18,8 +18,8 @@ describe('RegisterScreen', () => {
   it('shows validation errors for an invalid form', async () => {
     render(<RegisterScreen navigation={mockNavigation} route={{} as never} />);
 
-    fireEvent.changeText(screen.getByPlaceholderText('Ad Soyad'), 'A');
-    fireEvent.changeText(screen.getByPlaceholderText('Şifre (en az 8 karakter)'), '123');
+    fireEvent.changeText(screen.getByLabelText('Ad Soyad'), 'A');
+    fireEvent.changeText(screen.getByLabelText('Şifre (en az 8 karakter)'), '123');
     fireEvent.press(screen.getByText('Kayıt ol'));
 
     expect(await screen.findByText('En az 2 karakter')).toBeTruthy();
@@ -36,9 +36,9 @@ describe('RegisterScreen', () => {
 
     render(<RegisterScreen navigation={mockNavigation} route={{} as never} />);
 
-    fireEvent.changeText(screen.getByPlaceholderText('Ad Soyad'), 'Dogukan');
-    fireEvent.changeText(screen.getByPlaceholderText('E-posta'), 'dogukan@example.com');
-    fireEvent.changeText(screen.getByPlaceholderText('Şifre (en az 8 karakter)'), 'Min8Chars!');
+    fireEvent.changeText(screen.getByLabelText('Ad Soyad'), 'Dogukan');
+    fireEvent.changeText(screen.getByLabelText('E-posta'), 'dogukan@example.com');
+    fireEvent.changeText(screen.getByLabelText('Şifre (en az 8 karakter)'), 'Min8Chars!');
     fireEvent.press(screen.getByText('Kayıt ol'));
 
     await waitFor(() =>

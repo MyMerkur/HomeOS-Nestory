@@ -1,14 +1,10 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import {
-  ActivityIndicator,
-  Pressable,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from 'react-native';
+import { Pressable, StyleSheet, Text, View } from 'react-native';
+import { Button } from '../../../ui/Button';
+import { TextField } from '../../../ui/TextField';
+import { colors, fontSize, spacing, typography } from '../../../theme/theme';
 import { useAuthStore } from '../../../store/useAuthStore';
 import { registerRequest } from '../services/authApi';
 import { registerSchema, type RegisterFormValues } from '../schemas/authSchema';
@@ -47,68 +43,61 @@ export function RegisterScreen({ navigation }: AuthStackScreenProps<'Register'>)
     <View style={styles.container}>
       <Text style={styles.title}>Hesap oluştur</Text>
 
-      <Controller
-        control={control}
-        name="name"
-        render={({ field: { onChange, onBlur, value } }) => (
-          <TextInput
-            style={styles.input}
-            placeholder="Ad Soyad"
-            value={value}
-            onChangeText={onChange}
-            onBlur={onBlur}
-          />
-        )}
-      />
-      {errors.name && <Text style={styles.error}>{errors.name.message}</Text>}
+      <View style={styles.form}>
+        <Controller
+          control={control}
+          name="name"
+          render={({ field: { onChange, onBlur, value } }) => (
+            <TextField
+              label="Ad Soyad"
+              value={value}
+              onChangeText={onChange}
+              onBlur={onBlur}
+              error={errors.name?.message}
+            />
+          )}
+        />
 
-      <Controller
-        control={control}
-        name="email"
-        render={({ field: { onChange, onBlur, value } }) => (
-          <TextInput
-            style={styles.input}
-            placeholder="E-posta"
-            autoCapitalize="none"
-            keyboardType="email-address"
-            value={value}
-            onChangeText={onChange}
-            onBlur={onBlur}
-          />
-        )}
-      />
-      {errors.email && <Text style={styles.error}>{errors.email.message}</Text>}
+        <Controller
+          control={control}
+          name="email"
+          render={({ field: { onChange, onBlur, value } }) => (
+            <TextField
+              label="E-posta"
+              autoCapitalize="none"
+              keyboardType="email-address"
+              value={value}
+              onChangeText={onChange}
+              onBlur={onBlur}
+              error={errors.email?.message}
+            />
+          )}
+        />
 
-      <Controller
-        control={control}
-        name="password"
-        render={({ field: { onChange, onBlur, value } }) => (
-          <TextInput
-            style={styles.input}
-            placeholder="Şifre (en az 8 karakter)"
-            secureTextEntry
-            value={value}
-            onChangeText={onChange}
-            onBlur={onBlur}
-          />
-        )}
-      />
-      {errors.password && <Text style={styles.error}>{errors.password.message}</Text>}
+        <Controller
+          control={control}
+          name="password"
+          render={({ field: { onChange, onBlur, value } }) => (
+            <TextField
+              label="Şifre (en az 8 karakter)"
+              secureTextEntry
+              value={value}
+              onChangeText={onChange}
+              onBlur={onBlur}
+              error={errors.password?.message}
+            />
+          )}
+        />
 
-      {serverError && <Text style={styles.error}>{serverError}</Text>}
+        {serverError ? <Text style={styles.error}>{serverError}</Text> : null}
 
-      <Pressable
-        testID="register-submit-button"
-        style={[styles.button, isSubmitting && styles.buttonDisabled]}
-        onPress={handleSubmit(onSubmit)}
-        disabled={isSubmitting}
-      >
-        {isSubmitting ? (
-          <ActivityIndicator color="#fff" />
-        ) : (
-          <Text style={styles.buttonText}>Kayıt ol</Text>
-        )}
-      </Pressable>
+        <Button
+          testID="register-submit-button"
+          label="Kayıt ol"
+          onPress={handleSubmit(onSubmit)}
+          loading={isSubmitting}
+        />
+      </View>
 
       <Pressable onPress={() => navigation.navigate('Login')}>
         <Text style={styles.link}>Zaten hesabın var mı? Giriş yap</Text>
@@ -118,24 +107,26 @@ export function RegisterScreen({ navigation }: AuthStackScreenProps<'Register'>)
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'center', padding: 24, gap: 12 },
-  title: { fontSize: 28, fontWeight: '700', marginBottom: 12 },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
+  container: { flex: 1, justifyContent: 'center', padding: spacing.xl, backgroundColor: colors.background },
+  title: {
+    fontSize: fontSize.displayLg,
+    fontFamily: typography.display.fontFamily,
+    fontWeight: typography.display.fontWeight,
+    color: colors.textPrimary,
+    textAlign: 'center',
+    marginBottom: spacing.xxl,
   },
-  error: { color: '#c0392b', fontSize: 13 },
-  button: {
-    backgroundColor: '#1d76db',
-    borderRadius: 8,
-    paddingVertical: 14,
-    alignItems: 'center',
-    marginTop: 8,
+  form: { gap: spacing.md },
+  error: {
+    fontSize: fontSize.bodySm,
+    fontFamily: typography.caption.fontFamily,
+    color: colors.dangerDark,
   },
-  buttonDisabled: { opacity: 0.6 },
-  buttonText: { color: '#fff', fontWeight: '600' },
-  link: { textAlign: 'center', marginTop: 16, color: '#1d76db' },
+  link: {
+    textAlign: 'center',
+    marginTop: spacing.xl,
+    fontSize: fontSize.bodyMd,
+    fontFamily: typography.bodyMedium.fontFamily,
+    color: colors.primary,
+  },
 });

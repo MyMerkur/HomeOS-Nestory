@@ -98,9 +98,9 @@ describe('QuickAddItemScreen', () => {
     fireEvent.press(screen.getByTestId('quick-add-scan-barcode-button'));
 
     expect(await screen.findByText('Yoğurt')).toBeTruthy();
-    expect(screen.getByTestId('quick-add-location-chip-loc-pantry').props.style).toEqual(
-      expect.arrayContaining([expect.objectContaining({ backgroundColor: '#1d76db' })]),
-    );
+    expect(screen.getByTestId('quick-add-location-chip-loc-pantry').props.accessibilityState).toEqual({
+      selected: true,
+    });
   });
 
   it('submits the quick-add form and creates the item', async () => {
