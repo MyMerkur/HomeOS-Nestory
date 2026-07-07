@@ -46,6 +46,27 @@ async function setupHomeWithItem() {
   return { userId: user.id, homeId: home.id, itemId: item.id };
 }
 
+async function setupHomeWithMedicine(overrides: { quantity?: number; doseAmount?: number } = {}) {
+  const { user } = await authService.register({
+    name: 'Owner',
+    email: `owner-${Date.now()}-${Math.random()}@example.com`,
+    password: 'Min8Chars!',
+  });
+  const { home } = await homeService.createHome(user.id, { name: 'Test Home' });
+  const locations = await locationService.listLocations(home.id);
+  const pantry = locations.find((l) => l.type === 'pantry')!;
+  const item = await inventoryService.createItem(home.id, user.id, {
+    name: 'Parol',
+    locationId: pantry.id,
+    category: 'Medicine',
+    quantity: overrides.quantity ?? 10,
+    unit: 'piece',
+    doseAmount: overrides.doseAmount,
+    doseTimes: ['09:00', '21:00'],
+  });
+  return { userId: user.id, homeId: home.id, itemId: item.id };
+}
+
 describe('inventoryActionService', () => {
   it('consumes an item and writes an audit log', async () => {
     const { homeId, userId, itemId } = await setupHomeWithItem();
@@ -106,5 +127,45 @@ describe('inventoryActionService', () => {
     expect((logs[0].metadata as { shoppingItemId: string }).shoppingItemId).toBe(
       result.shoppingItem.id,
     );
+  });
+
+  it('decrements quantity by doseAmount when a dose is taken', async () => {
+    const { homeId, userId, itemId } = await setupHomeWithMedicine({ quantity: 10, doseAmount: 2 });
+
+    const result = await inventoryActionService.takeDose(homeId, userId, itemId);
+
+    expect(result.item.quantity).toBe(8);
+    expect(result.item.status).toBe('active');
+
+    const logs = await AuditLog.find({ homeId, action: 'dose_taken' });
+    expect(logs).toHaveLength(1);
+    expect(logs[0].previousStatus).toBe('active');
+    expect(logs[0].newStatus).toBe('active');
+    expect((logs[0].metadata as { quantityAfter: number }).quantityAfter).toBe(8);
+  });
+
+  it('defaults doseAmount to 1 when unset', async () => {
+    const { homeId, userId, itemId } = await setupHomeWithMedicine({ quantity: 10 });
+
+    const result = await inventoryActionService.takeDose(homeId, userId, itemId);
+
+    expect(result.item.quantity).toBe(9);
+  });
+
+  it('floors quantity at 0 instead of going negative', async () => {
+    const { homeId, userId, itemId } = await setupHomeWithMedicine({ quantity: 1, doseAmount: 5 });
+
+    const result = await inventoryActionService.takeDose(homeId, userId, itemId);
+
+    expect(result.item.quantity).toBe(0);
+    expect(result.item.status).toBe('active');
+  });
+
+  it('rejects taking a dose on a non-medicine item', async () => {
+    const { homeId, userId, itemId } = await setupHomeWithItem();
+
+    await expect(inventoryActionService.takeDose(homeId, userId, itemId)).rejects.toMatchObject({
+      code: 'NOT_A_MEDICINE',
+    });
   });
 });

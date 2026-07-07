@@ -201,6 +201,10 @@ status değişikliği garantili bir `AuditLog` kaydı üretir.
 `category` ve `unit` sabit enum'lardır (`server/src/constants/inventory.ts`).
 `locationId` bu home'a ait değilse `400 INVALID_LOCATION`.
 
+`category: 'Medicine'` için opsiyonel `doseAmount` (number) ve `doseTimes`
+(`"HH:mm"` string dizisi, ör. `["09:00", "21:00"]`) alanları da kabul edilir —
+diğer kategorilerde anlamsızdır ama şema seviyesinde reddedilmez.
+
 ### GET/PATCH/DELETE /api/homes/:homeId/items/:itemId
 
 Body'deki her alan PATCH'te opsiyoneldir. Başka home'un ürününe erişim (veya olmayan id)
@@ -216,6 +220,7 @@ POST /api/homes/:homeId/items/:itemId/consume
 POST /api/homes/:homeId/items/:itemId/discard
 POST /api/homes/:homeId/items/:itemId/freeze
 POST /api/homes/:homeId/items/:itemId/add-to-shopping
+POST /api/homes/:homeId/items/:itemId/take-dose
 ```
 
 - `consume/discard/freeze`: item'ın `status`'unu sırasıyla `consumed/discarded/frozen` yapar,
@@ -225,6 +230,12 @@ POST /api/homes/:homeId/items/:itemId/add-to-shopping
 - `add-to-shopping`: item'ın `status`'unu **değiştirmez**; ürün adı/birim/kategorisiyle
   home'un varsayılan alışveriş listesine yeni bir `ShoppingItem` ekler (bkz. Shopping
   endpointleri) ve `metadata.shoppingItemId` ile ilişkilendirilmiş bir `AuditLog` kaydı üretir.
+- `take-dose` (v1.3, İlaç modülü): yalnızca `category: 'Medicine'` olan item'larda
+  çalışır, aksi halde `400 NOT_A_MEDICINE`. `quantity`'yi `doseAmount` (belirtilmemişse
+  `1`) kadar azaltır, `0`'ın altına düşürmez (`Math.max(0, ...)`). `status`'u
+  **değiştirmez** — `consume/discard/freeze`'in aksine tekrarlanabilir bir aksiyondur
+  (ilaç yenilenip stok tekrar dolabilir), tek seferlik bir durum geçişi değildir.
+  `metadata.quantityAfter` ile bir `AuditLog` kaydı (`action: 'dose_taken'`) üretir.
 
 Response: `{ "item": {...} }` (add-to-shopping'de ayrıca `"shoppingItem": {...}`).
 

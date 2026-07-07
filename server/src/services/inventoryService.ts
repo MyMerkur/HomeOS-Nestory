@@ -20,6 +20,8 @@ export type ItemSummary = {
   notes: string | null;
   imageUrl: string | null;
   reminderDaysBefore: number[];
+  doseAmount: number | null;
+  doseTimes: string[];
   createdAt: Date;
   updatedAt: Date;
 };
@@ -40,6 +42,8 @@ export function toSummary(item: InventoryItemDocument & { _id: unknown }): ItemS
     notes: item.notes ?? null,
     imageUrl: item.imageUrl ?? null,
     reminderDaysBefore: item.reminderDaysBefore ?? [],
+    doseAmount: item.doseAmount ?? null,
+    doseTimes: item.doseTimes ?? [],
     createdAt: item.createdAt as Date,
     updatedAt: item.updatedAt as Date,
   };
@@ -75,6 +79,8 @@ export async function createItem(
     notes: input.notes,
     imageUrl: input.imageUrl,
     reminderDaysBefore: input.reminderDaysBefore,
+    doseAmount: input.doseAmount,
+    doseTimes: input.doseTimes,
   });
 
   return toSummary(item);
@@ -118,6 +124,8 @@ export async function updateItem(
   if (input.notes !== undefined) item.notes = input.notes;
   if (input.imageUrl !== undefined) item.imageUrl = input.imageUrl;
   if (input.reminderDaysBefore !== undefined) item.reminderDaysBefore = input.reminderDaysBefore;
+  if (input.doseAmount !== undefined) item.doseAmount = input.doseAmount;
+  if (input.doseTimes !== undefined) item.doseTimes = input.doseTimes;
 
   await item.save();
   return toSummary(item);

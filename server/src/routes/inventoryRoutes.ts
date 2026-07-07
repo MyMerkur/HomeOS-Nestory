@@ -11,6 +11,7 @@ import {
   consumeItemHandler,
   discardItemHandler,
   freezeItemHandler,
+  takeDoseHandler,
 } from '../controllers/inventoryActionController';
 import { requireHomeMembership } from '../middlewares/requireHomeMembership';
 import { validateBody, validateParams, validateQuery } from '../middlewares/validate';
@@ -88,6 +89,13 @@ router.post(
   validateParams(homeItemIdParamSchema),
   requireHomeMembership('member'),
   catchAsync(addToShoppingHandler),
+);
+
+router.post(
+  '/:itemId/take-dose',
+  validateParams(homeItemIdParamSchema),
+  requireHomeMembership('member'),
+  catchAsync(takeDoseHandler),
 );
 
 export default router;

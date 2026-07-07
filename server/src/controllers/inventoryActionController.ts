@@ -29,6 +29,15 @@ export async function freezeItemHandler(req: Request, res: Response) {
   sendSuccess(res, result, 'Item marked as frozen');
 }
 
+export async function takeDoseHandler(req: Request, res: Response) {
+  const result = await inventoryActionService.takeDose(
+    req.params.homeId,
+    req.userId!,
+    req.params.itemId,
+  );
+  sendSuccess(res, result, 'Dose recorded');
+}
+
 export async function addToShoppingHandler(req: Request, res: Response) {
   const result = await inventoryActionService.addToShopping(
     req.params.homeId,

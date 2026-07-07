@@ -1,6 +1,12 @@
 import { Schema, model, type InferSchemaType } from 'mongoose';
 
-export const AUDIT_LOG_ACTIONS = ['consumed', 'discarded', 'frozen', 'added_to_shopping'] as const;
+export const AUDIT_LOG_ACTIONS = [
+  'consumed',
+  'discarded',
+  'frozen',
+  'added_to_shopping',
+  'dose_taken',
+] as const;
 
 const auditLogSchema = new Schema(
   {

@@ -19,6 +19,8 @@ const inventoryItemSchema = new Schema(
     notes: { type: String, maxlength: 500 },
     imageUrl: { type: String },
     reminderDaysBefore: { type: [Number], default: [7, 3, 1, 0] },
+    doseAmount: { type: Number, min: 0 },
+    doseTimes: { type: [String], default: [] },
   },
   { timestamps: true },
 );

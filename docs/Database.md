@@ -173,12 +173,19 @@ index: `(homeId, listId, status)`.
   notes?: string (max 500),
   imageUrl?: string,
   reminderDaysBefore: number[] (default [7,3,1,0]),
+  doseAmount?: number (bir dozda kullanılan quantity/unit miktarı, ör. 1),
+  doseTimes: string[] (default [] — günlük hatırlatma saatleri, "HH:mm", ör. ["09:00","21:00"]),
   createdAt, updatedAt
 }
 ```
 
 indexler: `(homeId, status)`, `(homeId, expiryDate)`, `(homeId, locationId)`, `(homeId, normalizedName)`.
 Sabitler `server/src/constants/inventory.ts`'de tutulur (mobile tarafından da referans alınabilir).
+
+`doseAmount`/`doseTimes` yalnızca `category: 'Medicine'` olduğunda anlamlıdır — v1.3
+"İlaç modülü" için ayrı bir model yerine mevcut `InventoryItem`'a eklendi (SKT takibi
+zaten bu modelden geliyor, bkz. `docs/ProjectDecisions.md`). Stok miktarı hâlâ mevcut
+`quantity`/`unit` alanlarıyla tutulur; yeni bir "doz birimi" enum'u eklenmedi.
 
 ### AuditLog (`server/src/models/AuditLog.ts`) ✅
 
@@ -187,16 +194,16 @@ Sabitler `server/src/constants/inventory.ts`'de tutulur (mobile tarafından da r
   homeId: ObjectId (ref Home, indexed),
   itemId: ObjectId (ref InventoryItem),
   userId: ObjectId (ref User),
-  action: 'consumed' | 'discarded' | 'frozen' | 'added_to_shopping',
+  action: 'consumed' | 'discarded' | 'frozen' | 'added_to_shopping' | 'dose_taken',
   previousStatus: string,
   newStatus?: string (add-to-shopping'de item status değişmediği için yok),
-  metadata?: Mixed (örn. { shoppingItemId }),
+  metadata?: Mixed (örn. { shoppingItemId } veya { quantityAfter }),
   createdAt (updatedAt yok — timestamps: { createdAt: true, updatedAt: false })
 }
 ```
 
 index: `(homeId, createdAt)`. Her `inventoryActionService` aksiyonu (consume/discard/freeze/
-add-to-shopping) bir `AuditLog` kaydı üretir; `InventoryItem.status` artık yalnızca bu
+add-to-shopping/take-dose) bir `AuditLog` kaydı üretir; `InventoryItem.status` artık yalnızca bu
 servis üzerinden değişebilir (genel PATCH'ten çıkarıldı).
 
 ### Recipe (`server/src/models/Recipe.ts`) ✅

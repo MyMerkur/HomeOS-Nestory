@@ -15,6 +15,8 @@ export const createItemSchema = z.object({
   notes: z.string().trim().max(500).optional(),
   imageUrl: z.string().trim().optional(),
   reminderDaysBefore: z.array(z.number().int().min(0)).optional(),
+  doseAmount: z.number().positive().optional(),
+  doseTimes: z.array(z.string().regex(/^([01]\d|2[0-3]):([0-5]\d)$/, 'HH:mm formatında olmalı')).optional(),
 });
 
 // status kasıtlı olarak burada yok — status değişiklikleri yalnızca
