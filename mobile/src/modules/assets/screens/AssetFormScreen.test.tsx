@@ -1,11 +1,21 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react-native';
+import TextRecognition from '@react-native-ml-kit/text-recognition';
 import { AssetFormScreen } from './AssetFormScreen';
-import { createAsset, getAsset, updateAsset } from '../services/assetApi';
+import {
+  createAsset,
+  getAsset,
+  updateAsset,
+  uploadReceipt,
+  uploadWarrantyDocument,
+} from '../services/assetApi';
+import { captureImage } from '../../../services/cameraCapture';
 import { useHomeStore } from '../../../store/useHomeStore';
 import type { DashboardStackScreenProps } from '../../../app/navigation/types';
 
 jest.mock('../services/assetApi');
+jest.mock('../../../services/cameraCapture');
+jest.mock('@react-native-ml-kit/text-recognition');
 
 const mockNavigation = {
   navigate: jest.fn(),
@@ -87,5 +97,68 @@ describe('AssetFormScreen', () => {
         expect.objectContaining({ name: 'Buzdolabı (Bosch)' }),
       ),
     );
+  });
+
+  it('scans a receipt, prefills purchaseDate, and uploads immediately in edit mode', async () => {
+    (getAsset as jest.Mock).mockResolvedValue({
+      id: 'asset-1',
+      name: 'Buzdolabı',
+      category: 'Appliance',
+    });
+    (captureImage as jest.Mock).mockResolvedValue('file://receipt.jpg');
+    (TextRecognition.recognize as jest.Mock).mockResolvedValue({ text: '10.10.2026', blocks: [] });
+    (uploadReceipt as jest.Mock).mockResolvedValue({ id: 'asset-1' });
+
+    renderScreen('asset-1');
+    await screen.findByDisplayValue('Buzdolabı');
+
+    fireEvent.press(screen.getByTestId('scan-receipt-button'));
+
+    await waitFor(() =>
+      expect(uploadReceipt).toHaveBeenCalledWith('home-1', 'asset-1', 'file://receipt.jpg'),
+    );
+    expect(await screen.findByText('10.10.2026')).toBeTruthy();
+    expect(await screen.findByText('Fiş Eklendi ✓')).toBeTruthy();
+  });
+
+  it('defers the receipt upload until after create in create mode', async () => {
+    (captureImage as jest.Mock).mockResolvedValue('file://receipt.jpg');
+    (TextRecognition.recognize as jest.Mock).mockResolvedValue({ text: 'no date here', blocks: [] });
+    (createAsset as jest.Mock).mockResolvedValue({ id: 'new-asset' });
+    (uploadReceipt as jest.Mock).mockResolvedValue({ id: 'new-asset' });
+
+    renderScreen();
+
+    fireEvent.press(screen.getByTestId('scan-receipt-button'));
+    expect(await screen.findByText('Fiş Eklendi ✓')).toBeTruthy();
+    expect(uploadReceipt).not.toHaveBeenCalled();
+
+    fireEvent.changeText(screen.getByPlaceholderText('ör. Televizyon'), 'Televizyon');
+    fireEvent.press(screen.getByTestId('asset-category-chip-Electronics'));
+    fireEvent.press(screen.getByTestId('asset-form-submit'));
+
+    await waitFor(() =>
+      expect(uploadReceipt).toHaveBeenCalledWith('home-1', 'new-asset', 'file://receipt.jpg'),
+    );
+  });
+
+  it('captures and uploads a warranty document immediately in edit mode', async () => {
+    (getAsset as jest.Mock).mockResolvedValue({
+      id: 'asset-1',
+      name: 'Buzdolabı',
+      category: 'Appliance',
+    });
+    (captureImage as jest.Mock).mockResolvedValue('file://warranty.jpg');
+    (uploadWarrantyDocument as jest.Mock).mockResolvedValue({ id: 'asset-1' });
+
+    renderScreen('asset-1');
+    await screen.findByDisplayValue('Buzdolabı');
+
+    fireEvent.press(screen.getByTestId('add-warranty-document-button'));
+
+    await waitFor(() =>
+      expect(uploadWarrantyDocument).toHaveBeenCalledWith('home-1', 'asset-1', 'file://warranty.jpg'),
+    );
+    expect(await screen.findByText('Belge Eklendi ✓')).toBeTruthy();
   });
 });

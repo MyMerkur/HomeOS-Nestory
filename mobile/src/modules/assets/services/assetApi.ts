@@ -84,3 +84,33 @@ export async function updateAsset(
 export async function deleteAsset(homeId: string, assetId: string): Promise<void> {
   await apiClient.delete(`/homes/${homeId}/assets/${assetId}`);
 }
+
+function buildPhotoFormData(uri: string): FormData {
+  const filename = uri.split('/').pop() ?? 'photo.jpg';
+  const extension = filename.split('.').pop()?.toLowerCase();
+  const type = extension === 'png' ? 'image/png' : 'image/jpeg';
+
+  const formData = new FormData();
+  formData.append('file', { uri, name: filename, type } as unknown as Blob);
+  return formData;
+}
+
+export async function uploadReceipt(homeId: string, assetId: string, uri: string): Promise<Asset> {
+  const { data } = await apiClient.post<ApiEnvelope<{ asset: Asset }>>(
+    `/homes/${homeId}/assets/${assetId}/receipt`,
+    buildPhotoFormData(uri),
+  );
+  return data.data.asset;
+}
+
+export async function uploadWarrantyDocument(
+  homeId: string,
+  assetId: string,
+  uri: string,
+): Promise<Asset> {
+  const { data } = await apiClient.post<ApiEnvelope<{ asset: Asset }>>(
+    `/homes/${homeId}/assets/${assetId}/warranty-document`,
+    buildPhotoFormData(uri),
+  );
+  return data.data.asset;
+}

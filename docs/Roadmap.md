@@ -44,5 +44,6 @@ dolap fotoğrafı analizi.
 | Sprint 6 | v1.2 Barcode/OCR Production | 11.1 Scanner Hardening, 11.2 Quick Add Flow |
 | Sprint 7 | v1.1 Completion | 12.1 Saved Recipes Backend, 12.2 Saved Recipes Mobile |
 | Sprint 8 | v1.3 Medicine Module | 13.1 Medicine Backend, 13.2 Medicine Mobile |
+| Sprint 9 | v2 Warranty/Documents | 14.1 Asset Backend + Uploads, 14.2 Asset Mobile + Receipt Scan |
 
 Kapsam büyümeye başlarsa buradaki v1 sınırlarına geri dönülür.

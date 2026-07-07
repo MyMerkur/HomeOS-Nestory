@@ -1,11 +1,34 @@
 import notifee from '@notifee/react-native';
 import { syncItemReminders } from './notificationScheduler';
 import type { InventoryItem } from '../modules/pantry/services/pantryApi';
+import type { Asset } from '../modules/assets/services/assetApi';
 
 function daysFromNow(days: number): string {
   const date = new Date();
   date.setDate(date.getDate() + days);
   return date.toISOString();
+}
+
+function buildAsset(overrides: Partial<Asset>): Asset {
+  return {
+    id: 'asset-1',
+    name: 'Televizyon',
+    category: 'Electronics',
+    room: null,
+    brand: null,
+    serialNumber: null,
+    purchaseDate: null,
+    price: null,
+    warrantyEndDate: null,
+    receiptImageUrl: null,
+    warrantyDocumentUrl: null,
+    notes: null,
+    reminderDaysBefore: [30, 7, 1, 0],
+    status: 'active',
+    createdAt: '2026-01-01T00:00:00.000Z',
+    updatedAt: '2026-01-01T00:00:00.000Z',
+    ...overrides,
+  };
 }
 
 function buildItem(overrides: Partial<InventoryItem>): InventoryItem {
@@ -129,5 +152,56 @@ describe('notificationScheduler', () => {
     await syncItemReminders([item]);
 
     expect(notifee.createTriggerNotification).not.toHaveBeenCalled();
+  });
+
+  it('schedules a trigger for every future reminder day of an active asset warranty', async () => {
+    const asset = buildAsset({ id: 'asset-1', warrantyEndDate: daysFromNow(40) });
+
+    await syncItemReminders([], [asset]);
+
+    // reminderDaysBefore [30,7,1,0] against a 40-day-out warranty end -> all 4 are still future
+    expect(notifee.createTriggerNotification).toHaveBeenCalledTimes(4);
+    expect(notifee.createTriggerNotification).toHaveBeenCalledWith(
+      expect.objectContaining({ id: 'asset:asset-1:30' }),
+      expect.objectContaining({ type: 0 }),
+    );
+  });
+
+  it('skips warranty reminder days that have already passed', async () => {
+    const asset = buildAsset({ id: 'asset-2', warrantyEndDate: daysFromNow(5) });
+
+    await syncItemReminders([], [asset]);
+
+    // reminderDaysBefore [30,7,1,0] against a 5-day-out warranty end -> only 1 and 0 are future
+    expect(notifee.createTriggerNotification).toHaveBeenCalledTimes(2);
+    const scheduledIds = (notifee.createTriggerNotification as jest.Mock).mock.calls.map(
+      ([notification]) => notification.id,
+    );
+    expect(scheduledIds.sort()).toEqual(['asset:asset-2:0', 'asset:asset-2:1']);
+  });
+
+  it('does not schedule warranty reminders for archived assets', async () => {
+    const asset = buildAsset({ id: 'asset-3', status: 'archived', warrantyEndDate: daysFromNow(40) });
+
+    await syncItemReminders([], [asset]);
+
+    expect(notifee.createTriggerNotification).not.toHaveBeenCalled();
+  });
+
+  it('does not schedule warranty reminders for an asset with no warrantyEndDate', async () => {
+    const asset = buildAsset({ id: 'asset-4', warrantyEndDate: null });
+
+    await syncItemReminders([], [asset]);
+
+    expect(notifee.createTriggerNotification).not.toHaveBeenCalled();
+  });
+
+  it('schedules items and asset warranties together without interfering with each other', async () => {
+    const item = buildItem({ id: 'item-5', expiryDate: daysFromNow(10) });
+    const asset = buildAsset({ id: 'asset-5', warrantyEndDate: daysFromNow(40) });
+
+    await syncItemReminders([item], [asset]);
+
+    expect(notifee.createTriggerNotification).toHaveBeenCalledTimes(8);
   });
 });

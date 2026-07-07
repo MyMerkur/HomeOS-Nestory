@@ -1,6 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import DateTimePicker from '@react-native-community/datetimepicker';
+import TextRecognition from '@react-native-ml-kit/text-recognition';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import {
@@ -14,9 +15,17 @@ import {
   View,
 } from 'react-native';
 import { useHomeStore } from '../../../store/useHomeStore';
+import { captureImage } from '../../../services/cameraCapture';
+import { parseExpiryDateFromText } from '../../pantry/services/dateOcrScanner';
 import { ASSET_CATEGORIES, ASSET_CATEGORY_LABELS } from '../constants';
 import { ASSETS_QUERY_KEY } from '../hooks/useAssetsQuery';
-import { createAsset, getAsset, updateAsset } from '../services/assetApi';
+import {
+  createAsset,
+  getAsset,
+  updateAsset,
+  uploadReceipt,
+  uploadWarrantyDocument,
+} from '../services/assetApi';
 import { assetFormSchema, type AssetFormValues } from '../schemas/assetSchema';
 import type { DashboardStackScreenProps } from '../../../app/navigation/types';
 
@@ -36,16 +45,27 @@ export function AssetFormScreen({ navigation, route }: DashboardStackScreenProps
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showPurchaseDatePicker, setShowPurchaseDatePicker] = useState(false);
   const [showWarrantyDatePicker, setShowWarrantyDatePicker] = useState(false);
+  const [isScanningReceipt, setIsScanningReceipt] = useState(false);
+  const [isAddingWarrantyDocument, setIsAddingWarrantyDocument] = useState(false);
+  const [pendingReceiptUri, setPendingReceiptUri] = useState<string | null>(null);
+  const [pendingWarrantyDocumentUri, setPendingWarrantyDocumentUri] = useState<string | null>(null);
+  const [receiptJustUploaded, setReceiptJustUploaded] = useState(false);
+  const [warrantyDocumentJustUploaded, setWarrantyDocumentJustUploaded] = useState(false);
 
   const {
     control,
     handleSubmit,
     reset,
+    setValue,
     formState: { errors },
   } = useForm<AssetFormValues>({
     resolver: zodResolver(assetFormSchema),
     defaultValues: { name: '', category: undefined },
   });
+
+  const hasReceipt = !!existingAsset?.receiptImageUrl || !!pendingReceiptUri || receiptJustUploaded;
+  const hasWarrantyDocument =
+    !!existingAsset?.warrantyDocumentUrl || !!pendingWarrantyDocumentUri || warrantyDocumentJustUploaded;
 
   useEffect(() => {
     navigation.setOptions({ title: isEditMode ? 'Eşyayı düzenle' : 'Eşya ekle' });
@@ -67,6 +87,46 @@ export function AssetFormScreen({ navigation, route }: DashboardStackScreenProps
     }
   }, [existingAsset, reset]);
 
+  const handleScanReceipt = async () => {
+    setIsScanningReceipt(true);
+    try {
+      const uri = await captureImage();
+      if (!uri) return;
+
+      const result = await TextRecognition.recognize(uri);
+      const date = parseExpiryDateFromText(result.text);
+      if (date) setValue('purchaseDate', date);
+
+      if (isEditMode) {
+        await uploadReceipt(homeId, assetId as string, uri);
+        setReceiptJustUploaded(true);
+        await queryClient.invalidateQueries({ queryKey: ['asset', homeId, assetId] });
+      } else {
+        setPendingReceiptUri(uri);
+      }
+    } finally {
+      setIsScanningReceipt(false);
+    }
+  };
+
+  const handleAddWarrantyDocument = async () => {
+    setIsAddingWarrantyDocument(true);
+    try {
+      const uri = await captureImage();
+      if (!uri) return;
+
+      if (isEditMode) {
+        await uploadWarrantyDocument(homeId, assetId as string, uri);
+        setWarrantyDocumentJustUploaded(true);
+        await queryClient.invalidateQueries({ queryKey: ['asset', homeId, assetId] });
+      } else {
+        setPendingWarrantyDocumentUri(uri);
+      }
+    } finally {
+      setIsAddingWarrantyDocument(false);
+    }
+  };
+
   const onSubmit = async (values: AssetFormValues) => {
     setServerError(null);
     setIsSubmitting(true);
@@ -86,7 +146,11 @@ export function AssetFormScreen({ navigation, route }: DashboardStackScreenProps
       if (isEditMode) {
         await updateAsset(homeId, assetId as string, payload);
       } else {
-        await createAsset(homeId, payload);
+        const created = await createAsset(homeId, payload);
+        if (pendingReceiptUri) await uploadReceipt(homeId, created.id, pendingReceiptUri);
+        if (pendingWarrantyDocumentUri) {
+          await uploadWarrantyDocument(homeId, created.id, pendingWarrantyDocumentUri);
+        }
       }
 
       await queryClient.invalidateQueries({ queryKey: [ASSETS_QUERY_KEY] });
@@ -261,6 +325,36 @@ export function AssetFormScreen({ navigation, route }: DashboardStackScreenProps
         )}
       />
 
+      <Text style={styles.label}>Fiş / Garanti Belgesi (opsiyonel)</Text>
+      <View style={styles.chipsRow}>
+        <Pressable
+          testID="scan-receipt-button"
+          style={[styles.scanButton, isScanningReceipt && styles.buttonDisabled]}
+          onPress={handleScanReceipt}
+          disabled={isScanningReceipt}
+        >
+          {isScanningReceipt ? (
+            <ActivityIndicator color="#1d76db" />
+          ) : (
+            <Text style={styles.scanButtonText}>{hasReceipt ? 'Fiş Eklendi ✓' : 'Fişi Tara'}</Text>
+          )}
+        </Pressable>
+        <Pressable
+          testID="add-warranty-document-button"
+          style={[styles.scanButton, isAddingWarrantyDocument && styles.buttonDisabled]}
+          onPress={handleAddWarrantyDocument}
+          disabled={isAddingWarrantyDocument}
+        >
+          {isAddingWarrantyDocument ? (
+            <ActivityIndicator color="#1d76db" />
+          ) : (
+            <Text style={styles.scanButtonText}>
+              {hasWarrantyDocument ? 'Belge Eklendi ✓' : 'Garanti Belgesi Ekle'}
+            </Text>
+          )}
+        </Pressable>
+      </View>
+
       <Text style={styles.label}>Notlar (opsiyonel)</Text>
       <Controller
         control={control}
@@ -312,6 +406,14 @@ const styles = StyleSheet.create({
   chipActive: { backgroundColor: '#1d76db' },
   chipText: { fontSize: 13, color: '#333' },
   chipTextActive: { color: '#fff', fontWeight: '600' },
+  scanButton: {
+    borderWidth: 1,
+    borderColor: '#1d76db',
+    borderRadius: 8,
+    paddingHorizontal: 12,
+    paddingVertical: 10,
+  },
+  scanButtonText: { color: '#1d76db', fontWeight: '600', fontSize: 13 },
   button: {
     backgroundColor: '#1d76db',
     borderRadius: 8,

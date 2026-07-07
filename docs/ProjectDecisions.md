@@ -208,3 +208,49 @@ alındığında yeni bir bölüm eklenir; eskiler değiştirilmez, "superseded" 
   ateşlenmesi Jest ile doğrulanamaz, cihaz/simulator'de elle test gerekir. Uygulama
   yine tıbbi tavsiye vermez — `docs/legal/TermsOfService.md`'de belirtildiği gibi
   yalnızca hatırlatma/kayıt amaçlıdır.
+
+---
+
+## Decision: v2 Warranty/Documents — ayrı Asset modeli, gerçek dosya yükleme, tek bildirim döngüsü
+
+- **Date**: 2026-07-07
+- **Status**: Accepted
+- **Context**: Roadmap'in v2 maddesi "Warranty/documents, receipt scan — Envanteri
+  gıda dışına taşımak". `InventoryItem.locationId` zorunlu ve `PantryLocation.type`
+  enum'u (`fridge/freezer/pantry/cabinet/medicine/other`) gıda-depolama
+  kelime dağarcığı; `quantity`/`unit` (piece/kg/liter) "bir TV" için anlamlı değil.
+  `InventoryItem.imageUrl` bugüne kadar **ölü bir alan**dı — hiçbir upload
+  endpoint'i, multer, ya da bulut depolama SDK'sı yoktu, ham bir string olarak
+  olduğu gibi saklanıyordu.
+- **Decision**: (1) `InventoryItem`'ı genişletmek yerine yeni, ayrı bir `Asset`
+  modeli eklendi — bu gerçekten farklı bir alan (quantity/unit/pantry-lokasyonu
+  yok). `room` alanı **basit bir serbest metin**tir (ör. "Oturma Odası") —
+  `PantryLocation` gibi ayrı bir model/CRUD değil, kapsamı orantısız
+  büyütmemek için. (2) Fiş/garanti belgesi fotoğrafları için ilk kez **gerçek
+  dosya yükleme altyapısı** kuruldu: multer ile `server/uploads/receipts/`
+  altına diskte saklanır, `express.static` ile `/uploads` yolundan sunulur —
+  bu, `docs/Deployment.md`'nin backup politikasının zaten öngördüğü ama boş
+  bırakılmış "`/uploads` klasörü varsa ayrıca yedeklenir" notunu dolduruyor.
+  `receiptImageUrl`/`warrantyDocumentUrl` genel PATCH'ten **ayarlanamaz**,
+  yalnızca özel upload endpoint'leri üzerinden set edilir. (3) "Fiş tara"
+  özelliği, İlaç modülünün OCR/barkod POC'larında kurulan statik-foto + ML Kit
+  pipeline'ını (`captureImage` + `TextRecognition` + `parseExpiryDateFromText`)
+  doğrudan yeniden kullanır — tam fiş/kalem ayrıştırma değil, sadece bir satın
+  alma tarihi çıkarımı (roadmap'in "v1'de olmayacaklar" listesindeki "tam
+  otomatik fiş okuma" yalnızca *tam otomatik* olanı hariç tutuyordu). Oluşturma
+  akışında henüz asset id'si olmadığı için fotoğraf `pendingReceiptUri` olarak
+  yerel state'te tutulur ve `createAsset` başarılı olduktan hemen sonra
+  yüklenir; düzenleme modunda id zaten var olduğu için yükleme anındadır. (4)
+  Garanti hatırlatmaları, İlaç modülünde öğrenilen dersle **ayrı bir scheduler
+  yerine** `syncItemReminders`'ın mevcut tek iptal-et-yeniden-kur döngüsüne
+  eklendi (`asset:${assetId}:${daysBefore}` id öneki ile SKT/doz
+  hatırlatmalarından ayrıştırılır) — ikinci bağımsız bir scheduler diğerlerinin
+  bildirimlerini silerdi. Varsayılan `reminderDaysBefore` gıdanın `[7,3,1,0]`
+  yerine `[30,7,1,0]` — garanti pencereleri gün değil ay/yıl mertebesinde. (5)
+  UI, kullanıcının kararıyla Dashboard altına (Badges/Medicines gibi) nested
+  bir "Varlıklarım" ekranı olarak eklendi, yeni bir bottom tab değil.
+- **Consequences**: Gerçek fotoğraf yükleme/OCR kalitesi ve garanti
+  hatırlatmasının gerçek zamanda ateşlenmesi yine Jest ile doğrulanamaz,
+  cihaz/simulator'de elle test gerekir. `server/uploads/` diskte tutulur —
+  `docs/Deployment.md`'nin backup politikasına artık gerçekten dahil edilmesi
+  gerekiyor (VPS'e taşınırken hatırlanmalı).
