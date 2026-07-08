@@ -487,3 +487,42 @@ navigasyon başlıkları da tema fontuna taşındı
   `tsc --noEmit` sıfır hata, 31 suite / 135 test yeşil. Backend: 16 suite /
   85 test yeşil. Bu, Sprint 13'ü (i18n initiative) tamamlıyor — Sprint 14
   (Dark Mode) sıradaki adım.
+
+---
+
+## Decision: Dark Mode altyapısı kuruldu (Sprint 14.1)
+
+- **Date**: 2026-07-08
+- **Status**: Accepted
+- **Context**: i18n initiative (Sprint 13) tamamlandıktan sonra "Yayın
+  Kalitesi" planının bir sonraki adımı olan Dark Mode'a başlandı.
+  `theme.ts` tek statik `colors` paleti taşıyordu; reaktif tema değişimi
+  için altyapı yoktu. Backend `User.settings.theme` şeması zaten
+  `light|dark|system` enum'unu destekliyordu ama `userValidation.ts`
+  yalnızca `z.literal('light')` kabul ediyordu (v1 kısıtı).
+- **Decision**: `mobile/src/theme/theme.ts`'teki `colors`, `lightColors`/
+  `darkColors` olarak ikiye ayrıldı (`ThemeColors` tipi, aynı anahtar
+  setiyle string değerler). Geriye dönük uyumluluk için `colors` adı
+  `lightColors`'a eşit statik bir alias olarak korundu — ekran/bileşen
+  migrasyonu (Sprint 14.2, ayrı issue) tamamlanana kadar mevcut ~30 dosya
+  değişmeden derlenmeye devam ediyor. `freshnessColor()` artık opsiyonel
+  bir `themeColors` parametresi kabul ediyor (varsayılan: statik `colors`)
+  — 14.2'de `useTheme().colors` ile çağrılacak şekilde güncellenecek.
+  Yeni `mobile/src/theme/ThemeContext.tsx`: `ThemeProvider` + `useTheme()`
+  — `{ colors, mode, resolvedMode, setMode }`. `mode==='system'` iken
+  `Appearance.addChangeListener` ile cihaz temasını izler. Tercih
+  `mobile/src/services/themeStorage.ts` ile (mevcut `languageStorage.ts`/
+  `secureStorage.ts` deseniyle aynı) `AsyncStorage` anahtarı
+  `homeos.theme`'e yazılır, açılışta okunur. `App.tsx` kök seviyede
+  `ThemeProvider` ile sarmalandı; `StatusBar barStyle` artık
+  `useColorScheme()` yerine `useTheme().resolvedMode`'dan okunuyor.
+  Backend `userValidation.ts`'teki `theme` alanı
+  `z.enum(['light','dark','system'])` olarak genişletildi (model zaten
+  hazırdı, sadece v1 kısıtı kaldırıldı).
+- **Consequences**: Bu adımdan sonra hâlâ hiçbir ekran/bileşen
+  `useTheme()` tüketmiyor — Ayarlar'daki "Tema: Açık (v1)" satırı da
+  değişmedi, tümü Sprint 14.2'de (ui/ altındaki 10 bileşen + 18 ekranın
+  `createStyles(colors)` desenine geçişi + Ayarlar'a Sistem/Açık/Koyu
+  seçici) ele alınacak. Mobile: lint temiz, `tsc --noEmit` sıfır hata,
+  33 suite / 145 test yeşil (yeni `ThemeContext.test.tsx`,
+  `themeStorage.test.ts` dahil). Backend: 16 suite / 85 test yeşil.

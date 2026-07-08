@@ -485,8 +485,9 @@ Yanlış mevcut şifre `401 INVALID_CURRENT_PASSWORD` döner.
 `de`, `fr`, `es`, `it`, `cs`, `pt` (Sprint 13, i18n initiative). Başka bir
 değer zod validasyonunda `422 VALIDATION_ERROR` ile reddedilir.
 
-`theme` v1 sınırı gereği yalnızca `"light"` kabul edilir — başka bir değer
-(`dark`/`system`) zod validasyonunda `422 VALIDATION_ERROR` ile reddedilir.
+`theme` artık `"light"`, `"dark"`, `"system"` değerlerinin tamamını kabul
+eder (Sprint 14.1, dark mode initiative — önceki v1 sınırı kaldırıldı).
+Başka bir değer zod validasyonunda `422 VALIDATION_ERROR` ile reddedilir.
 `notificationPreferences` kısmi güncellenebilir (verilmeyen alanlar korunur).
 
 ## Pagination

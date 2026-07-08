@@ -1,8 +1,8 @@
 // HomeOS / Nestory — Tasarım Tokenları
 // Tek kaynak: tüm renk, tipografi, spacing ve radius değerleri buradan gelir.
-// Ekranlarda ASLA ham hex kullanılmaz, her zaman bu dosyadan import edilir.
+// Ekranlarda ASLA ham hex kullanılmaz, her zaman bu dosyadan (veya useTheme()'den) import edilir.
 
-export const colors = {
+export const lightColors = {
   // Marka
   primary: '#4B7F52', // taze/moss yeşil — ana aksiyon, aktif tab, FAB
   primaryTint: '#E8F0E4', // yeşil rozet/kart arka planı
@@ -28,6 +28,39 @@ export const colors = {
 
   white: '#FFFFFF',
 } as const;
+
+export const darkColors: { [K in keyof typeof lightColors]: string } = {
+  // Marka
+  primary: '#6FA377', // koyu zeminde okunurluk için açıklaştırılmış moss yeşil
+  primaryTint: '#1E2E20', // yeşil rozet/kart arka planı (koyu ton)
+  primaryDark: '#CFE8D2', // yeşil rozet üzerindeki metin (açık ton)
+
+  danger: '#E58A76', // SKT yaklaşan / kritik uyarı
+  dangerTint: '#3A211D',
+  dangerDark: '#F4C9BE',
+
+  warning: '#E0B563', // orta vadeli uyarı, rozet/streak
+  warningTint: '#3A2E14',
+  warningDark: '#F4DFB0',
+
+  // Nötr / arkaplan
+  background: '#14181A', // ekran arka planı (neredeyse saf siyah)
+  surface: '#1E2422', // kart, tab bar, header
+  border: '#2A312D', // ayraç çizgileri, ince kenarlıklar
+  borderStrong: '#3A423C', // input kenarlığı, segmented control
+
+  textPrimary: '#EDEFEA', // ana metin (saf beyaz değil, sıcak açık ton)
+  textSecondary: '#A9B3AA', // ikincil metin, alt başlıklar
+  textMuted: '#6B756E', // pasif ikon, placeholder, disabled
+
+  white: '#FFFFFF',
+} as const;
+
+export type ThemeColors = { [K in keyof typeof lightColors]: string };
+
+// Geriye dönük uyumluluk: ekran/bileşen migrasyonu (Sprint 14.2) tamamlanana kadar
+// `colors` statik olarak açık temayı gösterir. useTheme().colors reaktif alternatiftir.
+export const colors = lightColors;
 
 export const typography = {
   display: {
@@ -80,10 +113,10 @@ export const radius = {
 
 // Tazelik halkası renk eşiği — gün sayısına göre hangi renk kullanılacağını belirler.
 // item.daysUntilExpiry değerine göre çağrılır.
-export function freshnessColor(daysUntilExpiry: number): string {
-  if (daysUntilExpiry <= 1) return colors.danger;
-  if (daysUntilExpiry <= 4) return colors.warning;
-  return colors.primary;
+export function freshnessColor(daysUntilExpiry: number, themeColors: ThemeColors = colors): string {
+  if (daysUntilExpiry <= 1) return themeColors.danger;
+  if (daysUntilExpiry <= 4) return themeColors.warning;
+  return themeColors.primary;
 }
 
 export default { colors, typography, fontSize, spacing, radius, freshnessColor };

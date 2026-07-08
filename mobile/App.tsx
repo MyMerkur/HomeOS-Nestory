@@ -4,15 +4,16 @@
  */
 
 import { useEffect, useState } from 'react';
-import { ActivityIndicator, StatusBar, StyleSheet, useColorScheme, View } from 'react-native';
+import { ActivityIndicator, StatusBar, StyleSheet, View } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { QueryProvider } from './src/app/providers/QueryProvider';
 import { RootNavigator } from './src/app/navigation/RootNavigator';
 import { useAuthStore } from './src/store/useAuthStore';
 import { initI18n } from './src/i18n';
+import { ThemeProvider, useTheme } from './src/theme/ThemeContext';
 
-function App() {
-  const isDarkMode = useColorScheme() === 'dark';
+function AppContent() {
+  const { resolvedMode } = useTheme();
   const bootstrap = useAuthStore((state) => state.bootstrap);
   const [isI18nReady, setIsI18nReady] = useState(false);
 
@@ -34,11 +35,19 @@ function App() {
 
   return (
     <SafeAreaProvider>
-      <StatusBar barStyle={isDarkMode ? 'light-content' : 'dark-content'} />
+      <StatusBar barStyle={resolvedMode === 'dark' ? 'light-content' : 'dark-content'} />
       <QueryProvider>
         <RootNavigator />
       </QueryProvider>
     </SafeAreaProvider>
+  );
+}
+
+function App() {
+  return (
+    <ThemeProvider>
+      <AppContent />
+    </ThemeProvider>
   );
 }
 

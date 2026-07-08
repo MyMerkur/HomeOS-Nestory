@@ -14,7 +14,7 @@ export const SUPPORTED_LANGUAGES = ['en', 'tr', 'de', 'fr', 'es', 'it', 'cs', 'p
 
 export const updateUserSettingsSchema = z.object({
   language: z.enum(SUPPORTED_LANGUAGES).optional(),
-  theme: z.literal('light').optional(),
+  theme: z.enum(['light', 'dark', 'system']).optional(),
   notificationPreferences: z
     .object({
       expiryReminders: z.boolean().optional(),

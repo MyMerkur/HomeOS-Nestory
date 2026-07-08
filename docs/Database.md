@@ -62,9 +62,9 @@ audit_logs: homeId, createdAt
 ```
 
 `settings` alanı `PATCH /api/users/me/settings` ile aktif olarak okunup
-yazılıyor (`server/src/services/userService.ts`) — `theme` v1 sınırı gereği bu
-endpoint üzerinden yalnızca `'light'` kabul edilir, `dark`/`system` şema
-seviyesinde saklanabilir olsa da API üzerinden set edilemez.
+yazılıyor (`server/src/services/userService.ts`) — `theme` artık
+`'light'|'dark'|'system'` enum'unun tamamını API üzerinden kabul eder
+(Sprint 14.1, dark mode initiative — önceki v1 sınırı kaldırıldı).
 
 ### RefreshToken (`server/src/models/RefreshToken.ts`) ✅
 
