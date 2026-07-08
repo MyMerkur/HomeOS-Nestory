@@ -3,9 +3,9 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { IconChefHat, IconFridge, IconHome2, IconShoppingCart } from '@tabler/icons-react-native';
 import { useEffect, useMemo } from 'react';
-import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import { typography, type ThemeColors } from '../../theme/theme';
 import { useTheme } from '../../theme/ThemeContext';
+import { LoadingScreen } from '../screens/LoadingScreen';
 import { useAuthStore } from '../../store/useAuthStore';
 import { useHomeStore } from '../../store/useHomeStore';
 import { LoginScreen } from '../../modules/auth/screens/LoginScreen';
@@ -210,15 +210,6 @@ function MainNavigator() {
   );
 }
 
-function LoadingScreen() {
-  const { colors } = useTheme();
-  return (
-    <View style={[styles.loadingContainer, { backgroundColor: colors.background }]}>
-      <ActivityIndicator color={colors.primary} />
-    </View>
-  );
-}
-
 function AuthenticatedNavigator() {
   const { data: homes, isLoading } = useHomesQuery();
   const selectedHomeId = useHomeStore((state) => state.selectedHomeId);
@@ -271,7 +262,3 @@ export function RootNavigator() {
     </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  loadingContainer: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-});

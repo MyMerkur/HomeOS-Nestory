@@ -7,6 +7,7 @@ import { Button } from '../../../ui/Button';
 import { Card } from '../../../ui/Card';
 import { Chip } from '../../../ui/Chip';
 import { TextField } from '../../../ui/TextField';
+import { useToast } from '../../../ui/ToastProvider';
 import { fontSize, spacing, typography, type ThemeColors } from '../../../theme/theme';
 import { useTheme } from '../../../theme/ThemeContext';
 import { useLocationsQuery } from '../hooks/useLocationsQuery';
@@ -18,6 +19,7 @@ import type { PantryStackScreenProps } from '../../../app/navigation/types';
 
 export function QuickAddItemScreen({ navigation }: PantryStackScreenProps<'QuickAddItem'>) {
   const { t, i18n } = useTranslation();
+  const { showToast } = useToast();
   const { colors } = useTheme();
   const styles = useMemo(() => createStyles(colors), [colors]);
   const homeId = useHomeStore((state) => state.selectedHomeId) as string;
@@ -41,10 +43,7 @@ export function QuickAddItemScreen({ navigation }: PantryStackScreenProps<'Quick
       const outcome = await scanBarcodeFromCamera();
       if (outcome.status === 'cancelled') return;
       if (outcome.status === 'not-found') {
-        Alert.alert(
-          t('pantry.quickAdd.barcodeNotFoundTitle'),
-          t('pantry.quickAdd.barcodeNotFoundMessage'),
-        );
+        showToast({ message: t('pantry.quickAdd.barcodeNotFoundMessage'), variant: 'info' });
         return;
       }
 
@@ -80,10 +79,7 @@ export function QuickAddItemScreen({ navigation }: PantryStackScreenProps<'Quick
       const outcome = await scanExpiryDateFromCamera();
       if (outcome.status === 'cancelled') return;
       if (outcome.status === 'not-found') {
-        Alert.alert(
-          t('pantry.quickAdd.expiryNotFoundTitle'),
-          t('pantry.quickAdd.expiryNotFoundMessage'),
-        );
+        showToast({ message: t('pantry.quickAdd.expiryNotFoundMessage'), variant: 'info' });
         return;
       }
       setExpiryDate(outcome.date);

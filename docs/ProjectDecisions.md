@@ -577,3 +577,78 @@ navigasyon başlıkları da tema fontuna taşındı
   Açık/Koyu temaya reaktif olarak tepki veriyor. Mobile: lint temiz,
   `tsc --noEmit` sıfır hata, 33 suite / 143 test yeşil. Sprint 15
   (Pull-to-Refresh, Skeleton, Toast) sıradaki adım.
+
+---
+
+## Decision: Pull-to-refresh + Skeleton loading eklendi (Sprint 15.1)
+
+- **Date**: 2026-07-09
+- **Status**: Accepted
+- **Context**: 8 `FlatList` ekranı (`AssetsScreen`, `BadgesScreen`,
+  `DashboardScreen`, `MedicinesScreen`, `FamilyScreen`, `PantryScreen`,
+  `RecipesScreen`, `ShoppingScreen`) sabit veriyle açılıyordu — kullanıcının
+  elle yenilemesi için bir yol yoktu, ilk yükleme de çıplak bir
+  `ActivityIndicator` ile gösteriliyordu. Sorgu hook'larının (`useQuery`
+  sonucunu doğrudan döndüren `useDashboardQuery` vb.) zaten `refetch`/
+  `isRefetching` alanlarını içerdiği görüldü — hook'larda değişiklik
+  gerekmedi, sadece ekranlarda bu alanların kullanılması gerekiyordu.
+- **Decision**: Yeni `mobile/src/ui/Skeleton.tsx` — `useTheme()`'den
+  okuyan, `Animated` ile nabız gibi atan temel dikdörtgen bileşeni
+  (`width`/`height`/`radius`/`style` prop'ları). Desen önce
+  `DashboardScreen.tsx`'te kanıtlandı, sonra 4 paralel arka plan ajanına
+  (PantryScreen; ShoppingScreen; RecipesScreen; Badges+Medicines+Family+
+  Assets grubu) bölündü. Her ekranda: (1) `isLoading` sırasında tam ekran
+  `ActivityIndicator` yerine ekrana özgü, birkaç `Skeleton` bloğundan
+  oluşan yerel bir `<XScreenSkeleton>` bileşeni gösteriliyor; (2) önceden
+  `{cond && <EmptyState/>} {cond && <FlatList/>}` şeklindeki koşullu
+  dallanma tek bir `FlatList` + `ListEmptyComponent`'e indirgendi, filtre/
+  arama gibi liste-üstü içerik `ListHeaderComponent`'e taşındı; (3)
+  `FlatList`'e doğrudan `refreshing={isRefetching}` `onRefresh={refetch}`
+  prop'ları eklendi (React Native'in `RefreshControl` eleman prop'u değil
+  — bu şekilde hem native tarafta otomatik bir `RefreshControl` kurulur
+  hem de RTL'de `fireEvent(list, 'refresh')` doğrudan çalışır). `tintColor`
+  bilinçli olarak eklenmedi — bu RN sürümünün `FlatList` TS tiplerinde yok
+  ve `tsc`'yi kırıyor. `RecipesScreen.tsx`'te `Suggestions`/`Saved` sekme
+  değişimine göre aktif sorgudan (`suggestionsQuery`/`savedQuery`) doğru
+  `refetch`/`isRefetching` seçiliyor.
+- **Consequences**: 8 ekranın tamamında artık aşağı çekince yenileme ve
+  ilk yüklemede iskelet önizleme var. Mobile: lint temiz, `tsc --noEmit`
+  sıfır hata, 37 suite / 156 test yeşil (8 yeni "refetches when pulled to
+  refresh" testi dahil). Sprint 15.2 (Toast/Snackbar + açılış animasyonu)
+  sıradaki adım.
+
+---
+
+## Decision: Toast/Snackbar sistemi + markalı açılış yükleme ekranı (Sprint 15.2)
+
+- **Date**: 2026-07-09
+- **Status**: Accepted
+- **Context**: Geçici başarı/bilgi mesajları (şifre değişti, barkod/SKT
+  taranamadı) şimdiye kadar `Alert.alert` ile gösteriliyordu — bu, her
+  seferinde kullanıcının elle kapatması gereken bir native dialog. Ayrıca
+  uygulama açılışı/oturum kontrolü sırasında çıplak bir `ActivityIndicator`
+  gösteriliyordu, markaya uygun değildi.
+- **Decision**: Yeni `mobile/src/ui/Toast.tsx` (tek bir toast'ın görünümü,
+  `Animated` ile alttan kayarak beliren) + `mobile/src/ui/ToastProvider.tsx`
+  (`ToastProvider` + `useToast()` → `showToast({message, variant:
+  'success'|'error'|'info'})`, 2.5sn sonra otomatik kapanır, üçüncü parti
+  kütüphane eklenmedi). Toast arka plan renkleri **kasıtlı olarak** sabit
+  koyu tonlar (`useTheme()`'e bağlı değil) — reaktif `darkColors`'taki
+  "dark" adlı alanlar (örn. `primaryDark`) karanlık modda anlamı tersine
+  dönüyor (tint üzerindeki metin rengi oluyor), bu yüzden her zaman koyu
+  chip/beyaz metin görünümü isteyen bir toast için uygun değiller —
+  Material Snackbar konvansiyonuyla tutarlı şekilde sabit hex değerleri
+  kullanıldı. `App.tsx` kökünde `ToastProvider` eklendi. Mevcut
+  `Alert.alert` kullanımları gözden geçirildi: yıkıcı/onay gerektiren
+  aksiyonlar (evden ayrıl, üye çıkar, yeni barkod için forma git kararı)
+  `Alert.alert` olarak kalıyor; geçici bilgi mesajları (şifre değişti,
+  barkod/SKT taranamadı) `useToast()`'a taşındı
+  (`SettingsScreen.tsx`, `QuickAddItemScreen.tsx`, `ItemFormScreen.tsx`).
+  Yeni `mobile/src/app/screens/LoadingScreen.tsx`: marka adı ("Nestory")
+  + fade-in animasyonu + `ActivityIndicator`, hem `App.tsx`'teki i18n
+  yükleme kapısında hem `RootNavigator.tsx`'teki oturum bootstrap
+  kapısında kullanılıyor (`RootNavigator`'ın kendi yerel `LoadingScreen`
+  tanımı kaldırılıp bu paylaşılan bileşene yönlendirildi).
+- **Consequences**: Mobile: lint temiz, `tsc --noEmit` sıfır hata, tam
+  test suite'i yeşil. `docs/Roadmap.md`'deki Sprint 15 tamamlandı — sırada
+  Sprint 16 (Bildirim: Yerel + Push).

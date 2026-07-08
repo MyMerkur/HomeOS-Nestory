@@ -16,6 +16,7 @@ import { logoutRequest } from '../../auth/services/authApi';
 import { useHomeStore } from '../../../store/useHomeStore';
 import { useAuthStore } from '../../../store/useAuthStore';
 import { ThemeProvider } from '../../../theme/ThemeContext';
+import { ToastProvider } from '../../../ui/ToastProvider';
 import * as secureStorage from '../../../services/secureStorage';
 
 jest.mock('../services/settingsApi');
@@ -52,9 +53,11 @@ function renderScreen() {
   const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   return render(
     <ThemeProvider>
-      <QueryClientProvider client={queryClient}>
-        <SettingsScreen />
-      </QueryClientProvider>
+      <ToastProvider>
+        <QueryClientProvider client={queryClient}>
+          <SettingsScreen />
+        </QueryClientProvider>
+      </ToastProvider>
     </ThemeProvider>,
   );
 }

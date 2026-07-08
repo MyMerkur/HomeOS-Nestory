@@ -7,6 +7,7 @@ import { scanBarcodeFromCamera } from '../services/barcodeScanner';
 import { scanExpiryDateFromCamera } from '../services/dateOcrScanner';
 import { useHomeStore } from '../../../store/useHomeStore';
 import { ThemeProvider } from '../../../theme/ThemeContext';
+import { ToastProvider } from '../../../ui/ToastProvider';
 import type { PantryStackScreenProps } from '../../../app/navigation/types';
 
 jest.mock('../services/pantryApi');
@@ -29,9 +30,11 @@ function renderScreen() {
   const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   return render(
     <ThemeProvider>
-      <QueryClientProvider client={queryClient}>
-        <QuickAddItemScreen navigation={mockNavigation} route={{} as never} />
-      </QueryClientProvider>
+      <ToastProvider>
+        <QueryClientProvider client={queryClient}>
+          <QuickAddItemScreen navigation={mockNavigation} route={{} as never} />
+        </QueryClientProvider>
+      </ToastProvider>
     </ThemeProvider>,
   );
 }
@@ -44,13 +47,14 @@ describe('QuickAddItemScreen', () => {
   });
 
   it('warns when no barcode is recognized', async () => {
-    const alertSpy = jest.spyOn(Alert, 'alert').mockImplementation(() => {});
     (scanBarcodeFromCamera as jest.Mock).mockResolvedValue({ status: 'not-found' });
 
     renderScreen();
     fireEvent.press(screen.getByTestId('quick-add-scan-barcode-button'));
 
-    await waitFor(() => expect(alertSpy).toHaveBeenCalled());
+    expect(
+      await screen.findByText("Couldn't recognize a barcode in the photo, try again."),
+    ).toBeTruthy();
     expect(listItems).not.toHaveBeenCalled();
   });
 

@@ -10,6 +10,7 @@ import { Card } from '../../../ui/Card';
 import { Chip } from '../../../ui/Chip';
 import { SegmentedControl } from '../../../ui/SegmentedControl';
 import { TextField } from '../../../ui/TextField';
+import { useToast } from '../../../ui/ToastProvider';
 import { fontSize, spacing, typography, type ThemeColors } from '../../../theme/theme';
 import { useTheme } from '../../../theme/ThemeContext';
 import type { ThemeMode } from '../../../services/themeStorage';
@@ -43,6 +44,7 @@ function SectionTitle({ title, style }: { title: string; style: TextStyle }) {
 
 export function SettingsScreen() {
   const { t } = useTranslation();
+  const { showToast } = useToast();
   const { colors, mode, setMode } = useTheme();
   const styles = useMemo(() => createStyles(colors), [colors]);
   const homeId = useHomeStore((state) => state.selectedHomeId) as string;
@@ -107,7 +109,7 @@ export function SettingsScreen() {
     try {
       await changePassword(values);
       reset();
-      Alert.alert(t('settings.passwordChangedMessage'));
+      showToast({ message: t('settings.passwordChangedMessage'), variant: 'success' });
     } catch {
       setPasswordError(t('settings.passwordErrorInvalid'));
     } finally {

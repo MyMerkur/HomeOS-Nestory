@@ -5,7 +5,6 @@ import { useEffect, useMemo, useState } from 'react';
 import { Controller, useForm, useWatch } from 'react-hook-form';
 import {
   ActivityIndicator,
-  Alert,
   Platform,
   Pressable,
   ScrollView,
@@ -18,6 +17,7 @@ import { useHomeStore } from '../../../store/useHomeStore';
 import { Button } from '../../../ui/Button';
 import { Chip } from '../../../ui/Chip';
 import { TextField } from '../../../ui/TextField';
+import { useToast } from '../../../ui/ToastProvider';
 import { fontSize, spacing, typography, type ThemeColors } from '../../../theme/theme';
 import { useTheme } from '../../../theme/ThemeContext';
 import { CATEGORIES, UNITS } from '../constants';
@@ -31,6 +31,7 @@ import type { PantryStackScreenProps } from '../../../app/navigation/types';
 
 export function ItemFormScreen({ navigation, route }: PantryStackScreenProps<'ItemForm'>) {
   const { t, i18n } = useTranslation();
+  const { showToast } = useToast();
   const { colors } = useTheme();
   const styles = useMemo(() => createStyles(colors), [colors]);
   const itemId = route.params?.itemId;
@@ -119,10 +120,7 @@ export function ItemFormScreen({ navigation, route }: PantryStackScreenProps<'It
       const outcome = await scanBarcodeFromCamera();
       if (outcome.status === 'cancelled') return;
       if (outcome.status === 'not-found') {
-        Alert.alert(
-          t('pantry.itemForm.barcodeNotFoundTitle'),
-          t('pantry.itemForm.barcodeNotFoundMessage'),
-        );
+        showToast({ message: t('pantry.itemForm.barcodeNotFoundMessage'), variant: 'info' });
         return;
       }
 
@@ -142,10 +140,7 @@ export function ItemFormScreen({ navigation, route }: PantryStackScreenProps<'It
       const outcome = await scanExpiryDateFromCamera();
       if (outcome.status === 'cancelled') return;
       if (outcome.status === 'not-found') {
-        Alert.alert(
-          t('pantry.itemForm.expiryNotFoundTitle'),
-          t('pantry.itemForm.expiryNotFoundMessage'),
-        );
+        showToast({ message: t('pantry.itemForm.expiryNotFoundMessage'), variant: 'info' });
         return;
       }
       setValue('expiryDate', outcome.date);

@@ -4,13 +4,15 @@
  */
 
 import { useEffect, useState } from 'react';
-import { ActivityIndicator, StatusBar, StyleSheet, View } from 'react-native';
+import { StatusBar } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { QueryProvider } from './src/app/providers/QueryProvider';
 import { RootNavigator } from './src/app/navigation/RootNavigator';
+import { LoadingScreen } from './src/app/screens/LoadingScreen';
 import { useAuthStore } from './src/store/useAuthStore';
 import { initI18n } from './src/i18n';
 import { ThemeProvider, useTheme } from './src/theme/ThemeContext';
+import { ToastProvider } from './src/ui/ToastProvider';
 
 function AppContent() {
   const { resolvedMode } = useTheme();
@@ -26,19 +28,17 @@ function AppContent() {
   }, [bootstrap]);
 
   if (!isI18nReady) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator />
-      </View>
-    );
+    return <LoadingScreen />;
   }
 
   return (
     <SafeAreaProvider>
       <StatusBar barStyle={resolvedMode === 'dark' ? 'light-content' : 'dark-content'} />
-      <QueryProvider>
-        <RootNavigator />
-      </QueryProvider>
+      <ToastProvider>
+        <QueryProvider>
+          <RootNavigator />
+        </QueryProvider>
+      </ToastProvider>
     </SafeAreaProvider>
   );
 }
@@ -50,9 +50,5 @@ function App() {
     </ThemeProvider>
   );
 }
-
-const styles = StyleSheet.create({
-  loadingContainer: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-});
 
 export default App;
