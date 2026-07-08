@@ -3,7 +3,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, Text, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, StyleSheet, Text, View } from 'react-native';
 import { IconConfetti } from '@tabler/icons-react-native';
 import { Button } from '../../../ui/Button';
 import { TextField } from '../../../ui/TextField';
@@ -70,7 +70,7 @@ export function CreateHomeScreen() {
   }
 
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
       <Text style={styles.title}>{t('onboarding.createHome.title')}</Text>
 
       <View style={styles.form}>
@@ -96,7 +96,7 @@ export function CreateHomeScreen() {
           loading={isSubmitting}
         />
       </View>
-    </View>
+    </KeyboardAvoidingView>
   );
 }
 

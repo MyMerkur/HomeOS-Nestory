@@ -4,7 +4,16 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import TextRecognition from '@react-native-ml-kit/text-recognition';
 import { useEffect, useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import { ActivityIndicator, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import {
+  ActivityIndicator,
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useHomeStore } from '../../../store/useHomeStore';
 import { captureImage } from '../../../services/cameraCapture';
@@ -24,6 +33,7 @@ import {
   uploadWarrantyDocument,
 } from '../services/assetApi';
 import { makeAssetFormSchema, type AssetFormValues } from '../schemas/assetSchema';
+import { triggerHaptic } from '../../../services/haptics';
 import type { DashboardStackScreenProps } from '../../../app/navigation/types';
 
 export function AssetFormScreen({ navigation, route }: DashboardStackScreenProps<'AssetForm'>) {
@@ -153,6 +163,7 @@ export function AssetFormScreen({ navigation, route }: DashboardStackScreenProps
         }
       }
 
+      triggerHaptic('notificationSuccess');
       await queryClient.invalidateQueries({ queryKey: [ASSETS_QUERY_KEY] });
       navigation.goBack();
     } catch {
@@ -171,7 +182,8 @@ export function AssetFormScreen({ navigation, route }: DashboardStackScreenProps
   }
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+    <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
       <Controller
         control={control}
         name="name"
@@ -364,11 +376,13 @@ export function AssetFormScreen({ navigation, route }: DashboardStackScreenProps
         />
       </View>
     </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
 function createStyles(colors: ThemeColors) {
   return StyleSheet.create({
+    flex: { flex: 1, backgroundColor: colors.background },
     container: { padding: spacing.lg, gap: spacing.md, backgroundColor: colors.background },
     centered: { flex: 1, alignItems: 'center', justifyContent: 'center' },
     label: {

@@ -28,6 +28,7 @@ import { ShoppingScreen } from '../../modules/shopping/screens/ShoppingScreen';
 import { RecipesScreen } from '../../modules/recipes/screens/RecipesScreen';
 import { RecipeDetailScreen } from '../../modules/recipes/screens/RecipeDetailScreen';
 import { useNotificationSync } from '../../modules/pantry/hooks/useNotificationSync';
+import { registerForPushNotifications, subscribeToForegroundMessages } from '../../services/pushNotifications';
 import type {
   AuthStackParamList,
   DashboardStackParamList,
@@ -150,6 +151,12 @@ function RecipesTabNavigator() {
 
 function NotificationSync() {
   useNotificationSync();
+
+  useEffect(() => {
+    registerForPushNotifications();
+    return subscribeToForegroundMessages();
+  }, []);
+
   return null;
 }
 

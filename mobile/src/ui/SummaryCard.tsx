@@ -16,7 +16,12 @@ export function SummaryCard({ value, caption, tint }: Props) {
   const { styles, tintBackground, tintText } = useMemo(() => createStyles(colors), [colors]);
 
   return (
-    <View style={[styles.card, tintBackground[tint]]}>
+    <View
+      style={[styles.card, tintBackground[tint]]}
+      accessible
+      accessibilityRole="text"
+      accessibilityLabel={`${value} ${caption}`}
+    >
       <Text style={[styles.value, tintText[tint]]}>{value}</Text>
       <Text style={styles.caption}>{caption}</Text>
     </View>

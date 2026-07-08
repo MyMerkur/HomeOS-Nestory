@@ -2,7 +2,16 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import {
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Button } from '../../../ui/Button';
 import { TextField } from '../../../ui/TextField';
 import { fontSize, spacing, typography, type ThemeColors } from '../../../theme/theme';
@@ -16,6 +25,7 @@ export function LoginScreen({ navigation }: AuthStackScreenProps<'Login'>) {
   const { t } = useTranslation();
   const { colors } = useTheme();
   const styles = useMemo(() => createStyles(colors), [colors]);
+  const insets = useSafeAreaInsets();
   const setSession = useAuthStore((state) => state.setSession);
   const [serverError, setServerError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -43,62 +53,74 @@ export function LoginScreen({ navigation }: AuthStackScreenProps<'Login'>) {
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.wordmark}>{t('auth.login.wordmark')}</Text>
-      <Text style={styles.tagline}>{t('auth.login.tagline')}</Text>
+    <KeyboardAvoidingView
+      style={styles.flex}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    >
+      <ScrollView
+        contentContainerStyle={[
+          styles.container,
+          { paddingTop: insets.top + spacing.xl, paddingBottom: insets.bottom + spacing.xl },
+        ]}
+        keyboardShouldPersistTaps="handled"
+      >
+        <Text style={styles.wordmark}>{t('auth.login.wordmark')}</Text>
+        <Text style={styles.tagline}>{t('auth.login.tagline')}</Text>
 
-      <View style={styles.form}>
-        <Controller
-          control={control}
-          name="email"
-          render={({ field: { onChange, onBlur, value } }) => (
-            <TextField
-              label={t('auth.login.emailLabel')}
-              autoCapitalize="none"
-              keyboardType="email-address"
-              value={value}
-              onChangeText={onChange}
-              onBlur={onBlur}
-              error={errors.email?.message}
-            />
-          )}
-        />
+        <View style={styles.form}>
+          <Controller
+            control={control}
+            name="email"
+            render={({ field: { onChange, onBlur, value } }) => (
+              <TextField
+                label={t('auth.login.emailLabel')}
+                autoCapitalize="none"
+                keyboardType="email-address"
+                value={value}
+                onChangeText={onChange}
+                onBlur={onBlur}
+                error={errors.email?.message}
+              />
+            )}
+          />
 
-        <Controller
-          control={control}
-          name="password"
-          render={({ field: { onChange, onBlur, value } }) => (
-            <TextField
-              label={t('auth.login.passwordLabel')}
-              secureTextEntry
-              value={value}
-              onChangeText={onChange}
-              onBlur={onBlur}
-              error={errors.password?.message}
-            />
-          )}
-        />
+          <Controller
+            control={control}
+            name="password"
+            render={({ field: { onChange, onBlur, value } }) => (
+              <TextField
+                label={t('auth.login.passwordLabel')}
+                secureTextEntry
+                value={value}
+                onChangeText={onChange}
+                onBlur={onBlur}
+                error={errors.password?.message}
+              />
+            )}
+          />
 
-        {serverError ? <Text style={styles.error}>{serverError}</Text> : null}
+          {serverError ? <Text style={styles.error}>{serverError}</Text> : null}
 
-        <Button
-          testID="login-submit-button"
-          label={t('auth.login.submitButton')}
-          onPress={handleSubmit(onSubmit)}
-          loading={isSubmitting}
-        />
-      </View>
+          <Button
+            testID="login-submit-button"
+            label={t('auth.login.submitButton')}
+            onPress={handleSubmit(onSubmit)}
+            loading={isSubmitting}
+          />
+        </View>
 
-      <Pressable onPress={() => navigation.navigate('Register')}>
-        <Text style={styles.link}>{t('auth.login.noAccountLink')}</Text>
-      </Pressable>
-    </View>
+        <Pressable onPress={() => navigation.navigate('Register')}>
+          <Text style={styles.link}>{t('auth.login.noAccountLink')}</Text>
+        </Pressable>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
 function createStyles(colors: ThemeColors) {
   return StyleSheet.create({
-    container: { flex: 1, justifyContent: 'center', padding: spacing.xl, backgroundColor: colors.background },
+    flex: { flex: 1, backgroundColor: colors.background },
+    container: { flexGrow: 1, justifyContent: 'center', paddingHorizontal: spacing.xl },
     wordmark: {
       fontSize: fontSize.displayLg,
       fontFamily: typography.display.fontFamily,

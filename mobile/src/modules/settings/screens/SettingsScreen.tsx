@@ -8,6 +8,7 @@ import type { TextStyle } from 'react-native';
 import {
   ActivityIndicator,
   Alert,
+  KeyboardAvoidingView,
   Platform,
   Pressable,
   ScrollView,
@@ -29,6 +30,7 @@ import { useAuthStore } from '../../../store/useAuthStore';
 import { useHomeStore } from '../../../store/useHomeStore';
 import { getStoredRefreshToken } from '../../../services/secureStorage';
 import { setStoredLanguage } from '../../../services/languageStorage';
+import { triggerHaptic } from '../../../services/haptics';
 import i18n, { SUPPORTED_LANGUAGES, type SupportedLanguage } from '../../../i18n';
 import { LANGUAGE_NATIVE_NAMES } from '../../../i18n/languages';
 import { logoutRequest } from '../../auth/services/authApi';
@@ -83,6 +85,8 @@ export function SettingsScreen() {
   const [isChangingPassword, setIsChangingPassword] = useState(false);
   const [currentLanguage, setCurrentLanguage] = useState(i18n.language as SupportedLanguage);
   const [showTimePicker, setShowTimePicker] = useState(false);
+  const [isLeavingHome, setIsLeavingHome] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   useEffect(() => {
     if (profile) {
@@ -129,6 +133,7 @@ export function SettingsScreen() {
     try {
       await changePassword(values);
       reset();
+      triggerHaptic('notificationSuccess');
       showToast({ message: t('settings.passwordChangedMessage'), variant: 'success' });
     } catch {
       setPasswordError(t('settings.passwordErrorInvalid'));
@@ -183,20 +188,31 @@ export function SettingsScreen() {
         text: t('settings.leaveHomeConfirmConfirm'),
         style: 'destructive',
         onPress: async () => {
-          await leaveHome(homeId);
-          setSelectedHomeId(null);
-          await queryClient.invalidateQueries({ queryKey: HOMES_QUERY_KEY });
+          triggerHaptic('notificationWarning');
+          setIsLeavingHome(true);
+          try {
+            await leaveHome(homeId);
+            setSelectedHomeId(null);
+            await queryClient.invalidateQueries({ queryKey: HOMES_QUERY_KEY });
+          } finally {
+            setIsLeavingHome(false);
+          }
         },
       },
     ]);
   };
 
   const handleLogout = async () => {
-    const refreshToken = await getStoredRefreshToken();
-    if (refreshToken) {
-      await logoutRequest(refreshToken).catch(() => undefined);
+    setIsLoggingOut(true);
+    try {
+      const refreshToken = await getStoredRefreshToken();
+      if (refreshToken) {
+        await logoutRequest(refreshToken).catch(() => undefined);
+      }
+      await clearSession();
+    } finally {
+      setIsLoggingOut(false);
     }
-    await clearSession();
   };
 
   const handleChangeTheme = async (nextMode: ThemeMode) => {
@@ -222,7 +238,11 @@ export function SettingsScreen() {
   }
 
   return (
-    <ScrollView style={styles.container} contentContainerStyle={styles.content}>
+    <KeyboardAvoidingView
+      style={styles.container}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    >
+      <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
       <SectionTitle title={t('settings.sectionAccount')} style={styles.sectionTitle} />
       <Card style={styles.card}>
         <TextField label={t('settings.nameLabel')} value={name} onChangeText={setName} />
@@ -368,7 +388,12 @@ export function SettingsScreen() {
         {isOwner ? (
           <Text style={styles.hint}>{t('settings.ownerCannotLeaveHint')}</Text>
         ) : (
-          <Button label={t('settings.leaveHomeButton')} onPress={handleLeaveHome} variant="outline" />
+          <Button
+            label={t('settings.leaveHomeButton')}
+            onPress={handleLeaveHome}
+            loading={isLeavingHome}
+            variant="outline"
+          />
         )}
       </Card>
 
@@ -398,8 +423,14 @@ export function SettingsScreen() {
         />
       </Card>
 
-      <Button label={t('settings.logoutButton')} onPress={handleLogout} variant="outline" />
-    </ScrollView>
+      <Button
+        label={t('settings.logoutButton')}
+        onPress={handleLogout}
+        loading={isLoggingOut}
+        variant="outline"
+      />
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 

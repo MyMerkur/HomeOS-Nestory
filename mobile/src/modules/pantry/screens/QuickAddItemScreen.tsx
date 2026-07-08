@@ -15,6 +15,7 @@ import { INVENTORY_ITEMS_QUERY_KEY } from '../hooks/useInventoryItemsQuery';
 import { createItem, listItems, type InventoryItem } from '../services/pantryApi';
 import { scanBarcodeFromCamera } from '../services/barcodeScanner';
 import { scanExpiryDateFromCamera } from '../services/dateOcrScanner';
+import { triggerHaptic } from '../../../services/haptics';
 import type { PantryStackScreenProps } from '../../../app/navigation/types';
 
 export function QuickAddItemScreen({ navigation }: PantryStackScreenProps<'QuickAddItem'>) {
@@ -108,6 +109,7 @@ export function QuickAddItemScreen({ navigation }: PantryStackScreenProps<'Quick
         expiryDate: expiryDate?.toISOString(),
         barcode: barcode ?? undefined,
       });
+      triggerHaptic('notificationSuccess');
       await queryClient.invalidateQueries({ queryKey: [INVENTORY_ITEMS_QUERY_KEY] });
       navigation.goBack();
     } catch {

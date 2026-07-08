@@ -4,6 +4,7 @@ const notifee = {
   getTriggerNotificationIds: jest.fn(() => Promise.resolve([])),
   cancelTriggerNotification: jest.fn(() => Promise.resolve()),
   createTriggerNotification: jest.fn(() => Promise.resolve('notification-id')),
+  displayNotification: jest.fn(() => Promise.resolve('notification-id')),
 };
 
 module.exports = notifee;

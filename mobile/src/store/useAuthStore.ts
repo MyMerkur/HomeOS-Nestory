@@ -4,6 +4,7 @@ import {
   getStoredRefreshToken,
   setStoredRefreshToken,
 } from '../services/secureStorage';
+import { unregisterPushToken } from '../services/pushNotifications';
 import { refreshRequest, type AuthSession, type AuthUser } from '../modules/auth/services/authApi';
 
 type AuthState = {
@@ -26,6 +27,7 @@ export const useAuthStore = create<AuthState>((set) => ({
   },
 
   clearSession: async () => {
+    await unregisterPushToken();
     await clearStoredRefreshToken();
     set({ user: null, accessToken: null });
   },

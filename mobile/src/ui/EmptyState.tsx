@@ -20,8 +20,10 @@ export function EmptyState({ icon: Icon, title, actionLabel, onAction }: Props) 
 
   return (
     <View style={styles.container}>
-      <Icon color={colors.textMuted} size={40} />
-      <Text style={styles.title}>{title}</Text>
+      <View style={styles.content} accessible accessibilityRole="text" accessibilityLabel={title}>
+        <Icon color={colors.textMuted} size={40} />
+        <Text style={styles.title}>{title}</Text>
+      </View>
       {actionLabel && onAction ? (
         <View style={styles.action}>
           <Button label={actionLabel} onPress={onAction} variant="secondary" />
@@ -38,6 +40,11 @@ function createStyles(colors: ThemeColors) {
       justifyContent: 'center',
       paddingVertical: spacing.xxl,
       paddingHorizontal: spacing.lg,
+      gap: spacing.md,
+    },
+    content: {
+      alignItems: 'center',
+      justifyContent: 'center',
       gap: spacing.md,
     },
     title: {

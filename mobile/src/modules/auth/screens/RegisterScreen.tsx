@@ -2,7 +2,16 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { Pressable, StyleSheet, Text, View } from 'react-native';
+import {
+  KeyboardAvoidingView,
+  Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Button } from '../../../ui/Button';
 import { TextField } from '../../../ui/TextField';
 import { fontSize, spacing, typography, type ThemeColors } from '../../../theme/theme';
@@ -17,6 +26,7 @@ export function RegisterScreen({ navigation }: AuthStackScreenProps<'Register'>)
   const { t } = useTranslation();
   const { colors } = useTheme();
   const styles = useMemo(() => createStyles(colors), [colors]);
+  const insets = useSafeAreaInsets();
   const setSession = useAuthStore((state) => state.setSession);
   const [serverError, setServerError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -44,10 +54,20 @@ export function RegisterScreen({ navigation }: AuthStackScreenProps<'Register'>)
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>{t('auth.register.title')}</Text>
+    <KeyboardAvoidingView
+      style={styles.flex}
+      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+    >
+      <ScrollView
+        contentContainerStyle={[
+          styles.container,
+          { paddingTop: insets.top + spacing.xl, paddingBottom: insets.bottom + spacing.xl },
+        ]}
+        keyboardShouldPersistTaps="handled"
+      >
+        <Text style={styles.title}>{t('auth.register.title')}</Text>
 
-      <View style={styles.form}>
+        <View style={styles.form}>
         <Controller
           control={control}
           name="name"
@@ -103,16 +123,18 @@ export function RegisterScreen({ navigation }: AuthStackScreenProps<'Register'>)
         />
       </View>
 
-      <Pressable onPress={() => navigation.navigate('Login')}>
-        <Text style={styles.link}>{t('auth.register.hasAccountLink')}</Text>
-      </Pressable>
-    </View>
+        <Pressable onPress={() => navigation.navigate('Login')}>
+          <Text style={styles.link}>{t('auth.register.hasAccountLink')}</Text>
+        </Pressable>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
 function createStyles(colors: ThemeColors) {
   return StyleSheet.create({
-    container: { flex: 1, justifyContent: 'center', padding: spacing.xl, backgroundColor: colors.background },
+    flex: { flex: 1, backgroundColor: colors.background },
+    container: { flexGrow: 1, justifyContent: 'center', paddingHorizontal: spacing.xl },
     title: {
       fontSize: fontSize.displayLg,
       fontFamily: typography.display.fontFamily,

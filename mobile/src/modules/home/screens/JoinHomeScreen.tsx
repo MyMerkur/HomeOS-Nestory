@@ -3,7 +3,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
-import { StyleSheet, Text, View } from 'react-native';
+import { KeyboardAvoidingView, Platform, StyleSheet, Text, View } from 'react-native';
 import { Button } from '../../../ui/Button';
 import { TextField } from '../../../ui/TextField';
 import { fontSize, spacing, typography, type ThemeColors } from '../../../theme/theme';
@@ -49,7 +49,7 @@ export function JoinHomeScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
       <Text style={styles.title}>{t('onboarding.joinHome.title')}</Text>
 
       <View style={styles.form}>
@@ -77,7 +77,7 @@ export function JoinHomeScreen() {
           loading={isSubmitting}
         />
       </View>
-    </View>
+    </KeyboardAvoidingView>
   );
 }
 

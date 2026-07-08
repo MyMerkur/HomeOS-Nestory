@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Controller, useForm, useWatch } from 'react-hook-form';
 import {
   ActivityIndicator,
+  KeyboardAvoidingView,
   Platform,
   Pressable,
   ScrollView,
@@ -26,6 +27,7 @@ import { INVENTORY_ITEMS_QUERY_KEY } from '../hooks/useInventoryItemsQuery';
 import { createItem, getItem, listItems, updateItem } from '../services/pantryApi';
 import { scanBarcodeFromCamera } from '../services/barcodeScanner';
 import { scanExpiryDateFromCamera } from '../services/dateOcrScanner';
+import { triggerHaptic } from '../../../services/haptics';
 import { makeItemFormSchema, type ItemFormValues } from '../schemas/itemSchema';
 import type { PantryStackScreenProps } from '../../../app/navigation/types';
 
@@ -171,6 +173,7 @@ export function ItemFormScreen({ navigation, route }: PantryStackScreenProps<'It
         await createItem(homeId, payload);
       }
 
+      triggerHaptic('notificationSuccess');
       await queryClient.invalidateQueries({ queryKey: [INVENTORY_ITEMS_QUERY_KEY] });
       navigation.goBack();
     } catch {
@@ -189,7 +192,8 @@ export function ItemFormScreen({ navigation, route }: PantryStackScreenProps<'It
   }
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+    <ScrollView contentContainerStyle={styles.container} keyboardShouldPersistTaps="handled">
       <Controller
         control={control}
         name="name"
@@ -420,11 +424,13 @@ export function ItemFormScreen({ navigation, route }: PantryStackScreenProps<'It
         />
       </View>
     </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
 function createStyles(colors: ThemeColors) {
   return StyleSheet.create({
+    flex: { flex: 1, backgroundColor: colors.background },
     container: { padding: spacing.lg, gap: spacing.md, backgroundColor: colors.background },
     centered: { flex: 1, alignItems: 'center', justifyContent: 'center' },
     label: {

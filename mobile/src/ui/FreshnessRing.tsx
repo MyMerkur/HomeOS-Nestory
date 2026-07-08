@@ -27,7 +27,12 @@ export function FreshnessRing({ daysUntilExpiry, size = 'small' }: Props) {
   const color = freshnessColor(daysUntilExpiry, colors);
 
   return (
-    <View style={{ width: diameter, height: diameter }}>
+    <View
+      style={{ width: diameter, height: diameter }}
+      accessible
+      accessibilityRole="text"
+      accessibilityLabel={`${Math.max(daysUntilExpiry, 0)} ${t('common.daysLeftCaption')}`}
+    >
       <Svg width={diameter} height={diameter}>
         <Circle cx={center} cy={center} r={radius} stroke={colors.border} strokeWidth={stroke} fill="none" />
         <Circle

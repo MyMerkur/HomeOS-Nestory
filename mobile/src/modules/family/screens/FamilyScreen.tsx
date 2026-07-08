@@ -14,6 +14,7 @@ import { useHomeStore } from '../../../store/useHomeStore';
 import { useAuthStore } from '../../../store/useAuthStore';
 import { MEMBERS_QUERY_KEY, useMembersQuery } from '../hooks/useMembersQuery';
 import { regenerateInviteCode, removeMember, type Member } from '../services/familyApi';
+import { triggerHaptic } from '../../../services/haptics';
 
 function FamilyScreenSkeleton({ styles }: { styles: ReturnType<typeof createStyles> }) {
   return (
@@ -78,6 +79,7 @@ export function FamilyScreen() {
         text: t('family.removeConfirmConfirm'),
         style: 'destructive',
         onPress: async () => {
+          triggerHaptic('notificationWarning');
           await removeMember(homeId, member.userId);
           await queryClient.invalidateQueries({ queryKey: [MEMBERS_QUERY_KEY] });
         },

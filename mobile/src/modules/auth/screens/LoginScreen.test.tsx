@@ -1,4 +1,5 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { LoginScreen } from './LoginScreen';
 import { loginRequest } from '../services/authApi';
 import { useAuthStore } from '../../../store/useAuthStore';
@@ -16,9 +17,11 @@ describe('LoginScreen', () => {
 
   it('shows validation errors for empty submission', async () => {
     render(
-      <ThemeProvider>
-        <LoginScreen navigation={mockNavigation} route={{} as never} />
-      </ThemeProvider>,
+      <SafeAreaProvider initialMetrics={{ frame: { x: 0, y: 0, width: 0, height: 0 }, insets: { top: 0, left: 0, right: 0, bottom: 0 } }}>
+        <ThemeProvider>
+          <LoginScreen navigation={mockNavigation} route={{} as never} />
+        </ThemeProvider>
+      </SafeAreaProvider>,
     );
 
     fireEvent.press(screen.getByTestId('login-submit-button'));
@@ -35,9 +38,11 @@ describe('LoginScreen', () => {
     });
 
     render(
-      <ThemeProvider>
-        <LoginScreen navigation={mockNavigation} route={{} as never} />
-      </ThemeProvider>,
+      <SafeAreaProvider initialMetrics={{ frame: { x: 0, y: 0, width: 0, height: 0 }, insets: { top: 0, left: 0, right: 0, bottom: 0 } }}>
+        <ThemeProvider>
+          <LoginScreen navigation={mockNavigation} route={{} as never} />
+        </ThemeProvider>
+      </SafeAreaProvider>,
     );
 
     fireEvent.changeText(screen.getByLabelText('Email'), 'test@example.com');
