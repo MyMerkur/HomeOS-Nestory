@@ -750,3 +750,109 @@ navigasyon başlıkları da tema fontuna taşındı
   native paketin iOS tarafını (`pod install`) kurmak `GoogleService-Info.
   plist` eksikliğinden derleme hatasına yol açabileceği için bilinçli
   olarak bekletiliyor.
+
+---
+
+## Decision: Push bildirim mobile entegrasyonu (Sprint 16.2, mobile yarısı)
+
+- **Date**: 2026-07-09
+- **Status**: Accepted
+- **Context**: Kullanıcı Firebase projesi kimlik bilgilerinin tamamını
+  (`google-services.json`, `GoogleService-Info.plist`, bir APNs Auth
+  Key `.p8` dosyası, ve backend Admin SDK servis hesabı JSON'u) aynı
+  oturumda sağladı. Bu, Sprint 16.2'nin backend yarısında bilinçli
+  olarak bekletilen mobile entegrasyonun önünü açtı.
+- **Decision**: Kimlik bilgisi dosyaları asla repo'ya commit edilmeyecek
+  şekilde ele alındı — `google-services.json` → `mobile/android/app/`,
+  `GoogleService-Info.plist` → `mobile/ios/NestoryMobile/` (Info.plist
+  ile aynı klasör) kopyalandı, ikisi de kök `.gitignore`'a eklendi;
+  kullanıcının sağladığı geçici `Firebase İlgili Dosyalar/` klasörü de
+  (içindeki `.p8` APNs anahtarı dahil) `.gitignore`'a eklendi. Admin SDK
+  servis hesabı JSON'u tek satıra indirilip `server/.env`'deki
+  (zaten gitignore'lu) `FIREBASE_SERVICE_ACCOUNT` değişkenine yazıldı —
+  gerçek kimlik bilgisiyle `firebase-admin`'in başarıyla initialize
+  olduğu doğrulandı. APNs Auth Key repo'ya hiç girmedi — Firebase
+  konsoluna (Cloud Messaging → Apple app configuration) doğrudan
+  kullanıcı tarafından yüklenmesi gerekiyor, bu adım benim
+  tarafımdan yapılamaz.
+  `@react-native-firebase/app` + `@react-native-firebase/messaging`
+  kuruldu. Android: kök `build.gradle`'a `com.google.gms:google-services`
+  classpath'i, `android/app/build.gradle`'a
+  `apply plugin: "com.google.gms.google-services"` eklendi (paket adı
+  `com.nestorymobile`, `google-services.json`'daki `package_name` ile
+  eşleşiyor doğrulandı). iOS: `Podfile`'a `use_modular_headers!` eklendi
+  (`FirebaseCoreInternal` → `GoogleUtilities` modül tanımlamadığı için
+  Swift pod'ların statik kütüphane olarak entegre edilebilmesi için
+  gerekli — CocoaPods'un kendi hata mesajından tespit edildi),
+  `pod install --repo-update` ile Firebase 12.15.0 + RNFBApp/RNFBMessaging
+  25.1.0 başarıyla kuruldu; `AppDelegate.swift`'e `FirebaseApp.configure()`
+  çağrısı eklendi (bundle ID `org.reactjs.native.example.NestoryMobile`,
+  `GoogleService-Info.plist`'teki `BUNDLE_ID` ile eşleşiyor doğrulandı).
+  Yeni `mobile/src/services/pushNotifications.ts`:
+  `registerForPushNotifications()` (izin ister, FCM token alır,
+  `POST /users/me/push-tokens` ile kaydeder), `unregisterPushToken()`
+  (best-effort, hata yutuyor), `subscribeToForegroundMessages()` —
+  gösterim her zaman notifee üzerinden yapılıyor (FCM sadece taşıma
+  katmanı), böylece push ve yerel hatırlatmalar tutarlı görünüyor.
+  `RootNavigator.tsx`'teki `NotificationSync` bileşenine kayıt+foreground
+  abonelik eklendi; `useAuthStore.clearSession()`'a `unregisterPushToken()`
+  eklendi (hem manuel çıkışta hem refresh-token geçersizse). Testler için
+  yeni `__mocks__/@react-native-firebase/messaging.js` (manuel mock,
+  mevcut `@notifee/react-native.js` deseniyle aynı).
+- **Consequences**: Native projeler gerçek Firebase kimlik bilgileriyle
+  başarıyla yapılandırıldı ve derleniyor (`pod install` ve
+  `./gradlew :app:tasks` ikisi de başarılı) — ancak gerçek cihazda uçtan
+  uca push gönderimi (Firebase konsolundan test mesajı veya backend
+  `sendToUser()` üzerinden) bu ortamda fiilen tetiklenip doğrulanamadı;
+  bu, kullanıcının gerçek cihaz/simulator'de manuel doğrulaması gereken
+  bir adım olarak kalıyor. Mobile: lint temiz, `tsc --noEmit` sıfır
+  hata, tam test suite'i yeşil (yeni `pushNotifications.test.ts` dahil).
+  Bu, Sprint 16'yı (Bildirim: Yerel + Push) tamamlıyor.
+
+---
+
+## Decision: Yayın öncesi kalite — a11y, safe area, keyboard, haptics (Sprint 17.1)
+
+- **Date**: 2026-07-09
+- **Status**: Accepted
+- **Context**: Header'sız `AuthStack` (Login/Register) cihaz çentiği/ev
+  çubuğuyla çakışma riski taşıyordu; hiçbir form ekranında klavye
+  içeriği kapatmıyordu; Ayarlar'daki "Evden ayrıl"/"Çıkış yap"
+  butonlarında gönderim sırasında çift-tıklama koruması yoktu; paylaşılan
+  `ui/` bileşenlerinden birkaçı (EmptyState, SummaryCard, FreshnessRing)
+  ekran okuyucuya ayrı ayrı ikon/metin parçaları olarak görünüyordu;
+  hiç dokunsal geri bildirim yoktu.
+- **Decision**: `LoginScreen.tsx`/`RegisterScreen.tsx`:
+  `useSafeAreaInsets()` ile üst/alt padding + `KeyboardAvoidingView` +
+  `ScrollView` (`keyboardShouldPersistTaps="handled"`). Aynı
+  `KeyboardAvoidingView` deseni (safe-area'sız, çünkü header'lı stack
+  içindeler) `CreateHomeScreen`, `JoinHomeScreen`, `ItemFormScreen`,
+  `AssetFormScreen`, `SettingsScreen`'e de uygulandı — bu beş dosya
+  paralel bir arka plan ajanıyla hızlandırıldı. `SettingsScreen.tsx`:
+  `isLeavingHome`/`isLoggingOut` state'i eklenip mevcut `Button`
+  `loading` prop'una bağlandı (diğer 4 ekranda zaten var olan desenle
+  aynı). `ui/EmptyState.tsx`/`SummaryCard.tsx`/`FreshnessRing.tsx`:
+  ikon+metin (veya sayı+etiket) `accessible accessibilityRole="text"
+  accessibilityLabel={...}` ile tek bir gruplanmış öğeye dönüştürüldü
+  (ör. FreshnessRing artık "3 gün kaldı" gibi tek bir anlamlı etiket
+  okutuyor, SVG halkasını ayrı ayrı okutmuyor). Kod taraması, ikon-only
+  interaktif öğelerin (FAB, ShoppingScreen'in sil butonu,
+  PantryItemRow'un chevron'u) zaten doğru etiketlenmiş olduğunu
+  doğruladı — bu yüzden ek bir tarama/değişiklik gerekmedi.
+  `react-native-haptic-feedback` kuruldu (npm + `pod install`,
+  Android autolinking `./gradlew :app:tasks` ile doğrulandı — Podfile'da
+  Firebase kurulumundan kalan `use_modular_headers!` yeterliydi, ek bir
+  Podfile değişikliği gerekmedi). Yeni `mobile/src/services/haptics.ts`
+  (`triggerHaptic(type)` ince sarmalayıcı). Kullanım noktaları bilinçli
+  olarak sınırlı tutuldu: birincil başarı aksiyonları
+  (`ItemFormScreen`/`QuickAddItemScreen`/`AssetFormScreen` kayıt
+  başarılı, `SettingsScreen` şifre değişti) ve yıkıcı aksiyon
+  onayları (`SettingsScreen` evden ayrıl, `FamilyScreen` üye çıkar) —
+  sekme geçişlerine veya genel buton basmalarına eklenmedi.
+  `PantryScreen.tsx`'teki tek `Alert.alert` (tüket/at/dondur/listeye
+  ekle seçim menüsü) `style: 'destructive'` içermediği için haptics
+  kapsamına dahil edilmedi.
+- **Consequences**: Mobile: lint temiz, `tsc --noEmit` sıfır hata, tam
+  test suite'i yeşil (41 suite / 177 test). Sprint 17.1 tamamlandı —
+  Sprint 17.2 (offline/retry, versiyon, gizlilik/şartlar, constants
+  gözden geçirme) sıradaki ve son adım.
