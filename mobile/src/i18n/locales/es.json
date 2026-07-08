@@ -274,6 +274,11 @@
     "notifExpiry": "Recordatorios de caducidad",
     "notifShopping": "Actualizaciones de la compra",
     "notifWeekly": "Resumen semanal",
+    "reminderDaysLabel": "Recordarme antes de caducar",
+    "reminderDaySameDay": "El mismo día",
+    "reminderDaysBeforeLabel": "{{count}} días antes",
+    "notifDaily": "Recordatorio diario",
+    "reminderHourLabel": "Hora del recordatorio: {{hour}}:00",
     "sectionHome": "Casa",
     "homeNameLabel": "Nombre de la casa",
     "saveHomeNameButton": "Guardar nombre de la casa",
@@ -333,5 +338,25 @@
     "UPLOAD_ERROR": "Error al subir el archivo.",
     "USER_NOT_FOUND": "Usuario no encontrado."
   },
-  "notifications": {}
+  "notifications": {
+    "channelExpiry": "Recordatorios de caducidad",
+    "channelDose": "Recordatorios de medicamentos",
+    "channelWarranty": "Recordatorios de garantía",
+    "expiryTitle": "Recordatorio de caducidad",
+    "expiryBodyToday": "La fecha de caducidad de {{name}} es hoy.",
+    "expiryBodyDays": "La fecha de caducidad de {{name}} es en {{count}} días.",
+    "doseTitle": "Hora del medicamento",
+    "doseBody": "Hora de tomar {{name}} ({{amount}} {{unit}}).",
+    "warrantyTitle": "Recordatorio de garantía",
+    "warrantyBodyToday": "La garantía de {{name}} termina hoy.",
+    "warrantyBodyDays": "La garantía de {{name}} termina en {{count}} días.",
+    "dailyReminderTitle": "Nestory",
+    "dailyReminderMessages": [
+      "Revisa qué está por caducar pronto en tu despensa.",
+      "Un vistazo rápido a tu despensa podría evitar desperdicio hoy.",
+      "No olvides revisar tus productos por caducar."
+    ],
+    "weeklySummaryTitle": "Resumen semanal de la despensa",
+    "weeklySummaryBody": "Mira qué ha cambiado en tu despensa esta semana."
+  }
 }

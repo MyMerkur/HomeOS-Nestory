@@ -274,6 +274,11 @@
     "notifExpiry": "Promemoria di scadenza",
     "notifShopping": "Aggiornamenti spesa",
     "notifWeekly": "Riepilogo settimanale",
+    "reminderDaysLabel": "Ricordami prima della scadenza",
+    "reminderDaySameDay": "Lo stesso giorno",
+    "reminderDaysBeforeLabel": "{{count}} giorni prima",
+    "notifDaily": "Promemoria giornaliero",
+    "reminderHourLabel": "Orario promemoria: {{hour}}:00",
     "sectionHome": "Casa",
     "homeNameLabel": "Nome della casa",
     "saveHomeNameButton": "Salva nome della casa",
@@ -333,5 +338,25 @@
     "UPLOAD_ERROR": "Caricamento del file non riuscito.",
     "USER_NOT_FOUND": "Utente non trovato."
   },
-  "notifications": {}
+  "notifications": {
+    "channelExpiry": "Promemoria di scadenza",
+    "channelDose": "Promemoria farmaci",
+    "channelWarranty": "Promemoria garanzia",
+    "expiryTitle": "Promemoria di scadenza",
+    "expiryBodyToday": "La data di scadenza di {{name}} è oggi.",
+    "expiryBodyDays": "La data di scadenza di {{name}} è tra {{count}} giorni.",
+    "doseTitle": "Ora del farmaco",
+    "doseBody": "È ora di prendere {{name}} ({{amount}} {{unit}}).",
+    "warrantyTitle": "Promemoria garanzia",
+    "warrantyBodyToday": "La garanzia di {{name}} scade oggi.",
+    "warrantyBodyDays": "La garanzia di {{name}} scade tra {{count}} giorni.",
+    "dailyReminderTitle": "Nestory",
+    "dailyReminderMessages": [
+      "Controlla cosa sta per scadere nella tua dispensa.",
+      "Un rapido sguardo alla dispensa potrebbe evitare sprechi oggi.",
+      "Non dimenticare di controllare i tuoi articoli in scadenza."
+    ],
+    "weeklySummaryTitle": "Riepilogo settimanale della dispensa",
+    "weeklySummaryBody": "Scopri cosa è cambiato nella tua dispensa questa settimana."
+  }
 }

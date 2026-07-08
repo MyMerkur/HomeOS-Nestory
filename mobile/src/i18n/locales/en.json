@@ -274,6 +274,11 @@
     "notifExpiry": "Expiry reminders",
     "notifShopping": "Shopping updates",
     "notifWeekly": "Weekly summary",
+    "reminderDaysLabel": "Remind me before expiry",
+    "reminderDaySameDay": "Same day",
+    "reminderDaysBeforeLabel": "{{count}} days before",
+    "notifDaily": "Daily reminder",
+    "reminderHourLabel": "Reminder time: {{hour}}:00",
     "sectionHome": "Home",
     "homeNameLabel": "Home name",
     "saveHomeNameButton": "Save home name",
@@ -333,5 +338,25 @@
     "UPLOAD_ERROR": "File upload failed.",
     "USER_NOT_FOUND": "User not found."
   },
-  "notifications": {}
+  "notifications": {
+    "channelExpiry": "Expiry Reminders",
+    "channelDose": "Medicine Reminders",
+    "channelWarranty": "Warranty Reminders",
+    "expiryTitle": "Expiry Reminder",
+    "expiryBodyToday": "{{name}}'s expiry date is today.",
+    "expiryBodyDays": "{{name}}'s expiry date is in {{count}} days.",
+    "doseTitle": "Medicine Time",
+    "doseBody": "Time to take {{name}} ({{amount}} {{unit}}).",
+    "warrantyTitle": "Warranty Reminder",
+    "warrantyBodyToday": "{{name}}'s warranty ends today.",
+    "warrantyBodyDays": "{{name}}'s warranty ends in {{count}} days.",
+    "dailyReminderTitle": "Nestory",
+    "dailyReminderMessages": [
+      "Check what's expiring soon in your pantry.",
+      "A quick look at your pantry could save some food today.",
+      "Don't forget to check your expiring items."
+    ],
+    "weeklySummaryTitle": "Weekly Pantry Check-in",
+    "weeklySummaryBody": "See what's changed in your pantry this week."
+  }
 }

@@ -274,6 +274,11 @@
     "notifExpiry": "Lembretes de validade",
     "notifShopping": "Atualizações da lista de compras",
     "notifWeekly": "Resumo semanal",
+    "reminderDaysLabel": "Lembrar antes de vencer",
+    "reminderDaySameDay": "No mesmo dia",
+    "reminderDaysBeforeLabel": "{{count}} dias antes",
+    "notifDaily": "Lembrete diário",
+    "reminderHourLabel": "Horário do lembrete: {{hour}}:00",
     "sectionHome": "Casa",
     "homeNameLabel": "Nome da casa",
     "saveHomeNameButton": "Guardar nome da casa",
@@ -333,5 +338,25 @@
     "UPLOAD_ERROR": "Falha ao carregar o ficheiro.",
     "USER_NOT_FOUND": "Utilizador não encontrado."
   },
-  "notifications": {}
+  "notifications": {
+    "channelExpiry": "Lembretes de validade",
+    "channelDose": "Lembretes de medicamentos",
+    "channelWarranty": "Lembretes de garantia",
+    "expiryTitle": "Lembrete de validade",
+    "expiryBodyToday": "A data de validade de {{name}} é hoje.",
+    "expiryBodyDays": "A data de validade de {{name}} é em {{count}} dias.",
+    "doseTitle": "Hora do medicamento",
+    "doseBody": "Hora de tomar {{name}} ({{amount}} {{unit}}).",
+    "warrantyTitle": "Lembrete de garantia",
+    "warrantyBodyToday": "A garantia de {{name}} termina hoje.",
+    "warrantyBodyDays": "A garantia de {{name}} termina em {{count}} dias.",
+    "dailyReminderTitle": "Nestory",
+    "dailyReminderMessages": [
+      "Veja o que está prestes a vencer na sua despensa.",
+      "Uma rápida olhada na despensa pode evitar desperdício hoje.",
+      "Não se esqueça de verificar os itens a vencer."
+    ],
+    "weeklySummaryTitle": "Resumo semanal da despensa",
+    "weeklySummaryBody": "Veja o que mudou na sua despensa esta semana."
+  }
 }

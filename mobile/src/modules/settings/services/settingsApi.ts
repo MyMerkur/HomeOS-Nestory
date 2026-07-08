@@ -4,6 +4,9 @@ export type NotificationPreferences = {
   expiryReminders: boolean;
   shoppingUpdates: boolean;
   weeklySummary: boolean;
+  reminderDaysBefore: number[];
+  dailyReminderEnabled: boolean;
+  dailyReminderHour: number;
 };
 
 export type UserProfile = {

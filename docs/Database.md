@@ -55,7 +55,11 @@ audit_logs: homeId, createdAt
   settings: {
     language: string (default 'tr'),
     theme: 'light' | 'dark' | 'system',
-    notificationPreferences: { expiryReminders, shoppingUpdates, weeklySummary: boolean }
+    notificationPreferences: {
+      expiryReminders, shoppingUpdates, weeklySummary, dailyReminderEnabled: boolean,
+      reminderDaysBefore: number[] (default [7,3,1,0]),
+      dailyReminderHour: number 0-23 (default 9)
+    }
   },
   createdAt, updatedAt
 }

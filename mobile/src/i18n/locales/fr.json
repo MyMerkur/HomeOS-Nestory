@@ -274,6 +274,11 @@
     "notifExpiry": "Rappels de péremption",
     "notifShopping": "Mises à jour de la liste de courses",
     "notifWeekly": "Résumé hebdomadaire",
+    "reminderDaysLabel": "Me rappeler avant la péremption",
+    "reminderDaySameDay": "Le jour même",
+    "reminderDaysBeforeLabel": "{{count}} jours avant",
+    "notifDaily": "Rappel quotidien",
+    "reminderHourLabel": "Heure du rappel : {{hour}}:00",
     "sectionHome": "Maison",
     "homeNameLabel": "Nom de la maison",
     "saveHomeNameButton": "Enregistrer le nom de la maison",
@@ -333,5 +338,25 @@
     "UPLOAD_ERROR": "Échec du téléchargement du fichier.",
     "USER_NOT_FOUND": "Utilisateur introuvable."
   },
-  "notifications": {}
+  "notifications": {
+    "channelExpiry": "Rappels de péremption",
+    "channelDose": "Rappels de médicaments",
+    "channelWarranty": "Rappels de garantie",
+    "expiryTitle": "Rappel de péremption",
+    "expiryBodyToday": "La date de péremption de {{name}} est aujourd'hui.",
+    "expiryBodyDays": "La date de péremption de {{name}} est dans {{count}} jours.",
+    "doseTitle": "Heure du médicament",
+    "doseBody": "Il est temps de prendre {{name}} ({{amount}} {{unit}}).",
+    "warrantyTitle": "Rappel de garantie",
+    "warrantyBodyToday": "La garantie de {{name}} se termine aujourd'hui.",
+    "warrantyBodyDays": "La garantie de {{name}} se termine dans {{count}} jours.",
+    "dailyReminderTitle": "Nestory",
+    "dailyReminderMessages": [
+      "Vérifiez ce qui expire bientôt dans votre garde-manger.",
+      "Un coup d'œil rapide à votre garde-manger pourrait éviter du gaspillage aujourd'hui.",
+      "N'oubliez pas de vérifier vos articles qui expirent bientôt."
+    ],
+    "weeklySummaryTitle": "Bilan hebdomadaire du garde-manger",
+    "weeklySummaryBody": "Découvrez ce qui a changé dans votre garde-manger cette semaine."
+  }
 }

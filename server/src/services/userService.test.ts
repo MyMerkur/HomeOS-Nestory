@@ -42,6 +42,9 @@ describe('userService', () => {
       expiryReminders: true,
       shoppingUpdates: true,
       weeklySummary: true,
+      reminderDaysBefore: [7, 3, 1, 0],
+      dailyReminderEnabled: false,
+      dailyReminderHour: 9,
     });
   });
 
@@ -88,6 +91,9 @@ describe('userService', () => {
       expiryReminders: false,
       shoppingUpdates: true,
       weeklySummary: true,
+      reminderDaysBefore: [7, 3, 1, 0],
+      dailyReminderEnabled: false,
+      dailyReminderHour: 9,
     });
   });
 

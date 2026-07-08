@@ -274,6 +274,11 @@
     "notifExpiry": "Připomenutí spotřeby",
     "notifShopping": "Aktualizace nákupního seznamu",
     "notifWeekly": "Týdenní souhrn",
+    "reminderDaysLabel": "Připomenout před expirací",
+    "reminderDaySameDay": "Ve stejný den",
+    "reminderDaysBeforeLabel": "{{count}} dní předem",
+    "notifDaily": "Denní připomenutí",
+    "reminderHourLabel": "Čas připomenutí: {{hour}}:00",
     "sectionHome": "Domácnost",
     "homeNameLabel": "Název domácnosti",
     "saveHomeNameButton": "Uložit název domácnosti",
@@ -333,5 +338,25 @@
     "UPLOAD_ERROR": "Nahrání souboru se nezdařilo.",
     "USER_NOT_FOUND": "Uživatel nenalezen."
   },
-  "notifications": {}
+  "notifications": {
+    "channelExpiry": "Připomenutí expirace",
+    "channelDose": "Připomenutí léků",
+    "channelWarranty": "Připomenutí záruky",
+    "expiryTitle": "Připomenutí expirace",
+    "expiryBodyToday": "Datum spotřeby {{name}} je dnes.",
+    "expiryBodyDays": "Datum spotřeby {{name}} je za {{count}} dní.",
+    "doseTitle": "Čas na lék",
+    "doseBody": "Čas užít {{name}} ({{amount}} {{unit}}).",
+    "warrantyTitle": "Připomenutí záruky",
+    "warrantyBodyToday": "Záruka na {{name}} končí dnes.",
+    "warrantyBodyDays": "Záruka na {{name}} končí za {{count}} dní.",
+    "dailyReminderTitle": "Nestory",
+    "dailyReminderMessages": [
+      "Zkontrolujte, co brzy expiruje ve vaší spíži.",
+      "Rychlý pohled do spíže by dnes mohl zachránit jídlo.",
+      "Nezapomeňte zkontrolovat expirující položky."
+    ],
+    "weeklySummaryTitle": "Týdenní kontrola spíže",
+    "weeklySummaryBody": "Podívejte se, co se tento týden změnilo ve vaší spíži."
+  }
 }

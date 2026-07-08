@@ -274,6 +274,11 @@
     "notifExpiry": "Ablauferinnerungen",
     "notifShopping": "Aktualisierungen der Einkaufsliste",
     "notifWeekly": "Wöchentliche Zusammenfassung",
+    "reminderDaysLabel": "Vor Ablauf erinnern",
+    "reminderDaySameDay": "Am selben Tag",
+    "reminderDaysBeforeLabel": "{{count}} Tage vorher",
+    "notifDaily": "Tägliche Erinnerung",
+    "reminderHourLabel": "Erinnerungszeit: {{hour}}:00",
     "sectionHome": "Zuhause",
     "homeNameLabel": "Name des Zuhauses",
     "saveHomeNameButton": "Namen speichern",
@@ -333,5 +338,25 @@
     "UPLOAD_ERROR": "Datei-Upload fehlgeschlagen.",
     "USER_NOT_FOUND": "Benutzer nicht gefunden."
   },
-  "notifications": {}
+  "notifications": {
+    "channelExpiry": "Ablauf-Erinnerungen",
+    "channelDose": "Medikamenten-Erinnerungen",
+    "channelWarranty": "Garantie-Erinnerungen",
+    "expiryTitle": "Ablauferinnerung",
+    "expiryBodyToday": "Das Verfallsdatum von {{name}} ist heute.",
+    "expiryBodyDays": "Das Verfallsdatum von {{name}} ist in {{count}} Tagen.",
+    "doseTitle": "Medikamentenzeit",
+    "doseBody": "Zeit für {{name}} ({{amount}} {{unit}}).",
+    "warrantyTitle": "Garantieerinnerung",
+    "warrantyBodyToday": "Die Garantie für {{name}} endet heute.",
+    "warrantyBodyDays": "Die Garantie für {{name}} endet in {{count}} Tagen.",
+    "dailyReminderTitle": "Nestory",
+    "dailyReminderMessages": [
+      "Schau nach, was in deiner Speisekammer bald abläuft.",
+      "Ein kurzer Blick in die Speisekammer könnte heute Lebensmittel retten.",
+      "Vergiss nicht, deine ablaufenden Artikel zu überprüfen."
+    ],
+    "weeklySummaryTitle": "Wöchentlicher Speisekammer-Check",
+    "weeklySummaryBody": "Sieh dir an, was sich diese Woche in deiner Speisekammer geändert hat."
+  }
 }

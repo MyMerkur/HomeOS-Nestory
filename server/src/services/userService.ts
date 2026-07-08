@@ -22,6 +22,9 @@ type ProfileResult = {
       expiryReminders: boolean;
       shoppingUpdates: boolean;
       weeklySummary: boolean;
+      reminderDaysBefore: number[];
+      dailyReminderEnabled: boolean;
+      dailyReminderHour: number;
     };
   };
 };
@@ -39,6 +42,9 @@ function toProfileResult(user: HydratedDocument<UserDocument>): ProfileResult {
         expiryReminders: user.settings?.notificationPreferences?.expiryReminders ?? true,
         shoppingUpdates: user.settings?.notificationPreferences?.shoppingUpdates ?? true,
         weeklySummary: user.settings?.notificationPreferences?.weeklySummary ?? true,
+        reminderDaysBefore: user.settings?.notificationPreferences?.reminderDaysBefore ?? [7, 3, 1, 0],
+        dailyReminderEnabled: user.settings?.notificationPreferences?.dailyReminderEnabled ?? false,
+        dailyReminderHour: user.settings?.notificationPreferences?.dailyReminderHour ?? 9,
       },
     },
   };
@@ -105,6 +111,18 @@ export async function updateSettings(
         input.notificationPreferences?.weeklySummary ??
         user.settings?.notificationPreferences?.weeklySummary ??
         true,
+      reminderDaysBefore:
+        input.notificationPreferences?.reminderDaysBefore ??
+        user.settings?.notificationPreferences?.reminderDaysBefore ??
+        [7, 3, 1, 0],
+      dailyReminderEnabled:
+        input.notificationPreferences?.dailyReminderEnabled ??
+        user.settings?.notificationPreferences?.dailyReminderEnabled ??
+        false,
+      dailyReminderHour:
+        input.notificationPreferences?.dailyReminderHour ??
+        user.settings?.notificationPreferences?.dailyReminderHour ??
+        9,
     },
   };
 

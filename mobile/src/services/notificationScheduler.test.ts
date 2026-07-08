@@ -1,5 +1,5 @@
 import notifee from '@notifee/react-native';
-import { syncItemReminders } from './notificationScheduler';
+import { cancelDailyReminder, scheduleDailyReminder, scheduleWeeklySummary, syncItemReminders } from './notificationScheduler';
 import type { InventoryItem } from '../modules/pantry/services/pantryApi';
 import type { Asset } from '../modules/assets/services/assetApi';
 
@@ -203,5 +203,37 @@ describe('notificationScheduler', () => {
     await syncItemReminders([item], [asset]);
 
     expect(notifee.createTriggerNotification).toHaveBeenCalledTimes(8);
+  });
+
+  describe('scheduleDailyReminder', () => {
+    it('cancels any existing daily reminder before scheduling a new repeating one', async () => {
+      await scheduleDailyReminder(9);
+
+      expect(notifee.cancelTriggerNotification).toHaveBeenCalledWith('daily-reminder');
+      expect(notifee.createTriggerNotification).toHaveBeenCalledWith(
+        expect.objectContaining({ id: 'daily-reminder' }),
+        expect.objectContaining({ type: 0, repeatFrequency: 1 }),
+      );
+    });
+  });
+
+  describe('cancelDailyReminder', () => {
+    it('cancels the daily reminder trigger', async () => {
+      await cancelDailyReminder();
+
+      expect(notifee.cancelTriggerNotification).toHaveBeenCalledWith('daily-reminder');
+    });
+  });
+
+  describe('scheduleWeeklySummary', () => {
+    it('cancels any existing weekly summary before scheduling a new repeating one', async () => {
+      await scheduleWeeklySummary();
+
+      expect(notifee.cancelTriggerNotification).toHaveBeenCalledWith('weekly-summary');
+      expect(notifee.createTriggerNotification).toHaveBeenCalledWith(
+        expect.objectContaining({ id: 'weekly-summary' }),
+        expect.objectContaining({ type: 0, repeatFrequency: 2 }),
+      );
+    });
   });
 });

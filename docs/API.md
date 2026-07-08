@@ -456,7 +456,7 @@ düzenleme endpoint'i yoktur.
 ### GET /api/users/me
 
 ```json
-{ "user": { "id", "name", "email", "avatarUrl", "settings": { "language", "theme", "notificationPreferences": { "expiryReminders", "shoppingUpdates", "weeklySummary" } } } }
+{ "user": { "id", "name", "email", "avatarUrl", "settings": { "language", "theme", "notificationPreferences": { "expiryReminders", "shoppingUpdates", "weeklySummary", "reminderDaysBefore", "dailyReminderEnabled", "dailyReminderHour" } } } }
 ```
 
 ### PATCH /api/users/me
@@ -489,6 +489,9 @@ değer zod validasyonunda `422 VALIDATION_ERROR` ile reddedilir.
 eder (Sprint 14.1, dark mode initiative — önceki v1 sınırı kaldırıldı).
 Başka bir değer zod validasyonunda `422 VALIDATION_ERROR` ile reddedilir.
 `notificationPreferences` kısmi güncellenebilir (verilmeyen alanlar korunur).
+`reminderDaysBefore` (SKT hatırlatma eşikleri, varsayılan `[7,3,1,0]`),
+`dailyReminderEnabled` ve `dailyReminderHour` (0-23, varsayılan `9`) Sprint 16.1
+(bildirim initiative) ile eklendi.
 
 ## Pagination
 

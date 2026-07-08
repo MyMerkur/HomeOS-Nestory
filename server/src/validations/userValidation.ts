@@ -20,6 +20,9 @@ export const updateUserSettingsSchema = z.object({
       expiryReminders: z.boolean().optional(),
       shoppingUpdates: z.boolean().optional(),
       weeklySummary: z.boolean().optional(),
+      reminderDaysBefore: z.array(z.number().int().min(0)).max(10).optional(),
+      dailyReminderEnabled: z.boolean().optional(),
+      dailyReminderHour: z.number().int().min(0).max(23).optional(),
     })
     .optional(),
 });

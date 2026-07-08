@@ -652,3 +652,55 @@ navigasyon başlıkları da tema fontuna taşındı
 - **Consequences**: Mobile: lint temiz, `tsc --noEmit` sıfır hata, tam
   test suite'i yeşil. `docs/Roadmap.md`'deki Sprint 15 tamamlandı — sırada
   Sprint 16 (Bildirim: Yerel + Push).
+
+---
+
+## Decision: Yerel bildirimlerin profesyonelleştirilmesi (Sprint 16.1)
+
+- **Date**: 2026-07-09
+- **Status**: Accepted
+- **Context**: Yerel bildirimler (`@notifee/react-native`) çalışıyordu ama
+  üç eksiği vardı: (1) `useNotificationSync`, uygulama ilk açıldığında
+  kullanıcı henüz hiçbir gerçek veri görmeden izin istiyordu; (2) günlük/
+  haftalık genel hatırlatma altyapısı yoktu; (3) SKT hatırlatma eşikleri
+  (`reminderDaysBefore`) ve günlük hatırlatma saati kullanıcı tarafından
+  ayarlanamıyordu, `notificationScheduler.ts`'teki başlık/gövde metinleri
+  de i18n'e taşınmamış, hâlâ hardcoded Türkçe idi (Sprint 13 ekran
+  migrasyonu bu servis dosyasını kapsamıyordu).
+- **Decision**: Backend `User.ts` şemasına
+  `notificationPreferences.reminderDaysBefore: number[]` (varsayılan
+  `[7,3,1,0]`), `dailyReminderEnabled: boolean` (varsayılan `false`),
+  `dailyReminderHour: number` (0-23, varsayılan `9`) eklendi;
+  `userValidation.ts`/`userService.ts` aynı alan-bazlı merge deseniyle
+  genişletildi. Mobile: `notificationScheduler.ts`'teki tüm başlık/gövde
+  metinleri `i18next` (React dışı, doğrudan `i18next.t()`) üzerinden
+  `notifications.*` anahtarlarına taşındı (8 dilin tamamında dolduruldu).
+  Yeni `scheduleDailyReminder(hour)` / `cancelDailyReminder()` — notifee
+  `TimestampTrigger` + `RepeatFrequency.DAILY`, `notifications.
+  dailyReminderMessages` havuzundan rastgele bir şablon mesaj seçiliyor
+  (spam hissi vermemesi için). Yeni `scheduleWeeklySummary()` /
+  `cancelWeeklySummary()` — `RepeatFrequency.WEEKLY`, sabit genel metin
+  (gerçek "bu hafta N ürün..." gibi dinamik bir özet, bildirim ateşlenme
+  anında canlı veri hesaplayamayacağı için kapsam dışı bırakıldı — bu,
+  bilinçli bir sınır, ileride arka plan görevi/push gerektirir). Yeni
+  `mobile/src/services/notificationPromptStorage.ts`
+  (`hasShownNotificationPrompt`/`markNotificationPromptShown`,
+  `AsyncStorage` anahtarı `homeos.notificationPromptShown`) —
+  `useNotificationSync.ts` artık izni, envanter sorgusu ilk kez veri
+  döndürdüğünde (kullanıcı gerçek veriyi ilk gördüğünde) ve bayrak
+  henüz kurulmamışsa istiyor; ayrıca `useProfileQuery()`'den okuduğu
+  `dailyReminderEnabled`/`dailyReminderHour`/`weeklySummary` tercihlerine
+  göre günlük/haftalık hatırlatmaları otomatik zamanlıyor/iptal ediyor.
+  `SettingsScreen.tsx`'in "Bildirimler" kartına: SKT eşikleri için
+  `Chip` çoklu-seçim grubu (`0/1/3/7/14/30` gün), günlük hatırlatma
+  `Switch`'i, ve etkinken görünen saat seçici (mevcut
+  `@react-native-community/datetimepicker`, `mode="time"`, `ItemFormScreen`
+  ile aynı desen) eklendi.
+- **Consequences**: Yeni ürünlerin varsayılan SKT hatırlatma eşiklerini
+  kullanıcının tercihine göre ayarlama (item oluşturma formuna
+  `reminderDaysBefore` geçirme) kapsam dışı bırakıldı — şu an yeni
+  ürünler hâlâ backend'in genel varsayılanını (`[7,3,1,0]`) alıyor; bu,
+  ileride ele alınabilecek bilinen bir sınırdır. Mobile: lint temiz,
+  `tsc --noEmit` sıfır hata, 39 suite / 169 test yeşil. Backend: 16 suite
+  / 88 test yeşil. Sprint 16.2 (Push altyapısı, FCM) sıradaki adım —
+  Firebase projesi/kimlik bilgileri kullanıcıdan istenecek.

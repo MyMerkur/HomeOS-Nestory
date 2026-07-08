@@ -1,10 +1,21 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQueryClient } from '@tanstack/react-query';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import { useEffect, useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import type { TextStyle } from 'react-native';
-import { ActivityIndicator, Alert, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
+import {
+  ActivityIndicator,
+  Alert,
+  Platform,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Switch,
+  Text,
+  View,
+} from 'react-native';
 import { Button } from '../../../ui/Button';
 import { Card } from '../../../ui/Card';
 import { Chip } from '../../../ui/Chip';
@@ -42,6 +53,14 @@ function SectionTitle({ title, style }: { title: string; style: TextStyle }) {
   return <Text style={style}>{title}</Text>;
 }
 
+const REMINDER_DAY_OPTIONS = [0, 1, 3, 7, 14, 30];
+
+function hourToDate(hour: number): Date {
+  const date = new Date();
+  date.setHours(hour, 0, 0, 0);
+  return date;
+}
+
 export function SettingsScreen() {
   const { t } = useTranslation();
   const { showToast } = useToast();
@@ -63,6 +82,7 @@ export function SettingsScreen() {
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
   const [currentLanguage, setCurrentLanguage] = useState(i18n.language as SupportedLanguage);
+  const [showTimePicker, setShowTimePicker] = useState(false);
 
   useEffect(() => {
     if (profile) {
@@ -118,10 +138,23 @@ export function SettingsScreen() {
   };
 
   const handleToggleNotification = async (
-    key: 'expiryReminders' | 'shoppingUpdates' | 'weeklySummary',
+    key: 'expiryReminders' | 'shoppingUpdates' | 'weeklySummary' | 'dailyReminderEnabled',
     value: boolean,
   ) => {
     await updateNotificationPreferences({ [key]: value });
+    await queryClient.invalidateQueries({ queryKey: [PROFILE_QUERY_KEY] });
+  };
+
+  const handleToggleReminderDay = async (day: number, currentDays: number[]) => {
+    const nextDays = currentDays.includes(day)
+      ? currentDays.filter((d) => d !== day)
+      : [...currentDays, day].sort((a, b) => b - a);
+    await updateNotificationPreferences({ reminderDaysBefore: nextDays });
+    await queryClient.invalidateQueries({ queryKey: [PROFILE_QUERY_KEY] });
+  };
+
+  const handleChangeDailyReminderHour = async (date: Date) => {
+    await updateNotificationPreferences({ dailyReminderHour: date.getHours() });
     await queryClient.invalidateQueries({ queryKey: [PROFILE_QUERY_KEY] });
   };
 
@@ -263,6 +296,58 @@ export function SettingsScreen() {
             trackColor={{ true: colors.primary }}
           />
         </View>
+
+        <Text style={styles.switchLabel}>{t('settings.reminderDaysLabel')}</Text>
+        <View style={styles.languageChipsRow}>
+          {REMINDER_DAY_OPTIONS.map((day) => (
+            <Chip
+              key={day}
+              testID={`reminder-day-chip-${day}`}
+              label={
+                day === 0
+                  ? t('settings.reminderDaySameDay')
+                  : t('settings.reminderDaysBeforeLabel', { count: day })
+              }
+              selected={profile.settings.notificationPreferences.reminderDaysBefore.includes(day)}
+              onPress={() =>
+                handleToggleReminderDay(day, profile.settings.notificationPreferences.reminderDaysBefore)
+              }
+            />
+          ))}
+        </View>
+
+        <View style={styles.switchRow}>
+          <Text style={styles.switchLabel}>{t('settings.notifDaily')}</Text>
+          <Switch
+            value={profile.settings.notificationPreferences.dailyReminderEnabled}
+            onValueChange={(value) => handleToggleNotification('dailyReminderEnabled', value)}
+            trackColor={{ true: colors.primary }}
+          />
+        </View>
+        {profile.settings.notificationPreferences.dailyReminderEnabled ? (
+          <>
+            <Pressable testID="daily-reminder-hour-button" onPress={() => setShowTimePicker(true)}>
+              <Text style={styles.hint}>
+                {t('settings.reminderHourLabel', {
+                  hour: String(profile.settings.notificationPreferences.dailyReminderHour).padStart(2, '0'),
+                })}
+              </Text>
+            </Pressable>
+            {showTimePicker ? (
+              <DateTimePicker
+                value={hourToDate(profile.settings.notificationPreferences.dailyReminderHour)}
+                mode="time"
+                display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+                onChange={(_event, selectedTime) => {
+                  setShowTimePicker(Platform.OS === 'ios');
+                  if (selectedTime) {
+                    handleChangeDailyReminderHour(selectedTime);
+                  }
+                }}
+              />
+            ) : null}
+          </>
+        ) : null}
       </Card>
 
       <SectionTitle title={t('settings.sectionHome')} style={styles.sectionTitle} />

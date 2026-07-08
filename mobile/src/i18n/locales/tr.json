@@ -274,6 +274,11 @@
     "notifExpiry": "SKT hatırlatmaları",
     "notifShopping": "Alışveriş güncellemeleri",
     "notifWeekly": "Haftalık özet",
+    "reminderDaysLabel": "SKT'den önce hatırlat",
+    "reminderDaySameDay": "Aynı gün",
+    "reminderDaysBeforeLabel": "{{count}} gün önce",
+    "notifDaily": "Günlük hatırlatma",
+    "reminderHourLabel": "Hatırlatma saati: {{hour}}:00",
     "sectionHome": "Ev",
     "homeNameLabel": "Ev adı",
     "saveHomeNameButton": "Ev adını kaydet",
@@ -333,5 +338,25 @@
     "UPLOAD_ERROR": "Dosya yüklenemedi.",
     "USER_NOT_FOUND": "Kullanıcı bulunamadı."
   },
-  "notifications": {}
+  "notifications": {
+    "channelExpiry": "SKT Hatırlatmaları",
+    "channelDose": "İlaç Hatırlatmaları",
+    "channelWarranty": "Garanti Hatırlatmaları",
+    "expiryTitle": "SKT Hatırlatma",
+    "expiryBodyToday": "{{name}} için son kullanma tarihi bugün.",
+    "expiryBodyDays": "{{name}} için son kullanma tarihine {{count}} gün kaldı.",
+    "doseTitle": "İlaç Zamanı",
+    "doseBody": "{{name}} alma vakti ({{amount}} {{unit}}).",
+    "warrantyTitle": "Garanti Hatırlatma",
+    "warrantyBodyToday": "{{name}} için garanti süresi bugün doluyor.",
+    "warrantyBodyDays": "{{name}} için garanti süresi {{count}} gün sonra doluyor.",
+    "dailyReminderTitle": "Nestory",
+    "dailyReminderMessages": [
+      "Kilerinizde yakında son kullanma tarihi gelen ürünler var mı bakın.",
+      "Kilerinize hızlı bir göz atmak bugün israfı önleyebilir.",
+      "Son kullanma tarihi yaklaşan ürünlerinizi kontrol etmeyi unutmayın."
+    ],
+    "weeklySummaryTitle": "Haftalık Kiler Kontrolü",
+    "weeklySummaryBody": "Bu hafta kilerinizde neler değişti bir bakın."
+  }
 }

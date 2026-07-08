@@ -37,6 +37,9 @@ const PROFILE: UserProfile = {
       expiryReminders: true,
       shoppingUpdates: true,
       weeklySummary: true,
+      reminderDaysBefore: [7, 3, 1, 0],
+      dailyReminderEnabled: false,
+      dailyReminderHour: 9,
     },
   },
 };
@@ -99,6 +102,34 @@ describe('SettingsScreen', () => {
 
     await waitFor(() =>
       expect(updateNotificationPreferences).toHaveBeenCalledWith({ expiryReminders: false }),
+    );
+  });
+
+  it('toggles a reminder day threshold', async () => {
+    (updateNotificationPreferences as jest.Mock).mockResolvedValue(PROFILE);
+    renderScreen();
+    await screen.findByTestId('reminder-day-chip-14');
+
+    fireEvent.press(screen.getByTestId('reminder-day-chip-14'));
+
+    await waitFor(() =>
+      expect(updateNotificationPreferences).toHaveBeenCalledWith({
+        reminderDaysBefore: [14, 7, 3, 1, 0],
+      }),
+    );
+  });
+
+  it('hides the reminder time picker button until the daily reminder is enabled', async () => {
+    (updateNotificationPreferences as jest.Mock).mockResolvedValue(PROFILE);
+    renderScreen();
+    await screen.findByText('Daily reminder');
+
+    expect(screen.queryByTestId('daily-reminder-hour-button')).toBeNull();
+
+    fireEvent(screen.getAllByRole('switch')[3], 'valueChange', true);
+
+    await waitFor(() =>
+      expect(updateNotificationPreferences).toHaveBeenCalledWith({ dailyReminderEnabled: true }),
     );
   });
 
