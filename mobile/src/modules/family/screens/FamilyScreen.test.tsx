@@ -50,20 +50,20 @@ describe('FamilyScreen', () => {
     renderScreen();
 
     expect(await screen.findByText('Ayşe')).toBeTruthy();
-    expect(screen.getByText('Üye')).toBeTruthy();
+    expect(screen.getByText('Member')).toBeTruthy();
     expect(screen.getByText('member@example.com')).toBeTruthy();
   });
 
   it('lets an owner remove a non-owner member', async () => {
     (removeMember as jest.Mock).mockResolvedValue(undefined);
     jest.spyOn(Alert, 'alert').mockImplementation((_title, _msg, buttons) => {
-      const confirm = buttons?.find((button) => button.text === 'Çıkar');
+      const confirm = buttons?.find((button) => button.text === 'Remove');
       confirm?.onPress?.();
     });
     renderScreen();
     await screen.findByText('Mehmet');
 
-    fireEvent.press(screen.getByText('Çıkar'));
+    fireEvent.press(screen.getByText('Remove'));
 
     await waitFor(() => expect(removeMember).toHaveBeenCalledWith('home-1', 'user-member'));
   });
@@ -73,15 +73,15 @@ describe('FamilyScreen', () => {
 
     await screen.findByText('Ayşe');
 
-    expect(screen.queryAllByText('Çıkar')).toHaveLength(1);
+    expect(screen.queryAllByText('Remove')).toHaveLength(1);
   });
 
-  it('regenerates the invite code and opens the share sheet when Davet Et is pressed', async () => {
+  it('regenerates the invite code and opens the share sheet when Invite is pressed', async () => {
     (regenerateInviteCode as jest.Mock).mockResolvedValue('ABC12345');
     renderScreen();
     await screen.findByText('Ayşe');
 
-    fireEvent.press(screen.getByText('Davet Et'));
+    fireEvent.press(screen.getByText('Invite'));
 
     await waitFor(() => expect(regenerateInviteCode).toHaveBeenCalledWith('home-1'));
     expect(Share.share).toHaveBeenCalledWith(

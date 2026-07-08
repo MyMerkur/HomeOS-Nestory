@@ -26,7 +26,7 @@ describe('JoinHomeScreen', () => {
 
     fireEvent.press(screen.getByTestId('join-home-submit'));
 
-    expect(await screen.findByText('Davet kodu gerekli')).toBeTruthy();
+    expect(await screen.findByText('Invite code is required')).toBeTruthy();
     expect(joinHomeRequest).not.toHaveBeenCalled();
   });
 
@@ -41,7 +41,7 @@ describe('JoinHomeScreen', () => {
 
     renderWithQueryClient();
 
-    fireEvent.changeText(screen.getByLabelText('Davet kodu'), 'ABCD1234');
+    fireEvent.changeText(screen.getByLabelText('Invite code'), 'ABCD1234');
     fireEvent.press(screen.getByTestId('join-home-submit'));
 
     await waitFor(() => expect(joinHomeRequest).toHaveBeenCalledWith({ inviteCode: 'ABCD1234' }));

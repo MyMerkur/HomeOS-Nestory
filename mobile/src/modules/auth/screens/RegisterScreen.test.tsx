@@ -18,12 +18,12 @@ describe('RegisterScreen', () => {
   it('shows validation errors for an invalid form', async () => {
     render(<RegisterScreen navigation={mockNavigation} route={{} as never} />);
 
-    fireEvent.changeText(screen.getByLabelText('Ad Soyad'), 'A');
-    fireEvent.changeText(screen.getByLabelText('Şifre (en az 8 karakter)'), '123');
-    fireEvent.press(screen.getByText('Kayıt ol'));
+    fireEvent.changeText(screen.getByLabelText('Full name'), 'A');
+    fireEvent.changeText(screen.getByLabelText('Password (at least 8 characters)'), '123');
+    fireEvent.press(screen.getByText('Sign up'));
 
-    expect(await screen.findByText('En az 2 karakter')).toBeTruthy();
-    expect(await screen.findByText('En az 8 karakter')).toBeTruthy();
+    expect(await screen.findByText('At least 2 characters')).toBeTruthy();
+    expect(await screen.findByText('At least 8 characters')).toBeTruthy();
     expect(registerRequest).not.toHaveBeenCalled();
   });
 
@@ -36,10 +36,10 @@ describe('RegisterScreen', () => {
 
     render(<RegisterScreen navigation={mockNavigation} route={{} as never} />);
 
-    fireEvent.changeText(screen.getByLabelText('Ad Soyad'), 'Dogukan');
-    fireEvent.changeText(screen.getByLabelText('E-posta'), 'dogukan@example.com');
-    fireEvent.changeText(screen.getByLabelText('Şifre (en az 8 karakter)'), 'Min8Chars!');
-    fireEvent.press(screen.getByText('Kayıt ol'));
+    fireEvent.changeText(screen.getByLabelText('Full name'), 'Dogukan');
+    fireEvent.changeText(screen.getByLabelText('Email'), 'dogukan@example.com');
+    fireEvent.changeText(screen.getByLabelText('Password (at least 8 characters)'), 'Min8Chars!');
+    fireEvent.press(screen.getByText('Sign up'));
 
     await waitFor(() =>
       expect(registerRequest).toHaveBeenCalledWith({

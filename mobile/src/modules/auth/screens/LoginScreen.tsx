@@ -1,16 +1,18 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Button } from '../../../ui/Button';
 import { TextField } from '../../../ui/TextField';
 import { colors, fontSize, spacing, typography } from '../../../theme/theme';
 import { useAuthStore } from '../../../store/useAuthStore';
 import { loginRequest } from '../services/authApi';
-import { loginSchema, type LoginFormValues } from '../schemas/authSchema';
+import { makeLoginSchema, type LoginFormValues } from '../schemas/authSchema';
 import type { AuthStackScreenProps } from '../../../app/navigation/types';
 
 export function LoginScreen({ navigation }: AuthStackScreenProps<'Login'>) {
+  const { t } = useTranslation();
   const setSession = useAuthStore((state) => state.setSession);
   const [serverError, setServerError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -20,7 +22,7 @@ export function LoginScreen({ navigation }: AuthStackScreenProps<'Login'>) {
     handleSubmit,
     formState: { errors },
   } = useForm<LoginFormValues>({
-    resolver: zodResolver(loginSchema),
+    resolver: zodResolver(makeLoginSchema(t)),
     defaultValues: { email: '', password: '' },
   });
 
@@ -31,7 +33,7 @@ export function LoginScreen({ navigation }: AuthStackScreenProps<'Login'>) {
       const session = await loginRequest(values);
       await setSession(session);
     } catch {
-      setServerError('E-posta veya şifre hatalı.');
+      setServerError(t('auth.login.errorInvalidCredentials'));
     } finally {
       setIsSubmitting(false);
     }
@@ -39,8 +41,8 @@ export function LoginScreen({ navigation }: AuthStackScreenProps<'Login'>) {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.wordmark}>HomeOS</Text>
-      <Text style={styles.tagline}>Evindeki her şey tek yerde.</Text>
+      <Text style={styles.wordmark}>{t('auth.login.wordmark')}</Text>
+      <Text style={styles.tagline}>{t('auth.login.tagline')}</Text>
 
       <View style={styles.form}>
         <Controller
@@ -48,7 +50,7 @@ export function LoginScreen({ navigation }: AuthStackScreenProps<'Login'>) {
           name="email"
           render={({ field: { onChange, onBlur, value } }) => (
             <TextField
-              label="E-posta"
+              label={t('auth.login.emailLabel')}
               autoCapitalize="none"
               keyboardType="email-address"
               value={value}
@@ -64,7 +66,7 @@ export function LoginScreen({ navigation }: AuthStackScreenProps<'Login'>) {
           name="password"
           render={({ field: { onChange, onBlur, value } }) => (
             <TextField
-              label="Şifre"
+              label={t('auth.login.passwordLabel')}
               secureTextEntry
               value={value}
               onChangeText={onChange}
@@ -78,14 +80,14 @@ export function LoginScreen({ navigation }: AuthStackScreenProps<'Login'>) {
 
         <Button
           testID="login-submit-button"
-          label="Giriş yap"
+          label={t('auth.login.submitButton')}
           onPress={handleSubmit(onSubmit)}
           loading={isSubmitting}
         />
       </View>
 
       <Pressable onPress={() => navigation.navigate('Register')}>
-        <Text style={styles.link}>Hesabın yok mu? Kayıt ol</Text>
+        <Text style={styles.link}>{t('auth.login.noAccountLink')}</Text>
       </Pressable>
     </View>
   );

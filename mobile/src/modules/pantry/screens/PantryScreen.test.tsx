@@ -108,7 +108,7 @@ describe('PantryScreen', () => {
   it('consumes an item via the long-press action menu', async () => {
     (consumeItem as jest.Mock).mockResolvedValue({});
     jest.spyOn(Alert, 'alert').mockImplementation((_title, _message, buttons) => {
-      buttons?.find((button) => button.text === 'Tükettim')?.onPress?.();
+      buttons?.find((button) => button.text === 'Consumed')?.onPress?.();
     });
 
     renderScreen();
@@ -120,7 +120,7 @@ describe('PantryScreen', () => {
   it('discards an item via the long-press action menu', async () => {
     (discardItem as jest.Mock).mockResolvedValue({});
     jest.spyOn(Alert, 'alert').mockImplementation((_title, _message, buttons) => {
-      buttons?.find((button) => button.text === 'Attım')?.onPress?.();
+      buttons?.find((button) => button.text === 'Discarded')?.onPress?.();
     });
 
     renderScreen();
@@ -132,7 +132,7 @@ describe('PantryScreen', () => {
   it('freezes an item via the long-press action menu', async () => {
     (freezeItem as jest.Mock).mockResolvedValue({});
     jest.spyOn(Alert, 'alert').mockImplementation((_title, _message, buttons) => {
-      buttons?.find((button) => button.text === 'Dondurdum')?.onPress?.();
+      buttons?.find((button) => button.text === 'Froze it')?.onPress?.();
     });
 
     renderScreen();
@@ -144,7 +144,7 @@ describe('PantryScreen', () => {
   it('adds an item to the shopping list via the long-press action menu', async () => {
     (addToShopping as jest.Mock).mockResolvedValue({});
     jest.spyOn(Alert, 'alert').mockImplementation((_title, _message, buttons) => {
-      buttons?.find((button) => button.text === 'Alışveriş listesine ekle')?.onPress?.();
+      buttons?.find((button) => button.text === 'Add to shopping list')?.onPress?.();
     });
 
     renderScreen();

@@ -1,23 +1,25 @@
+import { useTranslation } from 'react-i18next';
 import { StyleSheet, Text, View } from 'react-native';
 import { Button } from '../../../ui/Button';
 import { colors, fontSize, spacing, typography } from '../../../theme/theme';
 import type { HomeSetupScreenProps } from '../../../app/navigation/types';
 
 export function HomeSetupChoiceScreen({ navigation }: HomeSetupScreenProps<'HomeSetupChoice'>) {
+  const { t } = useTranslation();
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Henüz bir evin yok</Text>
-      <Text style={styles.subtitle}>Yeni bir ev oluştur ya da davet koduyla mevcut bir eve katıl.</Text>
+      <Text style={styles.title}>{t('onboarding.choice.title')}</Text>
+      <Text style={styles.subtitle}>{t('onboarding.choice.subtitle')}</Text>
 
       <View style={styles.actions}>
         <Button
           testID="go-to-create-home"
-          label="Ev oluştur"
+          label={t('onboarding.choice.createButton')}
           onPress={() => navigation.navigate('CreateHome')}
         />
         <Button
           testID="go-to-join-home"
-          label="Davet koduyla katıl"
+          label={t('onboarding.choice.joinButton')}
           onPress={() => navigation.navigate('JoinHome')}
           variant="outline"
         />

@@ -1,5 +1,5 @@
+import { useTranslation } from 'react-i18next';
 import { PantryItemRow } from '../../../ui/PantryItemRow';
-import { CATEGORY_LABELS, UNIT_LABELS } from '../constants';
 import type { InventoryItem } from '../services/pantryApi';
 
 type Props = {
@@ -17,11 +17,12 @@ function daysUntilExpiry(expiryDate: string): number {
 }
 
 export function ItemCard({ item, onPress, onLongPress }: Props) {
+  const { t } = useTranslation();
   return (
     <PantryItemRow
       testID={`item-card-${item.id}`}
       name={item.name}
-      subtitle={`${item.quantity} ${UNIT_LABELS[item.unit]} · ${CATEGORY_LABELS[item.category]}`}
+      subtitle={`${item.quantity} ${t(`pantry.units.${item.unit}`)} · ${t(`pantry.categories.${item.category}`)}`}
       daysUntilExpiry={item.expiryDate ? daysUntilExpiry(item.expiryDate) : null}
       onPress={onPress}
       onLongPress={onLongPress}

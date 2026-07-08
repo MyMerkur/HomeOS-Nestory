@@ -54,11 +54,11 @@ describe('MedicinesScreen', () => {
     renderScreen();
 
     expect(await screen.findByText('Parol')).toBeTruthy();
-    expect(screen.getByText('Saatler: 09:00, 21:00')).toBeTruthy();
+    expect(screen.getByText('Times: 09:00, 21:00')).toBeTruthy();
     expect(screen.getByTestId('take-dose-med-1')).toBeTruthy();
   });
 
-  it('calls takeDose and refetches when "Doz Aldım" is pressed', async () => {
+  it('calls takeDose and refetches when "Took dose" is pressed', async () => {
     (listItems as jest.Mock).mockResolvedValue({
       items: [buildMedicine()],
       pagination: { page: 1, limit: 100, total: 1, totalPages: 1 },
@@ -81,7 +81,7 @@ describe('MedicinesScreen', () => {
     renderScreen();
 
     await screen.findByText('Parol');
-    expect(screen.getByText(/Stokta yok/)).toBeTruthy();
+    expect(screen.getByText(/Out of stock/)).toBeTruthy();
     expect(screen.queryByTestId('take-dose-med-1')).toBeNull();
 
     fireEvent.press(screen.getByTestId('add-to-shopping-med-1'));
@@ -97,6 +97,6 @@ describe('MedicinesScreen', () => {
 
     renderScreen();
 
-    expect(await screen.findByText('Henüz kayıtlı bir ilaç yok.')).toBeTruthy();
+    expect(await screen.findByText('No medicines registered yet.')).toBeTruthy();
   });
 });

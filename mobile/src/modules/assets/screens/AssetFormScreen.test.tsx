@@ -46,7 +46,7 @@ describe('AssetFormScreen', () => {
 
     fireEvent.press(screen.getByTestId('asset-form-submit'));
 
-    expect(await screen.findByText('Eşya adı gerekli')).toBeTruthy();
+    expect(await screen.findByText('Asset name is required')).toBeTruthy();
     expect(createAsset).not.toHaveBeenCalled();
   });
 
@@ -55,7 +55,7 @@ describe('AssetFormScreen', () => {
 
     renderScreen();
 
-    fireEvent.changeText(screen.getByPlaceholderText('ör. Televizyon'), 'Televizyon');
+    fireEvent.changeText(screen.getByPlaceholderText('e.g. Television'), 'Televizyon');
     fireEvent.press(screen.getByTestId('asset-category-chip-Electronics'));
     fireEvent.press(screen.getByTestId('asset-form-submit'));
 
@@ -117,8 +117,8 @@ describe('AssetFormScreen', () => {
     await waitFor(() =>
       expect(uploadReceipt).toHaveBeenCalledWith('home-1', 'asset-1', 'file://receipt.jpg'),
     );
-    expect(await screen.findByText('10.10.2026')).toBeTruthy();
-    expect(await screen.findByText('Fiş Eklendi ✓')).toBeTruthy();
+    expect(await screen.findByText('10/10/2026')).toBeTruthy();
+    expect(await screen.findByText('Receipt added ✓')).toBeTruthy();
   });
 
   it('defers the receipt upload until after create in create mode', async () => {
@@ -130,10 +130,10 @@ describe('AssetFormScreen', () => {
     renderScreen();
 
     fireEvent.press(screen.getByTestId('scan-receipt-button'));
-    expect(await screen.findByText('Fiş Eklendi ✓')).toBeTruthy();
+    expect(await screen.findByText('Receipt added ✓')).toBeTruthy();
     expect(uploadReceipt).not.toHaveBeenCalled();
 
-    fireEvent.changeText(screen.getByPlaceholderText('ör. Televizyon'), 'Televizyon');
+    fireEvent.changeText(screen.getByPlaceholderText('e.g. Television'), 'Televizyon');
     fireEvent.press(screen.getByTestId('asset-category-chip-Electronics'));
     fireEvent.press(screen.getByTestId('asset-form-submit'));
 
@@ -159,6 +159,6 @@ describe('AssetFormScreen', () => {
     await waitFor(() =>
       expect(uploadWarrantyDocument).toHaveBeenCalledWith('home-1', 'asset-1', 'file://warranty.jpg'),
     );
-    expect(await screen.findByText('Belge Eklendi ✓')).toBeTruthy();
+    expect(await screen.findByText('Document added ✓')).toBeTruthy();
   });
 });

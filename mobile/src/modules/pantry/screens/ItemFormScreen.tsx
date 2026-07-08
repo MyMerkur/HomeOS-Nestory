@@ -13,21 +13,23 @@ import {
   Text,
   View,
 } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { useHomeStore } from '../../../store/useHomeStore';
 import { Button } from '../../../ui/Button';
 import { Chip } from '../../../ui/Chip';
 import { TextField } from '../../../ui/TextField';
 import { colors, fontSize, spacing, typography } from '../../../theme/theme';
-import { CATEGORIES, CATEGORY_LABELS, UNITS, UNIT_LABELS } from '../constants';
+import { CATEGORIES, UNITS } from '../constants';
 import { useLocationsQuery } from '../hooks/useLocationsQuery';
 import { INVENTORY_ITEMS_QUERY_KEY } from '../hooks/useInventoryItemsQuery';
 import { createItem, getItem, listItems, updateItem } from '../services/pantryApi';
 import { scanBarcodeFromCamera } from '../services/barcodeScanner';
 import { scanExpiryDateFromCamera } from '../services/dateOcrScanner';
-import { itemFormSchema, type ItemFormValues } from '../schemas/itemSchema';
+import { makeItemFormSchema, type ItemFormValues } from '../schemas/itemSchema';
 import type { PantryStackScreenProps } from '../../../app/navigation/types';
 
 export function ItemFormScreen({ navigation, route }: PantryStackScreenProps<'ItemForm'>) {
+  const { t, i18n } = useTranslation();
   const itemId = route.params?.itemId;
   const initialBarcode = route.params?.initialBarcode;
   const isEditMode = !!itemId;
@@ -56,7 +58,7 @@ export function ItemFormScreen({ navigation, route }: PantryStackScreenProps<'It
     getValues,
     formState: { errors },
   } = useForm<ItemFormValues>({
-    resolver: zodResolver(itemFormSchema),
+    resolver: zodResolver(makeItemFormSchema(t)),
     defaultValues: {
       name: '',
       locationId: '',
@@ -71,8 +73,8 @@ export function ItemFormScreen({ navigation, route }: PantryStackScreenProps<'It
   const isMedicine = useWatch({ control, name: 'category' }) === 'Medicine';
 
   useEffect(() => {
-    navigation.setOptions({ title: isEditMode ? 'Ürünü düzenle' : 'Ürün ekle' });
-  }, [navigation, isEditMode]);
+    navigation.setOptions({ title: isEditMode ? t('pantry.itemForm.titleEdit') : t('pantry.itemForm.titleAdd') });
+  }, [navigation, isEditMode, t]);
 
   useEffect(() => {
     if (existingItem) {
@@ -114,7 +116,10 @@ export function ItemFormScreen({ navigation, route }: PantryStackScreenProps<'It
       const outcome = await scanBarcodeFromCamera();
       if (outcome.status === 'cancelled') return;
       if (outcome.status === 'not-found') {
-        Alert.alert('Barkod bulunamadı', 'Fotoğrafta bir barkod tanınamadı, tekrar dene veya elle gir.');
+        Alert.alert(
+          t('pantry.itemForm.barcodeNotFoundTitle'),
+          t('pantry.itemForm.barcodeNotFoundMessage'),
+        );
         return;
       }
 
@@ -134,7 +139,10 @@ export function ItemFormScreen({ navigation, route }: PantryStackScreenProps<'It
       const outcome = await scanExpiryDateFromCamera();
       if (outcome.status === 'cancelled') return;
       if (outcome.status === 'not-found') {
-        Alert.alert('Tarih bulunamadı', 'Fotoğrafta bir SKT tarihi tanınamadı, elle girebilirsin.');
+        Alert.alert(
+          t('pantry.itemForm.expiryNotFoundTitle'),
+          t('pantry.itemForm.expiryNotFoundMessage'),
+        );
         return;
       }
       setValue('expiryDate', outcome.date);
@@ -168,7 +176,7 @@ export function ItemFormScreen({ navigation, route }: PantryStackScreenProps<'It
       await queryClient.invalidateQueries({ queryKey: [INVENTORY_ITEMS_QUERY_KEY] });
       navigation.goBack();
     } catch {
-      setServerError('Ürün kaydedilemedi, tekrar dene.');
+      setServerError(t('pantry.itemForm.errorSave'));
     } finally {
       setIsSubmitting(false);
     }
@@ -189,8 +197,8 @@ export function ItemFormScreen({ navigation, route }: PantryStackScreenProps<'It
         name="name"
         render={({ field: { onChange, onBlur, value } }) => (
           <TextField
-            label="Ürün adı"
-            placeholder="ör. Süt"
+            label={t('pantry.itemForm.nameLabel')}
+            placeholder={t('pantry.itemForm.namePlaceholder')}
             value={value}
             onChangeText={onChange}
             onBlur={onBlur}
@@ -199,7 +207,7 @@ export function ItemFormScreen({ navigation, route }: PantryStackScreenProps<'It
         )}
       />
 
-      <Text style={styles.label}>Barkod (opsiyonel)</Text>
+      <Text style={styles.label}>{t('pantry.itemForm.barcodeLabel')}</Text>
       <View style={styles.row}>
         <Controller
           control={control}
@@ -207,9 +215,9 @@ export function ItemFormScreen({ navigation, route }: PantryStackScreenProps<'It
           render={({ field: { onChange, onBlur, value } }) => (
             <View style={styles.rowInput}>
               <TextField
-                label="Barkod"
+                label={t('pantry.itemForm.barcodeFieldLabel')}
                 hideLabel
-                placeholder="Barkod numarası"
+                placeholder={t('pantry.itemForm.barcodePlaceholder')}
                 value={value ?? ''}
                 onChangeText={onChange}
                 onBlur={onBlur}
@@ -219,14 +227,14 @@ export function ItemFormScreen({ navigation, route }: PantryStackScreenProps<'It
         />
         <Button
           testID="scan-barcode-button"
-          label="Barkod Tara"
+          label={t('pantry.itemForm.scanBarcodeButton')}
           onPress={handleScanBarcode}
           loading={isScanningBarcode}
           variant="outline"
         />
       </View>
 
-      <Text style={styles.label}>Lokasyon</Text>
+      <Text style={styles.label}>{t('pantry.itemForm.locationLabel')}</Text>
       <Controller
         control={control}
         name="locationId"
@@ -246,7 +254,7 @@ export function ItemFormScreen({ navigation, route }: PantryStackScreenProps<'It
       />
       {errors.locationId ? <Text style={styles.error}>{errors.locationId.message}</Text> : null}
 
-      <Text style={styles.label}>Kategori</Text>
+      <Text style={styles.label}>{t('pantry.itemForm.categoryLabel')}</Text>
       <Controller
         control={control}
         name="category"
@@ -256,7 +264,7 @@ export function ItemFormScreen({ navigation, route }: PantryStackScreenProps<'It
               <Chip
                 key={category}
                 testID={`category-chip-${category}`}
-                label={CATEGORY_LABELS[category]}
+                label={t(`pantry.categories.${category}`)}
                 selected={value === category}
                 onPress={() => onChange(category)}
               />
@@ -271,7 +279,7 @@ export function ItemFormScreen({ navigation, route }: PantryStackScreenProps<'It
         name="quantity"
         render={({ field: { onChange, onBlur, value } }) => (
           <TextField
-            label="Miktar"
+            label={t('pantry.itemForm.quantityLabel')}
             keyboardType="numeric"
             value={value === undefined ? '' : String(value)}
             onChangeText={(text) => onChange(text === '' ? undefined : Number(text))}
@@ -281,7 +289,7 @@ export function ItemFormScreen({ navigation, route }: PantryStackScreenProps<'It
         )}
       />
 
-      <Text style={styles.label}>Birim</Text>
+      <Text style={styles.label}>{t('pantry.itemForm.unitLabel')}</Text>
       <Controller
         control={control}
         name="unit"
@@ -291,7 +299,7 @@ export function ItemFormScreen({ navigation, route }: PantryStackScreenProps<'It
               <Chip
                 key={unit}
                 testID={`unit-chip-${unit}`}
-                label={UNIT_LABELS[unit]}
+                label={t(`pantry.units.${unit}`)}
                 selected={value === unit}
                 onPress={() => onChange(unit)}
               />
@@ -309,9 +317,9 @@ export function ItemFormScreen({ navigation, route }: PantryStackScreenProps<'It
             render={({ field: { onChange, onBlur, value } }) => (
               <TextField
                 testID="dose-amount-input"
-                label="Doz miktarı (opsiyonel)"
+                label={t('pantry.itemForm.doseAmountLabel')}
                 keyboardType="numeric"
-                placeholder="ör. 1"
+                placeholder={t('pantry.itemForm.doseAmountPlaceholder')}
                 value={value === undefined ? '' : String(value)}
                 onChangeText={(text) => onChange(text === '' ? undefined : Number(text))}
                 onBlur={onBlur}
@@ -319,7 +327,7 @@ export function ItemFormScreen({ navigation, route }: PantryStackScreenProps<'It
             )}
           />
 
-          <Text style={styles.label}>Doz saatleri (opsiyonel)</Text>
+          <Text style={styles.label}>{t('pantry.itemForm.doseTimesLabel')}</Text>
           <Controller
             control={control}
             name="doseTimes"
@@ -333,12 +341,12 @@ export function ItemFormScreen({ navigation, route }: PantryStackScreenProps<'It
                         key={time}
                         testID={`dose-time-chip-${time}`}
                         label={`${time} ✕`}
-                        onPress={() => onChange(times.filter((t) => t !== time))}
+                        onPress={() => onChange(times.filter((existingTime) => existingTime !== time))}
                       />
                     ))}
                     <Button
                       testID="add-dose-time-button"
-                      label="+ Saat Ekle"
+                      label={t('pantry.itemForm.addTimeButton')}
                       onPress={() => setShowDoseTimePicker(true)}
                       variant="outline"
                     />
@@ -364,7 +372,7 @@ export function ItemFormScreen({ navigation, route }: PantryStackScreenProps<'It
         </>
       ) : null}
 
-      <Text style={styles.label}>Son kullanma tarihi (opsiyonel)</Text>
+      <Text style={styles.label}>{t('pantry.itemForm.expiryDateLabel')}</Text>
       <View style={styles.row}>
         <Controller
           control={control}
@@ -377,7 +385,7 @@ export function ItemFormScreen({ navigation, route }: PantryStackScreenProps<'It
                 onPress={() => setShowDatePicker(true)}
               >
                 <Text style={styles.dateButtonText}>
-                  {value ? value.toLocaleDateString('tr-TR') : 'Tarih seç'}
+                  {value ? value.toLocaleDateString(i18n.language) : t('pantry.itemForm.selectDateButton')}
                 </Text>
               </Pressable>
               {showDatePicker ? (
@@ -396,7 +404,7 @@ export function ItemFormScreen({ navigation, route }: PantryStackScreenProps<'It
         />
         <Button
           testID="scan-expiry-date-button"
-          label="SKT Tara"
+          label={t('pantry.itemForm.scanExpiryButton')}
           onPress={handleScanExpiryDate}
           loading={isScanningExpiryDate}
           variant="outline"
@@ -408,7 +416,7 @@ export function ItemFormScreen({ navigation, route }: PantryStackScreenProps<'It
       <View style={styles.submitButton}>
         <Button
           testID="item-form-submit"
-          label={isEditMode ? 'Güncelle' : 'Ekle'}
+          label={isEditMode ? t('pantry.itemForm.submitEdit') : t('pantry.itemForm.submitAdd')}
           onPress={handleSubmit(onSubmit)}
           loading={isSubmitting}
         />

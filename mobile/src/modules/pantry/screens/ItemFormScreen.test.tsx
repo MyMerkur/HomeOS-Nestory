@@ -45,7 +45,7 @@ describe('ItemFormScreen', () => {
     await screen.findByTestId('location-chip-loc-fridge');
     fireEvent.press(screen.getByTestId('item-form-submit'));
 
-    expect(await screen.findByText('Ürün adı gerekli')).toBeTruthy();
+    expect(await screen.findByText('Item name is required')).toBeTruthy();
     expect(createItem).not.toHaveBeenCalled();
   });
 
@@ -55,7 +55,7 @@ describe('ItemFormScreen', () => {
     renderScreen();
 
     await screen.findByTestId('location-chip-loc-fridge');
-    fireEvent.changeText(screen.getByPlaceholderText('ör. Süt'), 'Yoğurt');
+    fireEvent.changeText(screen.getByPlaceholderText('e.g. Milk'), 'Yoğurt');
     fireEvent.press(screen.getByTestId('location-chip-loc-fridge'));
     fireEvent.press(screen.getByTestId('category-chip-Dairy'));
     fireEvent.press(screen.getByTestId('unit-chip-piece'));
@@ -187,7 +187,7 @@ describe('ItemFormScreen', () => {
     await screen.findByTestId('location-chip-loc-fridge');
     fireEvent.press(screen.getByTestId('scan-expiry-date-button'));
 
-    expect(await screen.findByText('10.10.2026')).toBeTruthy();
+    expect(await screen.findByText(new Date(2026, 9, 10).toLocaleDateString('en'))).toBeTruthy();
   });
 
   it('warns when the OCR scan finds no date', async () => {

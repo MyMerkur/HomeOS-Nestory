@@ -2,6 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Alert, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
 import { Button } from '../../../ui/Button';
 import { Card } from '../../../ui/Card';
@@ -25,8 +26,8 @@ import {
   updateProfile,
 } from '../services/settingsApi';
 import {
-  changePasswordSchema,
-  homeNameSchema,
+  makeChangePasswordSchema,
+  makeHomeNameSchema,
   type ChangePasswordFormValues,
   type HomeNameFormValues,
 } from '../schemas/settingsSchema';
@@ -36,6 +37,7 @@ function SectionTitle({ title }: { title: string }) {
 }
 
 export function SettingsScreen() {
+  const { t } = useTranslation();
   const homeId = useHomeStore((state) => state.selectedHomeId) as string;
   const setSelectedHomeId = useHomeStore((state) => state.setSelectedHomeId);
   const clearSession = useAuthStore((state) => state.clearSession);
@@ -65,12 +67,12 @@ export function SettingsScreen() {
     reset,
     formState: { errors },
   } = useForm<ChangePasswordFormValues>({
-    resolver: zodResolver(changePasswordSchema),
+    resolver: zodResolver(makeChangePasswordSchema(t)),
     defaultValues: { currentPassword: '', newPassword: '' },
   });
 
   const homeNameForm = useForm<HomeNameFormValues>({
-    resolver: zodResolver(homeNameSchema),
+    resolver: zodResolver(makeHomeNameSchema(t)),
     defaultValues: { name: '' },
   });
 
@@ -98,9 +100,9 @@ export function SettingsScreen() {
     try {
       await changePassword(values);
       reset();
-      Alert.alert('Şifre değiştirildi');
+      Alert.alert(t('settings.passwordChangedMessage'));
     } catch {
-      setPasswordError('Mevcut şifre yanlış.');
+      setPasswordError(t('settings.passwordErrorInvalid'));
     } finally {
       setIsChangingPassword(false);
     }
@@ -133,10 +135,10 @@ export function SettingsScreen() {
   };
 
   const handleLeaveHome = () => {
-    Alert.alert('Bu evden ayrılmak istediğine emin misin?', undefined, [
-      { text: 'İptal', style: 'cancel' },
+    Alert.alert(t('settings.leaveHomeConfirmTitle'), undefined, [
+      { text: t('settings.leaveHomeConfirmCancel'), style: 'cancel' },
       {
-        text: 'Ayrıl',
+        text: t('settings.leaveHomeConfirmConfirm'),
         style: 'destructive',
         onPress: async () => {
           await leaveHome(homeId);
@@ -166,17 +168,22 @@ export function SettingsScreen() {
   if (isError || !profile) {
     return (
       <View style={styles.centered}>
-        <Text style={styles.error}>Ayarlar yüklenemedi.</Text>
+        <Text style={styles.error}>{t('settings.errorLoad')}</Text>
       </View>
     );
   }
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      <SectionTitle title="Hesap" />
+      <SectionTitle title={t('settings.sectionAccount')} />
       <Card style={styles.card}>
-        <TextField label="İsim" value={name} onChangeText={setName} />
-        <Button label="Kaydet" onPress={handleSaveProfile} loading={isSavingName} variant="secondary" />
+        <TextField label={t('settings.nameLabel')} value={name} onChangeText={setName} />
+        <Button
+          label={t('settings.saveButton')}
+          onPress={handleSaveProfile}
+          loading={isSavingName}
+          variant="secondary"
+        />
       </Card>
 
       <Card style={styles.card}>
@@ -185,7 +192,7 @@ export function SettingsScreen() {
           name="currentPassword"
           render={({ field: { onChange, value } }) => (
             <TextField
-              label="Mevcut şifre"
+              label={t('settings.currentPasswordLabel')}
               value={value}
               onChangeText={onChange}
               secureTextEntry
@@ -198,7 +205,7 @@ export function SettingsScreen() {
           name="newPassword"
           render={({ field: { onChange, value } }) => (
             <TextField
-              label="Yeni şifre"
+              label={t('settings.newPasswordLabel')}
               value={value}
               onChangeText={onChange}
               secureTextEntry
@@ -208,17 +215,17 @@ export function SettingsScreen() {
         />
         {passwordError ? <Text style={styles.errorText}>{passwordError}</Text> : null}
         <Button
-          label="Şifreyi değiştir"
+          label={t('settings.changePasswordButton')}
           onPress={handleSubmit(onChangePassword)}
           loading={isChangingPassword}
           variant="secondary"
         />
       </Card>
 
-      <SectionTitle title="Bildirimler" />
+      <SectionTitle title={t('settings.sectionNotifications')} />
       <Card style={styles.card}>
         <View style={styles.switchRow}>
-          <Text style={styles.switchLabel}>SKT hatırlatmaları</Text>
+          <Text style={styles.switchLabel}>{t('settings.notifExpiry')}</Text>
           <Switch
             value={profile.settings.notificationPreferences.expiryReminders}
             onValueChange={(value) => handleToggleNotification('expiryReminders', value)}
@@ -226,7 +233,7 @@ export function SettingsScreen() {
           />
         </View>
         <View style={styles.switchRow}>
-          <Text style={styles.switchLabel}>Alışveriş güncellemeleri</Text>
+          <Text style={styles.switchLabel}>{t('settings.notifShopping')}</Text>
           <Switch
             value={profile.settings.notificationPreferences.shoppingUpdates}
             onValueChange={(value) => handleToggleNotification('shoppingUpdates', value)}
@@ -234,7 +241,7 @@ export function SettingsScreen() {
           />
         </View>
         <View style={styles.switchRow}>
-          <Text style={styles.switchLabel}>Haftalık özet</Text>
+          <Text style={styles.switchLabel}>{t('settings.notifWeekly')}</Text>
           <Switch
             value={profile.settings.notificationPreferences.weeklySummary}
             onValueChange={(value) => handleToggleNotification('weeklySummary', value)}
@@ -243,33 +250,31 @@ export function SettingsScreen() {
         </View>
       </Card>
 
-      <SectionTitle title="Ev" />
+      <SectionTitle title={t('settings.sectionHome')} />
       <Card style={styles.card}>
         <Controller
           control={homeNameForm.control}
           name="name"
           render={({ field: { onChange, value } }) => (
-            <TextField label="Ev adı" value={value} onChangeText={onChange} />
+            <TextField label={t('settings.homeNameLabel')} value={value} onChangeText={onChange} />
           )}
         />
         <Button
-          label="Ev adını kaydet"
+          label={t('settings.saveHomeNameButton')}
           onPress={homeNameForm.handleSubmit(onSaveHomeName)}
           loading={isSavingHomeName}
           variant="secondary"
         />
         {isOwner ? (
-          <Text style={styles.hint}>
-            Ev sahibi olarak, başka üyeler varken bu evden ayrılamazsın.
-          </Text>
+          <Text style={styles.hint}>{t('settings.ownerCannotLeaveHint')}</Text>
         ) : (
-          <Button label="Evden ayrıl" onPress={handleLeaveHome} variant="outline" />
+          <Button label={t('settings.leaveHomeButton')} onPress={handleLeaveHome} variant="outline" />
         )}
       </Card>
 
-      <SectionTitle title="Uygulama" />
+      <SectionTitle title={t('settings.sectionApp')} />
       <Card style={styles.card}>
-        <Text style={styles.switchLabel}>Dil</Text>
+        <Text style={styles.switchLabel}>{t('settings.languageLabel')}</Text>
         <View style={styles.languageChipsRow}>
           {SUPPORTED_LANGUAGES.map((language) => (
             <Chip
@@ -282,12 +287,12 @@ export function SettingsScreen() {
           ))}
         </View>
         <View style={styles.switchRow}>
-          <Text style={styles.switchLabel}>Tema</Text>
-          <Text style={styles.readonlyValue}>Açık (v1)</Text>
+          <Text style={styles.switchLabel}>{t('settings.themeLabel')}</Text>
+          <Text style={styles.readonlyValue}>{t('settings.themeValuePlaceholder')}</Text>
         </View>
       </Card>
 
-      <Button label="Çıkış yap" onPress={handleLogout} variant="outline" />
+      <Button label={t('settings.logoutButton')} onPress={handleLogout} variant="outline" />
     </ScrollView>
   );
 }

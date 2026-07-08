@@ -1,14 +1,18 @@
 import { z } from 'zod';
+import type { TFunction } from 'i18next';
 
-export const changePasswordSchema = z.object({
-  currentPassword: z.string().min(1, 'Mevcut şifre gerekli'),
-  newPassword: z.string().min(8, 'En az 8 karakter'),
-});
+export function makeChangePasswordSchema(t: TFunction) {
+  return z.object({
+    currentPassword: z.string().min(1, t('validation.currentPasswordRequired')),
+    newPassword: z.string().min(8, t('validation.passwordMin8')),
+  });
+}
 
-export type ChangePasswordFormValues = z.infer<typeof changePasswordSchema>;
+export function makeHomeNameSchema(t: TFunction) {
+  return z.object({
+    name: z.string().trim().min(1, t('validation.homeNameRequired')).max(80),
+  });
+}
 
-export const homeNameSchema = z.object({
-  name: z.string().trim().min(1, 'Ev adı gerekli').max(80),
-});
-
-export type HomeNameFormValues = z.infer<typeof homeNameSchema>;
+export type ChangePasswordFormValues = z.infer<ReturnType<typeof makeChangePasswordSchema>>;
+export type HomeNameFormValues = z.infer<ReturnType<typeof makeHomeNameSchema>>;

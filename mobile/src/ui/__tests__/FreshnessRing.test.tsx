@@ -6,7 +6,7 @@ describe('FreshnessRing', () => {
     render(<FreshnessRing daysUntilExpiry={5} size="large" />);
 
     expect(screen.getByText('5')).toBeTruthy();
-    expect(screen.getByText('gün kaldı')).toBeTruthy();
+    expect(screen.getByText('days left')).toBeTruthy();
   });
 
   it('clamps a negative day count to 0 in the label', () => {

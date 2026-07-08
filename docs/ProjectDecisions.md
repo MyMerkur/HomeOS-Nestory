@@ -444,3 +444,46 @@ navigasyon başlıkları da tema fontuna taşındı
   kullanılıyor — dil adı bir "çeviri" değil, sabit özel isim olduğu için).
   de/fr/es/it/cs/pt çevirileri LLM tarafından üretildi; mağaza yayınından
   önce anadil konuşan biri tarafından gözden geçirilmesi önerilir.
+
+---
+
+## Decision: Ekranların tam i18n migrasyonu tamamlandı (Sprint 13.2)
+
+- **Date**: 2026-07-08
+- **Status**: Accepted
+- **Context**: Sprint 13.1'de i18n altyapısı kurulmuştu (i18next, 8 dil, dil
+  seçici); bu adımda uygulamadaki 18 ekranın tamamındaki hardcoded Türkçe
+  stringler `t()` çağrılarına dönüştürüldü. İş hacmi büyük olduğu için
+  (18 ekran + birkaç paylaşılan bileşen) modül bazlı 6 paralel arka plan
+  ajanına bölündü — her biri kendi dosya kümesinde çalıştı, dosya çakışması
+  olmadı (validasyon şemaları ve `constants.ts` etiket haritaları önceden
+  merkezi olarak dönüştürülmüştü, ajanlar sadece ekran/bileşen dosyalarına
+  dokundu).
+- **Decision**: (1) Zod validasyon şemaları (`authSchema`, `homeSchema`,
+  `itemSchema`, `assetSchema`, `settingsSchema`) statik sabitlerden
+  `make*Schema(t)` fabrika fonksiyonlarına dönüştürüldü — her ekran artık
+  `zodResolver(makeXSchema(t))` çağırıyor. (2) `pantry/constants.ts` ve
+  `assets/constants.ts`'teki `CATEGORY_LABELS`/`UNIT_LABELS`/
+  `ASSET_CATEGORY_LABELS` haritaları kaldırıldı — görüntü metni artık
+  `t('pantry.categories.X')`/`t('pantry.units.X')`/`t('assets.categories.X')`
+  üzerinden geliyor (enum dizileri `CATEGORIES`/`UNITS`/`ASSET_CATEGORIES`
+  API sözleşmesi olarak aynı dosyada kaldı). (3) Sunucu hata mesajları
+  `apiError.ts`'teki `getErrorMessage()` ile `errors.<CODE>` anahtarına
+  map'leniyor (Sprint 13.1'de eklenmişti, bu adımda tüm ekranlara yayıldı).
+  (4) Tarih formatlama (`toLocaleDateString('tr-TR')`) her yerde
+  `toLocaleDateString(i18n.language)`'e çevrildi. (5) Dinamik sunucu verisi
+  (tarif adı/malzemeler/talimatlar, rozet adı/açıklaması, kullanıcı/ev/ürün
+  adları) kasıtlı olarak **çevrilmedi** — bunlar UI metni değil, kullanıcı
+  içeriği. (6) `ui/FreshnessRing.tsx`'teki "gün kaldı" metni de
+  `common.daysLeftCaption` anahtarına taşındı (paylaşılan bileşenlerde de
+  hiç Türkçe string kalmaması için). (7) Jest test ortamı için
+  `jest.config.js`'e `setupFilesAfterEnv: ['<rootDir>/src/i18n/testSetup.ts']`
+  eklendi — bu, i18next'i yalnızca `en` kaynağıyla senkron başlatıyor,
+  böylece tüm testler İngilizce metin varsayımıyla yazıldı (dil değiştirme
+  mantığı ayrı, `languageStorage`/`i18n` birim testlerinde kontrol ediliyor).
+- **Consequences**: Uygulamadaki **18 ekranın tamamında** artık hiçbir
+  hardcoded UI stringi yok — `grep -rl "[çğıöşüÇĞİÖŞÜ]" src/modules/*/screens
+  src/ui` (test dosyaları hariç) sıfır sonuç veriyor. Mobile: lint temiz,
+  `tsc --noEmit` sıfır hata, 31 suite / 135 test yeşil. Backend: 16 suite /
+  85 test yeşil. Bu, Sprint 13'ü (i18n initiative) tamamlıyor — Sprint 14
+  (Dark Mode) sıradaki adım.

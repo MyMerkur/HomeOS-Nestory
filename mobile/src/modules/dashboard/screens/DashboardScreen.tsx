@@ -1,5 +1,6 @@
 import { ActivityIndicator, FlatList, StyleSheet, Text, View } from 'react-native';
 import { IconMoodEmpty } from '@tabler/icons-react-native';
+import { useTranslation } from 'react-i18next';
 import { ItemCard } from '../../pantry/components/ItemCard';
 import { Chip } from '../../../ui/Chip';
 import { EmptyState } from '../../../ui/EmptyState';
@@ -9,6 +10,7 @@ import { useDashboardQuery } from '../hooks/useDashboardQuery';
 import type { DashboardStackScreenProps } from '../../../app/navigation/types';
 
 export function DashboardScreen({ navigation }: DashboardStackScreenProps<'Dashboard'>) {
+  const { t } = useTranslation();
   const { data, isLoading, isError } = useDashboardQuery();
 
   if (isLoading) {
@@ -22,7 +24,7 @@ export function DashboardScreen({ navigation }: DashboardStackScreenProps<'Dashb
   if (isError || !data) {
     return (
       <View style={styles.centered}>
-        <Text style={styles.error}>Özet bilgiler yüklenemedi.</Text>
+        <Text style={styles.error}>{t('dashboard.errorLoad')}</Text>
       </View>
     );
   }
@@ -30,28 +32,44 @@ export function DashboardScreen({ navigation }: DashboardStackScreenProps<'Dashb
   return (
     <View style={styles.container}>
       <View style={styles.shortcutsRow}>
-        <Chip testID="go-to-badges" label="Rozetlerim" onPress={() => navigation.navigate('Badges')} />
+        <Chip
+          testID="go-to-badges"
+          label={t('dashboard.shortcuts.badges')}
+          onPress={() => navigation.navigate('Badges')}
+        />
         <Chip
           testID="go-to-medicines"
-          label="İlaçlarım"
+          label={t('dashboard.shortcuts.medicines')}
           onPress={() => navigation.navigate('Medicines')}
         />
-        <Chip testID="go-to-assets" label="Varlıklarım" onPress={() => navigation.navigate('Assets')} />
-        <Chip testID="go-to-family" label="Ailem" onPress={() => navigation.navigate('Family')} />
-        <Chip testID="go-to-settings" label="Ayarlar" onPress={() => navigation.navigate('Settings')} />
+        <Chip
+          testID="go-to-assets"
+          label={t('dashboard.shortcuts.assets')}
+          onPress={() => navigation.navigate('Assets')}
+        />
+        <Chip
+          testID="go-to-family"
+          label={t('dashboard.shortcuts.family')}
+          onPress={() => navigation.navigate('Family')}
+        />
+        <Chip
+          testID="go-to-settings"
+          label={t('dashboard.shortcuts.settings')}
+          onPress={() => navigation.navigate('Settings')}
+        />
       </View>
 
       <View style={styles.summaryRow}>
-        <SummaryCard value={data.expiringToday} caption="Bugün" tint="danger" />
-        <SummaryCard value={data.expiringIn3Days} caption="3 gün" tint="warning" />
-        <SummaryCard value={data.expiringInWeek} caption="Hafta" tint="warning" />
-        <SummaryCard value={data.totalActive} caption="Toplam" tint="primary" />
+        <SummaryCard value={data.expiringToday} caption={t('dashboard.summary.today')} tint="danger" />
+        <SummaryCard value={data.expiringIn3Days} caption={t('dashboard.summary.in3Days')} tint="warning" />
+        <SummaryCard value={data.expiringInWeek} caption={t('dashboard.summary.inWeek')} tint="warning" />
+        <SummaryCard value={data.totalActive} caption={t('dashboard.summary.total')} tint="primary" />
       </View>
 
-      <Text style={styles.sectionTitle}>Yaklaşan ürünler</Text>
+      <Text style={styles.sectionTitle}>{t('dashboard.upcomingTitle')}</Text>
 
       {data.upcomingItems.length === 0 ? (
-        <EmptyState icon={IconMoodEmpty} title="Yaklaşan SKT'si olan ürün yok." />
+        <EmptyState icon={IconMoodEmpty} title={t('dashboard.emptyUpcoming')} />
       ) : (
         <FlatList
           data={data.upcomingItems}

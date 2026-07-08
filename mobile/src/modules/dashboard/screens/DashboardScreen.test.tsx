@@ -77,7 +77,7 @@ describe('DashboardScreen', () => {
     });
   });
 
-  it('navigates to the Badges screen when the Rozetlerim button is pressed', async () => {
+  it('navigates to the Badges screen when the Badges button is pressed', async () => {
     renderScreen();
 
     fireEvent.press(await screen.findByTestId('go-to-badges'));
@@ -85,7 +85,7 @@ describe('DashboardScreen', () => {
     expect(mockNavigation.navigate).toHaveBeenCalledWith('Badges');
   });
 
-  it('navigates to the Medicines screen when the İlaçlarım button is pressed', async () => {
+  it('navigates to the Medicines screen when the Medicines button is pressed', async () => {
     renderScreen();
 
     fireEvent.press(await screen.findByTestId('go-to-medicines'));
@@ -93,7 +93,7 @@ describe('DashboardScreen', () => {
     expect(mockNavigation.navigate).toHaveBeenCalledWith('Medicines');
   });
 
-  it('navigates to the Assets screen when the Varlıklarım button is pressed', async () => {
+  it('navigates to the Assets screen when the Assets button is pressed', async () => {
     renderScreen();
 
     fireEvent.press(await screen.findByTestId('go-to-assets'));
@@ -101,7 +101,7 @@ describe('DashboardScreen', () => {
     expect(mockNavigation.navigate).toHaveBeenCalledWith('Assets');
   });
 
-  it('navigates to the Family screen when the Ailem button is pressed', async () => {
+  it('navigates to the Family screen when the Family button is pressed', async () => {
     renderScreen();
 
     fireEvent.press(await screen.findByTestId('go-to-family'));
@@ -109,7 +109,7 @@ describe('DashboardScreen', () => {
     expect(mockNavigation.navigate).toHaveBeenCalledWith('Family');
   });
 
-  it('navigates to the Settings screen when the Ayarlar button is pressed', async () => {
+  it('navigates to the Settings screen when the Settings button is pressed', async () => {
     renderScreen();
 
     fireEvent.press(await screen.findByTestId('go-to-settings'));

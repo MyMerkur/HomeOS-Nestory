@@ -1,5 +1,6 @@
 import { StyleSheet, Text, View } from 'react-native';
 import Svg, { Circle } from 'react-native-svg';
+import { useTranslation } from 'react-i18next';
 import { colors, fontSize, freshnessColor, typography } from '../theme/theme';
 
 type Size = 'small' | 'large';
@@ -15,6 +16,7 @@ const DIMENSIONS: Record<Size, { diameter: number; stroke: number }> = {
 };
 
 export function FreshnessRing({ daysUntilExpiry, size = 'small' }: Props) {
+  const { t } = useTranslation();
   const { diameter, stroke } = DIMENSIONS[size];
   const radius = (diameter - stroke) / 2;
   const center = diameter / 2;
@@ -37,7 +39,7 @@ export function FreshnessRing({ daysUntilExpiry, size = 'small' }: Props) {
       {size === 'large' ? (
         <View style={[styles.labelContainer, { width: diameter, height: diameter }]}>
           <Text style={styles.labelValue}>{Math.max(daysUntilExpiry, 0)}</Text>
-          <Text style={styles.labelCaption}>gün kaldı</Text>
+          <Text style={styles.labelCaption}>{t('common.daysLeftCaption')}</Text>
         </View>
       ) : null}
     </View>

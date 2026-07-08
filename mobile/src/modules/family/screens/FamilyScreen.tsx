@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, Alert, FlatList, Share, StyleSheet, Text, View } from 'react-native';
 import { IconUsers } from '@tabler/icons-react-native';
 import { Button } from '../../../ui/Button';
@@ -12,13 +13,6 @@ import { useAuthStore } from '../../../store/useAuthStore';
 import { MEMBERS_QUERY_KEY, useMembersQuery } from '../hooks/useMembersQuery';
 import { regenerateInviteCode, removeMember, type Member } from '../services/familyApi';
 
-const ROLE_LABELS: Record<Member['role'], string> = {
-  owner: 'Sahip',
-  admin: 'Yönetici',
-  member: 'Üye',
-  viewer: 'İzleyici',
-};
-
 function MemberRow({
   member,
   canManage,
@@ -28,6 +22,7 @@ function MemberRow({
   canManage: boolean;
   onRemove: () => void;
 }) {
+  const { t } = useTranslation();
   return (
     <Card style={styles.memberCard}>
       <View style={styles.memberInfo}>
@@ -35,9 +30,9 @@ function MemberRow({
         <Text style={styles.memberEmail}>{member.email}</Text>
       </View>
       <View style={styles.memberActions}>
-        <Chip label={ROLE_LABELS[member.role]} />
+        <Chip label={t(`family.roles.${member.role}`)} />
         {canManage && member.role !== 'owner' ? (
-          <Button label="Çıkar" onPress={onRemove} variant="outline" />
+          <Button label={t('family.removeButton')} onPress={onRemove} variant="outline" />
         ) : null}
       </View>
     </Card>
@@ -45,6 +40,7 @@ function MemberRow({
 }
 
 export function FamilyScreen() {
+  const { t } = useTranslation();
   const homeId = useHomeStore((state) => state.selectedHomeId) as string;
   const currentUserId = useAuthStore((state) => state.user?.id);
   const queryClient = useQueryClient();
@@ -55,10 +51,10 @@ export function FamilyScreen() {
   const canManage = currentMember?.role === 'owner' || currentMember?.role === 'admin';
 
   const handleRemove = (member: Member) => {
-    Alert.alert(`${member.name} çıkarılsın mı?`, undefined, [
-      { text: 'İptal', style: 'cancel' },
+    Alert.alert(t('family.removeConfirmTitle', { name: member.name }), undefined, [
+      { text: t('family.removeConfirmCancel'), style: 'cancel' },
       {
-        text: 'Çıkar',
+        text: t('family.removeConfirmConfirm'),
         style: 'destructive',
         onPress: async () => {
           await removeMember(homeId, member.userId);
@@ -73,7 +69,7 @@ export function FamilyScreen() {
     try {
       const inviteCode = await regenerateInviteCode(homeId);
       await Share.share({
-        message: `HomeOS evine katılmak için davet kodu: ${inviteCode}`,
+        message: t('family.shareMessage', { code: inviteCode }),
       });
     } finally {
       setIsInviting(false);
@@ -91,7 +87,7 @@ export function FamilyScreen() {
   if (isError || !members) {
     return (
       <View style={styles.centered}>
-        <Text style={styles.error}>Üyeler yüklenemedi.</Text>
+        <Text style={styles.error}>{t('family.errorLoad')}</Text>
       </View>
     );
   }
@@ -100,14 +96,14 @@ export function FamilyScreen() {
     <View style={styles.container}>
       <View style={styles.inviteRow}>
         <Button
-          label="Davet Et"
+          label={t('family.inviteButton')}
           onPress={handleInvite}
           loading={isInviting}
         />
       </View>
 
       {members.length === 0 ? (
-        <EmptyState icon={IconUsers} title="Henüz üye yok" />
+        <EmptyState icon={IconUsers} title={t('family.emptyMembers')} />
       ) : (
         <FlatList
           data={members}

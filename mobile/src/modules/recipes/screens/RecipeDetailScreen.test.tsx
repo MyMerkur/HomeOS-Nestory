@@ -63,25 +63,25 @@ describe('RecipeDetailScreen', () => {
     expect(mockNavigation.setOptions).toHaveBeenCalledWith({ title: 'Mercimek Çorbası' });
   });
 
-  it('shows "Kaydet" and saves the recipe when pressed', async () => {
+  it('shows "Save" and saves the recipe when pressed', async () => {
     (saveRecipe as jest.Mock).mockResolvedValue(undefined);
     renderScreen({ isSaved: false });
 
-    expect(screen.getByText('Kaydet')).toBeTruthy();
+    expect(screen.getByText('Save')).toBeTruthy();
     fireEvent.press(screen.getByTestId('recipe-detail-save-button'));
 
     await waitFor(() => expect(saveRecipe).toHaveBeenCalledWith('home-1', 'recipe-1'));
-    expect(await screen.findByText('Kaydedildi ✓')).toBeTruthy();
+    expect(await screen.findByText('Saved ✓')).toBeTruthy();
   });
 
-  it('shows "Kaydedildi ✓" and unsaves the recipe when pressed', async () => {
+  it('shows "Saved ✓" and unsaves the recipe when pressed', async () => {
     (unsaveRecipe as jest.Mock).mockResolvedValue(undefined);
     renderScreen({ isSaved: true });
 
-    expect(screen.getByText('Kaydedildi ✓')).toBeTruthy();
+    expect(screen.getByText('Saved ✓')).toBeTruthy();
     fireEvent.press(screen.getByTestId('recipe-detail-save-button'));
 
     await waitFor(() => expect(unsaveRecipe).toHaveBeenCalledWith('home-1', 'recipe-1'));
-    expect(await screen.findByText('Kaydet')).toBeTruthy();
+    expect(await screen.findByText('Save')).toBeTruthy();
   });
 });

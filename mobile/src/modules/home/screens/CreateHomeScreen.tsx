@@ -2,6 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import { StyleSheet, Text, View } from 'react-native';
 import { IconConfetti } from '@tabler/icons-react-native';
 import { Button } from '../../../ui/Button';
@@ -10,9 +11,10 @@ import { colors, fontSize, spacing, typography } from '../../../theme/theme';
 import { useHomeStore } from '../../../store/useHomeStore';
 import { createHomeRequest, type HomeSummary } from '../services/homeApi';
 import { HOMES_QUERY_KEY } from '../hooks/useHomesQuery';
-import { createHomeSchema, type CreateHomeFormValues } from '../schemas/homeSchema';
+import { makeCreateHomeSchema, type CreateHomeFormValues } from '../schemas/homeSchema';
 
 export function CreateHomeScreen() {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const setSelectedHomeId = useHomeStore((state) => state.setSelectedHomeId);
   const [serverError, setServerError] = useState<string | null>(null);
@@ -24,7 +26,7 @@ export function CreateHomeScreen() {
     handleSubmit,
     formState: { errors },
   } = useForm<CreateHomeFormValues>({
-    resolver: zodResolver(createHomeSchema),
+    resolver: zodResolver(makeCreateHomeSchema(t)),
     defaultValues: { name: '' },
   });
 
@@ -35,7 +37,7 @@ export function CreateHomeScreen() {
       const result = await createHomeRequest(values);
       setCreated(result);
     } catch {
-      setServerError('Ev oluşturulamadı, tekrar dene.');
+      setServerError(t('onboarding.createHome.errorGeneric'));
     } finally {
       setIsSubmitting(false);
     }
@@ -54,21 +56,19 @@ export function CreateHomeScreen() {
     return (
       <View style={styles.container}>
         <IconConfetti color={colors.primary} size={40} style={styles.centeredIcon} />
-        <Text style={styles.title}>Ev oluşturuldu</Text>
-        <Text style={styles.subtitle}>
-          Aile üyelerini davet etmek için bu kodu paylaş. Bu kod yalnızca burada gösterilir.
-        </Text>
+        <Text style={styles.title}>{t('onboarding.createHome.createdTitle')}</Text>
+        <Text style={styles.subtitle}>{t('onboarding.createHome.createdSubtitle')}</Text>
         <Text testID="invite-code" style={styles.inviteCode} selectable>
           {created.inviteCode}
         </Text>
-        <Button testID="continue-button" label="Devam et" onPress={handleContinue} />
+        <Button testID="continue-button" label={t('onboarding.createHome.continueButton')} onPress={handleContinue} />
       </View>
     );
   }
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Ev oluştur</Text>
+      <Text style={styles.title}>{t('onboarding.createHome.title')}</Text>
 
       <View style={styles.form}>
         <Controller
@@ -76,7 +76,7 @@ export function CreateHomeScreen() {
           name="name"
           render={({ field: { onChange, onBlur, value } }) => (
             <TextField
-              label="Ev adı (ör. Ev, Yazlık)"
+              label={t('onboarding.createHome.nameLabel')}
               value={value}
               onChangeText={onChange}
               onBlur={onBlur}
@@ -88,7 +88,7 @@ export function CreateHomeScreen() {
 
         <Button
           testID="create-home-submit"
-          label="Oluştur"
+          label={t('onboarding.createHome.submitButton')}
           onPress={handleSubmit(onSubmit)}
           loading={isSubmitting}
         />

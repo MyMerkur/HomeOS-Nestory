@@ -61,7 +61,7 @@ describe('RecipesScreen', () => {
 
     expect(await screen.findByText('Menemen')).toBeTruthy();
     expect(screen.getByText('%100')).toBeTruthy();
-    expect(screen.getByText('Tüm malzemeler evde')).toBeTruthy();
+    expect(screen.getByText('All ingredients at home')).toBeTruthy();
   });
 
   it('navigates to the detail screen with the recipe payload on press', async () => {
@@ -76,10 +76,10 @@ describe('RecipesScreen', () => {
     (getSuggestions as jest.Mock).mockResolvedValue([]);
     renderScreen();
 
-    expect(await screen.findByText('Şu an evdeki ürünlerle eşleşen bir tarif yok.')).toBeTruthy();
+    expect(await screen.findByText('No recipes currently match items at home.')).toBeTruthy();
   });
 
-  it('switches to the saved-recipes list when the Kaydedilenler tab is pressed', async () => {
+  it('switches to the saved-recipes list when the Saved tab is pressed', async () => {
     renderScreen();
 
     await screen.findByText('Menemen');
@@ -95,6 +95,6 @@ describe('RecipesScreen', () => {
 
     fireEvent.press(screen.getByTestId('recipes-tab-saved'));
 
-    expect(await screen.findByText('Henüz kaydedilmiş bir tarif yok.')).toBeTruthy();
+    expect(await screen.findByText('No saved recipes yet.')).toBeTruthy();
   });
 });

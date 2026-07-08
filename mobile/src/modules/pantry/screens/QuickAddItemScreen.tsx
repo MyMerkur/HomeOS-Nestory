@@ -1,13 +1,13 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { useHomeStore } from '../../../store/useHomeStore';
 import { Button } from '../../../ui/Button';
 import { Card } from '../../../ui/Card';
 import { Chip } from '../../../ui/Chip';
 import { TextField } from '../../../ui/TextField';
 import { colors, fontSize, spacing, typography } from '../../../theme/theme';
-import { CATEGORY_LABELS, UNIT_LABELS } from '../constants';
 import { useLocationsQuery } from '../hooks/useLocationsQuery';
 import { INVENTORY_ITEMS_QUERY_KEY } from '../hooks/useInventoryItemsQuery';
 import { createItem, listItems, type InventoryItem } from '../services/pantryApi';
@@ -16,6 +16,7 @@ import { scanExpiryDateFromCamera } from '../services/dateOcrScanner';
 import type { PantryStackScreenProps } from '../../../app/navigation/types';
 
 export function QuickAddItemScreen({ navigation }: PantryStackScreenProps<'QuickAddItem'>) {
+  const { t, i18n } = useTranslation();
   const homeId = useHomeStore((state) => state.selectedHomeId) as string;
   const queryClient = useQueryClient();
   const { data: locations } = useLocationsQuery();
@@ -37,7 +38,10 @@ export function QuickAddItemScreen({ navigation }: PantryStackScreenProps<'Quick
       const outcome = await scanBarcodeFromCamera();
       if (outcome.status === 'cancelled') return;
       if (outcome.status === 'not-found') {
-        Alert.alert('Barkod bulunamadı', 'Fotoğrafta bir barkod tanınamadı, tekrar dene.');
+        Alert.alert(
+          t('pantry.quickAdd.barcodeNotFoundTitle'),
+          t('pantry.quickAdd.barcodeNotFoundMessage'),
+        );
         return;
       }
 
@@ -51,12 +55,12 @@ export function QuickAddItemScreen({ navigation }: PantryStackScreenProps<'Quick
         setLocationId(match.locationId);
       } else {
         Alert.alert(
-          'Bu barkod yeni',
-          'Daha önce bu barkodla eklenmiş ürün yok. Tüm bilgileriyle eklemek için forma geçebilirsin.',
+          t('pantry.quickAdd.newBarcodeTitle'),
+          t('pantry.quickAdd.newBarcodeMessage'),
           [
-            { text: 'Vazgeç', style: 'cancel' },
+            { text: t('pantry.quickAdd.cancelButton'), style: 'cancel' },
             {
-              text: 'Forma Git',
+              text: t('pantry.quickAdd.goToFormButton'),
               onPress: () => navigation.replace('ItemForm', { initialBarcode: outcome.value }),
             },
           ],
@@ -73,7 +77,10 @@ export function QuickAddItemScreen({ navigation }: PantryStackScreenProps<'Quick
       const outcome = await scanExpiryDateFromCamera();
       if (outcome.status === 'cancelled') return;
       if (outcome.status === 'not-found') {
-        Alert.alert('Tarih bulunamadı', 'Fotoğrafta bir SKT tarihi tanınamadı, elle girebilirsin.');
+        Alert.alert(
+          t('pantry.quickAdd.expiryNotFoundTitle'),
+          t('pantry.quickAdd.expiryNotFoundMessage'),
+        );
         return;
       }
       setExpiryDate(outcome.date);
@@ -86,7 +93,7 @@ export function QuickAddItemScreen({ navigation }: PantryStackScreenProps<'Quick
     if (!matchedItem || !locationId) return;
     const parsedQuantity = Number(quantity);
     if (!parsedQuantity || parsedQuantity <= 0) {
-      setServerError('Miktar 0’dan büyük olmalı');
+      setServerError(t('pantry.quickAdd.errorQuantity'));
       return;
     }
 
@@ -105,7 +112,7 @@ export function QuickAddItemScreen({ navigation }: PantryStackScreenProps<'Quick
       await queryClient.invalidateQueries({ queryKey: [INVENTORY_ITEMS_QUERY_KEY] });
       navigation.goBack();
     } catch {
-      setServerError('Ürün kaydedilemedi, tekrar dene.');
+      setServerError(t('pantry.quickAdd.errorSave'));
     } finally {
       setIsSubmitting(false);
     }
@@ -115,7 +122,7 @@ export function QuickAddItemScreen({ navigation }: PantryStackScreenProps<'Quick
     <ScrollView contentContainerStyle={styles.container}>
       <Button
         testID="quick-add-scan-barcode-button"
-        label="Barkodu Tara"
+        label={t('pantry.quickAdd.scanBarcodeButton')}
         onPress={handleScanBarcode}
         loading={isScanningBarcode}
         variant="outline"
@@ -125,18 +132,18 @@ export function QuickAddItemScreen({ navigation }: PantryStackScreenProps<'Quick
         <Card style={styles.matchCard}>
           <Text style={styles.matchName}>{matchedItem.name}</Text>
           <Text style={styles.matchMeta}>
-            {CATEGORY_LABELS[matchedItem.category]} · {UNIT_LABELS[matchedItem.unit]}
+            {t(`pantry.categories.${matchedItem.category}`)} · {t(`pantry.units.${matchedItem.unit}`)}
           </Text>
 
           <TextField
             testID="quick-add-quantity"
-            label="Miktar"
+            label={t('pantry.quickAdd.quantityLabel')}
             keyboardType="numeric"
             value={quantity}
             onChangeText={setQuantity}
           />
 
-          <Text style={styles.label}>Lokasyon</Text>
+          <Text style={styles.label}>{t('pantry.quickAdd.locationLabel')}</Text>
           <View style={styles.chipsRow}>
             {(locations ?? []).map((location) => (
               <Chip
@@ -149,16 +156,16 @@ export function QuickAddItemScreen({ navigation }: PantryStackScreenProps<'Quick
             ))}
           </View>
 
-          <Text style={styles.label}>Son kullanma tarihi (opsiyonel)</Text>
+          <Text style={styles.label}>{t('pantry.quickAdd.expiryDateLabel')}</Text>
           <View style={styles.row}>
             <View style={styles.expiryDisplay}>
               <Text style={styles.expiryDisplayText}>
-                {expiryDate ? expiryDate.toLocaleDateString('tr-TR') : 'Taranmadı'}
+                {expiryDate ? expiryDate.toLocaleDateString(i18n.language) : t('pantry.quickAdd.notScannedLabel')}
               </Text>
             </View>
             <Button
               testID="quick-add-scan-expiry-date-button"
-              label="SKT Tara"
+              label={t('pantry.quickAdd.scanExpiryButton')}
               onPress={handleScanExpiryDate}
               loading={isScanningExpiryDate}
               variant="outline"
@@ -169,7 +176,7 @@ export function QuickAddItemScreen({ navigation }: PantryStackScreenProps<'Quick
 
           <Button
             testID="quick-add-submit"
-            label="Hızlı Ekle"
+            label={t('pantry.quickAdd.submitButton')}
             onPress={handleSubmit}
             loading={isSubmitting}
           />

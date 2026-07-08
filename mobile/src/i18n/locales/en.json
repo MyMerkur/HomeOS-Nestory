@@ -14,7 +14,8 @@
       "it": "Italiano",
       "cs": "Čeština",
       "pt": "Português"
-    }
+    },
+    "daysLeftCaption": "days left"
   },
   "auth": {
     "login": {

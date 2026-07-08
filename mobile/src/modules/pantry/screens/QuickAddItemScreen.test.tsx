@@ -61,7 +61,7 @@ describe('QuickAddItemScreen', () => {
       pagination: { page: 1, limit: 1, total: 0, totalPages: 1 },
     });
     jest.spyOn(Alert, 'alert').mockImplementation((_title, _message, buttons) => {
-      buttons?.find((button) => button.text === 'Forma Git')?.onPress?.();
+      buttons?.find((button) => button.text === 'Go to form')?.onPress?.();
     });
 
     renderScreen();
@@ -176,7 +176,7 @@ describe('QuickAddItemScreen', () => {
     await screen.findByText('Yoğurt');
 
     fireEvent.press(screen.getByTestId('quick-add-scan-expiry-date-button'));
-    expect(await screen.findByText('10.10.2026')).toBeTruthy();
+    expect(await screen.findByText(new Date(2026, 9, 10).toLocaleDateString('en'))).toBeTruthy();
 
     fireEvent.press(screen.getByTestId('quick-add-submit'));
 

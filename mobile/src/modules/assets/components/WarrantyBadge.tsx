@@ -1,4 +1,5 @@
 import { StyleSheet, Text, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { colors, fontSize, radius, spacing, typography } from '../../../theme/theme';
 
 type Props = {
@@ -17,10 +18,12 @@ function daysLeftFrom(warrantyEndDate: string): number {
 // from FreshnessRing's food-oriented ones (matches Asset's own default
 // reminderDaysBefore [30, 7, 1, 0]).
 export function WarrantyBadge({ warrantyEndDate }: Props) {
+  const { t } = useTranslation();
+
   if (!warrantyEndDate) {
     return (
       <View style={[styles.badge, styles.neutral]}>
-        <Text style={[styles.text, styles.textNeutral]}>Garanti yok</Text>
+        <Text style={[styles.text, styles.textNeutral]}>{t('assets.warranty.none')}</Text>
       </View>
     );
   }
@@ -30,34 +33,34 @@ export function WarrantyBadge({ warrantyEndDate }: Props) {
   if (daysLeft < 0) {
     return (
       <View style={[styles.badge, styles.expired]}>
-        <Text style={[styles.text, styles.textOnDark]}>Garantisi bitti</Text>
+        <Text style={[styles.text, styles.textOnDark]}>{t('assets.warranty.expired')}</Text>
       </View>
     );
   }
   if (daysLeft === 0) {
     return (
       <View style={[styles.badge, styles.today]}>
-        <Text style={[styles.text, styles.textOnDark]}>Bugün bitiyor</Text>
+        <Text style={[styles.text, styles.textOnDark]}>{t('assets.warranty.today')}</Text>
       </View>
     );
   }
   if (daysLeft <= 7) {
     return (
       <View style={[styles.badge, styles.soon]}>
-        <Text style={[styles.text, styles.textWarning]}>{daysLeft} gün</Text>
+        <Text style={[styles.text, styles.textWarning]}>{t('assets.warranty.daysLeft', { count: daysLeft })}</Text>
       </View>
     );
   }
   if (daysLeft <= 30) {
     return (
       <View style={[styles.badge, styles.week]}>
-        <Text style={[styles.text, styles.textWarning]}>{daysLeft} gün</Text>
+        <Text style={[styles.text, styles.textWarning]}>{t('assets.warranty.daysLeft', { count: daysLeft })}</Text>
       </View>
     );
   }
   return (
     <View style={[styles.badge, styles.safe]}>
-      <Text style={[styles.text, styles.textSafe]}>{daysLeft} gün</Text>
+      <Text style={[styles.text, styles.textSafe]}>{t('assets.warranty.daysLeft', { count: daysLeft })}</Text>
     </View>
   );
 }

@@ -5,6 +5,7 @@ import TextRecognition from '@react-native-ml-kit/text-recognition';
 import { useEffect, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { ActivityIndicator, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { useHomeStore } from '../../../store/useHomeStore';
 import { captureImage } from '../../../services/cameraCapture';
 import { Button } from '../../../ui/Button';
@@ -12,7 +13,7 @@ import { Chip } from '../../../ui/Chip';
 import { TextField } from '../../../ui/TextField';
 import { colors, fontSize, spacing, typography } from '../../../theme/theme';
 import { parseExpiryDateFromText } from '../../pantry/services/dateOcrScanner';
-import { ASSET_CATEGORIES, ASSET_CATEGORY_LABELS } from '../constants';
+import { ASSET_CATEGORIES } from '../constants';
 import { ASSETS_QUERY_KEY } from '../hooks/useAssetsQuery';
 import {
   createAsset,
@@ -21,10 +22,11 @@ import {
   uploadReceipt,
   uploadWarrantyDocument,
 } from '../services/assetApi';
-import { assetFormSchema, type AssetFormValues } from '../schemas/assetSchema';
+import { makeAssetFormSchema, type AssetFormValues } from '../schemas/assetSchema';
 import type { DashboardStackScreenProps } from '../../../app/navigation/types';
 
 export function AssetFormScreen({ navigation, route }: DashboardStackScreenProps<'AssetForm'>) {
+  const { t, i18n } = useTranslation();
   const assetId = route.params?.assetId;
   const isEditMode = !!assetId;
   const homeId = useHomeStore((state) => state.selectedHomeId) as string;
@@ -54,7 +56,7 @@ export function AssetFormScreen({ navigation, route }: DashboardStackScreenProps
     setValue,
     formState: { errors },
   } = useForm<AssetFormValues>({
-    resolver: zodResolver(assetFormSchema),
+    resolver: zodResolver(makeAssetFormSchema(t)),
     defaultValues: { name: '', category: undefined },
   });
 
@@ -63,8 +65,8 @@ export function AssetFormScreen({ navigation, route }: DashboardStackScreenProps
     !!existingAsset?.warrantyDocumentUrl || !!pendingWarrantyDocumentUri || warrantyDocumentJustUploaded;
 
   useEffect(() => {
-    navigation.setOptions({ title: isEditMode ? 'Eşyayı düzenle' : 'Eşya ekle' });
-  }, [navigation, isEditMode]);
+    navigation.setOptions({ title: isEditMode ? t('assets.form.titleEdit') : t('assets.form.titleAdd') });
+  }, [navigation, isEditMode, t]);
 
   useEffect(() => {
     if (existingAsset) {
@@ -151,7 +153,7 @@ export function AssetFormScreen({ navigation, route }: DashboardStackScreenProps
       await queryClient.invalidateQueries({ queryKey: [ASSETS_QUERY_KEY] });
       navigation.goBack();
     } catch {
-      setServerError('Eşya kaydedilemedi, tekrar dene.');
+      setServerError(t('assets.form.errorSave'));
     } finally {
       setIsSubmitting(false);
     }
@@ -172,8 +174,8 @@ export function AssetFormScreen({ navigation, route }: DashboardStackScreenProps
         name="name"
         render={({ field: { onChange, onBlur, value } }) => (
           <TextField
-            label="Eşya adı"
-            placeholder="ör. Televizyon"
+            label={t('assets.form.nameLabel')}
+            placeholder={t('assets.form.namePlaceholder')}
             value={value}
             onChangeText={onChange}
             onBlur={onBlur}
@@ -182,7 +184,7 @@ export function AssetFormScreen({ navigation, route }: DashboardStackScreenProps
         )}
       />
 
-      <Text style={styles.label}>Kategori</Text>
+      <Text style={styles.label}>{t('assets.form.categoryLabel')}</Text>
       <Controller
         control={control}
         name="category"
@@ -192,7 +194,7 @@ export function AssetFormScreen({ navigation, route }: DashboardStackScreenProps
               <Chip
                 key={category}
                 testID={`asset-category-chip-${category}`}
-                label={ASSET_CATEGORY_LABELS[category]}
+                label={t(`assets.categories.${category}`)}
                 selected={value === category}
                 onPress={() => onChange(category)}
               />
@@ -207,8 +209,8 @@ export function AssetFormScreen({ navigation, route }: DashboardStackScreenProps
         name="room"
         render={({ field: { onChange, onBlur, value } }) => (
           <TextField
-            label="Oda (opsiyonel)"
-            placeholder="ör. Oturma Odası"
+            label={t('assets.form.roomLabel')}
+            placeholder={t('assets.form.roomPlaceholder')}
             value={value ?? ''}
             onChangeText={onChange}
             onBlur={onBlur}
@@ -220,7 +222,12 @@ export function AssetFormScreen({ navigation, route }: DashboardStackScreenProps
         control={control}
         name="brand"
         render={({ field: { onChange, onBlur, value } }) => (
-          <TextField label="Marka (opsiyonel)" value={value ?? ''} onChangeText={onChange} onBlur={onBlur} />
+          <TextField
+            label={t('assets.form.brandLabel')}
+            value={value ?? ''}
+            onChangeText={onChange}
+            onBlur={onBlur}
+          />
         )}
       />
 
@@ -229,7 +236,7 @@ export function AssetFormScreen({ navigation, route }: DashboardStackScreenProps
         name="serialNumber"
         render={({ field: { onChange, onBlur, value } }) => (
           <TextField
-            label="Seri numarası (opsiyonel)"
+            label={t('assets.form.serialNumberLabel')}
             value={value ?? ''}
             onChangeText={onChange}
             onBlur={onBlur}
@@ -242,7 +249,7 @@ export function AssetFormScreen({ navigation, route }: DashboardStackScreenProps
         name="price"
         render={({ field: { onChange, onBlur, value } }) => (
           <TextField
-            label="Fiyat (opsiyonel)"
+            label={t('assets.form.priceLabel')}
             keyboardType="numeric"
             value={value === undefined ? '' : String(value)}
             onChangeText={(text) => onChange(text === '' ? undefined : Number(text))}
@@ -251,7 +258,7 @@ export function AssetFormScreen({ navigation, route }: DashboardStackScreenProps
         )}
       />
 
-      <Text style={styles.label}>Satın alma tarihi (opsiyonel)</Text>
+      <Text style={styles.label}>{t('assets.form.purchaseDateLabel')}</Text>
       <Controller
         control={control}
         name="purchaseDate"
@@ -263,7 +270,7 @@ export function AssetFormScreen({ navigation, route }: DashboardStackScreenProps
               onPress={() => setShowPurchaseDatePicker(true)}
             >
               <Text style={styles.dateButtonText}>
-                {value ? value.toLocaleDateString('tr-TR') : 'Tarih seç'}
+                {value ? value.toLocaleDateString(i18n.language) : t('assets.form.selectDateButton')}
               </Text>
             </Pressable>
             {showPurchaseDatePicker ? (
@@ -281,7 +288,7 @@ export function AssetFormScreen({ navigation, route }: DashboardStackScreenProps
         )}
       />
 
-      <Text style={styles.label}>Garanti bitiş tarihi (opsiyonel)</Text>
+      <Text style={styles.label}>{t('assets.form.warrantyDateLabel')}</Text>
       <Controller
         control={control}
         name="warrantyEndDate"
@@ -293,7 +300,7 @@ export function AssetFormScreen({ navigation, route }: DashboardStackScreenProps
               onPress={() => setShowWarrantyDatePicker(true)}
             >
               <Text style={styles.dateButtonText}>
-                {value ? value.toLocaleDateString('tr-TR') : 'Tarih seç'}
+                {value ? value.toLocaleDateString(i18n.language) : t('assets.form.selectDateButton')}
               </Text>
             </Pressable>
             {showWarrantyDatePicker ? (
@@ -311,18 +318,18 @@ export function AssetFormScreen({ navigation, route }: DashboardStackScreenProps
         )}
       />
 
-      <Text style={styles.label}>Fiş / Garanti Belgesi (opsiyonel)</Text>
+      <Text style={styles.label}>{t('assets.form.receiptLabel')}</Text>
       <View style={styles.chipsRow}>
         <Button
           testID="scan-receipt-button"
-          label={hasReceipt ? 'Fiş Eklendi ✓' : 'Fişi Tara'}
+          label={hasReceipt ? t('assets.form.receiptAddedButton') : t('assets.form.scanReceiptButton')}
           onPress={handleScanReceipt}
           loading={isScanningReceipt}
           variant="outline"
         />
         <Button
           testID="add-warranty-document-button"
-          label={hasWarrantyDocument ? 'Belge Eklendi ✓' : 'Garanti Belgesi Ekle'}
+          label={hasWarrantyDocument ? t('assets.form.warrantyDocAddedButton') : t('assets.form.warrantyDocButton')}
           onPress={handleAddWarrantyDocument}
           loading={isAddingWarrantyDocument}
           variant="outline"
@@ -334,7 +341,7 @@ export function AssetFormScreen({ navigation, route }: DashboardStackScreenProps
         name="notes"
         render={({ field: { onChange, onBlur, value } }) => (
           <TextField
-            label="Notlar (opsiyonel)"
+            label={t('assets.form.notesLabel')}
             multiline
             value={value ?? ''}
             onChangeText={onChange}
@@ -348,7 +355,7 @@ export function AssetFormScreen({ navigation, route }: DashboardStackScreenProps
       <View style={styles.submitButton}>
         <Button
           testID="asset-form-submit"
-          label={isEditMode ? 'Güncelle' : 'Ekle'}
+          label={isEditMode ? t('assets.form.submitEdit') : t('assets.form.submitAdd')}
           onPress={handleSubmit(onSubmit)}
           loading={isSubmitting}
         />

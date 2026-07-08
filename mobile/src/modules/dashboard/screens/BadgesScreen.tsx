@@ -1,4 +1,5 @@
 import { ActivityIndicator, FlatList, StyleSheet, Text, View } from 'react-native';
+import { useTranslation } from 'react-i18next';
 import { Card } from '../../../ui/Card';
 import { colors, fontSize, spacing, typography } from '../../../theme/theme';
 import { useBadgesQuery } from '../hooks/useBadgesQuery';
@@ -22,6 +23,7 @@ function BadgeCard({ badge }: { badge: Badge }) {
 }
 
 export function BadgesScreen() {
+  const { t } = useTranslation();
   const { data: badges, isLoading, isError } = useBadgesQuery();
 
   if (isLoading) {
@@ -35,7 +37,7 @@ export function BadgesScreen() {
   if (isError || !badges) {
     return (
       <View style={styles.centered}>
-        <Text style={styles.error}>Rozetler yüklenemedi.</Text>
+        <Text style={styles.error}>{t('badges.errorLoad')}</Text>
       </View>
     );
   }

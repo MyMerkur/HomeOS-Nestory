@@ -56,8 +56,8 @@ describe('AssetsScreen', () => {
     renderScreen();
 
     expect(await screen.findByText('Televizyon')).toBeTruthy();
-    expect(screen.getByText('Elektronik · Oturma Odası')).toBeTruthy();
-    expect(screen.getByText('Garanti yok')).toBeTruthy();
+    expect(screen.getByText('Electronics · Oturma Odası')).toBeTruthy();
+    expect(screen.getByText('No warranty')).toBeTruthy();
   });
 
   it('navigates to AssetForm with the asset id on press', async () => {
@@ -79,7 +79,7 @@ describe('AssetsScreen', () => {
   it('archives an asset via the long-press action menu', async () => {
     (updateAsset as jest.Mock).mockResolvedValue({});
     jest.spyOn(Alert, 'alert').mockImplementation((_title, _message, buttons) => {
-      buttons?.find((button) => button.text === 'Arşivle')?.onPress?.();
+      buttons?.find((button) => button.text === 'Archive')?.onPress?.();
     });
 
     renderScreen();
@@ -91,7 +91,7 @@ describe('AssetsScreen', () => {
   it('deletes an asset via the long-press action menu', async () => {
     (deleteAsset as jest.Mock).mockResolvedValue({});
     jest.spyOn(Alert, 'alert').mockImplementation((_title, _message, buttons) => {
-      buttons?.find((button) => button.text === 'Sil')?.onPress?.();
+      buttons?.find((button) => button.text === 'Delete')?.onPress?.();
     });
 
     renderScreen();
@@ -108,6 +108,6 @@ describe('AssetsScreen', () => {
 
     renderScreen();
 
-    expect(await screen.findByText('Henüz kayıtlı bir eşya yok.')).toBeTruthy();
+    expect(await screen.findByText('No assets registered yet.')).toBeTruthy();
   });
 });

@@ -2,6 +2,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { ActivityIndicator, Alert, FlatList, StyleSheet, Text, View } from 'react-native';
 import { IconPlus, IconPackageOff } from '@tabler/icons-react-native';
+import { useTranslation } from 'react-i18next';
 import { useHomeStore } from '../../../store/useHomeStore';
 import { ItemCard } from '../components/ItemCard';
 import { Button } from '../../../ui/Button';
@@ -25,6 +26,7 @@ import type { PantryStackScreenProps } from '../../../app/navigation/types';
 const ALL_LOCATIONS = null;
 
 export function PantryScreen({ navigation }: PantryStackScreenProps<'Pantry'>) {
+  const { t } = useTranslation();
   const homeId = useHomeStore((state) => state.selectedHomeId) as string;
   const queryClient = useQueryClient();
   const [selectedLocationId, setSelectedLocationId] = useState<string | null>(ALL_LOCATIONS);
@@ -44,34 +46,34 @@ export function PantryScreen({ navigation }: PantryStackScreenProps<'Pantry'>) {
   const handleItemAction = (item: InventoryItem) => {
     Alert.alert(item.name, undefined, [
       {
-        text: 'Tükettim',
+        text: t('pantry.actions.consumed'),
         onPress: async () => {
           await consumeItem(homeId, item.id);
           await queryClient.invalidateQueries({ queryKey: [INVENTORY_ITEMS_QUERY_KEY] });
         },
       },
       {
-        text: 'Attım',
+        text: t('pantry.actions.discarded'),
         onPress: async () => {
           await discardItem(homeId, item.id);
           await queryClient.invalidateQueries({ queryKey: [INVENTORY_ITEMS_QUERY_KEY] });
         },
       },
       {
-        text: 'Dondurdum',
+        text: t('pantry.actions.frozen'),
         onPress: async () => {
           await freezeItem(homeId, item.id);
           await queryClient.invalidateQueries({ queryKey: [INVENTORY_ITEMS_QUERY_KEY] });
         },
       },
       {
-        text: 'Alışveriş listesine ekle',
+        text: t('pantry.actions.addToShopping'),
         onPress: async () => {
           await addToShopping(homeId, item.id);
           await queryClient.invalidateQueries({ queryKey: [SHOPPING_ITEMS_QUERY_KEY] });
         },
       },
-      { text: 'İptal', style: 'cancel' },
+      { text: t('pantry.actions.cancel'), style: 'cancel' },
     ]);
   };
 
@@ -80,9 +82,9 @@ export function PantryScreen({ navigation }: PantryStackScreenProps<'Pantry'>) {
       <View style={styles.searchContainer}>
         <TextField
           testID="pantry-search"
-          label="Ürün ara"
+          label={t('pantry.searchPlaceholder')}
           hideLabel
-          placeholder="Ürün ara"
+          placeholder={t('pantry.searchPlaceholder')}
           value={search}
           onChangeText={setSearch}
         />
@@ -91,7 +93,7 @@ export function PantryScreen({ navigation }: PantryStackScreenProps<'Pantry'>) {
       <View style={styles.tabsRow}>
         <Chip
           testID="location-tab-all"
-          label="Tümü"
+          label={t('pantry.tabAll')}
           selected={selectedLocationId === ALL_LOCATIONS}
           onPress={() => setSelectedLocationId(ALL_LOCATIONS)}
         />
@@ -114,12 +116,12 @@ export function PantryScreen({ navigation }: PantryStackScreenProps<'Pantry'>) {
 
       {isError && (
         <View style={styles.centered}>
-          <Text style={styles.error}>Ürünler yüklenemedi.</Text>
+          <Text style={styles.error}>{t('pantry.errorLoad')}</Text>
         </View>
       )}
 
       {!isLoading && !isError && (itemsResult?.items.length ?? 0) === 0 && (
-        <EmptyState icon={IconPackageOff} title="Bu görünümde henüz ürün yok." />
+        <EmptyState icon={IconPackageOff} title={t('pantry.emptyView')} />
       )}
 
       {!isLoading && !isError && (itemsResult?.items.length ?? 0) > 0 && (
@@ -140,7 +142,7 @@ export function PantryScreen({ navigation }: PantryStackScreenProps<'Pantry'>) {
       <View style={styles.barcodeButton}>
         <Button
           testID="quick-add-barcode-button"
-          label="Barkod"
+          label={t('pantry.barcodeButton')}
           onPress={() => navigation.navigate('QuickAddItem')}
           variant="outline"
         />
@@ -149,7 +151,7 @@ export function PantryScreen({ navigation }: PantryStackScreenProps<'Pantry'>) {
       <FAB
         testID="add-item-button"
         icon={IconPlus}
-        accessibilityLabel="Ürün ekle"
+        accessibilityLabel={t('pantry.addItemA11y')}
         onPress={() => navigation.navigate('ItemForm', undefined)}
       />
     </View>

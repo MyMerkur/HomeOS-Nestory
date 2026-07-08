@@ -1,5 +1,6 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import { IconCheck, IconShoppingCartOff, IconTrash } from '@tabler/icons-react-native';
 import { useHomeStore } from '../../../store/useHomeStore';
@@ -25,6 +26,7 @@ function ShoppingRow({
   onDelete: () => void;
 }) {
   const isChecked = item.status === 'checked';
+  const { t } = useTranslation();
 
   return (
     <View style={styles.row}>
@@ -40,7 +42,7 @@ function ShoppingRow({
       <Pressable
         testID={`shopping-item-delete-${item.id}`}
         onPress={onDelete}
-        accessibilityLabel={`${item.name} sil`}
+        accessibilityLabel={t('shopping.deleteA11y', { name: item.name })}
         hitSlop={8}
       >
         <IconTrash color={colors.dangerDark} size={20} />
@@ -50,6 +52,7 @@ function ShoppingRow({
 }
 
 export function ShoppingScreen() {
+  const { t } = useTranslation();
   const homeId = useHomeStore((state) => state.selectedHomeId) as string;
   const queryClient = useQueryClient();
   const { data: items, isLoading, isError } = useShoppingItemsQuery();
@@ -92,9 +95,9 @@ export function ShoppingScreen() {
         <View style={styles.addInput}>
           <TextField
             testID="shopping-add-input"
-            label="Ürün ekle"
+            label={t('shopping.addPlaceholder')}
             hideLabel
-            placeholder="Ürün ekle"
+            placeholder={t('shopping.addPlaceholder')}
             value={name}
             onChangeText={setName}
             onSubmitEditing={handleAdd}
@@ -102,7 +105,7 @@ export function ShoppingScreen() {
         </View>
         <Button
           testID="shopping-add-button"
-          label="Ekle"
+          label={t('shopping.addButton')}
           onPress={handleAdd}
           loading={isSubmitting}
         />
@@ -116,7 +119,7 @@ export function ShoppingScreen() {
 
       {isError && (
         <View style={styles.centered}>
-          <Text style={styles.error}>Alışveriş listesi yüklenemedi.</Text>
+          <Text style={styles.error}>{t('shopping.errorLoad')}</Text>
         </View>
       )}
 
@@ -126,7 +129,7 @@ export function ShoppingScreen() {
           keyExtractor={(item) => item.id}
           contentContainerStyle={styles.list}
           ListEmptyComponent={
-            <EmptyState icon={IconShoppingCartOff} title="Alışveriş listesi boş." />
+            <EmptyState icon={IconShoppingCartOff} title={t('shopping.emptyList')} />
           }
           renderItem={({ item }) => (
             <ShoppingRow

@@ -2,6 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import { StyleSheet, Text, View } from 'react-native';
 import { Button } from '../../../ui/Button';
 import { TextField } from '../../../ui/TextField';
@@ -9,9 +10,10 @@ import { colors, fontSize, spacing, typography } from '../../../theme/theme';
 import { useHomeStore } from '../../../store/useHomeStore';
 import { joinHomeRequest, type HomeSummary } from '../services/homeApi';
 import { HOMES_QUERY_KEY } from '../hooks/useHomesQuery';
-import { joinHomeSchema, type JoinHomeFormValues } from '../schemas/homeSchema';
+import { makeJoinHomeSchema, type JoinHomeFormValues } from '../schemas/homeSchema';
 
 export function JoinHomeScreen() {
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
   const setSelectedHomeId = useHomeStore((state) => state.setSelectedHomeId);
   const [serverError, setServerError] = useState<string | null>(null);
@@ -22,7 +24,7 @@ export function JoinHomeScreen() {
     handleSubmit,
     formState: { errors },
   } = useForm<JoinHomeFormValues>({
-    resolver: zodResolver(joinHomeSchema),
+    resolver: zodResolver(makeJoinHomeSchema(t)),
     defaultValues: { inviteCode: '' },
   });
 
@@ -37,7 +39,7 @@ export function JoinHomeScreen() {
       ]);
       setSelectedHomeId(home.id);
     } catch {
-      setServerError('Davet kodu geçersiz ya da bu eve zaten üyesin.');
+      setServerError(t('onboarding.joinHome.errorGeneric'));
     } finally {
       setIsSubmitting(false);
     }
@@ -45,7 +47,7 @@ export function JoinHomeScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Davet koduyla katıl</Text>
+      <Text style={styles.title}>{t('onboarding.joinHome.title')}</Text>
 
       <View style={styles.form}>
         <Controller
@@ -53,7 +55,7 @@ export function JoinHomeScreen() {
           name="inviteCode"
           render={({ field: { onChange, onBlur, value } }) => (
             <TextField
-              label="Davet kodu"
+              label={t('onboarding.joinHome.codeLabel')}
               autoCapitalize="characters"
               value={value}
               onChangeText={onChange}
@@ -67,7 +69,7 @@ export function JoinHomeScreen() {
 
         <Button
           testID="join-home-submit"
-          label="Katıl"
+          label={t('onboarding.joinHome.submitButton')}
           onPress={handleSubmit(onSubmit)}
           loading={isSubmitting}
         />

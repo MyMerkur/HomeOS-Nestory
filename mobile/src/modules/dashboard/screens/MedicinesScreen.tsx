@@ -1,12 +1,12 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { ActivityIndicator, FlatList, StyleSheet, Text, View } from 'react-native';
 import { IconPill } from '@tabler/icons-react-native';
+import { useTranslation } from 'react-i18next';
 import { Button } from '../../../ui/Button';
 import { Card } from '../../../ui/Card';
 import { EmptyState } from '../../../ui/EmptyState';
 import { colors, fontSize, spacing, typography } from '../../../theme/theme';
 import { useHomeStore } from '../../../store/useHomeStore';
-import { UNIT_LABELS } from '../../pantry/constants';
 import { INVENTORY_ITEMS_QUERY_KEY, useInventoryItemsQuery } from '../../pantry/hooks/useInventoryItemsQuery';
 import { addToShopping, takeDose, type InventoryItem } from '../../pantry/services/pantryApi';
 import { SHOPPING_ITEMS_QUERY_KEY } from '../../shopping/hooks/useShoppingItemsQuery';
@@ -18,6 +18,7 @@ type MedicineRowProps = {
 };
 
 function MedicineRow({ item, onTakeDose, onAddToShopping }: MedicineRowProps) {
+  const { t } = useTranslation();
   const outOfStock = item.quantity <= 0;
 
   return (
@@ -25,24 +26,26 @@ function MedicineRow({ item, onTakeDose, onAddToShopping }: MedicineRowProps) {
       <View style={styles.info}>
         <Text style={styles.name}>{item.name}</Text>
         <Text style={styles.meta}>
-          {item.quantity} {UNIT_LABELS[item.unit]}
-          {outOfStock ? ' · Stokta yok' : ''}
+          {item.quantity} {t(`pantry.units.${item.unit}`)}
+          {outOfStock ? ` · ${t('assets.medicines.outOfStock')}` : ''}
         </Text>
         {item.doseTimes.length > 0 ? (
-          <Text style={styles.doseTimes}>Saatler: {item.doseTimes.join(', ')}</Text>
+          <Text style={styles.doseTimes}>
+            {t('assets.medicines.doseTimesLabel', { times: item.doseTimes.join(', ') })}
+          </Text>
         ) : null}
       </View>
       {outOfStock ? (
         <Button
           testID={`add-to-shopping-${item.id}`}
-          label="Alışverişe ekle"
+          label={t('assets.medicines.addToShoppingButton')}
           onPress={() => onAddToShopping(item.id)}
           variant="warningOutline"
         />
       ) : (
         <Button
           testID={`take-dose-${item.id}`}
-          label="Doz Aldım"
+          label={t('assets.medicines.takeDoseButton')}
           onPress={() => onTakeDose(item.id)}
           variant="secondary"
         />
@@ -52,6 +55,7 @@ function MedicineRow({ item, onTakeDose, onAddToShopping }: MedicineRowProps) {
 }
 
 export function MedicinesScreen() {
+  const { t } = useTranslation();
   const homeId = useHomeStore((state) => state.selectedHomeId) as string;
   const queryClient = useQueryClient();
   const { data, isLoading, isError } = useInventoryItemsQuery({
@@ -81,13 +85,13 @@ export function MedicinesScreen() {
   if (isError || !data) {
     return (
       <View style={styles.centered}>
-        <Text style={styles.error}>İlaçlar yüklenemedi.</Text>
+        <Text style={styles.error}>{t('assets.medicines.errorLoad')}</Text>
       </View>
     );
   }
 
   if (data.items.length === 0) {
-    return <EmptyState icon={IconPill} title="Henüz kayıtlı bir ilaç yok." />;
+    return <EmptyState icon={IconPill} title={t('assets.medicines.emptyList')} />;
   }
 
   return (

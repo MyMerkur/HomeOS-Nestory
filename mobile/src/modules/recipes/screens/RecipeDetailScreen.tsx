@@ -1,5 +1,6 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Button } from '../../../ui/Button';
 import { colors, fontSize, radius, spacing, typography } from '../../../theme/theme';
@@ -10,6 +11,7 @@ import { saveRecipe, unsaveRecipe } from '../services/recipeApi';
 import type { RecipesStackScreenProps } from '../../../app/navigation/types';
 
 export function RecipeDetailScreen({ navigation, route }: RecipesStackScreenProps<'RecipeDetail'>) {
+  const { t } = useTranslation();
   const { recipe } = route.params;
   const homeId = useHomeStore((state) => state.selectedHomeId) as string;
   const queryClient = useQueryClient();
@@ -44,15 +46,17 @@ export function RecipeDetailScreen({ navigation, route }: RecipesStackScreenProp
     <ScrollView contentContainerStyle={styles.container}>
       <Button
         testID="recipe-detail-save-button"
-        label={isSaved ? 'Kaydedildi ✓' : 'Kaydet'}
+        label={isSaved ? t('recipes.detail.savedButton') : t('recipes.detail.saveButton')}
         onPress={handleToggleSave}
         loading={isTogglingSave}
         variant={isSaved ? 'primary' : 'outline'}
       />
 
-      <Text style={styles.coverage}>Evdeki malzemelerle kapsama: %{recipe.coveragePercent}</Text>
+      <Text style={styles.coverage}>
+        {t('recipes.detail.coverageLabel', { percent: recipe.coveragePercent })}
+      </Text>
 
-      <Text style={styles.sectionTitle}>Malzemeler</Text>
+      <Text style={styles.sectionTitle}>{t('recipes.detail.ingredientsTitle')}</Text>
       {recipe.ingredients.map((ingredient) => (
         <View
           key={ingredient.name}
@@ -60,12 +64,12 @@ export function RecipeDetailScreen({ navigation, route }: RecipesStackScreenProp
         >
           <Text style={styles.ingredient}>
             {missing.has(ingredient.name) ? '✗' : '✓'} {ingredient.name}
-            {ingredient.optional ? ' (opsiyonel)' : ''}
+            {ingredient.optional ? t('recipes.detail.optionalTag') : ''}
           </Text>
         </View>
       ))}
 
-      <Text style={styles.sectionTitle}>Talimatlar</Text>
+      <Text style={styles.sectionTitle}>{t('recipes.detail.instructionsTitle')}</Text>
       {recipe.instructions.map((step, index) => (
         <View key={`step-${index}`} style={styles.stepRow}>
           <Text style={styles.stepNumber}>{index + 1}.</Text>

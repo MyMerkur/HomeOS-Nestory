@@ -26,7 +26,7 @@ describe('CreateHomeScreen', () => {
 
     fireEvent.press(screen.getByTestId('create-home-submit'));
 
-    expect(await screen.findByText('Ev adı gerekli')).toBeTruthy();
+    expect(await screen.findByText('Home name is required')).toBeTruthy();
     expect(createHomeRequest).not.toHaveBeenCalled();
   });
 
@@ -38,7 +38,7 @@ describe('CreateHomeScreen', () => {
 
     renderWithQueryClient();
 
-    fireEvent.changeText(screen.getByLabelText('Ev adı (ör. Ev, Yazlık)'), 'My Home');
+    fireEvent.changeText(screen.getByLabelText('Home name (e.g. Home, Cottage)'), 'My Home');
     fireEvent.press(screen.getByTestId('create-home-submit'));
 
     expect(await screen.findByTestId('invite-code')).toHaveTextContent('ABCD1234');

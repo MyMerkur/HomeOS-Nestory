@@ -1,16 +1,19 @@
 import { z } from 'zod';
+import type { TFunction } from 'i18next';
 import { CATEGORIES, UNITS } from '../constants';
 
-export const itemFormSchema = z.object({
-  name: z.string().trim().min(1, 'Ürün adı gerekli').max(120),
-  locationId: z.string().min(1, 'Lokasyon seç'),
-  category: z.enum(CATEGORIES, { message: 'Kategori seç' }),
-  quantity: z.number().positive('Miktar 0’dan büyük olmalı'),
-  unit: z.enum(UNITS, { message: 'Birim seç' }),
-  expiryDate: z.date().optional(),
-  barcode: z.string().trim().optional(),
-  doseAmount: z.number().positive().optional(),
-  doseTimes: z.array(z.string()).optional(),
-});
+export function makeItemFormSchema(t: TFunction) {
+  return z.object({
+    name: z.string().trim().min(1, t('validation.itemNameRequired')).max(120),
+    locationId: z.string().min(1, t('validation.locationRequired')),
+    category: z.enum(CATEGORIES, { message: t('validation.categoryRequired') }),
+    quantity: z.number().positive(t('validation.quantityPositive')),
+    unit: z.enum(UNITS, { message: t('validation.unitRequired') }),
+    expiryDate: z.date().optional(),
+    barcode: z.string().trim().optional(),
+    doseAmount: z.number().positive().optional(),
+    doseTimes: z.array(z.string()).optional(),
+  });
+}
 
-export type ItemFormValues = z.infer<typeof itemFormSchema>;
+export type ItemFormValues = z.infer<ReturnType<typeof makeItemFormSchema>>;

@@ -69,16 +69,16 @@ describe('SettingsScreen', () => {
     renderScreen();
 
     expect(await screen.findByDisplayValue('Ayşe')).toBeTruthy();
-    expect(screen.getByText('SKT hatırlatmaları')).toBeTruthy();
+    expect(screen.getByText('Expiry reminders')).toBeTruthy();
   });
 
-  it('saves the profile name when Kaydet is pressed', async () => {
+  it('saves the profile name when Save is pressed', async () => {
     (updateProfile as jest.Mock).mockResolvedValue({ ...PROFILE, name: 'Ayşe Yılmaz' });
     renderScreen();
     const input = await screen.findByDisplayValue('Ayşe');
 
     fireEvent.changeText(input, 'Ayşe Yılmaz');
-    fireEvent.press(screen.getByText('Kaydet'));
+    fireEvent.press(screen.getByText('Save'));
 
     await waitFor(() => expect(updateProfile).toHaveBeenCalledWith({ name: 'Ayşe Yılmaz' }));
   });
@@ -86,7 +86,7 @@ describe('SettingsScreen', () => {
   it('toggles a notification preference', async () => {
     (updateNotificationPreferences as jest.Mock).mockResolvedValue(PROFILE);
     renderScreen();
-    await screen.findByText('SKT hatırlatmaları');
+    await screen.findByText('Expiry reminders');
 
     fireEvent(screen.getAllByRole('switch')[0], 'valueChange', false);
 
@@ -98,45 +98,45 @@ describe('SettingsScreen', () => {
   it('shows an error when the current password is wrong', async () => {
     (changePassword as jest.Mock).mockRejectedValue(new Error('invalid'));
     renderScreen();
-    await screen.findByText('Mevcut şifre');
+    await screen.findByText('Current password');
 
-    fireEvent.changeText(screen.getByLabelText('Mevcut şifre'), 'WrongPass!');
-    fireEvent.changeText(screen.getByLabelText('Yeni şifre'), 'NewPass123!');
-    fireEvent.press(screen.getByText('Şifreyi değiştir'));
+    fireEvent.changeText(screen.getByLabelText('Current password'), 'WrongPass!');
+    fireEvent.changeText(screen.getByLabelText('New password'), 'NewPass123!');
+    fireEvent.press(screen.getByText('Change password'));
 
-    expect(await screen.findByText('Mevcut şifre yanlış.')).toBeTruthy();
+    expect(await screen.findByText('Current password is incorrect.')).toBeTruthy();
   });
 
   it('does not offer to leave the home when the current user is the owner', async () => {
     renderScreen();
 
-    await screen.findByText(/Ev sahibi olarak/);
+    await screen.findByText(/As the owner/);
 
-    expect(screen.queryByText('Evden ayrıl')).toBeNull();
+    expect(screen.queryByText('Leave home')).toBeNull();
   });
 
   it('lets a non-owner leave the home', async () => {
     (listHomesRequest as jest.Mock).mockResolvedValue([{ ...OWNER_HOME, role: 'member' }]);
     (leaveHome as jest.Mock).mockResolvedValue(undefined);
     jest.spyOn(Alert, 'alert').mockImplementation((_title, _msg, buttons) => {
-      const confirm = buttons?.find((button) => button.text === 'Ayrıl');
+      const confirm = buttons?.find((button) => button.text === 'Leave');
       confirm?.onPress?.();
     });
     renderScreen();
-    await screen.findByText('Evden ayrıl');
+    await screen.findByText('Leave home');
 
-    fireEvent.press(screen.getByText('Evden ayrıl'));
+    fireEvent.press(screen.getByText('Leave home'));
 
     await waitFor(() => expect(leaveHome).toHaveBeenCalledWith('home-1'));
   });
 
-  it('saves the home name when Ev adını kaydet is pressed', async () => {
+  it('saves the home name when Save home name is pressed', async () => {
     (updateHomeName as jest.Mock).mockResolvedValue({ id: 'home-1', name: 'Yeni İsim' });
     renderScreen();
     const input = await screen.findByDisplayValue('Test Evi');
 
     fireEvent.changeText(input, 'Yeni İsim');
-    fireEvent.press(screen.getByText('Ev adını kaydet'));
+    fireEvent.press(screen.getByText('Save home name'));
 
     await waitFor(() => expect(updateHomeName).toHaveBeenCalledWith('home-1', 'Yeni İsim'));
   });
@@ -144,9 +144,9 @@ describe('SettingsScreen', () => {
   it('logs out via the server endpoint and clears the local session', async () => {
     (logoutRequest as jest.Mock).mockResolvedValue(undefined);
     renderScreen();
-    await screen.findByText('Çıkış yap');
+    await screen.findByText('Log out');
 
-    fireEvent.press(screen.getByText('Çıkış yap'));
+    fireEvent.press(screen.getByText('Log out'));
 
     await waitFor(() => expect(logoutRequest).toHaveBeenCalledWith('refresh-token'));
     await waitFor(() => expect(useAuthStore.getState().accessToken).toBeNull());

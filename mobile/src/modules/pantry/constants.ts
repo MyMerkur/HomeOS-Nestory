@@ -13,29 +13,7 @@ export const CATEGORIES = [
 ] as const;
 export type Category = (typeof CATEGORIES)[number];
 
-export const CATEGORY_LABELS: Record<Category, string> = {
-  Dairy: 'Süt Ürünleri',
-  Meat: 'Et',
-  Vegetable: 'Sebze',
-  Fruit: 'Meyve',
-  Bakery: 'Fırın',
-  Drink: 'İçecek',
-  Frozen: 'Dondurulmuş',
-  Cleaning: 'Temizlik',
-  Medicine: 'İlaç',
-  Other: 'Diğer',
-};
-
 export const UNITS = ['piece', 'gram', 'kg', 'ml', 'liter', 'pack', 'bottle', 'box'] as const;
 export type Unit = (typeof UNITS)[number];
 
-export const UNIT_LABELS: Record<Unit, string> = {
-  piece: 'Adet',
-  gram: 'Gram',
-  kg: 'Kilogram',
-  ml: 'Mililitre',
-  liter: 'Litre',
-  pack: 'Paket',
-  bottle: 'Şişe',
-  box: 'Kutu',
-};
+// Display labels moved to i18n: t(`pantry.categories.${category}`) / t(`pantry.units.${unit}`).

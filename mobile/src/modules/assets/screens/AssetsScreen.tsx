@@ -1,7 +1,7 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { ActivityIndicator, Alert, FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import { IconDevicesOff, IconPlus } from '@tabler/icons-react-native';
-import { ASSET_CATEGORY_LABELS } from '../constants';
+import { useTranslation } from 'react-i18next';
 import { WarrantyBadge } from '../components/WarrantyBadge';
 import { ASSETS_QUERY_KEY, useAssetsQuery } from '../hooks/useAssetsQuery';
 import { deleteAsset, updateAsset, type Asset } from '../services/assetApi';
@@ -12,6 +12,7 @@ import { useHomeStore } from '../../../store/useHomeStore';
 import type { DashboardStackScreenProps } from '../../../app/navigation/types';
 
 function AssetCard({ asset, onPress, onLongPress }: { asset: Asset; onPress: () => void; onLongPress: () => void }) {
+  const { t } = useTranslation();
   return (
     <Pressable
       testID={`asset-card-${asset.id}`}
@@ -22,7 +23,7 @@ function AssetCard({ asset, onPress, onLongPress }: { asset: Asset; onPress: () 
       <View style={styles.info}>
         <Text style={styles.name}>{asset.name}</Text>
         <Text style={styles.meta}>
-          {ASSET_CATEGORY_LABELS[asset.category]}
+          {t(`assets.categories.${asset.category}`)}
           {asset.room ? ` · ${asset.room}` : ''}
         </Text>
       </View>
@@ -32,6 +33,7 @@ function AssetCard({ asset, onPress, onLongPress }: { asset: Asset; onPress: () 
 }
 
 export function AssetsScreen({ navigation }: DashboardStackScreenProps<'Assets'>) {
+  const { t } = useTranslation();
   const homeId = useHomeStore((state) => state.selectedHomeId) as string;
   const queryClient = useQueryClient();
   const { data, isLoading, isError } = useAssetsQuery({ status: 'active', limit: 100 });
@@ -39,21 +41,21 @@ export function AssetsScreen({ navigation }: DashboardStackScreenProps<'Assets'>
   const handleAssetAction = (asset: Asset) => {
     Alert.alert(asset.name, undefined, [
       {
-        text: 'Arşivle',
+        text: t('assets.archiveAction'),
         onPress: async () => {
           await updateAsset(homeId, asset.id, { status: 'archived' });
           await queryClient.invalidateQueries({ queryKey: [ASSETS_QUERY_KEY] });
         },
       },
       {
-        text: 'Sil',
+        text: t('assets.deleteAction'),
         style: 'destructive',
         onPress: async () => {
           await deleteAsset(homeId, asset.id);
           await queryClient.invalidateQueries({ queryKey: [ASSETS_QUERY_KEY] });
         },
       },
-      { text: 'İptal', style: 'cancel' },
+      { text: t('assets.cancelAction'), style: 'cancel' },
     ]);
   };
 
@@ -68,7 +70,7 @@ export function AssetsScreen({ navigation }: DashboardStackScreenProps<'Assets'>
   if (isError || !data) {
     return (
       <View style={styles.centered}>
-        <Text style={styles.error}>Eşyalar yüklenemedi.</Text>
+        <Text style={styles.error}>{t('assets.errorLoad')}</Text>
       </View>
     );
   }
@@ -76,7 +78,7 @@ export function AssetsScreen({ navigation }: DashboardStackScreenProps<'Assets'>
   return (
     <View style={styles.container}>
       {data.assets.length === 0 ? (
-        <EmptyState icon={IconDevicesOff} title="Henüz kayıtlı bir eşya yok." />
+        <EmptyState icon={IconDevicesOff} title={t('assets.emptyList')} />
       ) : (
         <FlatList
           data={data.assets}
@@ -95,7 +97,7 @@ export function AssetsScreen({ navigation }: DashboardStackScreenProps<'Assets'>
       <FAB
         testID="add-asset-button"
         icon={IconPlus}
-        accessibilityLabel="Eşya ekle"
+        accessibilityLabel={t('assets.addA11y')}
         onPress={() => navigation.navigate('AssetForm', undefined)}
       />
     </View>

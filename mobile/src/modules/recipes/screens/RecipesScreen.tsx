@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import { IconToolsKitchen2 } from '@tabler/icons-react-native';
 import { EmptyState } from '../../../ui/EmptyState';
@@ -24,14 +25,15 @@ function coverageTextStyle(coveragePercent: number) {
 }
 
 function RecipeCard({ recipe, onPress }: { recipe: RecipeSuggestion; onPress: () => void }) {
+  const { t } = useTranslation();
   return (
     <Pressable testID={`recipe-card-${recipe.id}`} style={styles.card} onPress={onPress}>
       <View style={styles.info}>
         <Text style={styles.name}>{recipe.name}</Text>
         <Text style={styles.meta}>
           {recipe.missingIngredients.length === 0
-            ? 'Tüm malzemeler evde'
-            : `${recipe.missingIngredients.length} eksik malzeme`}
+            ? t('recipes.allIngredientsAvailable')
+            : t('recipes.missingIngredients', { count: recipe.missingIngredients.length })}
         </Text>
       </View>
       <View style={[styles.coverageBadge, coverageStyle(recipe.coveragePercent)]}>
@@ -44,6 +46,7 @@ function RecipeCard({ recipe, onPress }: { recipe: RecipeSuggestion; onPress: ()
 }
 
 export function RecipesScreen({ navigation }: RecipesStackScreenProps<'Recipes'>) {
+  const { t } = useTranslation();
   const [tab, setTab] = useState<Tab>('suggestions');
   const suggestionsQuery = useRecipeSuggestionsQuery();
   const savedQuery = useSavedRecipesQuery();
@@ -54,8 +57,8 @@ export function RecipesScreen({ navigation }: RecipesStackScreenProps<'Recipes'>
       <View style={styles.tabsRow}>
         <SegmentedControl
           options={[
-            { value: 'suggestions', label: 'Öneriler', testID: 'recipes-tab-suggestions' },
-            { value: 'saved', label: 'Kaydedilenler', testID: 'recipes-tab-saved' },
+            { value: 'suggestions', label: t('recipes.tabs.suggestions'), testID: 'recipes-tab-suggestions' },
+            { value: 'saved', label: t('recipes.tabs.saved'), testID: 'recipes-tab-saved' },
           ]}
           value={tab}
           onChange={(value) => setTab(value as Tab)}
@@ -70,7 +73,7 @@ export function RecipesScreen({ navigation }: RecipesStackScreenProps<'Recipes'>
 
       {!isLoading && isError && (
         <View style={styles.centered}>
-          <Text style={styles.error}>Tarifler yüklenemedi.</Text>
+          <Text style={styles.error}>{t('recipes.errorLoad')}</Text>
         </View>
       )}
 
@@ -79,8 +82,8 @@ export function RecipesScreen({ navigation }: RecipesStackScreenProps<'Recipes'>
           icon={IconToolsKitchen2}
           title={
             tab === 'suggestions'
-              ? 'Şu an evdeki ürünlerle eşleşen bir tarif yok.'
-              : 'Henüz kaydedilmiş bir tarif yok.'
+              ? t('recipes.emptySuggestions')
+              : t('recipes.emptySaved')
           }
         />
       )}

@@ -18,7 +18,7 @@ describe('LoginScreen', () => {
 
     fireEvent.press(screen.getByTestId('login-submit-button'));
 
-    expect(await screen.findByText('Geçerli bir e-posta girin')).toBeTruthy();
+    expect(await screen.findByText('Enter a valid email')).toBeTruthy();
     expect(loginRequest).not.toHaveBeenCalled();
   });
 
@@ -31,8 +31,8 @@ describe('LoginScreen', () => {
 
     render(<LoginScreen navigation={mockNavigation} route={{} as never} />);
 
-    fireEvent.changeText(screen.getByLabelText('E-posta'), 'test@example.com');
-    fireEvent.changeText(screen.getByLabelText('Şifre'), 'Min8Chars!');
+    fireEvent.changeText(screen.getByLabelText('Email'), 'test@example.com');
+    fireEvent.changeText(screen.getByLabelText('Password'), 'Min8Chars!');
     fireEvent.press(screen.getByTestId('login-submit-button'));
 
     await waitFor(() => expect(loginRequest).toHaveBeenCalledWith({

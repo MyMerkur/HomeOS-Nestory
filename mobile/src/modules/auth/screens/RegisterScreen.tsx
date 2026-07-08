@@ -1,16 +1,19 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
+import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Button } from '../../../ui/Button';
 import { TextField } from '../../../ui/TextField';
 import { colors, fontSize, spacing, typography } from '../../../theme/theme';
 import { useAuthStore } from '../../../store/useAuthStore';
 import { registerRequest } from '../services/authApi';
-import { registerSchema, type RegisterFormValues } from '../schemas/authSchema';
+import { makeRegisterSchema, type RegisterFormValues } from '../schemas/authSchema';
+import { getErrorMessage } from '../../../services/apiError';
 import type { AuthStackScreenProps } from '../../../app/navigation/types';
 
 export function RegisterScreen({ navigation }: AuthStackScreenProps<'Register'>) {
+  const { t } = useTranslation();
   const setSession = useAuthStore((state) => state.setSession);
   const [serverError, setServerError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -20,7 +23,7 @@ export function RegisterScreen({ navigation }: AuthStackScreenProps<'Register'>)
     handleSubmit,
     formState: { errors },
   } = useForm<RegisterFormValues>({
-    resolver: zodResolver(registerSchema),
+    resolver: zodResolver(makeRegisterSchema(t)),
     defaultValues: { name: '', email: '', password: '' },
   });
 
@@ -31,9 +34,7 @@ export function RegisterScreen({ navigation }: AuthStackScreenProps<'Register'>)
       const session = await registerRequest(values);
       await setSession(session);
     } catch (err) {
-      const message =
-        (err as { response?: { data?: { message?: string } } })?.response?.data?.message;
-      setServerError(message ?? 'Kayıt oluşturulamadı.');
+      setServerError(getErrorMessage(err));
     } finally {
       setIsSubmitting(false);
     }
@@ -41,7 +42,7 @@ export function RegisterScreen({ navigation }: AuthStackScreenProps<'Register'>)
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Hesap oluştur</Text>
+      <Text style={styles.title}>{t('auth.register.title')}</Text>
 
       <View style={styles.form}>
         <Controller
@@ -49,7 +50,7 @@ export function RegisterScreen({ navigation }: AuthStackScreenProps<'Register'>)
           name="name"
           render={({ field: { onChange, onBlur, value } }) => (
             <TextField
-              label="Ad Soyad"
+              label={t('auth.register.nameLabel')}
               value={value}
               onChangeText={onChange}
               onBlur={onBlur}
@@ -63,7 +64,7 @@ export function RegisterScreen({ navigation }: AuthStackScreenProps<'Register'>)
           name="email"
           render={({ field: { onChange, onBlur, value } }) => (
             <TextField
-              label="E-posta"
+              label={t('auth.register.emailLabel')}
               autoCapitalize="none"
               keyboardType="email-address"
               value={value}
@@ -79,7 +80,7 @@ export function RegisterScreen({ navigation }: AuthStackScreenProps<'Register'>)
           name="password"
           render={({ field: { onChange, onBlur, value } }) => (
             <TextField
-              label="Şifre (en az 8 karakter)"
+              label={t('auth.register.passwordLabel')}
               secureTextEntry
               value={value}
               onChangeText={onChange}
@@ -93,14 +94,14 @@ export function RegisterScreen({ navigation }: AuthStackScreenProps<'Register'>)
 
         <Button
           testID="register-submit-button"
-          label="Kayıt ol"
+          label={t('auth.register.submitButton')}
           onPress={handleSubmit(onSubmit)}
           loading={isSubmitting}
         />
       </View>
 
       <Pressable onPress={() => navigation.navigate('Login')}>
-        <Text style={styles.link}>Zaten hesabın var mı? Giriş yap</Text>
+        <Text style={styles.link}>{t('auth.register.hasAccountLink')}</Text>
       </Pressable>
     </View>
   );
