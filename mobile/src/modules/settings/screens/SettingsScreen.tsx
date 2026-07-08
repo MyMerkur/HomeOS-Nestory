@@ -1,14 +1,18 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQueryClient } from '@tanstack/react-query';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
+import type { TextStyle } from 'react-native';
 import { ActivityIndicator, Alert, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
 import { Button } from '../../../ui/Button';
 import { Card } from '../../../ui/Card';
 import { Chip } from '../../../ui/Chip';
+import { SegmentedControl } from '../../../ui/SegmentedControl';
 import { TextField } from '../../../ui/TextField';
-import { colors, fontSize, spacing, typography } from '../../../theme/theme';
+import { fontSize, spacing, typography, type ThemeColors } from '../../../theme/theme';
+import { useTheme } from '../../../theme/ThemeContext';
+import type { ThemeMode } from '../../../services/themeStorage';
 import { useAuthStore } from '../../../store/useAuthStore';
 import { useHomeStore } from '../../../store/useHomeStore';
 import { getStoredRefreshToken } from '../../../services/secureStorage';
@@ -24,6 +28,7 @@ import {
   updateLanguage,
   updateNotificationPreferences,
   updateProfile,
+  updateTheme,
 } from '../services/settingsApi';
 import {
   makeChangePasswordSchema,
@@ -32,12 +37,14 @@ import {
   type HomeNameFormValues,
 } from '../schemas/settingsSchema';
 
-function SectionTitle({ title }: { title: string }) {
-  return <Text style={styles.sectionTitle}>{title}</Text>;
+function SectionTitle({ title, style }: { title: string; style: TextStyle }) {
+  return <Text style={style}>{title}</Text>;
 }
 
 export function SettingsScreen() {
   const { t } = useTranslation();
+  const { colors, mode, setMode } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const homeId = useHomeStore((state) => state.selectedHomeId) as string;
   const setSelectedHomeId = useHomeStore((state) => state.setSelectedHomeId);
   const clearSession = useAuthStore((state) => state.clearSession);
@@ -157,6 +164,12 @@ export function SettingsScreen() {
     await clearSession();
   };
 
+  const handleChangeTheme = async (nextMode: ThemeMode) => {
+    setMode(nextMode);
+    await updateTheme(nextMode);
+    await queryClient.invalidateQueries({ queryKey: [PROFILE_QUERY_KEY] });
+  };
+
   if (isLoading) {
     return (
       <View style={styles.centered}>
@@ -175,7 +188,7 @@ export function SettingsScreen() {
 
   return (
     <ScrollView style={styles.container} contentContainerStyle={styles.content}>
-      <SectionTitle title={t('settings.sectionAccount')} />
+      <SectionTitle title={t('settings.sectionAccount')} style={styles.sectionTitle} />
       <Card style={styles.card}>
         <TextField label={t('settings.nameLabel')} value={name} onChangeText={setName} />
         <Button
@@ -222,7 +235,7 @@ export function SettingsScreen() {
         />
       </Card>
 
-      <SectionTitle title={t('settings.sectionNotifications')} />
+      <SectionTitle title={t('settings.sectionNotifications')} style={styles.sectionTitle} />
       <Card style={styles.card}>
         <View style={styles.switchRow}>
           <Text style={styles.switchLabel}>{t('settings.notifExpiry')}</Text>
@@ -250,7 +263,7 @@ export function SettingsScreen() {
         </View>
       </Card>
 
-      <SectionTitle title={t('settings.sectionHome')} />
+      <SectionTitle title={t('settings.sectionHome')} style={styles.sectionTitle} />
       <Card style={styles.card}>
         <Controller
           control={homeNameForm.control}
@@ -272,7 +285,7 @@ export function SettingsScreen() {
         )}
       </Card>
 
-      <SectionTitle title={t('settings.sectionApp')} />
+      <SectionTitle title={t('settings.sectionApp')} style={styles.sectionTitle} />
       <Card style={styles.card}>
         <Text style={styles.switchLabel}>{t('settings.languageLabel')}</Text>
         <View style={styles.languageChipsRow}>
@@ -286,10 +299,16 @@ export function SettingsScreen() {
             />
           ))}
         </View>
-        <View style={styles.switchRow}>
-          <Text style={styles.switchLabel}>{t('settings.themeLabel')}</Text>
-          <Text style={styles.readonlyValue}>{t('settings.themeValuePlaceholder')}</Text>
-        </View>
+        <Text style={styles.switchLabel}>{t('settings.themeLabel')}</Text>
+        <SegmentedControl
+          value={mode}
+          onChange={(value) => handleChangeTheme(value as ThemeMode)}
+          options={[
+            { value: 'system', label: t('settings.themeSystem'), testID: 'theme-option-system' },
+            { value: 'light', label: t('settings.themeLight'), testID: 'theme-option-light' },
+            { value: 'dark', label: t('settings.themeDark'), testID: 'theme-option-dark' },
+          ]}
+        />
       </Card>
 
       <Button label={t('settings.logoutButton')} onPress={handleLogout} variant="outline" />
@@ -297,43 +316,40 @@ export function SettingsScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.background },
-  content: { padding: spacing.lg, gap: spacing.md },
-  centered: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: spacing.xl },
-  error: {
-    fontSize: fontSize.bodyMd,
-    fontFamily: typography.body.fontFamily,
-    color: colors.textSecondary,
-  },
-  errorText: {
-    fontSize: fontSize.caption,
-    fontFamily: typography.caption.fontFamily,
-    color: colors.dangerDark,
-  },
-  sectionTitle: {
-    fontSize: fontSize.bodyMd,
-    fontFamily: typography.heading.fontFamily,
-    fontWeight: typography.heading.fontWeight,
-    color: colors.textPrimary,
-    marginTop: spacing.sm,
-  },
-  card: { gap: spacing.md },
-  languageChipsRow: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
-  switchRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
-  switchLabel: {
-    fontSize: fontSize.bodyMd,
-    fontFamily: typography.body.fontFamily,
-    color: colors.textPrimary,
-  },
-  readonlyValue: {
-    fontSize: fontSize.bodyMd,
-    fontFamily: typography.caption.fontFamily,
-    color: colors.textMuted,
-  },
-  hint: {
-    fontSize: fontSize.caption,
-    fontFamily: typography.caption.fontFamily,
-    color: colors.textSecondary,
-  },
-});
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
+    container: { flex: 1, backgroundColor: colors.background },
+    content: { padding: spacing.lg, gap: spacing.md },
+    centered: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: spacing.xl },
+    error: {
+      fontSize: fontSize.bodyMd,
+      fontFamily: typography.body.fontFamily,
+      color: colors.textSecondary,
+    },
+    errorText: {
+      fontSize: fontSize.caption,
+      fontFamily: typography.caption.fontFamily,
+      color: colors.dangerDark,
+    },
+    sectionTitle: {
+      fontSize: fontSize.bodyMd,
+      fontFamily: typography.heading.fontFamily,
+      fontWeight: typography.heading.fontWeight,
+      color: colors.textPrimary,
+      marginTop: spacing.sm,
+    },
+    card: { gap: spacing.md },
+    languageChipsRow: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
+    switchRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+    switchLabel: {
+      fontSize: fontSize.bodyMd,
+      fontFamily: typography.body.fontFamily,
+      color: colors.textPrimary,
+    },
+    hint: {
+      fontSize: fontSize.caption,
+      fontFamily: typography.caption.fontFamily,
+      color: colors.textSecondary,
+    },
+  });
+}

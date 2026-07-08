@@ -3,15 +3,18 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react-nativ
 import { JoinHomeScreen } from './JoinHomeScreen';
 import { joinHomeRequest } from '../services/homeApi';
 import { useHomeStore } from '../../../store/useHomeStore';
+import { ThemeProvider } from '../../../theme/ThemeContext';
 
 jest.mock('../services/homeApi');
 
 function renderWithQueryClient() {
   const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   return render(
-    <QueryClientProvider client={queryClient}>
-      <JoinHomeScreen />
-    </QueryClientProvider>,
+    <ThemeProvider>
+      <QueryClientProvider client={queryClient}>
+        <JoinHomeScreen />
+      </QueryClientProvider>
+    </ThemeProvider>,
   );
 }
 

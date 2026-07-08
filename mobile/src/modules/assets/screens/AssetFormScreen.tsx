@@ -2,7 +2,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import TextRecognition from '@react-native-ml-kit/text-recognition';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { ActivityIndicator, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
@@ -11,7 +11,8 @@ import { captureImage } from '../../../services/cameraCapture';
 import { Button } from '../../../ui/Button';
 import { Chip } from '../../../ui/Chip';
 import { TextField } from '../../../ui/TextField';
-import { colors, fontSize, spacing, typography } from '../../../theme/theme';
+import { fontSize, spacing, typography, type ThemeColors } from '../../../theme/theme';
+import { useTheme } from '../../../theme/ThemeContext';
 import { parseExpiryDateFromText } from '../../pantry/services/dateOcrScanner';
 import { ASSET_CATEGORIES } from '../constants';
 import { ASSETS_QUERY_KEY } from '../hooks/useAssetsQuery';
@@ -27,6 +28,8 @@ import type { DashboardStackScreenProps } from '../../../app/navigation/types';
 
 export function AssetFormScreen({ navigation, route }: DashboardStackScreenProps<'AssetForm'>) {
   const { t, i18n } = useTranslation();
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const assetId = route.params?.assetId;
   const isEditMode = !!assetId;
   const homeId = useHomeStore((state) => state.selectedHomeId) as string;
@@ -364,34 +367,36 @@ export function AssetFormScreen({ navigation, route }: DashboardStackScreenProps
   );
 }
 
-const styles = StyleSheet.create({
-  container: { padding: spacing.lg, gap: spacing.md, backgroundColor: colors.background },
-  centered: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  label: {
-    fontSize: fontSize.bodyMd,
-    fontFamily: typography.bodyMedium.fontFamily,
-    fontWeight: typography.bodyMedium.fontWeight,
-    color: colors.textPrimary,
-  },
-  error: {
-    fontSize: fontSize.bodySm,
-    fontFamily: typography.caption.fontFamily,
-    color: colors.dangerDark,
-  },
-  chipsRow: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
-  dateButton: {
-    minHeight: 44,
-    borderWidth: 1,
-    borderColor: colors.borderStrong,
-    borderRadius: 12,
-    paddingHorizontal: spacing.md,
-    justifyContent: 'center',
-    backgroundColor: colors.surface,
-  },
-  dateButtonText: {
-    fontSize: fontSize.bodyLg,
-    fontFamily: typography.body.fontFamily,
-    color: colors.textPrimary,
-  },
-  submitButton: { marginTop: spacing.lg, marginBottom: spacing.xxl },
-});
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
+    container: { padding: spacing.lg, gap: spacing.md, backgroundColor: colors.background },
+    centered: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+    label: {
+      fontSize: fontSize.bodyMd,
+      fontFamily: typography.bodyMedium.fontFamily,
+      fontWeight: typography.bodyMedium.fontWeight,
+      color: colors.textPrimary,
+    },
+    error: {
+      fontSize: fontSize.bodySm,
+      fontFamily: typography.caption.fontFamily,
+      color: colors.dangerDark,
+    },
+    chipsRow: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
+    dateButton: {
+      minHeight: 44,
+      borderWidth: 1,
+      borderColor: colors.borderStrong,
+      borderRadius: 12,
+      paddingHorizontal: spacing.md,
+      justifyContent: 'center',
+      backgroundColor: colors.surface,
+    },
+    dateButtonText: {
+      fontSize: fontSize.bodyLg,
+      fontFamily: typography.body.fontFamily,
+      color: colors.textPrimary,
+    },
+    submitButton: { marginTop: spacing.lg, marginBottom: spacing.xxl },
+  });
+}

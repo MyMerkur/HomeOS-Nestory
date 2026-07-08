@@ -1,13 +1,14 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQueryClient } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, Text, View } from 'react-native';
 import { IconConfetti } from '@tabler/icons-react-native';
 import { Button } from '../../../ui/Button';
 import { TextField } from '../../../ui/TextField';
-import { colors, fontSize, spacing, typography } from '../../../theme/theme';
+import { fontSize, spacing, typography, type ThemeColors } from '../../../theme/theme';
+import { useTheme } from '../../../theme/ThemeContext';
 import { useHomeStore } from '../../../store/useHomeStore';
 import { createHomeRequest, type HomeSummary } from '../services/homeApi';
 import { HOMES_QUERY_KEY } from '../hooks/useHomesQuery';
@@ -15,6 +16,8 @@ import { makeCreateHomeSchema, type CreateHomeFormValues } from '../schemas/home
 
 export function CreateHomeScreen() {
   const { t } = useTranslation();
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const queryClient = useQueryClient();
   const setSelectedHomeId = useHomeStore((state) => state.setSelectedHomeId);
   const [serverError, setServerError] = useState<string | null>(null);
@@ -97,36 +100,38 @@ export function CreateHomeScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'center', padding: spacing.xl, backgroundColor: colors.background },
-  centeredIcon: { alignSelf: 'center', marginBottom: spacing.sm },
-  title: {
-    fontSize: fontSize.displayLg,
-    fontFamily: typography.display.fontFamily,
-    fontWeight: typography.display.fontWeight,
-    color: colors.textPrimary,
-    textAlign: 'center',
-  },
-  subtitle: {
-    fontSize: fontSize.bodyMd,
-    fontFamily: typography.body.fontFamily,
-    color: colors.textSecondary,
-    textAlign: 'center',
-    marginTop: spacing.xs,
-  },
-  form: { gap: spacing.md, marginTop: spacing.xxl },
-  error: {
-    fontSize: fontSize.bodySm,
-    fontFamily: typography.caption.fontFamily,
-    color: colors.dangerDark,
-  },
-  inviteCode: {
-    fontSize: fontSize.displayLg * 1.4,
-    fontFamily: typography.display.fontFamily,
-    fontWeight: typography.display.fontWeight,
-    color: colors.textPrimary,
-    textAlign: 'center',
-    letterSpacing: 4,
-    marginVertical: spacing.xl,
-  },
-});
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
+    container: { flex: 1, justifyContent: 'center', padding: spacing.xl, backgroundColor: colors.background },
+    centeredIcon: { alignSelf: 'center', marginBottom: spacing.sm },
+    title: {
+      fontSize: fontSize.displayLg,
+      fontFamily: typography.display.fontFamily,
+      fontWeight: typography.display.fontWeight,
+      color: colors.textPrimary,
+      textAlign: 'center',
+    },
+    subtitle: {
+      fontSize: fontSize.bodyMd,
+      fontFamily: typography.body.fontFamily,
+      color: colors.textSecondary,
+      textAlign: 'center',
+      marginTop: spacing.xs,
+    },
+    form: { gap: spacing.md, marginTop: spacing.xxl },
+    error: {
+      fontSize: fontSize.bodySm,
+      fontFamily: typography.caption.fontFamily,
+      color: colors.dangerDark,
+    },
+    inviteCode: {
+      fontSize: fontSize.displayLg * 1.4,
+      fontFamily: typography.display.fontFamily,
+      fontWeight: typography.display.fontWeight,
+      color: colors.textPrimary,
+      textAlign: 'center',
+      letterSpacing: 4,
+      marginVertical: spacing.xl,
+    },
+  });
+}

@@ -1,10 +1,15 @@
 import { fireEvent, render, screen } from '@testing-library/react-native';
 import { Button } from '../Button';
+import { ThemeProvider } from '../../theme/ThemeContext';
 
 describe('Button', () => {
   it('calls onPress when tapped', () => {
     const onPress = jest.fn();
-    render(<Button label="Kaydet" onPress={onPress} />);
+    render(
+      <ThemeProvider>
+        <Button label="Kaydet" onPress={onPress} />
+      </ThemeProvider>,
+    );
 
     fireEvent.press(screen.getByRole('button'));
 
@@ -13,7 +18,11 @@ describe('Button', () => {
 
   it('does not call onPress when disabled', () => {
     const onPress = jest.fn();
-    render(<Button label="Kaydet" onPress={onPress} disabled />);
+    render(
+      <ThemeProvider>
+        <Button label="Kaydet" onPress={onPress} disabled />
+      </ThemeProvider>,
+    );
 
     fireEvent.press(screen.getByRole('button'));
 
@@ -22,7 +31,11 @@ describe('Button', () => {
 
   it('does not call onPress while loading', () => {
     const onPress = jest.fn();
-    render(<Button label="Kaydet" onPress={onPress} loading />);
+    render(
+      <ThemeProvider>
+        <Button label="Kaydet" onPress={onPress} loading />
+      </ThemeProvider>,
+    );
 
     fireEvent.press(screen.getByRole('button'));
 

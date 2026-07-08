@@ -1,11 +1,15 @@
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, Text, View } from 'react-native';
 import { Button } from '../../../ui/Button';
-import { colors, fontSize, spacing, typography } from '../../../theme/theme';
+import { fontSize, spacing, typography, type ThemeColors } from '../../../theme/theme';
+import { useTheme } from '../../../theme/ThemeContext';
 import type { HomeSetupScreenProps } from '../../../app/navigation/types';
 
 export function HomeSetupChoiceScreen({ navigation }: HomeSetupScreenProps<'HomeSetupChoice'>) {
   const { t } = useTranslation();
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   return (
     <View style={styles.container}>
       <Text style={styles.title}>{t('onboarding.choice.title')}</Text>
@@ -28,20 +32,22 @@ export function HomeSetupChoiceScreen({ navigation }: HomeSetupScreenProps<'Home
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'center', padding: spacing.xl, backgroundColor: colors.background },
-  title: {
-    fontSize: fontSize.displayLg,
-    fontFamily: typography.display.fontFamily,
-    fontWeight: typography.display.fontWeight,
-    color: colors.textPrimary,
-  },
-  subtitle: {
-    fontSize: fontSize.bodyMd,
-    fontFamily: typography.body.fontFamily,
-    color: colors.textSecondary,
-    marginTop: spacing.xs,
-    marginBottom: spacing.xxl,
-  },
-  actions: { gap: spacing.md },
-});
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
+    container: { flex: 1, justifyContent: 'center', padding: spacing.xl, backgroundColor: colors.background },
+    title: {
+      fontSize: fontSize.displayLg,
+      fontFamily: typography.display.fontFamily,
+      fontWeight: typography.display.fontWeight,
+      color: colors.textPrimary,
+    },
+    subtitle: {
+      fontSize: fontSize.bodyMd,
+      fontFamily: typography.body.fontFamily,
+      color: colors.textSecondary,
+      marginTop: spacing.xs,
+      marginBottom: spacing.xxl,
+    },
+    actions: { gap: spacing.md },
+  });
+}

@@ -1,9 +1,10 @@
 import { useQueryClient } from '@tanstack/react-query';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Button } from '../../../ui/Button';
-import { colors, fontSize, radius, spacing, typography } from '../../../theme/theme';
+import { fontSize, radius, spacing, typography, type ThemeColors } from '../../../theme/theme';
+import { useTheme } from '../../../theme/ThemeContext';
 import { useHomeStore } from '../../../store/useHomeStore';
 import { RECIPE_SUGGESTIONS_QUERY_KEY } from '../hooks/useRecipeSuggestionsQuery';
 import { SAVED_RECIPES_QUERY_KEY } from '../hooks/useSavedRecipesQuery';
@@ -12,6 +13,8 @@ import type { RecipesStackScreenProps } from '../../../app/navigation/types';
 
 export function RecipeDetailScreen({ navigation, route }: RecipesStackScreenProps<'RecipeDetail'>) {
   const { t } = useTranslation();
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const { recipe } = route.params;
   const homeId = useHomeStore((state) => state.selectedHomeId) as string;
   const queryClient = useQueryClient();
@@ -80,41 +83,43 @@ export function RecipeDetailScreen({ navigation, route }: RecipesStackScreenProp
   );
 }
 
-const styles = StyleSheet.create({
-  container: { padding: spacing.lg, gap: spacing.xs, backgroundColor: colors.background },
-  coverage: {
-    fontSize: fontSize.bodyMd,
-    fontFamily: typography.body.fontFamily,
-    color: colors.textSecondary,
-    marginTop: spacing.md,
-    marginBottom: spacing.sm,
-  },
-  sectionTitle: {
-    fontSize: fontSize.bodyMd,
-    fontFamily: typography.heading.fontFamily,
-    fontWeight: typography.heading.fontWeight,
-    color: colors.textPrimary,
-    marginTop: spacing.lg,
-    marginBottom: spacing.xs,
-  },
-  ingredientRow: { paddingVertical: spacing.xs, paddingHorizontal: spacing.sm, borderRadius: radius.sm },
-  ingredientRowMissing: { backgroundColor: colors.dangerTint },
-  ingredient: {
-    fontSize: fontSize.bodyLg,
-    fontFamily: typography.body.fontFamily,
-    color: colors.textPrimary,
-  },
-  stepRow: { flexDirection: 'row', gap: spacing.xs, paddingVertical: spacing.xs },
-  stepNumber: {
-    fontSize: fontSize.bodyLg,
-    fontFamily: typography.bodyMedium.fontFamily,
-    fontWeight: typography.bodyMedium.fontWeight,
-    color: colors.textPrimary,
-  },
-  stepText: {
-    flex: 1,
-    fontSize: fontSize.bodyLg,
-    fontFamily: typography.body.fontFamily,
-    color: colors.textPrimary,
-  },
-});
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
+    container: { padding: spacing.lg, gap: spacing.xs, backgroundColor: colors.background },
+    coverage: {
+      fontSize: fontSize.bodyMd,
+      fontFamily: typography.body.fontFamily,
+      color: colors.textSecondary,
+      marginTop: spacing.md,
+      marginBottom: spacing.sm,
+    },
+    sectionTitle: {
+      fontSize: fontSize.bodyMd,
+      fontFamily: typography.heading.fontFamily,
+      fontWeight: typography.heading.fontWeight,
+      color: colors.textPrimary,
+      marginTop: spacing.lg,
+      marginBottom: spacing.xs,
+    },
+    ingredientRow: { paddingVertical: spacing.xs, paddingHorizontal: spacing.sm, borderRadius: radius.sm },
+    ingredientRowMissing: { backgroundColor: colors.dangerTint },
+    ingredient: {
+      fontSize: fontSize.bodyLg,
+      fontFamily: typography.body.fontFamily,
+      color: colors.textPrimary,
+    },
+    stepRow: { flexDirection: 'row', gap: spacing.xs, paddingVertical: spacing.xs },
+    stepNumber: {
+      fontSize: fontSize.bodyLg,
+      fontFamily: typography.bodyMedium.fontFamily,
+      fontWeight: typography.bodyMedium.fontWeight,
+      color: colors.textPrimary,
+    },
+    stepText: {
+      flex: 1,
+      fontSize: fontSize.bodyLg,
+      fontFamily: typography.body.fontFamily,
+      color: colors.textPrimary,
+    },
+  });
+}

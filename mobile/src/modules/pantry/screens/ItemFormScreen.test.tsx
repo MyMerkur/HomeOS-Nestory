@@ -6,6 +6,7 @@ import { createItem, getItem, listItems, listLocations, updateItem } from '../se
 import { scanBarcodeFromCamera } from '../services/barcodeScanner';
 import { scanExpiryDateFromCamera } from '../services/dateOcrScanner';
 import { useHomeStore } from '../../../store/useHomeStore';
+import { ThemeProvider } from '../../../theme/ThemeContext';
 import type { PantryStackScreenProps } from '../../../app/navigation/types';
 
 jest.mock('../services/pantryApi');
@@ -23,12 +24,14 @@ const mockNavigation = {
 function renderScreen(params?: { itemId?: string; initialBarcode?: string }) {
   const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   return render(
-    <QueryClientProvider client={queryClient}>
-      <ItemFormScreen
-        navigation={mockNavigation}
-        route={{ params } as PantryStackScreenProps<'ItemForm'>['route']}
-      />
-    </QueryClientProvider>,
+    <ThemeProvider>
+      <QueryClientProvider client={queryClient}>
+        <ItemFormScreen
+          navigation={mockNavigation}
+          route={{ params } as PantryStackScreenProps<'ItemForm'>['route']}
+        />
+      </QueryClientProvider>
+    </ThemeProvider>,
   );
 }
 

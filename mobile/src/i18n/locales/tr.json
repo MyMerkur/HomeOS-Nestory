@@ -285,7 +285,9 @@
     "sectionApp": "Uygulama",
     "languageLabel": "Dil",
     "themeLabel": "Tema",
-    "themeValuePlaceholder": "Açık (v1)",
+    "themeSystem": "Sistem",
+    "themeLight": "Açık",
+    "themeDark": "Koyu",
     "logoutButton": "Çıkış yap",
     "errorLoad": "Ayarlar yüklenemedi."
   },

@@ -1,11 +1,12 @@
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { Button } from '../../../ui/Button';
 import { TextField } from '../../../ui/TextField';
-import { colors, fontSize, spacing, typography } from '../../../theme/theme';
+import { fontSize, spacing, typography, type ThemeColors } from '../../../theme/theme';
+import { useTheme } from '../../../theme/ThemeContext';
 import { useAuthStore } from '../../../store/useAuthStore';
 import { registerRequest } from '../services/authApi';
 import { makeRegisterSchema, type RegisterFormValues } from '../schemas/authSchema';
@@ -14,6 +15,8 @@ import type { AuthStackScreenProps } from '../../../app/navigation/types';
 
 export function RegisterScreen({ navigation }: AuthStackScreenProps<'Register'>) {
   const { t } = useTranslation();
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const setSession = useAuthStore((state) => state.setSession);
   const [serverError, setServerError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -107,27 +110,29 @@ export function RegisterScreen({ navigation }: AuthStackScreenProps<'Register'>)
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'center', padding: spacing.xl, backgroundColor: colors.background },
-  title: {
-    fontSize: fontSize.displayLg,
-    fontFamily: typography.display.fontFamily,
-    fontWeight: typography.display.fontWeight,
-    color: colors.textPrimary,
-    textAlign: 'center',
-    marginBottom: spacing.xxl,
-  },
-  form: { gap: spacing.md },
-  error: {
-    fontSize: fontSize.bodySm,
-    fontFamily: typography.caption.fontFamily,
-    color: colors.dangerDark,
-  },
-  link: {
-    textAlign: 'center',
-    marginTop: spacing.xl,
-    fontSize: fontSize.bodyMd,
-    fontFamily: typography.bodyMedium.fontFamily,
-    color: colors.primary,
-  },
-});
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
+    container: { flex: 1, justifyContent: 'center', padding: spacing.xl, backgroundColor: colors.background },
+    title: {
+      fontSize: fontSize.displayLg,
+      fontFamily: typography.display.fontFamily,
+      fontWeight: typography.display.fontWeight,
+      color: colors.textPrimary,
+      textAlign: 'center',
+      marginBottom: spacing.xxl,
+    },
+    form: { gap: spacing.md },
+    error: {
+      fontSize: fontSize.bodySm,
+      fontFamily: typography.caption.fontFamily,
+      color: colors.dangerDark,
+    },
+    link: {
+      textAlign: 'center',
+      marginTop: spacing.xl,
+      fontSize: fontSize.bodyMd,
+      fontFamily: typography.bodyMedium.fontFamily,
+      color: colors.primary,
+    },
+  });
+}

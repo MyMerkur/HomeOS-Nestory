@@ -285,7 +285,9 @@
     "sectionApp": "Aplikace",
     "languageLabel": "Jazyk",
     "themeLabel": "Motiv",
-    "themeValuePlaceholder": "Světlý (v1)",
+    "themeSystem": "Systém",
+    "themeLight": "Světlý",
+    "themeDark": "Tmavý",
     "logoutButton": "Odhlásit se",
     "errorLoad": "Nastavení se nepodařilo načíst."
   },

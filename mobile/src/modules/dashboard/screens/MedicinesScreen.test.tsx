@@ -3,6 +3,7 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react-nativ
 import { MedicinesScreen } from './MedicinesScreen';
 import { addToShopping, listItems, takeDose } from '../../pantry/services/pantryApi';
 import { useHomeStore } from '../../../store/useHomeStore';
+import { ThemeProvider } from '../../../theme/ThemeContext';
 
 jest.mock('../../pantry/services/pantryApi');
 
@@ -33,9 +34,11 @@ function buildMedicine(overrides: Partial<Record<string, unknown>> = {}) {
 function renderScreen() {
   const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   return render(
-    <QueryClientProvider client={queryClient}>
-      <MedicinesScreen />
-    </QueryClientProvider>,
+    <ThemeProvider>
+      <QueryClientProvider client={queryClient}>
+        <MedicinesScreen />
+      </QueryClientProvider>
+    </ThemeProvider>,
   );
 }
 

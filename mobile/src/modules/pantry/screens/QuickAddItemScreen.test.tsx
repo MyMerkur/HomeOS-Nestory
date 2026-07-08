@@ -6,6 +6,7 @@ import { createItem, listItems, listLocations } from '../services/pantryApi';
 import { scanBarcodeFromCamera } from '../services/barcodeScanner';
 import { scanExpiryDateFromCamera } from '../services/dateOcrScanner';
 import { useHomeStore } from '../../../store/useHomeStore';
+import { ThemeProvider } from '../../../theme/ThemeContext';
 import type { PantryStackScreenProps } from '../../../app/navigation/types';
 
 jest.mock('../services/pantryApi');
@@ -27,9 +28,11 @@ const mockNavigation = {
 function renderScreen() {
   const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   return render(
-    <QueryClientProvider client={queryClient}>
-      <QuickAddItemScreen navigation={mockNavigation} route={{} as never} />
-    </QueryClientProvider>,
+    <ThemeProvider>
+      <QueryClientProvider client={queryClient}>
+        <QuickAddItemScreen navigation={mockNavigation} route={{} as never} />
+      </QueryClientProvider>
+    </ThemeProvider>,
   );
 }
 

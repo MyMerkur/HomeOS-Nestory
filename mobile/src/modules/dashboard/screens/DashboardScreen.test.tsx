@@ -3,6 +3,7 @@ import { fireEvent, render, screen } from '@testing-library/react-native';
 import { DashboardScreen } from './DashboardScreen';
 import { getDashboard } from '../services/dashboardApi';
 import { useHomeStore } from '../../../store/useHomeStore';
+import { ThemeProvider } from '../../../theme/ThemeContext';
 import type { DashboardStackScreenProps } from '../../../app/navigation/types';
 
 jest.mock('../services/dashboardApi');
@@ -43,9 +44,11 @@ const mockDashboard = {
 function renderScreen() {
   const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   return render(
-    <QueryClientProvider client={queryClient}>
-      <DashboardScreen navigation={mockNavigation} route={{} as never} />
-    </QueryClientProvider>,
+    <ThemeProvider>
+      <QueryClientProvider client={queryClient}>
+        <DashboardScreen navigation={mockNavigation} route={{} as never} />
+      </QueryClientProvider>
+    </ThemeProvider>,
   );
 }
 

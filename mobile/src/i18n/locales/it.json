@@ -285,7 +285,9 @@
     "sectionApp": "App",
     "languageLabel": "Lingua",
     "themeLabel": "Tema",
-    "themeValuePlaceholder": "Chiaro (v1)",
+    "themeSystem": "Sistema",
+    "themeLight": "Chiaro",
+    "themeDark": "Scuro",
     "logoutButton": "Esci",
     "errorLoad": "Impossibile caricare le impostazioni."
   },

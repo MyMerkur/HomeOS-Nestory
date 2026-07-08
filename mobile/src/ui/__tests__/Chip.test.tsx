@@ -1,10 +1,15 @@
 import { fireEvent, render, screen } from '@testing-library/react-native';
 import { Chip } from '../Chip';
+import { ThemeProvider } from '../../theme/ThemeContext';
 
 describe('Chip', () => {
   it('calls onPress when tapped', () => {
     const onPress = jest.fn();
-    render(<Chip label="Süt Ürünleri" onPress={onPress} />);
+    render(
+      <ThemeProvider>
+        <Chip label="Süt Ürünleri" onPress={onPress} />
+      </ThemeProvider>,
+    );
 
     fireEvent.press(screen.getByText('Süt Ürünleri'));
 
@@ -12,7 +17,11 @@ describe('Chip', () => {
   });
 
   it('reflects selected state via accessibilityState', () => {
-    render(<Chip label="Süt Ürünleri" selected onPress={jest.fn()} />);
+    render(
+      <ThemeProvider>
+        <Chip label="Süt Ürünleri" selected onPress={jest.fn()} />
+      </ThemeProvider>,
+    );
 
     expect(screen.getByRole('button').props.accessibilityState).toEqual({ selected: true });
   });

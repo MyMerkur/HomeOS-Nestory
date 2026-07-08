@@ -11,6 +11,7 @@ import {
   listLocations,
 } from '../services/pantryApi';
 import { useHomeStore } from '../../../store/useHomeStore';
+import { ThemeProvider } from '../../../theme/ThemeContext';
 import type { PantryStackScreenProps } from '../../../app/navigation/types';
 
 jest.mock('../services/pantryApi');
@@ -50,9 +51,11 @@ const mockItems = [
 function renderScreen() {
   const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   return render(
-    <QueryClientProvider client={queryClient}>
-      <PantryScreen navigation={mockNavigation} route={{} as never} />
-    </QueryClientProvider>,
+    <ThemeProvider>
+      <QueryClientProvider client={queryClient}>
+        <PantryScreen navigation={mockNavigation} route={{} as never} />
+      </QueryClientProvider>
+    </ThemeProvider>,
   );
 }
 

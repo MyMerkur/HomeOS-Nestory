@@ -8,6 +8,7 @@ import {
   toggleShoppingItemCheck,
 } from '../services/shoppingApi';
 import { useHomeStore } from '../../../store/useHomeStore';
+import { ThemeProvider } from '../../../theme/ThemeContext';
 
 jest.mock('../services/shoppingApi');
 
@@ -39,9 +40,11 @@ const mockItems = [
 function renderScreen() {
   const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   return render(
-    <QueryClientProvider client={queryClient}>
-      <ShoppingScreen />
-    </QueryClientProvider>,
+    <ThemeProvider>
+      <QueryClientProvider client={queryClient}>
+        <ShoppingScreen />
+      </QueryClientProvider>
+    </ThemeProvider>,
   );
 }
 

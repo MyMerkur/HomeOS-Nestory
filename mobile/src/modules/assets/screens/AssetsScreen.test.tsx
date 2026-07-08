@@ -4,6 +4,7 @@ import { Alert } from 'react-native';
 import { AssetsScreen } from './AssetsScreen';
 import { deleteAsset, listAssets, updateAsset } from '../services/assetApi';
 import { useHomeStore } from '../../../store/useHomeStore';
+import { ThemeProvider } from '../../../theme/ThemeContext';
 import type { DashboardStackScreenProps } from '../../../app/navigation/types';
 
 jest.mock('../services/assetApi');
@@ -36,9 +37,11 @@ const mockAssets = [
 function renderScreen() {
   const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   return render(
-    <QueryClientProvider client={queryClient}>
-      <AssetsScreen navigation={mockNavigation} route={{} as never} />
-    </QueryClientProvider>,
+    <ThemeProvider>
+      <QueryClientProvider client={queryClient}>
+        <AssetsScreen navigation={mockNavigation} route={{} as never} />
+      </QueryClientProvider>
+    </ThemeProvider>,
   );
 }
 

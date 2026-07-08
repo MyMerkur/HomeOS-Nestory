@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { ActivityIndicator, FlatList, StyleSheet, Text, View } from 'react-native';
 import { IconMoodEmpty } from '@tabler/icons-react-native';
 import { useTranslation } from 'react-i18next';
@@ -5,12 +6,15 @@ import { ItemCard } from '../../pantry/components/ItemCard';
 import { Chip } from '../../../ui/Chip';
 import { EmptyState } from '../../../ui/EmptyState';
 import { SummaryCard } from '../../../ui/SummaryCard';
-import { colors, fontSize, spacing, typography } from '../../../theme/theme';
+import { fontSize, spacing, typography, type ThemeColors } from '../../../theme/theme';
+import { useTheme } from '../../../theme/ThemeContext';
 import { useDashboardQuery } from '../hooks/useDashboardQuery';
 import type { DashboardStackScreenProps } from '../../../app/navigation/types';
 
 export function DashboardScreen({ navigation }: DashboardStackScreenProps<'Dashboard'>) {
   const { t } = useTranslation();
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const { data, isLoading, isError } = useDashboardQuery();
 
   if (isLoading) {
@@ -89,29 +93,31 @@ export function DashboardScreen({ navigation }: DashboardStackScreenProps<'Dashb
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.background },
-  centered: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: spacing.xl },
-  error: {
-    fontSize: fontSize.bodyMd,
-    fontFamily: typography.body.fontFamily,
-    color: colors.textSecondary,
-  },
-  shortcutsRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: spacing.sm,
-    margin: spacing.md,
-  },
-  summaryRow: { flexDirection: 'row', paddingHorizontal: spacing.md, gap: spacing.sm },
-  sectionTitle: {
-    fontSize: fontSize.bodyMd,
-    fontFamily: typography.heading.fontFamily,
-    fontWeight: typography.heading.fontWeight,
-    color: colors.textPrimary,
-    paddingHorizontal: spacing.lg,
-    marginTop: spacing.lg,
-    marginBottom: spacing.xs,
-  },
-  list: { paddingHorizontal: spacing.lg },
-});
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
+    container: { flex: 1, backgroundColor: colors.background },
+    centered: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: spacing.xl },
+    error: {
+      fontSize: fontSize.bodyMd,
+      fontFamily: typography.body.fontFamily,
+      color: colors.textSecondary,
+    },
+    shortcutsRow: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      gap: spacing.sm,
+      margin: spacing.md,
+    },
+    summaryRow: { flexDirection: 'row', paddingHorizontal: spacing.md, gap: spacing.sm },
+    sectionTitle: {
+      fontSize: fontSize.bodyMd,
+      fontFamily: typography.heading.fontFamily,
+      fontWeight: typography.heading.fontWeight,
+      color: colors.textPrimary,
+      paddingHorizontal: spacing.lg,
+      marginTop: spacing.lg,
+      marginBottom: spacing.xs,
+    },
+    list: { paddingHorizontal: spacing.lg },
+  });
+}

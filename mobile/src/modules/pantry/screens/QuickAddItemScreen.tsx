@@ -1,5 +1,5 @@
 import { useQueryClient } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useHomeStore } from '../../../store/useHomeStore';
@@ -7,7 +7,8 @@ import { Button } from '../../../ui/Button';
 import { Card } from '../../../ui/Card';
 import { Chip } from '../../../ui/Chip';
 import { TextField } from '../../../ui/TextField';
-import { colors, fontSize, spacing, typography } from '../../../theme/theme';
+import { fontSize, spacing, typography, type ThemeColors } from '../../../theme/theme';
+import { useTheme } from '../../../theme/ThemeContext';
 import { useLocationsQuery } from '../hooks/useLocationsQuery';
 import { INVENTORY_ITEMS_QUERY_KEY } from '../hooks/useInventoryItemsQuery';
 import { createItem, listItems, type InventoryItem } from '../services/pantryApi';
@@ -17,6 +18,8 @@ import type { PantryStackScreenProps } from '../../../app/navigation/types';
 
 export function QuickAddItemScreen({ navigation }: PantryStackScreenProps<'QuickAddItem'>) {
   const { t, i18n } = useTranslation();
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const homeId = useHomeStore((state) => state.selectedHomeId) as string;
   const queryClient = useQueryClient();
   const { data: locations } = useLocationsQuery();
@@ -186,46 +189,48 @@ export function QuickAddItemScreen({ navigation }: PantryStackScreenProps<'Quick
   );
 }
 
-const styles = StyleSheet.create({
-  container: { padding: spacing.lg, gap: spacing.md, backgroundColor: colors.background },
-  label: {
-    fontSize: fontSize.bodyMd,
-    fontFamily: typography.bodyMedium.fontFamily,
-    fontWeight: typography.bodyMedium.fontWeight,
-    color: colors.textPrimary,
-  },
-  error: {
-    fontSize: fontSize.bodySm,
-    fontFamily: typography.caption.fontFamily,
-    color: colors.dangerDark,
-  },
-  row: { flexDirection: 'row', gap: spacing.sm, alignItems: 'center' },
-  expiryDisplay: {
-    flex: 1,
-    minHeight: 44,
-    borderWidth: 1,
-    borderColor: colors.borderStrong,
-    borderRadius: 12,
-    paddingHorizontal: spacing.md,
-    justifyContent: 'center',
-    backgroundColor: colors.surface,
-  },
-  expiryDisplayText: {
-    fontSize: fontSize.bodyLg,
-    fontFamily: typography.body.fontFamily,
-    color: colors.textPrimary,
-  },
-  matchCard: { marginTop: spacing.xl, gap: spacing.md },
-  matchName: {
-    fontSize: fontSize.displayMd,
-    fontFamily: typography.display.fontFamily,
-    fontWeight: typography.display.fontWeight,
-    color: colors.textPrimary,
-  },
-  matchMeta: {
-    fontSize: fontSize.bodySm,
-    fontFamily: typography.caption.fontFamily,
-    color: colors.textSecondary,
-  },
-  chipsRow: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
-});
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
+    container: { padding: spacing.lg, gap: spacing.md, backgroundColor: colors.background },
+    label: {
+      fontSize: fontSize.bodyMd,
+      fontFamily: typography.bodyMedium.fontFamily,
+      fontWeight: typography.bodyMedium.fontWeight,
+      color: colors.textPrimary,
+    },
+    error: {
+      fontSize: fontSize.bodySm,
+      fontFamily: typography.caption.fontFamily,
+      color: colors.dangerDark,
+    },
+    row: { flexDirection: 'row', gap: spacing.sm, alignItems: 'center' },
+    expiryDisplay: {
+      flex: 1,
+      minHeight: 44,
+      borderWidth: 1,
+      borderColor: colors.borderStrong,
+      borderRadius: 12,
+      paddingHorizontal: spacing.md,
+      justifyContent: 'center',
+      backgroundColor: colors.surface,
+    },
+    expiryDisplayText: {
+      fontSize: fontSize.bodyLg,
+      fontFamily: typography.body.fontFamily,
+      color: colors.textPrimary,
+    },
+    matchCard: { marginTop: spacing.xl, gap: spacing.md },
+    matchName: {
+      fontSize: fontSize.displayMd,
+      fontFamily: typography.display.fontFamily,
+      fontWeight: typography.display.fontWeight,
+      color: colors.textPrimary,
+    },
+    matchMeta: {
+      fontSize: fontSize.bodySm,
+      fontFamily: typography.caption.fontFamily,
+      color: colors.textSecondary,
+    },
+    chipsRow: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
+  });
+}

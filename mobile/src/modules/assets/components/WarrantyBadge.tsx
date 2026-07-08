@@ -1,6 +1,8 @@
+import { useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
-import { colors, fontSize, radius, spacing, typography } from '../../../theme/theme';
+import { fontSize, radius, spacing, typography, type ThemeColors } from '../../../theme/theme';
+import { useTheme } from '../../../theme/ThemeContext';
 
 type Props = {
   warrantyEndDate: string | null;
@@ -19,6 +21,8 @@ function daysLeftFrom(warrantyEndDate: string): number {
 // reminderDaysBefore [30, 7, 1, 0]).
 export function WarrantyBadge({ warrantyEndDate }: Props) {
   const { t } = useTranslation();
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
 
   if (!warrantyEndDate) {
     return (
@@ -65,26 +69,28 @@ export function WarrantyBadge({ warrantyEndDate }: Props) {
   );
 }
 
-const styles = StyleSheet.create({
-  badge: {
-    borderRadius: radius.md,
-    paddingHorizontal: spacing.sm,
-    paddingVertical: spacing.xs / 2,
-    alignSelf: 'flex-start',
-  },
-  text: {
-    fontSize: fontSize.bodySm,
-    fontFamily: typography.bodyMedium.fontFamily,
-    fontWeight: typography.bodyMedium.fontWeight,
-  },
-  neutral: { backgroundColor: colors.border },
-  textNeutral: { color: colors.textSecondary },
-  expired: { backgroundColor: colors.dangerDark },
-  today: { backgroundColor: colors.danger },
-  textOnDark: { color: colors.white },
-  soon: { backgroundColor: colors.warningTint },
-  week: { backgroundColor: colors.warningTint },
-  textWarning: { color: colors.warningDark },
-  safe: { backgroundColor: colors.primaryTint },
-  textSafe: { color: colors.primaryDark },
-});
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
+    badge: {
+      borderRadius: radius.md,
+      paddingHorizontal: spacing.sm,
+      paddingVertical: spacing.xs / 2,
+      alignSelf: 'flex-start',
+    },
+    text: {
+      fontSize: fontSize.bodySm,
+      fontFamily: typography.bodyMedium.fontFamily,
+      fontWeight: typography.bodyMedium.fontWeight,
+    },
+    neutral: { backgroundColor: colors.border },
+    textNeutral: { color: colors.textSecondary },
+    expired: { backgroundColor: colors.dangerDark },
+    today: { backgroundColor: colors.danger },
+    textOnDark: { color: colors.white },
+    soon: { backgroundColor: colors.warningTint },
+    week: { backgroundColor: colors.warningTint },
+    textWarning: { color: colors.warningDark },
+    safe: { backgroundColor: colors.primaryTint },
+    textSafe: { color: colors.primaryDark },
+  });
+}

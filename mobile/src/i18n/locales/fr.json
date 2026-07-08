@@ -285,7 +285,9 @@
     "sectionApp": "Application",
     "languageLabel": "Langue",
     "themeLabel": "Thème",
-    "themeValuePlaceholder": "Clair (v1)",
+    "themeSystem": "Système",
+    "themeLight": "Clair",
+    "themeDark": "Sombre",
     "logoutButton": "Se déconnecter",
     "errorLoad": "Impossible de charger les paramètres."
   },

@@ -1,5 +1,5 @@
 import { useQueryClient } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { ActivityIndicator, Alert, FlatList, StyleSheet, Text, View } from 'react-native';
 import { IconPlus, IconPackageOff } from '@tabler/icons-react-native';
 import { useTranslation } from 'react-i18next';
@@ -10,7 +10,8 @@ import { Chip } from '../../../ui/Chip';
 import { EmptyState } from '../../../ui/EmptyState';
 import { FAB } from '../../../ui/FAB';
 import { TextField } from '../../../ui/TextField';
-import { colors, spacing } from '../../../theme/theme';
+import { spacing, type ThemeColors } from '../../../theme/theme';
+import { useTheme } from '../../../theme/ThemeContext';
 import { useLocationsQuery } from '../hooks/useLocationsQuery';
 import { INVENTORY_ITEMS_QUERY_KEY, useInventoryItemsQuery } from '../hooks/useInventoryItemsQuery';
 import { SHOPPING_ITEMS_QUERY_KEY } from '../../shopping/hooks/useShoppingItemsQuery';
@@ -27,6 +28,8 @@ const ALL_LOCATIONS = null;
 
 export function PantryScreen({ navigation }: PantryStackScreenProps<'Pantry'>) {
   const { t } = useTranslation();
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const homeId = useHomeStore((state) => state.selectedHomeId) as string;
   const queryClient = useQueryClient();
   const [selectedLocationId, setSelectedLocationId] = useState<string | null>(ALL_LOCATIONS);
@@ -158,22 +161,24 @@ export function PantryScreen({ navigation }: PantryStackScreenProps<'Pantry'>) {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.background },
-  searchContainer: { paddingHorizontal: spacing.lg, paddingTop: spacing.md },
-  tabsRow: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    paddingHorizontal: spacing.lg,
-    paddingTop: spacing.sm,
-    gap: spacing.sm,
-  },
-  centered: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: spacing.xl },
-  error: { color: colors.dangerDark },
-  list: { paddingHorizontal: spacing.lg },
-  barcodeButton: {
-    position: 'absolute',
-    right: spacing.lg,
-    bottom: 88,
-  },
-});
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
+    container: { flex: 1, backgroundColor: colors.background },
+    searchContainer: { paddingHorizontal: spacing.lg, paddingTop: spacing.md },
+    tabsRow: {
+      flexDirection: 'row',
+      flexWrap: 'wrap',
+      paddingHorizontal: spacing.lg,
+      paddingTop: spacing.sm,
+      gap: spacing.sm,
+    },
+    centered: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: spacing.xl },
+    error: { color: colors.dangerDark },
+    list: { paddingHorizontal: spacing.lg },
+    barcodeButton: {
+      position: 'absolute',
+      right: spacing.lg,
+      bottom: 88,
+    },
+  });
+}

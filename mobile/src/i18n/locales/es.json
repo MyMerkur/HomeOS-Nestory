@@ -285,7 +285,9 @@
     "sectionApp": "App",
     "languageLabel": "Idioma",
     "themeLabel": "Tema",
-    "themeValuePlaceholder": "Claro (v1)",
+    "themeSystem": "Sistema",
+    "themeLight": "Claro",
+    "themeDark": "Oscuro",
     "logoutButton": "Cerrar sesión",
     "errorLoad": "No se pudieron cargar los ajustes."
   },

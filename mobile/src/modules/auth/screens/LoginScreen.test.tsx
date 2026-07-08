@@ -2,6 +2,7 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react-nativ
 import { LoginScreen } from './LoginScreen';
 import { loginRequest } from '../services/authApi';
 import { useAuthStore } from '../../../store/useAuthStore';
+import { ThemeProvider } from '../../../theme/ThemeContext';
 import type { AuthStackScreenProps } from '../../../app/navigation/types';
 
 jest.mock('../services/authApi');
@@ -14,7 +15,11 @@ describe('LoginScreen', () => {
   });
 
   it('shows validation errors for empty submission', async () => {
-    render(<LoginScreen navigation={mockNavigation} route={{} as never} />);
+    render(
+      <ThemeProvider>
+        <LoginScreen navigation={mockNavigation} route={{} as never} />
+      </ThemeProvider>,
+    );
 
     fireEvent.press(screen.getByTestId('login-submit-button'));
 
@@ -29,7 +34,11 @@ describe('LoginScreen', () => {
       refreshToken: 'refresh',
     });
 
-    render(<LoginScreen navigation={mockNavigation} route={{} as never} />);
+    render(
+      <ThemeProvider>
+        <LoginScreen navigation={mockNavigation} route={{} as never} />
+      </ThemeProvider>,
+    );
 
     fireEvent.changeText(screen.getByLabelText('Email'), 'test@example.com');
     fireEvent.changeText(screen.getByLabelText('Password'), 'Min8Chars!');

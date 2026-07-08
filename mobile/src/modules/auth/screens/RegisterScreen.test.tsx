@@ -2,6 +2,7 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react-nativ
 import { RegisterScreen } from './RegisterScreen';
 import { registerRequest } from '../services/authApi';
 import { useAuthStore } from '../../../store/useAuthStore';
+import { ThemeProvider } from '../../../theme/ThemeContext';
 import type { AuthStackScreenProps } from '../../../app/navigation/types';
 
 jest.mock('../services/authApi');
@@ -16,7 +17,11 @@ describe('RegisterScreen', () => {
   });
 
   it('shows validation errors for an invalid form', async () => {
-    render(<RegisterScreen navigation={mockNavigation} route={{} as never} />);
+    render(
+      <ThemeProvider>
+        <RegisterScreen navigation={mockNavigation} route={{} as never} />
+      </ThemeProvider>,
+    );
 
     fireEvent.changeText(screen.getByLabelText('Full name'), 'A');
     fireEvent.changeText(screen.getByLabelText('Password (at least 8 characters)'), '123');
@@ -34,7 +39,11 @@ describe('RegisterScreen', () => {
       refreshToken: 'refresh',
     });
 
-    render(<RegisterScreen navigation={mockNavigation} route={{} as never} />);
+    render(
+      <ThemeProvider>
+        <RegisterScreen navigation={mockNavigation} route={{} as never} />
+      </ThemeProvider>,
+    );
 
     fireEvent.changeText(screen.getByLabelText('Full name'), 'Dogukan');
     fireEvent.changeText(screen.getByLabelText('Email'), 'dogukan@example.com');

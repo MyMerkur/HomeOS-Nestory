@@ -3,6 +3,7 @@ import { fireEvent, render, screen } from '@testing-library/react-native';
 import { RecipesScreen } from './RecipesScreen';
 import { getSavedRecipes, getSuggestions } from '../services/recipeApi';
 import { useHomeStore } from '../../../store/useHomeStore';
+import { ThemeProvider } from '../../../theme/ThemeContext';
 import type { RecipesStackScreenProps } from '../../../app/navigation/types';
 
 jest.mock('../services/recipeApi');
@@ -42,9 +43,11 @@ const mockSavedRecipes = [
 function renderScreen() {
   const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   return render(
-    <QueryClientProvider client={queryClient}>
-      <RecipesScreen navigation={mockNavigation} route={{} as never} />
-    </QueryClientProvider>,
+    <ThemeProvider>
+      <QueryClientProvider client={queryClient}>
+        <RecipesScreen navigation={mockNavigation} route={{} as never} />
+      </QueryClientProvider>
+    </ThemeProvider>,
   );
 }
 

@@ -1,5 +1,5 @@
 import { useQueryClient } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ActivityIndicator, FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import { IconCheck, IconShoppingCartOff, IconTrash } from '@tabler/icons-react-native';
@@ -7,7 +7,8 @@ import { useHomeStore } from '../../../store/useHomeStore';
 import { Button } from '../../../ui/Button';
 import { EmptyState } from '../../../ui/EmptyState';
 import { TextField } from '../../../ui/TextField';
-import { colors, fontSize, radius, spacing, typography } from '../../../theme/theme';
+import { fontSize, radius, spacing, typography, type ThemeColors } from '../../../theme/theme';
+import { useTheme } from '../../../theme/ThemeContext';
 import { useShoppingItemsQuery, SHOPPING_ITEMS_QUERY_KEY } from '../hooks/useShoppingItemsQuery';
 import {
   addShoppingItem,
@@ -18,15 +19,18 @@ import {
 
 function ShoppingRow({
   item,
+  styles,
   onToggle,
   onDelete,
 }: {
   item: ShoppingItem;
+  styles: ReturnType<typeof createStyles>;
   onToggle: () => void;
   onDelete: () => void;
 }) {
   const isChecked = item.status === 'checked';
   const { t } = useTranslation();
+  const { colors } = useTheme();
 
   return (
     <View style={styles.row}>
@@ -53,6 +57,8 @@ function ShoppingRow({
 
 export function ShoppingScreen() {
   const { t } = useTranslation();
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const homeId = useHomeStore((state) => state.selectedHomeId) as string;
   const queryClient = useQueryClient();
   const { data: items, isLoading, isError } = useShoppingItemsQuery();
@@ -134,6 +140,7 @@ export function ShoppingScreen() {
           renderItem={({ item }) => (
             <ShoppingRow
               item={item}
+              styles={styles}
               onToggle={() => handleToggle(item.id)}
               onDelete={() => handleDelete(item.id)}
             />
@@ -144,44 +151,46 @@ export function ShoppingScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: colors.background },
-  addRow: { flexDirection: 'row', padding: spacing.lg, gap: spacing.sm, alignItems: 'flex-end' },
-  addInput: { flex: 1 },
-  centered: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: spacing.xl },
-  error: {
-    fontSize: fontSize.bodyMd,
-    fontFamily: typography.body.fontFamily,
-    color: colors.textSecondary,
-  },
-  list: { paddingHorizontal: spacing.lg },
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: spacing.sm,
-    minHeight: 44,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.border,
-  },
-  rowMain: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: spacing.md },
-  checkbox: {
-    width: 22,
-    height: 22,
-    borderRadius: radius.pill,
-    borderWidth: 2,
-    borderColor: colors.primary,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  checkboxChecked: { backgroundColor: colors.primary },
-  rowText: {
-    fontSize: fontSize.bodyLg,
-    fontFamily: typography.body.fontFamily,
-    color: colors.textPrimary,
-  },
-  rowTextChecked: {
-    color: colors.textMuted,
-    textDecorationLine: 'line-through',
-  },
-});
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
+    container: { flex: 1, backgroundColor: colors.background },
+    addRow: { flexDirection: 'row', padding: spacing.lg, gap: spacing.sm, alignItems: 'flex-end' },
+    addInput: { flex: 1 },
+    centered: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: spacing.xl },
+    error: {
+      fontSize: fontSize.bodyMd,
+      fontFamily: typography.body.fontFamily,
+      color: colors.textSecondary,
+    },
+    list: { paddingHorizontal: spacing.lg },
+    row: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingVertical: spacing.sm,
+      minHeight: 44,
+      borderBottomWidth: 1,
+      borderBottomColor: colors.border,
+    },
+    rowMain: { flex: 1, flexDirection: 'row', alignItems: 'center', gap: spacing.md },
+    checkbox: {
+      width: 22,
+      height: 22,
+      borderRadius: radius.pill,
+      borderWidth: 2,
+      borderColor: colors.primary,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    checkboxChecked: { backgroundColor: colors.primary },
+    rowText: {
+      fontSize: fontSize.bodyLg,
+      fontFamily: typography.body.fontFamily,
+      color: colors.textPrimary,
+    },
+    rowTextChecked: {
+      color: colors.textMuted,
+      textDecorationLine: 'line-through',
+    },
+  });
+}

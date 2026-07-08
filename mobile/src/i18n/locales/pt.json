@@ -285,7 +285,9 @@
     "sectionApp": "Aplicação",
     "languageLabel": "Idioma",
     "themeLabel": "Tema",
-    "themeValuePlaceholder": "Claro (v1)",
+    "themeSystem": "Sistema",
+    "themeLight": "Claro",
+    "themeDark": "Escuro",
     "logoutButton": "Terminar sessão",
     "errorLoad": "Não foi possível carregar as definições."
   },

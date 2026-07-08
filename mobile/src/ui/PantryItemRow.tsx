@@ -1,6 +1,8 @@
+import { useMemo } from 'react';
 import { Pressable, StyleSheet, Text, View } from 'react-native';
 import { IconChevronRight } from '@tabler/icons-react-native';
-import { colors, fontSize, spacing, typography } from '../theme/theme';
+import { fontSize, spacing, typography, type ThemeColors } from '../theme/theme';
+import { useTheme } from '../theme/ThemeContext';
 import { FreshnessRing } from './FreshnessRing';
 
 type Props = {
@@ -20,6 +22,9 @@ export function PantryItemRow({
   onLongPress,
   testID,
 }: Props) {
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
+
   return (
     <Pressable
       testID={testID}
@@ -46,34 +51,36 @@ export function PantryItemRow({
   );
 }
 
-const styles = StyleSheet.create({
-  row: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: spacing.md,
-    paddingVertical: spacing.sm,
-    minHeight: 44,
-  },
-  pressed: {
-    opacity: 0.7,
-  },
-  ringPlaceholder: {
-    width: 28,
-    height: 28,
-  },
-  textContainer: {
-    flex: 1,
-    gap: 2,
-  },
-  name: {
-    fontSize: fontSize.bodyMd,
-    fontFamily: typography.bodyMedium.fontFamily,
-    fontWeight: typography.bodyMedium.fontWeight,
-    color: colors.textPrimary,
-  },
-  subtitle: {
-    fontSize: fontSize.bodySm,
-    fontFamily: typography.caption.fontFamily,
-    color: colors.textSecondary,
-  },
-});
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
+    row: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      gap: spacing.md,
+      paddingVertical: spacing.sm,
+      minHeight: 44,
+    },
+    pressed: {
+      opacity: 0.7,
+    },
+    ringPlaceholder: {
+      width: 28,
+      height: 28,
+    },
+    textContainer: {
+      flex: 1,
+      gap: 2,
+    },
+    name: {
+      fontSize: fontSize.bodyMd,
+      fontFamily: typography.bodyMedium.fontFamily,
+      fontWeight: typography.bodyMedium.fontWeight,
+      color: colors.textPrimary,
+    },
+    subtitle: {
+      fontSize: fontSize.bodySm,
+      fontFamily: typography.caption.fontFamily,
+      color: colors.textSecondary,
+    },
+  });
+}

@@ -52,3 +52,10 @@ export async function updateLanguage(language: string): Promise<UserProfile> {
   });
   return data.data.user;
 }
+
+export async function updateTheme(theme: 'light' | 'dark' | 'system'): Promise<UserProfile> {
+  const { data } = await apiClient.patch<ApiEnvelope<{ user: UserProfile }>>('/users/me/settings', {
+    theme,
+  });
+  return data.data.user;
+}

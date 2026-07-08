@@ -1,5 +1,7 @@
+import { useMemo } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, Text } from 'react-native';
-import { colors, fontSize, radius, spacing, typography } from '../theme/theme';
+import { fontSize, radius, spacing, typography, type ThemeColors } from '../theme/theme';
+import { useTheme } from '../theme/ThemeContext';
 
 type Variant = 'primary' | 'secondary' | 'outline' | 'warningOutline';
 
@@ -20,6 +22,8 @@ export function Button({
   loading = false,
   testID,
 }: Props) {
+  const { colors } = useTheme();
+  const { styles, variantStyles, labelColor } = useMemo(() => createStyles(colors), [colors]);
   const isDisabled = disabled || loading;
 
   return (
@@ -47,50 +51,54 @@ export function Button({
   );
 }
 
-const styles = StyleSheet.create({
-  base: {
-    minHeight: 44,
-    borderRadius: radius.md,
-    alignItems: 'center',
-    justifyContent: 'center',
-    paddingHorizontal: spacing.lg,
-    paddingVertical: spacing.sm,
-  },
-  pressed: {
-    opacity: 0.85,
-  },
-  disabled: {
-    opacity: 0.5,
-  },
-  label: {
-    fontSize: fontSize.bodyLg,
-    fontFamily: typography.bodyMedium.fontFamily,
-    fontWeight: typography.bodyMedium.fontWeight,
-  },
-});
+function createStyles(colors: ThemeColors) {
+  const styles = StyleSheet.create({
+    base: {
+      minHeight: 44,
+      borderRadius: radius.md,
+      alignItems: 'center',
+      justifyContent: 'center',
+      paddingHorizontal: spacing.lg,
+      paddingVertical: spacing.sm,
+    },
+    pressed: {
+      opacity: 0.85,
+    },
+    disabled: {
+      opacity: 0.5,
+    },
+    label: {
+      fontSize: fontSize.bodyLg,
+      fontFamily: typography.bodyMedium.fontFamily,
+      fontWeight: typography.bodyMedium.fontWeight,
+    },
+  });
 
-const labelColor: Record<Variant, string> = {
-  primary: colors.white,
-  secondary: colors.primary,
-  outline: colors.primary,
-  warningOutline: colors.warningDark,
-};
+  const variantStyles = StyleSheet.create({
+    primary: {
+      backgroundColor: colors.primary,
+    },
+    secondary: {
+      backgroundColor: colors.primaryTint,
+    },
+    outline: {
+      backgroundColor: 'transparent',
+      borderWidth: 1,
+      borderColor: colors.primary,
+    },
+    warningOutline: {
+      backgroundColor: 'transparent',
+      borderWidth: 1,
+      borderColor: colors.warning,
+    },
+  });
 
-const variantStyles = StyleSheet.create({
-  primary: {
-    backgroundColor: colors.primary,
-  },
-  secondary: {
-    backgroundColor: colors.primaryTint,
-  },
-  outline: {
-    backgroundColor: 'transparent',
-    borderWidth: 1,
-    borderColor: colors.primary,
-  },
-  warningOutline: {
-    backgroundColor: 'transparent',
-    borderWidth: 1,
-    borderColor: colors.warning,
-  },
-});
+  const labelColor: Record<Variant, string> = {
+    primary: colors.white,
+    secondary: colors.primary,
+    outline: colors.primary,
+    warningOutline: colors.warningDark,
+  };
+
+  return { styles, variantStyles, labelColor };
+}

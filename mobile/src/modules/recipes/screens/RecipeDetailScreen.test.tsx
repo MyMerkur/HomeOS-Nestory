@@ -3,6 +3,7 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react-nativ
 import { RecipeDetailScreen } from './RecipeDetailScreen';
 import { saveRecipe, unsaveRecipe } from '../services/recipeApi';
 import { useHomeStore } from '../../../store/useHomeStore';
+import { ThemeProvider } from '../../../theme/ThemeContext';
 import type { RecipesStackScreenProps } from '../../../app/navigation/types';
 
 jest.mock('../services/recipeApi');
@@ -30,14 +31,16 @@ const recipe = {
 function renderScreen(overrides: Partial<typeof recipe> = {}) {
   const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   return render(
-    <QueryClientProvider client={queryClient}>
-      <RecipeDetailScreen
-        navigation={mockNavigation}
-        route={
-          { params: { recipe: { ...recipe, ...overrides } } } as RecipesStackScreenProps<'RecipeDetail'>['route']
-        }
-      />
-    </QueryClientProvider>,
+    <ThemeProvider>
+      <QueryClientProvider client={queryClient}>
+        <RecipeDetailScreen
+          navigation={mockNavigation}
+          route={
+            { params: { recipe: { ...recipe, ...overrides } } } as RecipesStackScreenProps<'RecipeDetail'>['route']
+          }
+        />
+      </QueryClientProvider>
+    </ThemeProvider>,
   );
 }
 

@@ -1,7 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Controller, useForm, useWatch } from 'react-hook-form';
 import {
   ActivityIndicator,
@@ -18,7 +18,8 @@ import { useHomeStore } from '../../../store/useHomeStore';
 import { Button } from '../../../ui/Button';
 import { Chip } from '../../../ui/Chip';
 import { TextField } from '../../../ui/TextField';
-import { colors, fontSize, spacing, typography } from '../../../theme/theme';
+import { fontSize, spacing, typography, type ThemeColors } from '../../../theme/theme';
+import { useTheme } from '../../../theme/ThemeContext';
 import { CATEGORIES, UNITS } from '../constants';
 import { useLocationsQuery } from '../hooks/useLocationsQuery';
 import { INVENTORY_ITEMS_QUERY_KEY } from '../hooks/useInventoryItemsQuery';
@@ -30,6 +31,8 @@ import type { PantryStackScreenProps } from '../../../app/navigation/types';
 
 export function ItemFormScreen({ navigation, route }: PantryStackScreenProps<'ItemForm'>) {
   const { t, i18n } = useTranslation();
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const itemId = route.params?.itemId;
   const initialBarcode = route.params?.initialBarcode;
   const isEditMode = !!itemId;
@@ -425,37 +428,39 @@ export function ItemFormScreen({ navigation, route }: PantryStackScreenProps<'It
   );
 }
 
-const styles = StyleSheet.create({
-  container: { padding: spacing.lg, gap: spacing.md, backgroundColor: colors.background },
-  centered: { flex: 1, alignItems: 'center', justifyContent: 'center' },
-  label: {
-    fontSize: fontSize.bodyMd,
-    fontFamily: typography.bodyMedium.fontFamily,
-    fontWeight: typography.bodyMedium.fontWeight,
-    color: colors.textPrimary,
-  },
-  error: {
-    fontSize: fontSize.bodySm,
-    fontFamily: typography.caption.fontFamily,
-    color: colors.dangerDark,
-  },
-  row: { flexDirection: 'row', gap: spacing.sm, alignItems: 'flex-end' },
-  rowInput: { flex: 1 },
-  dateButton: {
-    flex: 1,
-    minHeight: 44,
-    borderWidth: 1,
-    borderColor: colors.borderStrong,
-    borderRadius: 12,
-    paddingHorizontal: spacing.md,
-    justifyContent: 'center',
-    backgroundColor: colors.surface,
-  },
-  dateButtonText: {
-    fontSize: fontSize.bodyLg,
-    fontFamily: typography.body.fontFamily,
-    color: colors.textPrimary,
-  },
-  chipsRow: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
-  submitButton: { marginTop: spacing.lg, marginBottom: spacing.xxl },
-});
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
+    container: { padding: spacing.lg, gap: spacing.md, backgroundColor: colors.background },
+    centered: { flex: 1, alignItems: 'center', justifyContent: 'center' },
+    label: {
+      fontSize: fontSize.bodyMd,
+      fontFamily: typography.bodyMedium.fontFamily,
+      fontWeight: typography.bodyMedium.fontWeight,
+      color: colors.textPrimary,
+    },
+    error: {
+      fontSize: fontSize.bodySm,
+      fontFamily: typography.caption.fontFamily,
+      color: colors.dangerDark,
+    },
+    row: { flexDirection: 'row', gap: spacing.sm, alignItems: 'flex-end' },
+    rowInput: { flex: 1 },
+    dateButton: {
+      flex: 1,
+      minHeight: 44,
+      borderWidth: 1,
+      borderColor: colors.borderStrong,
+      borderRadius: 12,
+      paddingHorizontal: spacing.md,
+      justifyContent: 'center',
+      backgroundColor: colors.surface,
+    },
+    dateButtonText: {
+      fontSize: fontSize.bodyLg,
+      fontFamily: typography.body.fontFamily,
+      color: colors.textPrimary,
+    },
+    chipsRow: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
+    submitButton: { marginTop: spacing.lg, marginBottom: spacing.xxl },
+  });
+}

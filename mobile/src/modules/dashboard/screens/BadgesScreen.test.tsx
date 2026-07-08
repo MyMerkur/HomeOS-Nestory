@@ -3,6 +3,7 @@ import { render, screen } from '@testing-library/react-native';
 import { BadgesScreen } from './BadgesScreen';
 import { getBadges } from '../services/badgeApi';
 import { useHomeStore } from '../../../store/useHomeStore';
+import { ThemeProvider } from '../../../theme/ThemeContext';
 
 jest.mock('../services/badgeApi');
 
@@ -28,9 +29,11 @@ const mockBadges = [
 function renderScreen() {
   const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   return render(
-    <QueryClientProvider client={queryClient}>
-      <BadgesScreen />
-    </QueryClientProvider>,
+    <ThemeProvider>
+      <QueryClientProvider client={queryClient}>
+        <BadgesScreen />
+      </QueryClientProvider>
+    </ThemeProvider>,
   );
 }
 

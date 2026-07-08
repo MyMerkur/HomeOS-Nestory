@@ -11,6 +11,7 @@ import {
 } from '../services/assetApi';
 import { captureImage } from '../../../services/cameraCapture';
 import { useHomeStore } from '../../../store/useHomeStore';
+import { ThemeProvider } from '../../../theme/ThemeContext';
 import type { DashboardStackScreenProps } from '../../../app/navigation/types';
 
 jest.mock('../services/assetApi');
@@ -26,12 +27,14 @@ const mockNavigation = {
 function renderScreen(assetId?: string) {
   const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   return render(
-    <QueryClientProvider client={queryClient}>
-      <AssetFormScreen
-        navigation={mockNavigation}
-        route={{ params: { assetId } } as DashboardStackScreenProps<'AssetForm'>['route']}
-      />
-    </QueryClientProvider>,
+    <ThemeProvider>
+      <QueryClientProvider client={queryClient}>
+        <AssetFormScreen
+          navigation={mockNavigation}
+          route={{ params: { assetId } } as DashboardStackScreenProps<'AssetForm'>['route']}
+        />
+      </QueryClientProvider>
+    </ThemeProvider>,
   );
 }
 

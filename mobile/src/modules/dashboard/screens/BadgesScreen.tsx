@@ -1,11 +1,13 @@
+import { useMemo } from 'react';
 import { ActivityIndicator, FlatList, StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { Card } from '../../../ui/Card';
-import { colors, fontSize, spacing, typography } from '../../../theme/theme';
+import { fontSize, spacing, typography, type ThemeColors } from '../../../theme/theme';
+import { useTheme } from '../../../theme/ThemeContext';
 import { useBadgesQuery } from '../hooks/useBadgesQuery';
 import type { Badge } from '../services/badgeApi';
 
-function BadgeCard({ badge }: { badge: Badge }) {
+function BadgeCard({ badge, styles }: { badge: Badge; styles: ReturnType<typeof createStyles> }) {
   return (
     <Card tint={badge.earned ? 'primary' : 'default'} style={styles.card}>
       <View style={styles.info}>
@@ -24,6 +26,8 @@ function BadgeCard({ badge }: { badge: Badge }) {
 
 export function BadgesScreen() {
   const { t } = useTranslation();
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const { data: badges, isLoading, isError } = useBadgesQuery();
 
   if (isLoading) {
@@ -47,37 +51,39 @@ export function BadgesScreen() {
       data={badges}
       keyExtractor={(badge) => badge.id}
       contentContainerStyle={styles.list}
-      renderItem={({ item }) => <BadgeCard badge={item} />}
+      renderItem={({ item }) => <BadgeCard badge={item} styles={styles} />}
     />
   );
 }
 
-const styles = StyleSheet.create({
-  centered: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: spacing.xl },
-  error: {
-    fontSize: fontSize.bodyMd,
-    fontFamily: typography.body.fontFamily,
-    color: colors.textSecondary,
-  },
-  list: { padding: spacing.lg, gap: spacing.sm },
-  card: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: spacing.sm },
-  info: { flex: 1, gap: 2 },
-  name: {
-    fontSize: fontSize.bodyMd,
-    fontFamily: typography.bodyMedium.fontFamily,
-    fontWeight: typography.bodyMedium.fontWeight,
-    color: colors.textMuted,
-  },
-  nameEarned: { color: colors.primaryDark },
-  description: {
-    fontSize: fontSize.bodySm,
-    fontFamily: typography.caption.fontFamily,
-    color: colors.textSecondary,
-  },
-  progress: {
-    fontSize: fontSize.bodySm,
-    fontFamily: typography.bodyMedium.fontFamily,
-    fontWeight: typography.bodyMedium.fontWeight,
-    color: colors.textPrimary,
-  },
-});
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
+    centered: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: spacing.xl },
+    error: {
+      fontSize: fontSize.bodyMd,
+      fontFamily: typography.body.fontFamily,
+      color: colors.textSecondary,
+    },
+    list: { padding: spacing.lg, gap: spacing.sm },
+    card: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: spacing.sm },
+    info: { flex: 1, gap: 2 },
+    name: {
+      fontSize: fontSize.bodyMd,
+      fontFamily: typography.bodyMedium.fontFamily,
+      fontWeight: typography.bodyMedium.fontWeight,
+      color: colors.textMuted,
+    },
+    nameEarned: { color: colors.primaryDark },
+    description: {
+      fontSize: fontSize.bodySm,
+      fontFamily: typography.caption.fontFamily,
+      color: colors.textSecondary,
+    },
+    progress: {
+      fontSize: fontSize.bodySm,
+      fontFamily: typography.bodyMedium.fontFamily,
+      fontWeight: typography.bodyMedium.fontWeight,
+      color: colors.textPrimary,
+    },
+  });
+}

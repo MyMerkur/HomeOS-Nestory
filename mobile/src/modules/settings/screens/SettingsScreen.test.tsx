@@ -7,6 +7,7 @@ import {
   getProfile,
   updateNotificationPreferences,
   updateProfile,
+  updateTheme,
   type UserProfile,
 } from '../services/settingsApi';
 import { listHomesRequest } from '../../home/services/homeApi';
@@ -14,6 +15,7 @@ import { leaveHome, updateHomeName } from '../../family/services/familyApi';
 import { logoutRequest } from '../../auth/services/authApi';
 import { useHomeStore } from '../../../store/useHomeStore';
 import { useAuthStore } from '../../../store/useAuthStore';
+import { ThemeProvider } from '../../../theme/ThemeContext';
 import * as secureStorage from '../../../services/secureStorage';
 
 jest.mock('../services/settingsApi');
@@ -49,9 +51,11 @@ const OWNER_HOME = {
 function renderScreen() {
   const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   return render(
-    <QueryClientProvider client={queryClient}>
-      <SettingsScreen />
-    </QueryClientProvider>,
+    <ThemeProvider>
+      <QueryClientProvider client={queryClient}>
+        <SettingsScreen />
+      </QueryClientProvider>
+    </ThemeProvider>,
   );
 }
 
@@ -139,6 +143,16 @@ describe('SettingsScreen', () => {
     fireEvent.press(screen.getByText('Save home name'));
 
     await waitFor(() => expect(updateHomeName).toHaveBeenCalledWith('home-1', 'Yeni İsim'));
+  });
+
+  it('updates the theme when a segmented option is pressed', async () => {
+    (updateTheme as jest.Mock).mockResolvedValue({ ...PROFILE, settings: { ...PROFILE.settings, theme: 'dark' } });
+    renderScreen();
+    await screen.findByTestId('theme-option-dark');
+
+    fireEvent.press(screen.getByTestId('theme-option-dark'));
+
+    await waitFor(() => expect(updateTheme).toHaveBeenCalledWith('dark'));
   });
 
   it('logs out via the server endpoint and clears the local session', async () => {

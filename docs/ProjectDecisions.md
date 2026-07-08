@@ -526,3 +526,54 @@ navigasyon başlıkları da tema fontuna taşındı
   seçici) ele alınacak. Mobile: lint temiz, `tsc --noEmit` sıfır hata,
   33 suite / 145 test yeşil (yeni `ThemeContext.test.tsx`,
   `themeStorage.test.ts` dahil). Backend: 16 suite / 85 test yeşil.
+
+---
+
+## Decision: Dark Mode ekran/bileşen migrasyonu tamamlandı (Sprint 14.2)
+
+- **Date**: 2026-07-08
+- **Status**: Accepted
+- **Context**: Sprint 14.1'de kurulan tema altyapısını (`ThemeProvider`/
+  `useTheme()`, `lightColors`/`darkColors`) gerçek ekranlara bağlamak için
+  `ui/` altındaki 10 bileşen ve 18 ekranın tamamındaki statik
+  `StyleSheet.create` kullanımının reaktif `createStyles(colors)` desenine
+  geçirilmesi gerekiyordu. i18n migrasyonunda (Sprint 13.2) kanıtlanan
+  paralel ajan yaklaşımı burada da kullanıldı — desen önce 3 dosyada
+  (`Button.tsx`, `Card.tsx`, `DashboardScreen.tsx`) kanıtlandı, sonra 6
+  paralel arka plan ajanına (modül bazlı, dosya çakışması olmayan gruplar
+  halinde) bölündü.
+- **Decision**: Her dosyada modül seviyesindeki `const styles =
+  StyleSheet.create({...})`, `function createStyles(colors: ThemeColors)
+  { return StyleSheet.create({...}); }` fonksiyonuna dönüştürüldü; bileşen
+  içinde `const { colors } = useTheme(); const styles = useMemo(() =>
+  createStyles(colors), [colors]);` çağrılıyor. Birden fazla renk-bağımlı
+  stil grubu olan dosyalarda (örn. `Button.tsx`'teki `variantStyles` +
+  `labelColor`, `RecipesScreen.tsx`'teki kapsam yüzdesi renk haritası)
+  `createStyles` bir nesne döndürüp çağrı yerinde destructure ediliyor.
+  Ekran içinde tanımlı alt bileşenler (`BadgeCard`, `MedicineRow`,
+  `AssetCard`, `ShoppingRow`, `RecipeCard`, `MemberRow` gibi) artık
+  `styles`'ı prop olarak alıyor. Test dosyalarının tamamında `render(...)`
+  çağrıları en dışta `<ThemeProvider>` ile sarmalandı (mevcut
+  `QueryClientProvider` gibi sarmalayıcıların dışında, `DashboardScreen.
+  test.tsx`'teki örnek desen izlenerek). `mobile/src/theme/theme.ts`'teki
+  `freshnessColor()` artık `useTheme().colors`'ı `FreshnessRing.tsx`
+  üzerinden alıyor. `ui/` + 18 ekran dışında kalan tek dosya
+  (`modules/assets/components/WarrantyBadge.tsx`, `AssetsScreen`
+  içinde kullanılıyor) da tutarlılık için aynı şekilde dönüştürüldü.
+  `SettingsScreen.tsx`: "Tema: Açık (v1)" salt-okunur satırı,
+  `SegmentedControl` ile Sistem/Açık/Koyu seçiciye dönüştürüldü
+  (`useTheme().setMode` + yeni `settingsApi.updateTheme()` →
+  `PATCH /users/me/settings { theme }`); 8 dilin tamamına
+  `themeSystem`/`themeLight`/`themeDark` anahtarları eklendi,
+  kullanılmayan `themeValuePlaceholder` kaldırıldı. `RootNavigator.tsx`:
+  `stackHeaderScreenOptions` sabiti `useStackHeaderScreenOptions()`
+  hook'una, tab bar renkleri `MainNavigator` içinde `useTheme()`'e
+  bağlandı; `NavigationContainer`'a React Navigation'ın
+  `DefaultTheme`/`DarkTheme`'i temel alan, uygulamanın kendi renkleriyle
+  override edilmiş bir `theme` prop'u geçiriliyor (header/tab arka
+  planları dahil tam tutarlılık için).
+- **Consequences**: Bu, Sprint 14'ü (Dark Mode initiative) tamamlıyor —
+  uygulamadaki tüm ekran/bileşenler artık Ayarlar'dan seçilen Sistem/
+  Açık/Koyu temaya reaktif olarak tepki veriyor. Mobile: lint temiz,
+  `tsc --noEmit` sıfır hata, 33 suite / 143 test yeşil. Sprint 15
+  (Pull-to-Refresh, Skeleton, Toast) sıradaki adım.

@@ -1,10 +1,11 @@
-import { NavigationContainer } from '@react-navigation/native';
+import { DarkTheme, DefaultTheme, NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { IconChefHat, IconFridge, IconHome2, IconShoppingCart } from '@tabler/icons-react-native';
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import { ActivityIndicator, StyleSheet, View } from 'react-native';
-import { colors, typography } from '../../theme/theme';
+import { typography, type ThemeColors } from '../../theme/theme';
+import { useTheme } from '../../theme/ThemeContext';
 import { useAuthStore } from '../../store/useAuthStore';
 import { useHomeStore } from '../../store/useHomeStore';
 import { LoginScreen } from '../../modules/auth/screens/LoginScreen';
@@ -37,15 +38,22 @@ import type {
   ShoppingStackParamList,
 } from './types';
 
-const stackHeaderScreenOptions = {
-  headerStyle: { backgroundColor: colors.surface },
-  headerTintColor: colors.primary,
-  headerTitleStyle: {
-    fontFamily: typography.heading.fontFamily,
-    fontWeight: typography.heading.fontWeight,
-    color: colors.textPrimary,
-  },
-};
+function createStackHeaderScreenOptions(colors: ThemeColors) {
+  return {
+    headerStyle: { backgroundColor: colors.surface },
+    headerTintColor: colors.primary,
+    headerTitleStyle: {
+      fontFamily: typography.heading.fontFamily,
+      fontWeight: typography.heading.fontWeight,
+      color: colors.textPrimary,
+    },
+  };
+}
+
+function useStackHeaderScreenOptions() {
+  const { colors } = useTheme();
+  return useMemo(() => createStackHeaderScreenOptions(colors), [colors]);
+}
 
 const AuthStack = createNativeStackNavigator<AuthStackParamList>();
 const HomeSetupStack = createNativeStackNavigator<HomeSetupStackParamList>();
@@ -65,8 +73,9 @@ function AuthNavigator() {
 }
 
 function HomeSetupNavigator() {
+  const screenOptions = useStackHeaderScreenOptions();
   return (
-    <HomeSetupStack.Navigator screenOptions={stackHeaderScreenOptions}>
+    <HomeSetupStack.Navigator screenOptions={screenOptions}>
       <HomeSetupStack.Screen
         name="HomeSetupChoice"
         component={HomeSetupChoiceScreen}
@@ -87,8 +96,9 @@ function HomeSetupNavigator() {
 }
 
 function DashboardTabNavigator() {
+  const screenOptions = useStackHeaderScreenOptions();
   return (
-    <DashboardStack.Navigator screenOptions={stackHeaderScreenOptions}>
+    <DashboardStack.Navigator screenOptions={screenOptions}>
       <DashboardStack.Screen name="Dashboard" component={DashboardScreen} options={{ title: 'Özet' }} />
       <DashboardStack.Screen name="Badges" component={BadgesScreen} options={{ title: 'Rozetlerim' }} />
       <DashboardStack.Screen
@@ -105,8 +115,9 @@ function DashboardTabNavigator() {
 }
 
 function PantryTabNavigator() {
+  const screenOptions = useStackHeaderScreenOptions();
   return (
-    <PantryStack.Navigator screenOptions={stackHeaderScreenOptions}>
+    <PantryStack.Navigator screenOptions={screenOptions}>
       <PantryStack.Screen name="Pantry" component={PantryScreen} options={{ title: 'Dolap' }} />
       <PantryStack.Screen name="ItemForm" component={ItemFormScreen} />
       <PantryStack.Screen
@@ -119,16 +130,18 @@ function PantryTabNavigator() {
 }
 
 function ShoppingTabNavigator() {
+  const screenOptions = useStackHeaderScreenOptions();
   return (
-    <ShoppingStack.Navigator screenOptions={stackHeaderScreenOptions}>
+    <ShoppingStack.Navigator screenOptions={screenOptions}>
       <ShoppingStack.Screen name="Shopping" component={ShoppingScreen} options={{ title: 'Alışveriş' }} />
     </ShoppingStack.Navigator>
   );
 }
 
 function RecipesTabNavigator() {
+  const screenOptions = useStackHeaderScreenOptions();
   return (
-    <RecipesStack.Navigator screenOptions={stackHeaderScreenOptions}>
+    <RecipesStack.Navigator screenOptions={screenOptions}>
       <RecipesStack.Screen name="Recipes" component={RecipesScreen} options={{ title: 'Tarifler' }} />
       <RecipesStack.Screen name="RecipeDetail" component={RecipeDetailScreen} />
     </RecipesStack.Navigator>
@@ -157,17 +170,21 @@ function RecipesTabIcon({ color, size }: { color: string; size: number }) {
 }
 
 function MainNavigator() {
+  const { colors } = useTheme();
+  const tabScreenOptions = useMemo(
+    () => ({
+      headerShown: false,
+      tabBarActiveTintColor: colors.primary,
+      tabBarInactiveTintColor: colors.textMuted,
+      tabBarStyle: { backgroundColor: colors.surface, borderTopColor: colors.border },
+    }),
+    [colors],
+  );
+
   return (
     <>
       <NotificationSync />
-      <MainTab.Navigator
-        screenOptions={{
-          headerShown: false,
-          tabBarActiveTintColor: colors.primary,
-          tabBarInactiveTintColor: colors.textMuted,
-          tabBarStyle: { backgroundColor: colors.surface, borderTopColor: colors.border },
-        }}
-      >
+      <MainTab.Navigator screenOptions={tabScreenOptions}>
         <MainTab.Screen
           name="DashboardTab"
           component={DashboardTabNavigator}
@@ -194,9 +211,10 @@ function MainNavigator() {
 }
 
 function LoadingScreen() {
+  const { colors } = useTheme();
   return (
-    <View style={styles.loadingContainer}>
-      <ActivityIndicator />
+    <View style={[styles.loadingContainer, { backgroundColor: colors.background }]}>
+      <ActivityIndicator color={colors.primary} />
     </View>
   );
 }
@@ -226,13 +244,29 @@ function AuthenticatedNavigator() {
 export function RootNavigator() {
   const accessToken = useAuthStore((state) => state.accessToken);
   const isBootstrapping = useAuthStore((state) => state.isBootstrapping);
+  const { colors, resolvedMode } = useTheme();
+
+  const navigationTheme = useMemo(() => {
+    const base = resolvedMode === 'dark' ? DarkTheme : DefaultTheme;
+    return {
+      ...base,
+      colors: {
+        ...base.colors,
+        primary: colors.primary,
+        background: colors.background,
+        card: colors.surface,
+        text: colors.textPrimary,
+        border: colors.border,
+      },
+    };
+  }, [colors, resolvedMode]);
 
   if (isBootstrapping) {
     return <LoadingScreen />;
   }
 
   return (
-    <NavigationContainer>
+    <NavigationContainer theme={navigationTheme}>
       {accessToken ? <AuthenticatedNavigator /> : <AuthNavigator />}
     </NavigationContainer>
   );

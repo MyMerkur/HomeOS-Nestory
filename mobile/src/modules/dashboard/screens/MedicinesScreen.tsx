@@ -1,3 +1,4 @@
+import { useMemo } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { ActivityIndicator, FlatList, StyleSheet, Text, View } from 'react-native';
 import { IconPill } from '@tabler/icons-react-native';
@@ -5,7 +6,8 @@ import { useTranslation } from 'react-i18next';
 import { Button } from '../../../ui/Button';
 import { Card } from '../../../ui/Card';
 import { EmptyState } from '../../../ui/EmptyState';
-import { colors, fontSize, spacing, typography } from '../../../theme/theme';
+import { fontSize, spacing, typography, type ThemeColors } from '../../../theme/theme';
+import { useTheme } from '../../../theme/ThemeContext';
 import { useHomeStore } from '../../../store/useHomeStore';
 import { INVENTORY_ITEMS_QUERY_KEY, useInventoryItemsQuery } from '../../pantry/hooks/useInventoryItemsQuery';
 import { addToShopping, takeDose, type InventoryItem } from '../../pantry/services/pantryApi';
@@ -15,9 +17,10 @@ type MedicineRowProps = {
   item: InventoryItem;
   onTakeDose: (itemId: string) => void;
   onAddToShopping: (itemId: string) => void;
+  styles: ReturnType<typeof createStyles>;
 };
 
-function MedicineRow({ item, onTakeDose, onAddToShopping }: MedicineRowProps) {
+function MedicineRow({ item, onTakeDose, onAddToShopping, styles }: MedicineRowProps) {
   const { t } = useTranslation();
   const outOfStock = item.quantity <= 0;
 
@@ -56,6 +59,8 @@ function MedicineRow({ item, onTakeDose, onAddToShopping }: MedicineRowProps) {
 
 export function MedicinesScreen() {
   const { t } = useTranslation();
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const homeId = useHomeStore((state) => state.selectedHomeId) as string;
   const queryClient = useQueryClient();
   const { data, isLoading, isError } = useInventoryItemsQuery({
@@ -100,36 +105,43 @@ export function MedicinesScreen() {
       keyExtractor={(item) => item.id}
       contentContainerStyle={styles.list}
       renderItem={({ item }) => (
-        <MedicineRow item={item} onTakeDose={handleTakeDose} onAddToShopping={handleAddToShopping} />
+        <MedicineRow
+          item={item}
+          onTakeDose={handleTakeDose}
+          onAddToShopping={handleAddToShopping}
+          styles={styles}
+        />
       )}
     />
   );
 }
 
-const styles = StyleSheet.create({
-  centered: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: spacing.xl },
-  error: {
-    fontSize: fontSize.bodyMd,
-    fontFamily: typography.body.fontFamily,
-    color: colors.textSecondary,
-  },
-  list: { padding: spacing.lg },
-  card: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: spacing.sm },
-  info: { flex: 1, gap: 2 },
-  name: {
-    fontSize: fontSize.bodyMd,
-    fontFamily: typography.bodyMedium.fontFamily,
-    fontWeight: typography.bodyMedium.fontWeight,
-    color: colors.textPrimary,
-  },
-  meta: {
-    fontSize: fontSize.bodySm,
-    fontFamily: typography.caption.fontFamily,
-    color: colors.textSecondary,
-  },
-  doseTimes: {
-    fontSize: fontSize.caption,
-    fontFamily: typography.caption.fontFamily,
-    color: colors.textMuted,
-  },
-});
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
+    centered: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: spacing.xl },
+    error: {
+      fontSize: fontSize.bodyMd,
+      fontFamily: typography.body.fontFamily,
+      color: colors.textSecondary,
+    },
+    list: { padding: spacing.lg },
+    card: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', marginBottom: spacing.sm },
+    info: { flex: 1, gap: 2 },
+    name: {
+      fontSize: fontSize.bodyMd,
+      fontFamily: typography.bodyMedium.fontFamily,
+      fontWeight: typography.bodyMedium.fontWeight,
+      color: colors.textPrimary,
+    },
+    meta: {
+      fontSize: fontSize.bodySm,
+      fontFamily: typography.caption.fontFamily,
+      color: colors.textSecondary,
+    },
+    doseTimes: {
+      fontSize: fontSize.caption,
+      fontFamily: typography.caption.fontFamily,
+      color: colors.textMuted,
+    },
+  });
+}

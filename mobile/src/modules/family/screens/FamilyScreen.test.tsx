@@ -5,6 +5,7 @@ import { FamilyScreen } from './FamilyScreen';
 import { listMembers, regenerateInviteCode, removeMember, type Member } from '../services/familyApi';
 import { useHomeStore } from '../../../store/useHomeStore';
 import { useAuthStore } from '../../../store/useAuthStore';
+import { ThemeProvider } from '../../../theme/ThemeContext';
 
 jest.mock('../services/familyApi');
 
@@ -31,9 +32,11 @@ const MEMBER: Member = {
 function renderScreen() {
   const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   return render(
-    <QueryClientProvider client={queryClient}>
-      <FamilyScreen />
-    </QueryClientProvider>,
+    <ThemeProvider>
+      <QueryClientProvider client={queryClient}>
+        <FamilyScreen />
+      </QueryClientProvider>
+    </ThemeProvider>,
   );
 }
 

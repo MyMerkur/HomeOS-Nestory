@@ -285,7 +285,9 @@
     "sectionApp": "App",
     "languageLabel": "Sprache",
     "themeLabel": "Design",
-    "themeValuePlaceholder": "Hell (v1)",
+    "themeSystem": "System",
+    "themeLight": "Hell",
+    "themeDark": "Dunkel",
     "logoutButton": "Abmelden",
     "errorLoad": "Einstellungen konnten nicht geladen werden."
   },

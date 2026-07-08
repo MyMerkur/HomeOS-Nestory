@@ -285,7 +285,9 @@
     "sectionApp": "App",
     "languageLabel": "Language",
     "themeLabel": "Theme",
-    "themeValuePlaceholder": "Light (v1)",
+    "themeSystem": "System",
+    "themeLight": "Light",
+    "themeDark": "Dark",
     "logoutButton": "Log out",
     "errorLoad": "Couldn't load settings."
   },

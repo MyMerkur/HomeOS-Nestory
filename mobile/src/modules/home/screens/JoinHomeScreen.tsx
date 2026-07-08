@@ -1,12 +1,13 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQueryClient } from '@tanstack/react-query';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import { StyleSheet, Text, View } from 'react-native';
 import { Button } from '../../../ui/Button';
 import { TextField } from '../../../ui/TextField';
-import { colors, fontSize, spacing, typography } from '../../../theme/theme';
+import { fontSize, spacing, typography, type ThemeColors } from '../../../theme/theme';
+import { useTheme } from '../../../theme/ThemeContext';
 import { useHomeStore } from '../../../store/useHomeStore';
 import { joinHomeRequest, type HomeSummary } from '../services/homeApi';
 import { HOMES_QUERY_KEY } from '../hooks/useHomesQuery';
@@ -14,6 +15,8 @@ import { makeJoinHomeSchema, type JoinHomeFormValues } from '../schemas/homeSche
 
 export function JoinHomeScreen() {
   const { t } = useTranslation();
+  const { colors } = useTheme();
+  const styles = useMemo(() => createStyles(colors), [colors]);
   const queryClient = useQueryClient();
   const setSelectedHomeId = useHomeStore((state) => state.setSelectedHomeId);
   const [serverError, setServerError] = useState<string | null>(null);
@@ -78,24 +81,26 @@ export function JoinHomeScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: { flex: 1, justifyContent: 'center', padding: spacing.xl, backgroundColor: colors.background },
-  title: {
-    fontSize: fontSize.displayLg,
-    fontFamily: typography.display.fontFamily,
-    fontWeight: typography.display.fontWeight,
-    color: colors.textPrimary,
-    marginBottom: spacing.xxl,
-  },
-  form: { gap: spacing.md },
-  codeInput: {
-    fontSize: fontSize.displayMd,
-    letterSpacing: 4,
-    textAlign: 'center',
-  },
-  error: {
-    fontSize: fontSize.bodySm,
-    fontFamily: typography.caption.fontFamily,
-    color: colors.dangerDark,
-  },
-});
+function createStyles(colors: ThemeColors) {
+  return StyleSheet.create({
+    container: { flex: 1, justifyContent: 'center', padding: spacing.xl, backgroundColor: colors.background },
+    title: {
+      fontSize: fontSize.displayLg,
+      fontFamily: typography.display.fontFamily,
+      fontWeight: typography.display.fontWeight,
+      color: colors.textPrimary,
+      marginBottom: spacing.xxl,
+    },
+    form: { gap: spacing.md },
+    codeInput: {
+      fontSize: fontSize.displayMd,
+      letterSpacing: 4,
+      textAlign: 'center',
+    },
+    error: {
+      fontSize: fontSize.bodySm,
+      fontFamily: typography.caption.fontFamily,
+      color: colors.dangerDark,
+    },
+  });
+}
