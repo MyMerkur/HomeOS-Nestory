@@ -1,11 +1,13 @@
 import type { Request, Response } from 'express';
 import * as userService from '../services/userService';
+import { registerPushToken, removePushToken } from '../services/pushService';
 import { sendSuccess } from '../utils/apiResponse';
 import type {
   ChangePasswordInput,
   UpdateProfileInput,
   UpdateUserSettingsInput,
 } from '../validations/userValidation';
+import type { RegisterPushTokenInput } from '../validations/pushValidation';
 
 export async function getProfileHandler(req: Request, res: Response) {
   const profile = await userService.getProfile(req.userId!);
@@ -25,4 +27,15 @@ export async function changePasswordHandler(req: Request, res: Response) {
 export async function updateSettingsHandler(req: Request, res: Response) {
   const profile = await userService.updateSettings(req.userId!, req.body as UpdateUserSettingsInput);
   sendSuccess(res, { user: profile }, 'Settings updated successfully');
+}
+
+export async function registerPushTokenHandler(req: Request, res: Response) {
+  const { token, platform } = req.body as RegisterPushTokenInput;
+  await registerPushToken(req.userId!, token, platform);
+  sendSuccess(res, null, 'Push token registered successfully', 201);
+}
+
+export async function removePushTokenHandler(req: Request, res: Response) {
+  await removePushToken(req.userId!, req.params.token);
+  sendSuccess(res, null, 'Push token removed successfully');
 }

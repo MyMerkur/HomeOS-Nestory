@@ -13,6 +13,9 @@ const envSchema = z.object({
   REFRESH_TOKEN_EXPIRES_IN: z.string().default('30d'),
   CORS_ORIGIN: z.string().default('http://localhost:8081'),
   LOG_LEVEL: z.string().default('info'),
+  // Firebase Admin SDK service account JSON (as a single-line string). Optional —
+  // until it's provided, push notifications are a no-op (see pushService.ts).
+  FIREBASE_SERVICE_ACCOUNT: z.string().optional(),
 });
 
 export const env = envSchema.parse(process.env);

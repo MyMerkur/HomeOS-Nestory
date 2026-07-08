@@ -704,3 +704,49 @@ navigasyon başlıkları da tema fontuna taşındı
   `tsc --noEmit` sıfır hata, 39 suite / 169 test yeşil. Backend: 16 suite
   / 88 test yeşil. Sprint 16.2 (Push altyapısı, FCM) sıradaki adım —
   Firebase projesi/kimlik bilgileri kullanıcıdan istenecek.
+
+---
+
+## Decision: Push bildirim backend altyapısı (Sprint 16.2, backend yarısı)
+
+- **Date**: 2026-07-09
+- **Status**: Accepted
+- **Context**: Push bildirim (FCM) planın en baştan beri bilinen tek
+  bağımlılığı vardı: gerçek gönderim için bir Firebase projesi +
+  `google-services.json`/`GoogleService-Info.plist` + APNs Auth Key +
+  Admin SDK servis hesabı gerekiyor, bunlar kullanıcıdan istenecek
+  (`docs/`'da önceden not edilmişti). Ancak backend tarafındaki model/
+  servis/endpoint katmanı bu dosyalar olmadan da yazılıp gerçek
+  (mock'lanmış) testlerle doğrulanabilir.
+- **Decision**: `firebase-admin` (v13) backend'e eklendi. Yeni
+  `server/src/models/PushToken.ts` (`userId`, `token`, `platform`,
+  `userId+token` üzerinde unique index). Yeni
+  `server/src/services/pushService.ts`: `registerPushToken`/
+  `removePushToken` (basit upsert/delete) ve `sendToUser(userId,
+  {title, body, data})` — kullanıcının tüm token'larına paralel gönderim
+  yapar, Firebase'in `messaging/registration-token-not-registered` /
+  `messaging/invalid-registration-token` olarak işaretlediği token'ları
+  otomatik siler. Firebase Admin SDK, `env.ts`'e eklenen **opsiyonel**
+  `FIREBASE_SERVICE_ACCOUNT` (tek satır JSON) env değişkeni sağlanana
+  kadar **lazy başlatılmıyor** — `pushService.ts` bu değeri `env`
+  singleton'ı yerine bilinçli olarak doğrudan `process.env`'den okuyor
+  (testlerde `jest.resetModules()` gerektirmeden runtime'da açılıp
+  kapatılabilmesi için; `env.ts`'deki parse-time sabit bir modül
+  sıfırlamasında mongoose bağlantısını da koparıyordu). Değer yoksa
+  `sendToUser` sessizce no-op olur ve uyarı loglar — geri kalan uygulama
+  etkilenmez. Yeni endpoint'ler: `POST /api/users/me/push-tokens`
+  (kayıt, upsert) ve `DELETE /api/users/me/push-tokens/:token` (kaldırma,
+  idempotent). `userController.ts`/`userRoutes.ts` mevcut desene
+  (`validateBody` + `catchAsync`) uyacak şekilde genişletildi.
+- **Consequences**: Backend: lint temiz, `tsc --noEmit` sıfır hata,
+  18 suite / 99 test yeşil (yeni `pushService.test.ts`,
+  `pushRoutes.test.ts` dahil — Firebase Admin SDK `firebase-admin/app`
+  ve `firebase-admin/messaging` modülleri `jest.mock` ile taklit edildi).
+  Gerçek bir Firebase projesi/kimlik bilgisi olmadığı için gerçek push
+  gönderimi henüz doğrulanamadı. Mobile tarafı (native
+  `@react-native-firebase/app`+`messaging` kurulumu, token kaydı,
+  foreground/background gösterim) kullanıcıdan Firebase kimlik bilgileri
+  istendikten sonra ayrı bir adımda ele alınacak — bu dosyalar olmadan
+  native paketin iOS tarafını (`pod install`) kurmak `GoogleService-Info.
+  plist` eksikliğinden derleme hatasına yol açabileceği için bilinçli
+  olarak bekletiliyor.

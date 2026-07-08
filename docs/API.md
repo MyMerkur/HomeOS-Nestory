@@ -493,6 +493,25 @@ Başka bir değer zod validasyonunda `422 VALIDATION_ERROR` ile reddedilir.
 `dailyReminderEnabled` ve `dailyReminderHour` (0-23, varsayılan `9`) Sprint 16.1
 (bildirim initiative) ile eklendi.
 
+### POST /api/users/me/push-tokens
+
+```json
+{ "token": "<FCM cihaz token'ı>", "platform": "ios" }
+```
+
+`platform` yalnızca `"ios"` veya `"android"` kabul eder. Aynı `token` tekrar
+gönderilirse upsert edilir (yeni kayıt oluşmaz). `201` döner.
+
+### DELETE /api/users/me/push-tokens/:token
+
+Oturum sahibine ait belirtilen push token'ı siler (örn. logout akışında).
+Token bulunamasa da `200` döner (idempotent).
+
+Push gönderimi `server/src/services/pushService.ts`'teki `sendToUser()` ile
+yapılır — Firebase Admin SDK kimlik bilgisi (`FIREBASE_SERVICE_ACCOUNT` env
+değişkeni) ayarlanmadığı sürece bu fonksiyon sessizce no-op'tur (bkz.
+`docs/ProjectDecisions.md`, Sprint 16.2).
+
 ## Pagination
 
 ```

@@ -82,6 +82,22 @@ yazılıyor (`server/src/services/userService.ts`) — `theme` artık
 }
 ```
 
+### PushToken (`server/src/models/PushToken.ts`) ✅
+
+```
+{
+  userId: ObjectId (ref User, indexed),
+  token: string (FCM cihaz token'ı),
+  platform: 'ios' | 'android',
+  createdAt, updatedAt
+}
+```
+
+`userId+token` üzerinde unique index — aynı cihaz birden fazla kez
+kaydedilirse upsert edilir. `server/src/services/pushService.ts`,
+Firebase'in geçersiz/expired olarak işaretlediği token'ları otomatik
+temizler. Sprint 16.2 (push initiative) ile eklendi.
+
 Rotation: her `refresh` çağrısında mevcut kayıt `revokedAt` ile işaretlenir, yeni bir kayıt oluşturulur.
 
 ### Home (`server/src/models/Home.ts`) ✅
