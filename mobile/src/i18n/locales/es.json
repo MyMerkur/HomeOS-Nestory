@@ -1,0 +1,334 @@
+{
+  "common": {
+    "cancel": "Cancelar",
+    "save": "Guardar",
+    "delete": "Eliminar",
+    "retry": "Reintentar",
+    "loading": "Cargando…",
+    "languages": {
+      "en": "English",
+      "tr": "Türkçe",
+      "de": "Deutsch",
+      "fr": "Français",
+      "es": "Español",
+      "it": "Italiano",
+      "cs": "Čeština",
+      "pt": "Português"
+    }
+  },
+  "auth": {
+    "login": {
+      "wordmark": "HomeOS",
+      "tagline": "Todo lo de tu casa, en un solo lugar.",
+      "emailLabel": "Correo electrónico",
+      "passwordLabel": "Contraseña",
+      "submitButton": "Iniciar sesión",
+      "errorInvalidCredentials": "Correo electrónico o contraseña incorrectos.",
+      "noAccountLink": "¿No tienes una cuenta? Regístrate"
+    },
+    "register": {
+      "title": "Crear una cuenta",
+      "nameLabel": "Nombre completo",
+      "emailLabel": "Correo electrónico",
+      "passwordLabel": "Contraseña (mínimo 8 caracteres)",
+      "submitButton": "Registrarte",
+      "errorGeneric": "No se pudo crear la cuenta.",
+      "hasAccountLink": "¿Ya tienes una cuenta? Inicia sesión"
+    }
+  },
+  "onboarding": {
+    "choice": {
+      "title": "Todavía no tienes una casa",
+      "subtitle": "Crea una casa nueva o únete a una existente con un código de invitación.",
+      "createButton": "Crear una casa",
+      "joinButton": "Unirte con código de invitación"
+    },
+    "createHome": {
+      "title": "Crear una casa",
+      "nameLabel": "Nombre de la casa (p. ej. Casa, Cabaña)",
+      "submitButton": "Crear",
+      "errorGeneric": "No se pudo crear la casa, inténtalo de nuevo.",
+      "createdTitle": "Casa creada",
+      "createdSubtitle": "Comparte este código para invitar a familiares. Este código solo se muestra aquí.",
+      "continueButton": "Continuar"
+    },
+    "joinHome": {
+      "title": "Unirte con código de invitación",
+      "codeLabel": "Código de invitación",
+      "submitButton": "Unirte",
+      "errorGeneric": "Código de invitación no válido, o ya eres miembro de esta casa."
+    }
+  },
+  "dashboard": {
+    "shortcuts": {
+      "badges": "Insignias",
+      "medicines": "Medicamentos",
+      "assets": "Bienes",
+      "family": "Familia",
+      "settings": "Ajustes"
+    },
+    "summary": {
+      "today": "Hoy",
+      "in3Days": "3 días",
+      "inWeek": "Semana",
+      "total": "Total"
+    },
+    "upcomingTitle": "Próximos artículos",
+    "emptyUpcoming": "No hay artículos con fecha de caducidad próxima.",
+    "errorLoad": "No se pudo cargar el resumen."
+  },
+  "pantry": {
+    "searchPlaceholder": "Buscar artículos",
+    "tabAll": "Todos",
+    "errorLoad": "No se pudieron cargar los artículos.",
+    "emptyView": "Todavía no hay artículos en esta vista.",
+    "barcodeButton": "Código de barras",
+    "addItemA11y": "Añadir artículo",
+    "actions": {
+      "consumed": "Consumido",
+      "discarded": "Descartado",
+      "frozen": "Congelado",
+      "addToShopping": "Añadir a la lista de la compra",
+      "cancel": "Cancelar"
+    },
+    "categories": {
+      "Dairy": "Lácteos",
+      "Meat": "Carne",
+      "Vegetable": "Verdura",
+      "Fruit": "Fruta",
+      "Bakery": "Panadería",
+      "Drink": "Bebida",
+      "Frozen": "Congelados",
+      "Cleaning": "Limpieza",
+      "Medicine": "Medicamento",
+      "Other": "Otro"
+    },
+    "units": {
+      "piece": "Unidad",
+      "gram": "Gramo",
+      "kg": "Kilogramo",
+      "ml": "Mililitro",
+      "liter": "Litro",
+      "pack": "Paquete",
+      "bottle": "Botella",
+      "box": "Caja"
+    },
+    "itemForm": {
+      "titleEdit": "Editar artículo",
+      "titleAdd": "Añadir artículo",
+      "nameLabel": "Nombre del artículo",
+      "namePlaceholder": "p. ej. Leche",
+      "barcodeLabel": "Código de barras (opcional)",
+      "barcodeFieldLabel": "Código de barras",
+      "barcodePlaceholder": "Número de código de barras",
+      "scanBarcodeButton": "Escanear código de barras",
+      "locationLabel": "Ubicación",
+      "categoryLabel": "Categoría",
+      "quantityLabel": "Cantidad",
+      "unitLabel": "Unidad",
+      "doseAmountLabel": "Cantidad de dosis (opcional)",
+      "doseAmountPlaceholder": "p. ej. 1",
+      "doseTimesLabel": "Horarios de dosis (opcional)",
+      "addTimeButton": "+ Añadir hora",
+      "expiryDateLabel": "Fecha de caducidad (opcional)",
+      "selectDateButton": "Seleccionar fecha",
+      "scanExpiryButton": "Escanear fecha de caducidad",
+      "submitEdit": "Actualizar",
+      "submitAdd": "Añadir",
+      "errorSave": "No se pudo guardar el artículo, inténtalo de nuevo.",
+      "barcodeNotFoundTitle": "Código de barras no encontrado",
+      "barcodeNotFoundMessage": "No se pudo reconocer un código de barras en la foto, inténtalo de nuevo o introdúcelo manualmente.",
+      "expiryNotFoundTitle": "Fecha no encontrada",
+      "expiryNotFoundMessage": "No se pudo reconocer una fecha de caducidad en la foto, puedes introducirla manualmente."
+    },
+    "quickAdd": {
+      "scanBarcodeButton": "Escanear código de barras",
+      "newBarcodeTitle": "Código de barras nuevo",
+      "newBarcodeMessage": "Todavía no se ha añadido ningún artículo con este código de barras. Puedes ir al formulario completo para añadirlo con todos los detalles.",
+      "cancelButton": "Cancelar",
+      "goToFormButton": "Ir al formulario",
+      "quantityLabel": "Cantidad",
+      "locationLabel": "Ubicación",
+      "expiryDateLabel": "Fecha de caducidad (opcional)",
+      "notScannedLabel": "No escaneada",
+      "scanExpiryButton": "Escanear fecha de caducidad",
+      "submitButton": "Añadir rápido",
+      "errorQuantity": "La cantidad debe ser mayor que 0",
+      "errorSave": "No se pudo guardar el artículo, inténtalo de nuevo.",
+      "barcodeNotFoundTitle": "Código de barras no encontrado",
+      "barcodeNotFoundMessage": "No se pudo reconocer un código de barras en la foto, inténtalo de nuevo.",
+      "expiryNotFoundTitle": "Fecha no encontrada",
+      "expiryNotFoundMessage": "No se pudo reconocer una fecha de caducidad en la foto, puedes introducirla manualmente."
+    }
+  },
+  "shopping": {
+    "addPlaceholder": "Añadir artículo",
+    "addButton": "Añadir",
+    "errorLoad": "No se pudo cargar la lista de la compra.",
+    "emptyList": "La lista de la compra está vacía.",
+    "deleteA11y": "Eliminar {{name}}"
+  },
+  "family": {
+    "inviteButton": "Invitar",
+    "emptyMembers": "Todavía no hay miembros",
+    "errorLoad": "No se pudieron cargar los miembros.",
+    "removeButton": "Quitar",
+    "removeConfirmTitle": "¿Quitar a {{name}}?",
+    "removeConfirmCancel": "Cancelar",
+    "removeConfirmConfirm": "Quitar",
+    "shareMessage": "Código de invitación para unirte a HomeOS: {{code}}",
+    "roles": {
+      "owner": "Propietario",
+      "admin": "Administrador",
+      "member": "Miembro",
+      "viewer": "Espectador"
+    }
+  },
+  "recipes": {
+    "tabs": {
+      "suggestions": "Sugerencias",
+      "saved": "Guardadas"
+    },
+    "errorLoad": "No se pudieron cargar las recetas.",
+    "emptySuggestions": "Ninguna receta coincide actualmente con los artículos de casa.",
+    "emptySaved": "Todavía no hay recetas guardadas.",
+    "allIngredientsAvailable": "Todos los ingredientes en casa",
+    "missingIngredients_one": "Falta {{count}} ingrediente",
+    "missingIngredients_other": "Faltan {{count}} ingredientes",
+    "detail": {
+      "saveButton": "Guardar",
+      "savedButton": "Guardada ✓",
+      "coverageLabel": "Cobertura con artículos de casa: {{percent}}%",
+      "ingredientsTitle": "Ingredientes",
+      "instructionsTitle": "Instrucciones",
+      "optionalTag": " (opcional)"
+    }
+  },
+  "assets": {
+    "emptyList": "Todavía no hay bienes registrados.",
+    "errorLoad": "No se pudieron cargar los bienes.",
+    "addA11y": "Añadir bien",
+    "categories": {
+      "Electronics": "Electrónica",
+      "Appliance": "Electrodoméstico",
+      "Furniture": "Mueble",
+      "Other": "Otro"
+    },
+    "archiveAction": "Archivar",
+    "deleteAction": "Eliminar",
+    "cancelAction": "Cancelar",
+    "warranty": {
+      "none": "Sin garantía",
+      "expired": "Garantía vencida",
+      "today": "Vence hoy",
+      "daysLeft_one": "{{count}} día",
+      "daysLeft_other": "{{count}} días"
+    },
+    "form": {
+      "titleEdit": "Editar bien",
+      "titleAdd": "Añadir bien",
+      "nameLabel": "Nombre del bien",
+      "namePlaceholder": "p. ej. Televisor",
+      "categoryLabel": "Categoría",
+      "roomLabel": "Habitación (opcional)",
+      "roomPlaceholder": "p. ej. Salón",
+      "brandLabel": "Marca (opcional)",
+      "serialNumberLabel": "Número de serie (opcional)",
+      "priceLabel": "Precio (opcional)",
+      "purchaseDateLabel": "Fecha de compra (opcional)",
+      "warrantyDateLabel": "Fecha de fin de garantía (opcional)",
+      "selectDateButton": "Seleccionar fecha",
+      "receiptLabel": "Recibo / Documento de garantía (opcional)",
+      "scanReceiptButton": "Escanear recibo",
+      "receiptAddedButton": "Recibo añadido ✓",
+      "warrantyDocButton": "Añadir documento de garantía",
+      "warrantyDocAddedButton": "Documento añadido ✓",
+      "notesLabel": "Notas (opcional)",
+      "submitEdit": "Actualizar",
+      "submitAdd": "Añadir",
+      "errorSave": "No se pudo guardar el bien, inténtalo de nuevo."
+    },
+    "medicines": {
+      "outOfStock": "Sin existencias",
+      "addToShoppingButton": "Añadir a la lista de la compra",
+      "takeDoseButton": "Dosis tomada",
+      "doseTimesLabel": "Horarios: {{times}}",
+      "emptyList": "Todavía no hay medicamentos registrados.",
+      "errorLoad": "No se pudieron cargar los medicamentos."
+    }
+  },
+  "badges": {
+    "errorLoad": "No se pudieron cargar las insignias."
+  },
+  "settings": {
+    "sectionAccount": "Cuenta",
+    "nameLabel": "Nombre",
+    "saveButton": "Guardar",
+    "currentPasswordLabel": "Contraseña actual",
+    "newPasswordLabel": "Nueva contraseña",
+    "changePasswordButton": "Cambiar contraseña",
+    "passwordChangedMessage": "Contraseña cambiada",
+    "passwordErrorInvalid": "La contraseña actual es incorrecta.",
+    "sectionNotifications": "Notificaciones",
+    "notifExpiry": "Recordatorios de caducidad",
+    "notifShopping": "Actualizaciones de la compra",
+    "notifWeekly": "Resumen semanal",
+    "sectionHome": "Casa",
+    "homeNameLabel": "Nombre de la casa",
+    "saveHomeNameButton": "Guardar nombre de la casa",
+    "ownerCannotLeaveHint": "Como propietario, no puedes abandonar esta casa mientras existan otros miembros.",
+    "leaveHomeButton": "Abandonar casa",
+    "leaveHomeConfirmTitle": "¿Seguro que quieres abandonar esta casa?",
+    "leaveHomeConfirmCancel": "Cancelar",
+    "leaveHomeConfirmConfirm": "Abandonar",
+    "sectionApp": "App",
+    "languageLabel": "Idioma",
+    "themeLabel": "Tema",
+    "themeValuePlaceholder": "Claro (v1)",
+    "logoutButton": "Cerrar sesión",
+    "errorLoad": "No se pudieron cargar los ajustes."
+  },
+  "validation": {
+    "nameMin2": "Al menos 2 caracteres",
+    "emailInvalid": "Introduce un correo electrónico válido",
+    "passwordMin8": "Al menos 8 caracteres",
+    "passwordRequired": "La contraseña es obligatoria",
+    "homeNameRequired": "El nombre de la casa es obligatorio",
+    "inviteCodeRequired": "El código de invitación es obligatorio",
+    "itemNameRequired": "El nombre del artículo es obligatorio",
+    "locationRequired": "Selecciona una ubicación",
+    "categoryRequired": "Selecciona una categoría",
+    "quantityPositive": "La cantidad debe ser mayor que 0",
+    "unitRequired": "Selecciona una unidad",
+    "assetNameRequired": "El nombre del bien es obligatorio",
+    "currentPasswordRequired": "La contraseña actual es obligatoria"
+  },
+  "errors": {
+    "generic": "Algo salió mal. Inténtalo de nuevo.",
+    "ALREADY_MEMBER": "Ya eres miembro de esta casa.",
+    "ASSET_NOT_FOUND": "Bien no encontrado.",
+    "CANNOT_REMOVE_OWNER": "El propietario no se puede quitar.",
+    "EMAIL_IN_USE": "Este correo electrónico ya está en uso.",
+    "FILE_REQUIRED": "Se requiere un archivo.",
+    "HOME_NOT_FOUND": "Casa no encontrada.",
+    "INSUFFICIENT_ROLE": "No tienes permiso para hacer esto.",
+    "INVALID_CREDENTIALS": "Correo electrónico o contraseña incorrectos.",
+    "INVALID_CURRENT_PASSWORD": "La contraseña actual es incorrecta.",
+    "INVALID_INVITE_CODE": "Código de invitación no válido.",
+    "INVALID_LOCATION": "Ubicación no válida.",
+    "INVALID_REFRESH_TOKEN": "La sesión ha caducado, inicia sesión de nuevo.",
+    "INVALID_TOKEN": "La sesión ha caducado, inicia sesión de nuevo.",
+    "ITEM_NOT_FOUND": "Artículo no encontrado.",
+    "LOCATION_NOT_FOUND": "Ubicación no encontrada.",
+    "MEMBER_NOT_FOUND": "Miembro no encontrado.",
+    "NOT_A_MEDICINE": "Este artículo no es un medicamento.",
+    "NOT_A_MEMBER": "No eres miembro de esta casa.",
+    "OWNER_CANNOT_LEAVE": "Como propietario, no puedes abandonar esta casa mientras existan otros miembros.",
+    "RECIPE_NOT_FOUND": "Receta no encontrada.",
+    "SHOPPING_ITEM_NOT_FOUND": "Artículo de la compra no encontrado.",
+    "UNAUTHENTICATED": "Inicia sesión de nuevo.",
+    "UPLOAD_ERROR": "Error al subir el archivo.",
+    "USER_NOT_FOUND": "Usuario no encontrado."
+  },
+  "notifications": {}
+}

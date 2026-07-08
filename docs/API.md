@@ -481,6 +481,10 @@ Yanlış mevcut şifre `401 INVALID_CURRENT_PASSWORD` döner.
 { "language": "tr", "theme": "light", "notificationPreferences": { "expiryReminders": false } }
 ```
 
+`language` yalnızca desteklenen 8 dil kodundan birini kabul eder: `en`, `tr`,
+`de`, `fr`, `es`, `it`, `cs`, `pt` (Sprint 13, i18n initiative). Başka bir
+değer zod validasyonunda `422 VALIDATION_ERROR` ile reddedilir.
+
 `theme` v1 sınırı gereği yalnızca `"light"` kabul edilir — başka bir değer
 (`dark`/`system`) zod validasyonunda `422 VALIDATION_ERROR` ile reddedilir.
 `notificationPreferences` kısmi güncellenebilir (verilmeyen alanlar korunur).

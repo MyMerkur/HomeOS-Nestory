@@ -10,8 +10,10 @@ export const changePasswordSchema = z.object({
   newPassword: z.string().min(8),
 });
 
+export const SUPPORTED_LANGUAGES = ['en', 'tr', 'de', 'fr', 'es', 'it', 'cs', 'pt'] as const;
+
 export const updateUserSettingsSchema = z.object({
-  language: z.string().trim().min(2).max(10).optional(),
+  language: z.enum(SUPPORTED_LANGUAGES).optional(),
   theme: z.literal('light').optional(),
   notificationPreferences: z
     .object({

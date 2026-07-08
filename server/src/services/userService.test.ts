@@ -90,4 +90,13 @@ describe('userService', () => {
       weeklySummary: true,
     });
   });
+
+  it('updates the language preference without resetting untouched fields', async () => {
+    const user = await registerUser();
+
+    const updated = await userService.updateSettings(user.id, { language: 'de' });
+
+    expect(updated.settings.language).toBe('de');
+    expect(updated.settings.theme).toBe('system');
+  });
 });

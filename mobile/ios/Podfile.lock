@@ -2042,6 +2042,28 @@ PODS:
     - ReactCommon/turbomodule/core
     - ReactNativeDependencies
     - Yoga
+  - RNLocalize (3.7.0):
+    - hermes-engine
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Core
+    - React-Core-prebuilt
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-jsi
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-renderercss
+    - React-rendererdebug
+    - React-utils
+    - ReactCodegen
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - ReactNativeDependencies
+    - Yoga
   - RNMLKitBarcodeScanning (2.0.0):
     - GoogleMLKit/BarcodeScanning (= 8.0.0)
     - React
@@ -2231,6 +2253,7 @@ DEPENDENCIES:
   - ReactCommon/turbomodule/core (from `../node_modules/react-native/ReactCommon`)
   - ReactNativeDependencies (from `../node_modules/react-native/third-party-podspecs/ReactNativeDependencies.podspec`)
   - "RNDateTimePicker (from `../node_modules/@react-native-community/datetimepicker`)"
+  - RNLocalize (from `../node_modules/react-native-localize`)
   - "RNMLKitBarcodeScanning (from `../node_modules/@react-native-ml-kit/barcode-scanning`)"
   - "RNMLKitTextRecognition (from `../node_modules/@react-native-ml-kit/text-recognition`)"
   - "RNNotifee (from `../node_modules/@notifee/react-native`)"
@@ -2416,6 +2439,8 @@ EXTERNAL SOURCES:
     :podspec: "../node_modules/react-native/third-party-podspecs/ReactNativeDependencies.podspec"
   RNDateTimePicker:
     :path: "../node_modules/@react-native-community/datetimepicker"
+  RNLocalize:
+    :path: "../node_modules/react-native-localize"
   RNMLKitBarcodeScanning:
     :path: "../node_modules/@react-native-ml-kit/barcode-scanning"
   RNMLKitTextRecognition:
@@ -2525,6 +2550,7 @@ SPEC CHECKSUMS:
   ReactCommon: 4d01bfb533b93a2103329dfefc74db6a9e272888
   ReactNativeDependencies: fa0a54b3f5319ae0e3b9aff32bfee7a424b88e66
   RNDateTimePicker: c33c46d089998652b576a58ac08108db8c9af6f1
+  RNLocalize: a0dd99f2d709904a07fb826e0b748234f629af34
   RNMLKitBarcodeScanning: 41c805dbc4379aef276f55bf9705b488625b5dc8
   RNMLKitTextRecognition: 02e17c2274c9c98aeaab68be51f6921746ffc8e1
   RNNotifee: 4a6ee5c7deaf00e005050052d73ee6315dff7ec9

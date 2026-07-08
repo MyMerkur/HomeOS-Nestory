@@ -5,16 +5,25 @@ import { Controller, useForm } from 'react-hook-form';
 import { ActivityIndicator, Alert, ScrollView, StyleSheet, Switch, Text, View } from 'react-native';
 import { Button } from '../../../ui/Button';
 import { Card } from '../../../ui/Card';
+import { Chip } from '../../../ui/Chip';
 import { TextField } from '../../../ui/TextField';
 import { colors, fontSize, spacing, typography } from '../../../theme/theme';
 import { useAuthStore } from '../../../store/useAuthStore';
 import { useHomeStore } from '../../../store/useHomeStore';
 import { getStoredRefreshToken } from '../../../services/secureStorage';
+import { setStoredLanguage } from '../../../services/languageStorage';
+import i18n, { SUPPORTED_LANGUAGES, type SupportedLanguage } from '../../../i18n';
+import { LANGUAGE_NATIVE_NAMES } from '../../../i18n/languages';
 import { logoutRequest } from '../../auth/services/authApi';
 import { HOMES_QUERY_KEY, useHomesQuery } from '../../home/hooks/useHomesQuery';
 import { leaveHome, updateHomeName } from '../../family/services/familyApi';
 import { PROFILE_QUERY_KEY, useProfileQuery } from '../hooks/useProfileQuery';
-import { changePassword, updateNotificationPreferences, updateProfile } from '../services/settingsApi';
+import {
+  changePassword,
+  updateLanguage,
+  updateNotificationPreferences,
+  updateProfile,
+} from '../services/settingsApi';
 import {
   changePasswordSchema,
   homeNameSchema,
@@ -42,6 +51,7 @@ export function SettingsScreen() {
   const [isSavingHomeName, setIsSavingHomeName] = useState(false);
   const [passwordError, setPasswordError] = useState<string | null>(null);
   const [isChangingPassword, setIsChangingPassword] = useState(false);
+  const [currentLanguage, setCurrentLanguage] = useState(i18n.language as SupportedLanguage);
 
   useEffect(() => {
     if (profile) {
@@ -101,6 +111,14 @@ export function SettingsScreen() {
     value: boolean,
   ) => {
     await updateNotificationPreferences({ [key]: value });
+    await queryClient.invalidateQueries({ queryKey: [PROFILE_QUERY_KEY] });
+  };
+
+  const handleChangeLanguage = async (language: SupportedLanguage) => {
+    setCurrentLanguage(language);
+    await i18n.changeLanguage(language);
+    await setStoredLanguage(language);
+    await updateLanguage(language);
     await queryClient.invalidateQueries({ queryKey: [PROFILE_QUERY_KEY] });
   };
 
@@ -251,9 +269,17 @@ export function SettingsScreen() {
 
       <SectionTitle title="Uygulama" />
       <Card style={styles.card}>
-        <View style={styles.switchRow}>
-          <Text style={styles.switchLabel}>Dil</Text>
-          <Text style={styles.readonlyValue}>Türkçe</Text>
+        <Text style={styles.switchLabel}>Dil</Text>
+        <View style={styles.languageChipsRow}>
+          {SUPPORTED_LANGUAGES.map((language) => (
+            <Chip
+              key={language}
+              testID={`language-chip-${language}`}
+              label={LANGUAGE_NATIVE_NAMES[language]}
+              selected={currentLanguage === language}
+              onPress={() => handleChangeLanguage(language)}
+            />
+          ))}
         </View>
         <View style={styles.switchRow}>
           <Text style={styles.switchLabel}>Tema</Text>
@@ -288,6 +314,7 @@ const styles = StyleSheet.create({
     marginTop: spacing.sm,
   },
   card: { gap: spacing.md },
+  languageChipsRow: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
   switchRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   switchLabel: {
     fontSize: fontSize.bodyMd,

@@ -1,0 +1,334 @@
+{
+  "common": {
+    "cancel": "Cancel",
+    "save": "Save",
+    "delete": "Delete",
+    "retry": "Try again",
+    "loading": "Loading…",
+    "languages": {
+      "en": "English",
+      "tr": "Türkçe",
+      "de": "Deutsch",
+      "fr": "Français",
+      "es": "Español",
+      "it": "Italiano",
+      "cs": "Čeština",
+      "pt": "Português"
+    }
+  },
+  "auth": {
+    "login": {
+      "wordmark": "HomeOS",
+      "tagline": "Everything in your home, in one place.",
+      "emailLabel": "Email",
+      "passwordLabel": "Password",
+      "submitButton": "Log in",
+      "errorInvalidCredentials": "Incorrect email or password.",
+      "noAccountLink": "Don't have an account? Sign up"
+    },
+    "register": {
+      "title": "Create an account",
+      "nameLabel": "Full name",
+      "emailLabel": "Email",
+      "passwordLabel": "Password (at least 8 characters)",
+      "submitButton": "Sign up",
+      "errorGeneric": "Couldn't create account.",
+      "hasAccountLink": "Already have an account? Log in"
+    }
+  },
+  "onboarding": {
+    "choice": {
+      "title": "You don't have a home yet",
+      "subtitle": "Create a new home or join an existing one with an invite code.",
+      "createButton": "Create a home",
+      "joinButton": "Join with invite code"
+    },
+    "createHome": {
+      "title": "Create a home",
+      "nameLabel": "Home name (e.g. Home, Cottage)",
+      "submitButton": "Create",
+      "errorGeneric": "Couldn't create home, try again.",
+      "createdTitle": "Home created",
+      "createdSubtitle": "Share this code to invite family members. This code is only shown here.",
+      "continueButton": "Continue"
+    },
+    "joinHome": {
+      "title": "Join with invite code",
+      "codeLabel": "Invite code",
+      "submitButton": "Join",
+      "errorGeneric": "Invalid invite code, or you're already a member of this home."
+    }
+  },
+  "dashboard": {
+    "shortcuts": {
+      "badges": "Badges",
+      "medicines": "Medicines",
+      "assets": "Assets",
+      "family": "Family",
+      "settings": "Settings"
+    },
+    "summary": {
+      "today": "Today",
+      "in3Days": "3 days",
+      "inWeek": "Week",
+      "total": "Total"
+    },
+    "upcomingTitle": "Upcoming items",
+    "emptyUpcoming": "No items with an upcoming expiry date.",
+    "errorLoad": "Couldn't load summary."
+  },
+  "pantry": {
+    "searchPlaceholder": "Search items",
+    "tabAll": "All",
+    "errorLoad": "Couldn't load items.",
+    "emptyView": "No items in this view yet.",
+    "barcodeButton": "Barcode",
+    "addItemA11y": "Add item",
+    "actions": {
+      "consumed": "Consumed",
+      "discarded": "Discarded",
+      "frozen": "Froze it",
+      "addToShopping": "Add to shopping list",
+      "cancel": "Cancel"
+    },
+    "categories": {
+      "Dairy": "Dairy",
+      "Meat": "Meat",
+      "Vegetable": "Vegetable",
+      "Fruit": "Fruit",
+      "Bakery": "Bakery",
+      "Drink": "Drink",
+      "Frozen": "Frozen",
+      "Cleaning": "Cleaning",
+      "Medicine": "Medicine",
+      "Other": "Other"
+    },
+    "units": {
+      "piece": "Piece",
+      "gram": "Gram",
+      "kg": "Kilogram",
+      "ml": "Milliliter",
+      "liter": "Liter",
+      "pack": "Pack",
+      "bottle": "Bottle",
+      "box": "Box"
+    },
+    "itemForm": {
+      "titleEdit": "Edit item",
+      "titleAdd": "Add item",
+      "nameLabel": "Item name",
+      "namePlaceholder": "e.g. Milk",
+      "barcodeLabel": "Barcode (optional)",
+      "barcodeFieldLabel": "Barcode",
+      "barcodePlaceholder": "Barcode number",
+      "scanBarcodeButton": "Scan barcode",
+      "locationLabel": "Location",
+      "categoryLabel": "Category",
+      "quantityLabel": "Quantity",
+      "unitLabel": "Unit",
+      "doseAmountLabel": "Dose amount (optional)",
+      "doseAmountPlaceholder": "e.g. 1",
+      "doseTimesLabel": "Dose times (optional)",
+      "addTimeButton": "+ Add time",
+      "expiryDateLabel": "Expiry date (optional)",
+      "selectDateButton": "Select date",
+      "scanExpiryButton": "Scan expiry date",
+      "submitEdit": "Update",
+      "submitAdd": "Add",
+      "errorSave": "Couldn't save item, try again.",
+      "barcodeNotFoundTitle": "Barcode not found",
+      "barcodeNotFoundMessage": "Couldn't recognize a barcode in the photo, try again or enter it manually.",
+      "expiryNotFoundTitle": "Date not found",
+      "expiryNotFoundMessage": "Couldn't recognize an expiry date in the photo, you can enter it manually."
+    },
+    "quickAdd": {
+      "scanBarcodeButton": "Scan barcode",
+      "newBarcodeTitle": "New barcode",
+      "newBarcodeMessage": "No item has been added with this barcode before. You can go to the full form to add it with all details.",
+      "cancelButton": "Cancel",
+      "goToFormButton": "Go to form",
+      "quantityLabel": "Quantity",
+      "locationLabel": "Location",
+      "expiryDateLabel": "Expiry date (optional)",
+      "notScannedLabel": "Not scanned",
+      "scanExpiryButton": "Scan expiry date",
+      "submitButton": "Quick add",
+      "errorQuantity": "Quantity must be greater than 0",
+      "errorSave": "Couldn't save item, try again.",
+      "barcodeNotFoundTitle": "Barcode not found",
+      "barcodeNotFoundMessage": "Couldn't recognize a barcode in the photo, try again.",
+      "expiryNotFoundTitle": "Date not found",
+      "expiryNotFoundMessage": "Couldn't recognize an expiry date in the photo, you can enter it manually."
+    }
+  },
+  "shopping": {
+    "addPlaceholder": "Add item",
+    "addButton": "Add",
+    "errorLoad": "Couldn't load shopping list.",
+    "emptyList": "Shopping list is empty.",
+    "deleteA11y": "Delete {{name}}"
+  },
+  "family": {
+    "inviteButton": "Invite",
+    "emptyMembers": "No members yet",
+    "errorLoad": "Couldn't load members.",
+    "removeButton": "Remove",
+    "removeConfirmTitle": "Remove {{name}}?",
+    "removeConfirmCancel": "Cancel",
+    "removeConfirmConfirm": "Remove",
+    "shareMessage": "Invite code to join HomeOS: {{code}}",
+    "roles": {
+      "owner": "Owner",
+      "admin": "Admin",
+      "member": "Member",
+      "viewer": "Viewer"
+    }
+  },
+  "recipes": {
+    "tabs": {
+      "suggestions": "Suggestions",
+      "saved": "Saved"
+    },
+    "errorLoad": "Couldn't load recipes.",
+    "emptySuggestions": "No recipes currently match items at home.",
+    "emptySaved": "No saved recipes yet.",
+    "allIngredientsAvailable": "All ingredients at home",
+    "missingIngredients_one": "{{count}} missing ingredient",
+    "missingIngredients_other": "{{count}} missing ingredients",
+    "detail": {
+      "saveButton": "Save",
+      "savedButton": "Saved ✓",
+      "coverageLabel": "Coverage with items at home: {{percent}}%",
+      "ingredientsTitle": "Ingredients",
+      "instructionsTitle": "Instructions",
+      "optionalTag": " (optional)"
+    }
+  },
+  "assets": {
+    "emptyList": "No assets registered yet.",
+    "errorLoad": "Couldn't load assets.",
+    "addA11y": "Add asset",
+    "categories": {
+      "Electronics": "Electronics",
+      "Appliance": "Appliance",
+      "Furniture": "Furniture",
+      "Other": "Other"
+    },
+    "archiveAction": "Archive",
+    "deleteAction": "Delete",
+    "cancelAction": "Cancel",
+    "warranty": {
+      "none": "No warranty",
+      "expired": "Warranty expired",
+      "today": "Expires today",
+      "daysLeft_one": "{{count}} day",
+      "daysLeft_other": "{{count}} days"
+    },
+    "form": {
+      "titleEdit": "Edit asset",
+      "titleAdd": "Add asset",
+      "nameLabel": "Asset name",
+      "namePlaceholder": "e.g. Television",
+      "categoryLabel": "Category",
+      "roomLabel": "Room (optional)",
+      "roomPlaceholder": "e.g. Living room",
+      "brandLabel": "Brand (optional)",
+      "serialNumberLabel": "Serial number (optional)",
+      "priceLabel": "Price (optional)",
+      "purchaseDateLabel": "Purchase date (optional)",
+      "warrantyDateLabel": "Warranty end date (optional)",
+      "selectDateButton": "Select date",
+      "receiptLabel": "Receipt / Warranty document (optional)",
+      "scanReceiptButton": "Scan receipt",
+      "receiptAddedButton": "Receipt added ✓",
+      "warrantyDocButton": "Add warranty document",
+      "warrantyDocAddedButton": "Document added ✓",
+      "notesLabel": "Notes (optional)",
+      "submitEdit": "Update",
+      "submitAdd": "Add",
+      "errorSave": "Couldn't save asset, try again."
+    },
+    "medicines": {
+      "outOfStock": "Out of stock",
+      "addToShoppingButton": "Add to shopping list",
+      "takeDoseButton": "Took dose",
+      "doseTimesLabel": "Times: {{times}}",
+      "emptyList": "No medicines registered yet.",
+      "errorLoad": "Couldn't load medicines."
+    }
+  },
+  "badges": {
+    "errorLoad": "Couldn't load badges."
+  },
+  "settings": {
+    "sectionAccount": "Account",
+    "nameLabel": "Name",
+    "saveButton": "Save",
+    "currentPasswordLabel": "Current password",
+    "newPasswordLabel": "New password",
+    "changePasswordButton": "Change password",
+    "passwordChangedMessage": "Password changed",
+    "passwordErrorInvalid": "Current password is incorrect.",
+    "sectionNotifications": "Notifications",
+    "notifExpiry": "Expiry reminders",
+    "notifShopping": "Shopping updates",
+    "notifWeekly": "Weekly summary",
+    "sectionHome": "Home",
+    "homeNameLabel": "Home name",
+    "saveHomeNameButton": "Save home name",
+    "ownerCannotLeaveHint": "As the owner, you can't leave this home while other members exist.",
+    "leaveHomeButton": "Leave home",
+    "leaveHomeConfirmTitle": "Are you sure you want to leave this home?",
+    "leaveHomeConfirmCancel": "Cancel",
+    "leaveHomeConfirmConfirm": "Leave",
+    "sectionApp": "App",
+    "languageLabel": "Language",
+    "themeLabel": "Theme",
+    "themeValuePlaceholder": "Light (v1)",
+    "logoutButton": "Log out",
+    "errorLoad": "Couldn't load settings."
+  },
+  "validation": {
+    "nameMin2": "At least 2 characters",
+    "emailInvalid": "Enter a valid email",
+    "passwordMin8": "At least 8 characters",
+    "passwordRequired": "Password is required",
+    "homeNameRequired": "Home name is required",
+    "inviteCodeRequired": "Invite code is required",
+    "itemNameRequired": "Item name is required",
+    "locationRequired": "Select a location",
+    "categoryRequired": "Select a category",
+    "quantityPositive": "Quantity must be greater than 0",
+    "unitRequired": "Select a unit",
+    "assetNameRequired": "Asset name is required",
+    "currentPasswordRequired": "Current password is required"
+  },
+  "errors": {
+    "generic": "Something went wrong. Please try again.",
+    "ALREADY_MEMBER": "You're already a member of this home.",
+    "ASSET_NOT_FOUND": "Asset not found.",
+    "CANNOT_REMOVE_OWNER": "The owner can't be removed.",
+    "EMAIL_IN_USE": "This email is already in use.",
+    "FILE_REQUIRED": "A file is required.",
+    "HOME_NOT_FOUND": "Home not found.",
+    "INSUFFICIENT_ROLE": "You don't have permission to do this.",
+    "INVALID_CREDENTIALS": "Incorrect email or password.",
+    "INVALID_CURRENT_PASSWORD": "Current password is incorrect.",
+    "INVALID_INVITE_CODE": "Invalid invite code.",
+    "INVALID_LOCATION": "Invalid location.",
+    "INVALID_REFRESH_TOKEN": "Session expired, please log in again.",
+    "INVALID_TOKEN": "Session expired, please log in again.",
+    "ITEM_NOT_FOUND": "Item not found.",
+    "LOCATION_NOT_FOUND": "Location not found.",
+    "MEMBER_NOT_FOUND": "Member not found.",
+    "NOT_A_MEDICINE": "This item isn't a medicine.",
+    "NOT_A_MEMBER": "You're not a member of this home.",
+    "OWNER_CANNOT_LEAVE": "As the owner, you can't leave this home while other members exist.",
+    "RECIPE_NOT_FOUND": "Recipe not found.",
+    "SHOPPING_ITEM_NOT_FOUND": "Shopping item not found.",
+    "UNAUTHENTICATED": "Please log in again.",
+    "UPLOAD_ERROR": "File upload failed.",
+    "USER_NOT_FOUND": "User not found."
+  },
+  "notifications": {}
+}

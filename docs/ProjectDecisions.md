@@ -404,3 +404,43 @@ navigasyon başlıkları da tema fontuna taşındı
 - **Consequences**: `mobile/src/ui/` artık uygulamanın **tüm** 18 ekranında
   kullanılıyor — hiçbir ekranda ham hex/StyleSheet-per-screen kalmadı.
   Tasarım sistemi geçişi (Sprint 10-12) tamamlandı.
+
+---
+
+## Decision: Yayın Kalitesi initiative başlıyor — i18n altyapısı (Sprint 13.1)
+
+- **Date**: 2026-07-08
+- **Status**: Accepted
+- **Context**: Tasarım sistemi geçişi (Sprint 10-12) tamamlandıktan sonra
+  kullanıcı App Store/Google Play yayın kalitesine yönelik ayrı, daha büyük
+  bir talep getirdi: 8 dilde tam lokalizasyon, sistem temalı dark/light mode,
+  pull-to-refresh, skeleton loading, profesyonel bildirim sistemi (yerel +
+  push) ve yayın öncesi kalite kalemleri. Kullanıcı onayıyla push bildirim
+  altyapısı da kapsama eklendi; Gizlilik Politikası/Kullanım Şartları için
+  gerçek URL olmadığından uygulama içi placeholder ekranlar kullanılacak.
+  5 sprint / 10 issue'ya bölündü (plan: `docs/` dışında, oturum plan dosyası).
+- **Decision**: i18n için `i18next` + `react-i18next` + `react-native-localize`
+  seçildi (bare RN uyumlu, Expo gerektirmeyen native modüller — mevcut
+  `@notifee/react-native` kurulum desenine benzer `pod install` + otomatik
+  linking). 8 dil (`en/tr/de/fr/es/it/cs/pt`) için `mobile/src/i18n/locales/*.json`
+  oluşturuldu — İngilizce/Türkçe elle, kalan 6 dil paralel arka plan
+  ajanlarıyla çevrildi (yapısal anahtar tutarlılığı script ile doğrulandı:
+  8 dosyada da 265 anahtar, tam eşleşme). Cihaz dili `findBestLanguageTag`
+  ile algılanır, desteklenmeyen dilde **İngilizce**'ye düşer (Türkçe'ye değil
+  — kullanıcının açık talebi). Dil tercihi `mobile/src/services/languageStorage.ts`
+  ile `AsyncStorage`'a yazılır (mevcut `secureStorage.ts` deseniyle aynı).
+  Sunucu hata mesajları artık client'ta ham Türkçe metin olarak gösterilmiyor
+  — `AppError.code` (`error.response.data.error.code`) `errors.<CODE>`
+  anahtarına map'lenip `mobile/src/services/apiError.ts` üzerinden
+  localize ediliyor. Backend `userValidation.ts`'teki `language` alanı artık
+  8 dil enum'una kısıtlı (önceden serbest string idi). Settings ekranına
+  8 dili `Chip` listesiyle gösteren bir dil seçici eklendi (tüm ekranların
+  string migrasyonu henüz yapılmadı — bu ayrı bir issue, 19.2).
+- **Consequences**: Bu adımdan sonra hâlâ 18 ekranın tamamı hardcoded
+  Türkçe string kullanıyor (yalnızca Settings'in dil satırı ve altyapı
+  değişti) — ekran bazlı tam migrasyon 19.2'de yapılacak. `common.languages.*`
+  anahtarları JSON'larda duruyor ama şu an kullanılmıyor (dil adları yerine
+  `src/i18n/languages.ts`'teki sabit `LANGUAGE_NATIVE_NAMES` haritası
+  kullanılıyor — dil adı bir "çeviri" değil, sabit özel isim olduğu için).
+  de/fr/es/it/cs/pt çevirileri LLM tarafından üretildi; mağaza yayınından
+  önce anadil konuşan biri tarafından gözden geçirilmesi önerilir.

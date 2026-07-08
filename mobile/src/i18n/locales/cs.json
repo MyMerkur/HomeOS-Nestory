@@ -1,0 +1,334 @@
+{
+  "common": {
+    "cancel": "Zrušit",
+    "save": "Uložit",
+    "delete": "Smazat",
+    "retry": "Zkusit znovu",
+    "loading": "Načítání…",
+    "languages": {
+      "en": "English",
+      "tr": "Türkçe",
+      "de": "Deutsch",
+      "fr": "Français",
+      "es": "Español",
+      "it": "Italiano",
+      "cs": "Čeština",
+      "pt": "Português"
+    }
+  },
+  "auth": {
+    "login": {
+      "wordmark": "HomeOS",
+      "tagline": "Vše z vaší domácnosti na jednom místě.",
+      "emailLabel": "E-mail",
+      "passwordLabel": "Heslo",
+      "submitButton": "Přihlásit se",
+      "errorInvalidCredentials": "Nesprávný e-mail nebo heslo.",
+      "noAccountLink": "Nemáte účet? Zaregistrujte se"
+    },
+    "register": {
+      "title": "Vytvořit účet",
+      "nameLabel": "Celé jméno",
+      "emailLabel": "E-mail",
+      "passwordLabel": "Heslo (nejméně 8 znaků)",
+      "submitButton": "Zaregistrovat se",
+      "errorGeneric": "Účet se nepodařilo vytvořit.",
+      "hasAccountLink": "Už máte účet? Přihlaste se"
+    }
+  },
+  "onboarding": {
+    "choice": {
+      "title": "Zatím nemáte žádnou domácnost",
+      "subtitle": "Vytvořte novou domácnost nebo se připojte k existující pomocí zvacího kódu.",
+      "createButton": "Vytvořit domácnost",
+      "joinButton": "Připojit se pomocí kódu"
+    },
+    "createHome": {
+      "title": "Vytvořit domácnost",
+      "nameLabel": "Název domácnosti (např. Domov, Chata)",
+      "submitButton": "Vytvořit",
+      "errorGeneric": "Domácnost se nepodařilo vytvořit, zkuste to znovu.",
+      "createdTitle": "Domácnost vytvořena",
+      "createdSubtitle": "Tento kód sdílejte, chcete-li pozvat členy rodiny. Zobrazí se pouze zde.",
+      "continueButton": "Pokračovat"
+    },
+    "joinHome": {
+      "title": "Připojit se pomocí kódu",
+      "codeLabel": "Zvací kód",
+      "submitButton": "Připojit se",
+      "errorGeneric": "Neplatný zvací kód, nebo už jste členem této domácnosti."
+    }
+  },
+  "dashboard": {
+    "shortcuts": {
+      "badges": "Odznaky",
+      "medicines": "Léky",
+      "assets": "Vybavení",
+      "family": "Rodina",
+      "settings": "Nastavení"
+    },
+    "summary": {
+      "today": "Dnes",
+      "in3Days": "3 dny",
+      "inWeek": "Týden",
+      "total": "Celkem"
+    },
+    "upcomingTitle": "Blížící se položky",
+    "emptyUpcoming": "Žádné položky s blížícím se datem spotřeby.",
+    "errorLoad": "Přehled se nepodařilo načíst."
+  },
+  "pantry": {
+    "searchPlaceholder": "Hledat položky",
+    "tabAll": "Vše",
+    "errorLoad": "Položky se nepodařilo načíst.",
+    "emptyView": "V tomto zobrazení zatím nejsou žádné položky.",
+    "barcodeButton": "Čárový kód",
+    "addItemA11y": "Přidat položku",
+    "actions": {
+      "consumed": "Spotřebováno",
+      "discarded": "Vyhozeno",
+      "frozen": "Zamraženo",
+      "addToShopping": "Přidat na nákupní seznam",
+      "cancel": "Zrušit"
+    },
+    "categories": {
+      "Dairy": "Mléčné výrobky",
+      "Meat": "Maso",
+      "Vegetable": "Zelenina",
+      "Fruit": "Ovoce",
+      "Bakery": "Pečivo",
+      "Drink": "Nápoje",
+      "Frozen": "Mražené",
+      "Cleaning": "Úklid",
+      "Medicine": "Léky",
+      "Other": "Ostatní"
+    },
+    "units": {
+      "piece": "Kus",
+      "gram": "Gram",
+      "kg": "Kilogram",
+      "ml": "Mililitr",
+      "liter": "Litr",
+      "pack": "Balení",
+      "bottle": "Láhev",
+      "box": "Krabice"
+    },
+    "itemForm": {
+      "titleEdit": "Upravit položku",
+      "titleAdd": "Přidat položku",
+      "nameLabel": "Název položky",
+      "namePlaceholder": "např. Mléko",
+      "barcodeLabel": "Čárový kód (nepovinné)",
+      "barcodeFieldLabel": "Čárový kód",
+      "barcodePlaceholder": "Číslo čárového kódu",
+      "scanBarcodeButton": "Naskenovat čárový kód",
+      "locationLabel": "Umístění",
+      "categoryLabel": "Kategorie",
+      "quantityLabel": "Množství",
+      "unitLabel": "Jednotka",
+      "doseAmountLabel": "Množství dávky (nepovinné)",
+      "doseAmountPlaceholder": "např. 1",
+      "doseTimesLabel": "Časy dávkování (nepovinné)",
+      "addTimeButton": "+ Přidat čas",
+      "expiryDateLabel": "Datum spotřeby (nepovinné)",
+      "selectDateButton": "Vybrat datum",
+      "scanExpiryButton": "Naskenovat datum spotřeby",
+      "submitEdit": "Aktualizovat",
+      "submitAdd": "Přidat",
+      "errorSave": "Položku se nepodařilo uložit, zkuste to znovu.",
+      "barcodeNotFoundTitle": "Čárový kód nenalezen",
+      "barcodeNotFoundMessage": "Na fotografii se nepodařilo rozpoznat čárový kód, zkuste to znovu nebo jej zadejte ručně.",
+      "expiryNotFoundTitle": "Datum nenalezeno",
+      "expiryNotFoundMessage": "Na fotografii se nepodařilo rozpoznat datum spotřeby, můžete jej zadat ručně."
+    },
+    "quickAdd": {
+      "scanBarcodeButton": "Naskenovat čárový kód",
+      "newBarcodeTitle": "Nový čárový kód",
+      "newBarcodeMessage": "S tímto čárovým kódem ještě nebyla přidána žádná položka. Chcete-li ji přidat se všemi podrobnostmi, přejděte na celý formulář.",
+      "cancelButton": "Zrušit",
+      "goToFormButton": "Přejít na formulář",
+      "quantityLabel": "Množství",
+      "locationLabel": "Umístění",
+      "expiryDateLabel": "Datum spotřeby (nepovinné)",
+      "notScannedLabel": "Nenaskenováno",
+      "scanExpiryButton": "Naskenovat datum spotřeby",
+      "submitButton": "Rychlé přidání",
+      "errorQuantity": "Množství musí být větší než 0",
+      "errorSave": "Položku se nepodařilo uložit, zkuste to znovu.",
+      "barcodeNotFoundTitle": "Čárový kód nenalezen",
+      "barcodeNotFoundMessage": "Na fotografii se nepodařilo rozpoznat čárový kód, zkuste to znovu.",
+      "expiryNotFoundTitle": "Datum nenalezeno",
+      "expiryNotFoundMessage": "Na fotografii se nepodařilo rozpoznat datum spotřeby, můžete jej zadat ručně."
+    }
+  },
+  "shopping": {
+    "addPlaceholder": "Přidat položku",
+    "addButton": "Přidat",
+    "errorLoad": "Nákupní seznam se nepodařilo načíst.",
+    "emptyList": "Nákupní seznam je prázdný.",
+    "deleteA11y": "Smazat {{name}}"
+  },
+  "family": {
+    "inviteButton": "Pozvat",
+    "emptyMembers": "Zatím žádní členové",
+    "errorLoad": "Členy se nepodařilo načíst.",
+    "removeButton": "Odebrat",
+    "removeConfirmTitle": "Odebrat uživatele {{name}}?",
+    "removeConfirmCancel": "Zrušit",
+    "removeConfirmConfirm": "Odebrat",
+    "shareMessage": "Zvací kód pro připojení k HomeOS: {{code}}",
+    "roles": {
+      "owner": "Vlastník",
+      "admin": "Správce",
+      "member": "Člen",
+      "viewer": "Pozorovatel"
+    }
+  },
+  "recipes": {
+    "tabs": {
+      "suggestions": "Návrhy",
+      "saved": "Uložené"
+    },
+    "errorLoad": "Recepty se nepodařilo načíst.",
+    "emptySuggestions": "Aktuálně žádné recepty neodpovídají položkám doma.",
+    "emptySaved": "Zatím žádné uložené recepty.",
+    "allIngredientsAvailable": "Všechny ingredience doma",
+    "missingIngredients_one": "Chybí {{count}} ingredience",
+    "missingIngredients_other": "Chybí {{count}} ingrediencí",
+    "detail": {
+      "saveButton": "Uložit",
+      "savedButton": "Uloženo ✓",
+      "coverageLabel": "Pokrytí položkami doma: {{percent}} %",
+      "ingredientsTitle": "Ingredience",
+      "instructionsTitle": "Postup",
+      "optionalTag": " (nepovinné)"
+    }
+  },
+  "assets": {
+    "emptyList": "Zatím není registrováno žádné vybavení.",
+    "errorLoad": "Vybavení se nepodařilo načíst.",
+    "addA11y": "Přidat vybavení",
+    "categories": {
+      "Electronics": "Elektronika",
+      "Appliance": "Spotřebič",
+      "Furniture": "Nábytek",
+      "Other": "Ostatní"
+    },
+    "archiveAction": "Archivovat",
+    "deleteAction": "Smazat",
+    "cancelAction": "Zrušit",
+    "warranty": {
+      "none": "Bez záruky",
+      "expired": "Záruka vypršela",
+      "today": "Vyprší dnes",
+      "daysLeft_one": "{{count}} den",
+      "daysLeft_other": "{{count}} dní"
+    },
+    "form": {
+      "titleEdit": "Upravit vybavení",
+      "titleAdd": "Přidat vybavení",
+      "nameLabel": "Název vybavení",
+      "namePlaceholder": "např. Televize",
+      "categoryLabel": "Kategorie",
+      "roomLabel": "Místnost (nepovinné)",
+      "roomPlaceholder": "např. Obývací pokoj",
+      "brandLabel": "Značka (nepovinné)",
+      "serialNumberLabel": "Sériové číslo (nepovinné)",
+      "priceLabel": "Cena (nepovinné)",
+      "purchaseDateLabel": "Datum nákupu (nepovinné)",
+      "warrantyDateLabel": "Konec záruky (nepovinné)",
+      "selectDateButton": "Vybrat datum",
+      "receiptLabel": "Účtenka / záruční list (nepovinné)",
+      "scanReceiptButton": "Naskenovat účtenku",
+      "receiptAddedButton": "Účtenka přidána ✓",
+      "warrantyDocButton": "Přidat záruční list",
+      "warrantyDocAddedButton": "Dokument přidán ✓",
+      "notesLabel": "Poznámky (nepovinné)",
+      "submitEdit": "Aktualizovat",
+      "submitAdd": "Přidat",
+      "errorSave": "Vybavení se nepodařilo uložit, zkuste to znovu."
+    },
+    "medicines": {
+      "outOfStock": "Došlo",
+      "addToShoppingButton": "Přidat na nákupní seznam",
+      "takeDoseButton": "Dávka podána",
+      "doseTimesLabel": "Časy: {{times}}",
+      "emptyList": "Zatím nejsou registrovány žádné léky.",
+      "errorLoad": "Léky se nepodařilo načíst."
+    }
+  },
+  "badges": {
+    "errorLoad": "Odznaky se nepodařilo načíst."
+  },
+  "settings": {
+    "sectionAccount": "Účet",
+    "nameLabel": "Jméno",
+    "saveButton": "Uložit",
+    "currentPasswordLabel": "Současné heslo",
+    "newPasswordLabel": "Nové heslo",
+    "changePasswordButton": "Změnit heslo",
+    "passwordChangedMessage": "Heslo změněno",
+    "passwordErrorInvalid": "Současné heslo je nesprávné.",
+    "sectionNotifications": "Oznámení",
+    "notifExpiry": "Připomenutí spotřeby",
+    "notifShopping": "Aktualizace nákupního seznamu",
+    "notifWeekly": "Týdenní souhrn",
+    "sectionHome": "Domácnost",
+    "homeNameLabel": "Název domácnosti",
+    "saveHomeNameButton": "Uložit název domácnosti",
+    "ownerCannotLeaveHint": "Jako vlastník nemůžete opustit tuto domácnost, dokud v ní existují další členové.",
+    "leaveHomeButton": "Opustit domácnost",
+    "leaveHomeConfirmTitle": "Opravdu chcete opustit tuto domácnost?",
+    "leaveHomeConfirmCancel": "Zrušit",
+    "leaveHomeConfirmConfirm": "Opustit",
+    "sectionApp": "Aplikace",
+    "languageLabel": "Jazyk",
+    "themeLabel": "Motiv",
+    "themeValuePlaceholder": "Světlý (v1)",
+    "logoutButton": "Odhlásit se",
+    "errorLoad": "Nastavení se nepodařilo načíst."
+  },
+  "validation": {
+    "nameMin2": "Alespoň 2 znaky",
+    "emailInvalid": "Zadejte platný e-mail",
+    "passwordMin8": "Alespoň 8 znaků",
+    "passwordRequired": "Heslo je povinné",
+    "homeNameRequired": "Název domácnosti je povinný",
+    "inviteCodeRequired": "Zvací kód je povinný",
+    "itemNameRequired": "Název položky je povinný",
+    "locationRequired": "Vyberte umístění",
+    "categoryRequired": "Vyberte kategorii",
+    "quantityPositive": "Množství musí být větší než 0",
+    "unitRequired": "Vyberte jednotku",
+    "assetNameRequired": "Název vybavení je povinný",
+    "currentPasswordRequired": "Současné heslo je povinné"
+  },
+  "errors": {
+    "generic": "Něco se pokazilo. Zkuste to prosím znovu.",
+    "ALREADY_MEMBER": "Už jste členem této domácnosti.",
+    "ASSET_NOT_FOUND": "Vybavení nenalezeno.",
+    "CANNOT_REMOVE_OWNER": "Vlastníka nelze odebrat.",
+    "EMAIL_IN_USE": "Tento e-mail se již používá.",
+    "FILE_REQUIRED": "Soubor je povinný.",
+    "HOME_NOT_FOUND": "Domácnost nenalezena.",
+    "INSUFFICIENT_ROLE": "Nemáte oprávnění k této akci.",
+    "INVALID_CREDENTIALS": "Nesprávný e-mail nebo heslo.",
+    "INVALID_CURRENT_PASSWORD": "Současné heslo je nesprávné.",
+    "INVALID_INVITE_CODE": "Neplatný zvací kód.",
+    "INVALID_LOCATION": "Neplatné umístění.",
+    "INVALID_REFRESH_TOKEN": "Relace vypršela, přihlaste se prosím znovu.",
+    "INVALID_TOKEN": "Relace vypršela, přihlaste se prosím znovu.",
+    "ITEM_NOT_FOUND": "Položka nenalezena.",
+    "LOCATION_NOT_FOUND": "Umístění nenalezeno.",
+    "MEMBER_NOT_FOUND": "Člen nenalezen.",
+    "NOT_A_MEDICINE": "Tato položka není lék.",
+    "NOT_A_MEMBER": "Nejste členem této domácnosti.",
+    "OWNER_CANNOT_LEAVE": "Jako vlastník nemůžete opustit tuto domácnost, dokud v ní existují další členové.",
+    "RECIPE_NOT_FOUND": "Recept nenalezen.",
+    "SHOPPING_ITEM_NOT_FOUND": "Položka nákupního seznamu nenalezena.",
+    "UNAUTHENTICATED": "Přihlaste se prosím znovu.",
+    "UPLOAD_ERROR": "Nahrání souboru se nezdařilo.",
+    "USER_NOT_FOUND": "Uživatel nenalezen."
+  },
+  "notifications": {}
+}

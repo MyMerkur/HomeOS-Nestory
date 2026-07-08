@@ -1,0 +1,334 @@
+{
+  "common": {
+    "cancel": "Cancelar",
+    "save": "Guardar",
+    "delete": "Eliminar",
+    "retry": "Tentar novamente",
+    "loading": "A carregar…",
+    "languages": {
+      "en": "English",
+      "tr": "Türkçe",
+      "de": "Deutsch",
+      "fr": "Français",
+      "es": "Español",
+      "it": "Italiano",
+      "cs": "Čeština",
+      "pt": "Português"
+    }
+  },
+  "auth": {
+    "login": {
+      "wordmark": "HomeOS",
+      "tagline": "Tudo o que tem em casa, num só lugar.",
+      "emailLabel": "Email",
+      "passwordLabel": "Palavra-passe",
+      "submitButton": "Iniciar sessão",
+      "errorInvalidCredentials": "Email ou palavra-passe incorretos.",
+      "noAccountLink": "Não tem conta? Registe-se"
+    },
+    "register": {
+      "title": "Criar conta",
+      "nameLabel": "Nome completo",
+      "emailLabel": "Email",
+      "passwordLabel": "Palavra-passe (mínimo 8 caracteres)",
+      "submitButton": "Registar",
+      "errorGeneric": "Não foi possível criar a conta.",
+      "hasAccountLink": "Já tem conta? Inicie sessão"
+    }
+  },
+  "onboarding": {
+    "choice": {
+      "title": "Ainda não tem uma casa",
+      "subtitle": "Crie uma casa nova ou junte-se a uma existente com um código de convite.",
+      "createButton": "Criar uma casa",
+      "joinButton": "Juntar-se com código de convite"
+    },
+    "createHome": {
+      "title": "Criar uma casa",
+      "nameLabel": "Nome da casa (ex.: Casa, Casa de férias)",
+      "submitButton": "Criar",
+      "errorGeneric": "Não foi possível criar a casa, tente novamente.",
+      "createdTitle": "Casa criada",
+      "createdSubtitle": "Partilhe este código para convidar familiares. Este código só é mostrado aqui.",
+      "continueButton": "Continuar"
+    },
+    "joinHome": {
+      "title": "Juntar-se com código de convite",
+      "codeLabel": "Código de convite",
+      "submitButton": "Juntar-se",
+      "errorGeneric": "Código de convite inválido, ou já é membro desta casa."
+    }
+  },
+  "dashboard": {
+    "shortcuts": {
+      "badges": "Emblemas",
+      "medicines": "Medicamentos",
+      "assets": "Bens",
+      "family": "Família",
+      "settings": "Definições"
+    },
+    "summary": {
+      "today": "Hoje",
+      "in3Days": "3 dias",
+      "inWeek": "Semana",
+      "total": "Total"
+    },
+    "upcomingTitle": "Itens a expirar em breve",
+    "emptyUpcoming": "Sem itens com data de validade próxima.",
+    "errorLoad": "Não foi possível carregar o resumo."
+  },
+  "pantry": {
+    "searchPlaceholder": "Procurar itens",
+    "tabAll": "Todos",
+    "errorLoad": "Não foi possível carregar os itens.",
+    "emptyView": "Ainda não há itens nesta vista.",
+    "barcodeButton": "Código de barras",
+    "addItemA11y": "Adicionar item",
+    "actions": {
+      "consumed": "Consumido",
+      "discarded": "Descartado",
+      "frozen": "Congelado",
+      "addToShopping": "Adicionar à lista de compras",
+      "cancel": "Cancelar"
+    },
+    "categories": {
+      "Dairy": "Lacticínios",
+      "Meat": "Carne",
+      "Vegetable": "Vegetais",
+      "Fruit": "Fruta",
+      "Bakery": "Padaria",
+      "Drink": "Bebidas",
+      "Frozen": "Congelados",
+      "Cleaning": "Limpeza",
+      "Medicine": "Medicamento",
+      "Other": "Outro"
+    },
+    "units": {
+      "piece": "Unidade",
+      "gram": "Grama",
+      "kg": "Quilograma",
+      "ml": "Mililitro",
+      "liter": "Litro",
+      "pack": "Pacote",
+      "bottle": "Garrafa",
+      "box": "Caixa"
+    },
+    "itemForm": {
+      "titleEdit": "Editar item",
+      "titleAdd": "Adicionar item",
+      "nameLabel": "Nome do item",
+      "namePlaceholder": "ex.: Leite",
+      "barcodeLabel": "Código de barras (opcional)",
+      "barcodeFieldLabel": "Código de barras",
+      "barcodePlaceholder": "Número do código de barras",
+      "scanBarcodeButton": "Digitalizar código de barras",
+      "locationLabel": "Localização",
+      "categoryLabel": "Categoria",
+      "quantityLabel": "Quantidade",
+      "unitLabel": "Unidade",
+      "doseAmountLabel": "Quantidade da dose (opcional)",
+      "doseAmountPlaceholder": "ex.: 1",
+      "doseTimesLabel": "Horários da dose (opcional)",
+      "addTimeButton": "+ Adicionar horário",
+      "expiryDateLabel": "Data de validade (opcional)",
+      "selectDateButton": "Selecionar data",
+      "scanExpiryButton": "Digitalizar data de validade",
+      "submitEdit": "Atualizar",
+      "submitAdd": "Adicionar",
+      "errorSave": "Não foi possível guardar o item, tente novamente.",
+      "barcodeNotFoundTitle": "Código de barras não encontrado",
+      "barcodeNotFoundMessage": "Não foi possível reconhecer um código de barras na foto, tente novamente ou introduza-o manualmente.",
+      "expiryNotFoundTitle": "Data não encontrada",
+      "expiryNotFoundMessage": "Não foi possível reconhecer uma data de validade na foto, pode introduzi-la manualmente."
+    },
+    "quickAdd": {
+      "scanBarcodeButton": "Digitalizar código de barras",
+      "newBarcodeTitle": "Novo código de barras",
+      "newBarcodeMessage": "Ainda não foi adicionado nenhum item com este código de barras. Pode aceder ao formulário completo para o adicionar com todos os detalhes.",
+      "cancelButton": "Cancelar",
+      "goToFormButton": "Ir para o formulário",
+      "quantityLabel": "Quantidade",
+      "locationLabel": "Localização",
+      "expiryDateLabel": "Data de validade (opcional)",
+      "notScannedLabel": "Não digitalizado",
+      "scanExpiryButton": "Digitalizar data de validade",
+      "submitButton": "Adição rápida",
+      "errorQuantity": "A quantidade deve ser superior a 0",
+      "errorSave": "Não foi possível guardar o item, tente novamente.",
+      "barcodeNotFoundTitle": "Código de barras não encontrado",
+      "barcodeNotFoundMessage": "Não foi possível reconhecer um código de barras na foto, tente novamente.",
+      "expiryNotFoundTitle": "Data não encontrada",
+      "expiryNotFoundMessage": "Não foi possível reconhecer uma data de validade na foto, pode introduzi-la manualmente."
+    }
+  },
+  "shopping": {
+    "addPlaceholder": "Adicionar item",
+    "addButton": "Adicionar",
+    "errorLoad": "Não foi possível carregar a lista de compras.",
+    "emptyList": "A lista de compras está vazia.",
+    "deleteA11y": "Eliminar {{name}}"
+  },
+  "family": {
+    "inviteButton": "Convidar",
+    "emptyMembers": "Ainda sem membros",
+    "errorLoad": "Não foi possível carregar os membros.",
+    "removeButton": "Remover",
+    "removeConfirmTitle": "Remover {{name}}?",
+    "removeConfirmCancel": "Cancelar",
+    "removeConfirmConfirm": "Remover",
+    "shareMessage": "Código de convite para se juntar ao HomeOS: {{code}}",
+    "roles": {
+      "owner": "Proprietário",
+      "admin": "Administrador",
+      "member": "Membro",
+      "viewer": "Visualizador"
+    }
+  },
+  "recipes": {
+    "tabs": {
+      "suggestions": "Sugestões",
+      "saved": "Guardadas"
+    },
+    "errorLoad": "Não foi possível carregar as receitas.",
+    "emptySuggestions": "De momento, nenhuma receita corresponde aos itens em casa.",
+    "emptySaved": "Ainda não há receitas guardadas.",
+    "allIngredientsAvailable": "Todos os ingredientes em casa",
+    "missingIngredients_one": "Falta {{count}} ingrediente",
+    "missingIngredients_other": "Faltam {{count}} ingredientes",
+    "detail": {
+      "saveButton": "Guardar",
+      "savedButton": "Guardada ✓",
+      "coverageLabel": "Cobertura com itens em casa: {{percent}}%",
+      "ingredientsTitle": "Ingredientes",
+      "instructionsTitle": "Instruções",
+      "optionalTag": " (opcional)"
+    }
+  },
+  "assets": {
+    "emptyList": "Ainda não há bens registados.",
+    "errorLoad": "Não foi possível carregar os bens.",
+    "addA11y": "Adicionar bem",
+    "categories": {
+      "Electronics": "Eletrónica",
+      "Appliance": "Eletrodoméstico",
+      "Furniture": "Mobiliário",
+      "Other": "Outro"
+    },
+    "archiveAction": "Arquivar",
+    "deleteAction": "Eliminar",
+    "cancelAction": "Cancelar",
+    "warranty": {
+      "none": "Sem garantia",
+      "expired": "Garantia expirada",
+      "today": "Expira hoje",
+      "daysLeft_one": "{{count}} dia",
+      "daysLeft_other": "{{count}} dias"
+    },
+    "form": {
+      "titleEdit": "Editar bem",
+      "titleAdd": "Adicionar bem",
+      "nameLabel": "Nome do bem",
+      "namePlaceholder": "ex.: Televisão",
+      "categoryLabel": "Categoria",
+      "roomLabel": "Divisão (opcional)",
+      "roomPlaceholder": "ex.: Sala de estar",
+      "brandLabel": "Marca (opcional)",
+      "serialNumberLabel": "Número de série (opcional)",
+      "priceLabel": "Preço (opcional)",
+      "purchaseDateLabel": "Data de compra (opcional)",
+      "warrantyDateLabel": "Data de fim de garantia (opcional)",
+      "selectDateButton": "Selecionar data",
+      "receiptLabel": "Recibo / documento de garantia (opcional)",
+      "scanReceiptButton": "Digitalizar recibo",
+      "receiptAddedButton": "Recibo adicionado ✓",
+      "warrantyDocButton": "Adicionar documento de garantia",
+      "warrantyDocAddedButton": "Documento adicionado ✓",
+      "notesLabel": "Notas (opcional)",
+      "submitEdit": "Atualizar",
+      "submitAdd": "Adicionar",
+      "errorSave": "Não foi possível guardar o bem, tente novamente."
+    },
+    "medicines": {
+      "outOfStock": "Esgotado",
+      "addToShoppingButton": "Adicionar à lista de compras",
+      "takeDoseButton": "Dose tomada",
+      "doseTimesLabel": "Horários: {{times}}",
+      "emptyList": "Ainda não há medicamentos registados.",
+      "errorLoad": "Não foi possível carregar os medicamentos."
+    }
+  },
+  "badges": {
+    "errorLoad": "Não foi possível carregar os emblemas."
+  },
+  "settings": {
+    "sectionAccount": "Conta",
+    "nameLabel": "Nome",
+    "saveButton": "Guardar",
+    "currentPasswordLabel": "Palavra-passe atual",
+    "newPasswordLabel": "Nova palavra-passe",
+    "changePasswordButton": "Alterar palavra-passe",
+    "passwordChangedMessage": "Palavra-passe alterada",
+    "passwordErrorInvalid": "A palavra-passe atual está incorreta.",
+    "sectionNotifications": "Notificações",
+    "notifExpiry": "Lembretes de validade",
+    "notifShopping": "Atualizações da lista de compras",
+    "notifWeekly": "Resumo semanal",
+    "sectionHome": "Casa",
+    "homeNameLabel": "Nome da casa",
+    "saveHomeNameButton": "Guardar nome da casa",
+    "ownerCannotLeaveHint": "Como proprietário, não pode sair desta casa enquanto existirem outros membros.",
+    "leaveHomeButton": "Sair da casa",
+    "leaveHomeConfirmTitle": "Tem a certeza de que quer sair desta casa?",
+    "leaveHomeConfirmCancel": "Cancelar",
+    "leaveHomeConfirmConfirm": "Sair",
+    "sectionApp": "Aplicação",
+    "languageLabel": "Idioma",
+    "themeLabel": "Tema",
+    "themeValuePlaceholder": "Claro (v1)",
+    "logoutButton": "Terminar sessão",
+    "errorLoad": "Não foi possível carregar as definições."
+  },
+  "validation": {
+    "nameMin2": "Pelo menos 2 caracteres",
+    "emailInvalid": "Introduza um email válido",
+    "passwordMin8": "Pelo menos 8 caracteres",
+    "passwordRequired": "A palavra-passe é obrigatória",
+    "homeNameRequired": "O nome da casa é obrigatório",
+    "inviteCodeRequired": "O código de convite é obrigatório",
+    "itemNameRequired": "O nome do item é obrigatório",
+    "locationRequired": "Selecione uma localização",
+    "categoryRequired": "Selecione uma categoria",
+    "quantityPositive": "A quantidade deve ser superior a 0",
+    "unitRequired": "Selecione uma unidade",
+    "assetNameRequired": "O nome do bem é obrigatório",
+    "currentPasswordRequired": "A palavra-passe atual é obrigatória"
+  },
+  "errors": {
+    "generic": "Algo correu mal. Tente novamente.",
+    "ALREADY_MEMBER": "Já é membro desta casa.",
+    "ASSET_NOT_FOUND": "Bem não encontrado.",
+    "CANNOT_REMOVE_OWNER": "O proprietário não pode ser removido.",
+    "EMAIL_IN_USE": "Este email já está a ser utilizado.",
+    "FILE_REQUIRED": "É necessário um ficheiro.",
+    "HOME_NOT_FOUND": "Casa não encontrada.",
+    "INSUFFICIENT_ROLE": "Não tem permissão para fazer isto.",
+    "INVALID_CREDENTIALS": "Email ou palavra-passe incorretos.",
+    "INVALID_CURRENT_PASSWORD": "A palavra-passe atual está incorreta.",
+    "INVALID_INVITE_CODE": "Código de convite inválido.",
+    "INVALID_LOCATION": "Localização inválida.",
+    "INVALID_REFRESH_TOKEN": "A sessão expirou, inicie sessão novamente.",
+    "INVALID_TOKEN": "A sessão expirou, inicie sessão novamente.",
+    "ITEM_NOT_FOUND": "Item não encontrado.",
+    "LOCATION_NOT_FOUND": "Localização não encontrada.",
+    "MEMBER_NOT_FOUND": "Membro não encontrado.",
+    "NOT_A_MEDICINE": "Este item não é um medicamento.",
+    "NOT_A_MEMBER": "Não é membro desta casa.",
+    "OWNER_CANNOT_LEAVE": "Como proprietário, não pode sair desta casa enquanto existirem outros membros.",
+    "RECIPE_NOT_FOUND": "Receita não encontrada.",
+    "SHOPPING_ITEM_NOT_FOUND": "Item da lista de compras não encontrado.",
+    "UNAUTHENTICATED": "Inicie sessão novamente.",
+    "UPLOAD_ERROR": "Falha ao carregar o ficheiro.",
+    "USER_NOT_FOUND": "Utilizador não encontrado."
+  },
+  "notifications": {}
+}

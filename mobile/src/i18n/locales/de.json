@@ -1,0 +1,334 @@
+{
+  "common": {
+    "cancel": "Abbrechen",
+    "save": "Speichern",
+    "delete": "Löschen",
+    "retry": "Erneut versuchen",
+    "loading": "Wird geladen…",
+    "languages": {
+      "en": "English",
+      "tr": "Türkçe",
+      "de": "Deutsch",
+      "fr": "Français",
+      "es": "Español",
+      "it": "Italiano",
+      "cs": "Čeština",
+      "pt": "Português"
+    }
+  },
+  "auth": {
+    "login": {
+      "wordmark": "HomeOS",
+      "tagline": "Alles in Ihrem Zuhause, an einem Ort.",
+      "emailLabel": "E-Mail",
+      "passwordLabel": "Passwort",
+      "submitButton": "Anmelden",
+      "errorInvalidCredentials": "Falsche E-Mail-Adresse oder falsches Passwort.",
+      "noAccountLink": "Noch kein Konto? Jetzt registrieren"
+    },
+    "register": {
+      "title": "Konto erstellen",
+      "nameLabel": "Vollständiger Name",
+      "emailLabel": "E-Mail",
+      "passwordLabel": "Passwort (mindestens 8 Zeichen)",
+      "submitButton": "Registrieren",
+      "errorGeneric": "Konto konnte nicht erstellt werden.",
+      "hasAccountLink": "Sie haben bereits ein Konto? Anmelden"
+    }
+  },
+  "onboarding": {
+    "choice": {
+      "title": "Sie haben noch kein Zuhause",
+      "subtitle": "Erstellen Sie ein neues Zuhause oder treten Sie einem bestehenden mit einem Einladungscode bei.",
+      "createButton": "Zuhause erstellen",
+      "joinButton": "Mit Einladungscode beitreten"
+    },
+    "createHome": {
+      "title": "Zuhause erstellen",
+      "nameLabel": "Name des Zuhauses (z. B. Zuhause, Ferienhaus)",
+      "submitButton": "Erstellen",
+      "errorGeneric": "Zuhause konnte nicht erstellt werden, bitte erneut versuchen.",
+      "createdTitle": "Zuhause erstellt",
+      "createdSubtitle": "Teilen Sie diesen Code, um Familienmitglieder einzuladen. Er wird nur hier angezeigt.",
+      "continueButton": "Weiter"
+    },
+    "joinHome": {
+      "title": "Mit Einladungscode beitreten",
+      "codeLabel": "Einladungscode",
+      "submitButton": "Beitreten",
+      "errorGeneric": "Ungültiger Einladungscode, oder Sie sind bereits Mitglied dieses Zuhauses."
+    }
+  },
+  "dashboard": {
+    "shortcuts": {
+      "badges": "Abzeichen",
+      "medicines": "Medikamente",
+      "assets": "Inventar",
+      "family": "Familie",
+      "settings": "Einstellungen"
+    },
+    "summary": {
+      "today": "Heute",
+      "in3Days": "3 Tage",
+      "inWeek": "Woche",
+      "total": "Gesamt"
+    },
+    "upcomingTitle": "Bald ablaufende Artikel",
+    "emptyUpcoming": "Keine Artikel mit bevorstehendem Ablaufdatum.",
+    "errorLoad": "Übersicht konnte nicht geladen werden."
+  },
+  "pantry": {
+    "searchPlaceholder": "Artikel suchen",
+    "tabAll": "Alle",
+    "errorLoad": "Artikel konnten nicht geladen werden.",
+    "emptyView": "Noch keine Artikel in dieser Ansicht.",
+    "barcodeButton": "Barcode",
+    "addItemA11y": "Artikel hinzufügen",
+    "actions": {
+      "consumed": "Verbraucht",
+      "discarded": "Entsorgt",
+      "frozen": "Eingefroren",
+      "addToShopping": "Zur Einkaufsliste hinzufügen",
+      "cancel": "Abbrechen"
+    },
+    "categories": {
+      "Dairy": "Milchprodukte",
+      "Meat": "Fleisch",
+      "Vegetable": "Gemüse",
+      "Fruit": "Obst",
+      "Bakery": "Backwaren",
+      "Drink": "Getränke",
+      "Frozen": "Tiefkühl",
+      "Cleaning": "Reinigung",
+      "Medicine": "Medikamente",
+      "Other": "Sonstiges"
+    },
+    "units": {
+      "piece": "Stück",
+      "gram": "Gramm",
+      "kg": "Kilogramm",
+      "ml": "Milliliter",
+      "liter": "Liter",
+      "pack": "Packung",
+      "bottle": "Flasche",
+      "box": "Karton"
+    },
+    "itemForm": {
+      "titleEdit": "Artikel bearbeiten",
+      "titleAdd": "Artikel hinzufügen",
+      "nameLabel": "Artikelname",
+      "namePlaceholder": "z. B. Milch",
+      "barcodeLabel": "Barcode (optional)",
+      "barcodeFieldLabel": "Barcode",
+      "barcodePlaceholder": "Barcodenummer",
+      "scanBarcodeButton": "Barcode scannen",
+      "locationLabel": "Ort",
+      "categoryLabel": "Kategorie",
+      "quantityLabel": "Menge",
+      "unitLabel": "Einheit",
+      "doseAmountLabel": "Dosismenge (optional)",
+      "doseAmountPlaceholder": "z. B. 1",
+      "doseTimesLabel": "Einnahmezeiten (optional)",
+      "addTimeButton": "+ Zeit hinzufügen",
+      "expiryDateLabel": "Ablaufdatum (optional)",
+      "selectDateButton": "Datum auswählen",
+      "scanExpiryButton": "Ablaufdatum scannen",
+      "submitEdit": "Aktualisieren",
+      "submitAdd": "Hinzufügen",
+      "errorSave": "Artikel konnte nicht gespeichert werden, bitte erneut versuchen.",
+      "barcodeNotFoundTitle": "Barcode nicht gefunden",
+      "barcodeNotFoundMessage": "Auf dem Foto konnte kein Barcode erkannt werden. Versuchen Sie es erneut oder geben Sie ihn manuell ein.",
+      "expiryNotFoundTitle": "Datum nicht gefunden",
+      "expiryNotFoundMessage": "Auf dem Foto konnte kein Ablaufdatum erkannt werden, Sie können es manuell eingeben."
+    },
+    "quickAdd": {
+      "scanBarcodeButton": "Barcode scannen",
+      "newBarcodeTitle": "Neuer Barcode",
+      "newBarcodeMessage": "Mit diesem Barcode wurde noch kein Artikel hinzugefügt. Sie können zum vollständigen Formular wechseln, um ihn mit allen Details hinzuzufügen.",
+      "cancelButton": "Abbrechen",
+      "goToFormButton": "Zum Formular",
+      "quantityLabel": "Menge",
+      "locationLabel": "Ort",
+      "expiryDateLabel": "Ablaufdatum (optional)",
+      "notScannedLabel": "Nicht gescannt",
+      "scanExpiryButton": "Ablaufdatum scannen",
+      "submitButton": "Schnell hinzufügen",
+      "errorQuantity": "Die Menge muss größer als 0 sein",
+      "errorSave": "Artikel konnte nicht gespeichert werden, bitte erneut versuchen.",
+      "barcodeNotFoundTitle": "Barcode nicht gefunden",
+      "barcodeNotFoundMessage": "Auf dem Foto konnte kein Barcode erkannt werden, bitte erneut versuchen.",
+      "expiryNotFoundTitle": "Datum nicht gefunden",
+      "expiryNotFoundMessage": "Auf dem Foto konnte kein Ablaufdatum erkannt werden, Sie können es manuell eingeben."
+    }
+  },
+  "shopping": {
+    "addPlaceholder": "Artikel hinzufügen",
+    "addButton": "Hinzufügen",
+    "errorLoad": "Einkaufsliste konnte nicht geladen werden.",
+    "emptyList": "Die Einkaufsliste ist leer.",
+    "deleteA11y": "{{name}} löschen"
+  },
+  "family": {
+    "inviteButton": "Einladen",
+    "emptyMembers": "Noch keine Mitglieder",
+    "errorLoad": "Mitglieder konnten nicht geladen werden.",
+    "removeButton": "Entfernen",
+    "removeConfirmTitle": "{{name}} entfernen?",
+    "removeConfirmCancel": "Abbrechen",
+    "removeConfirmConfirm": "Entfernen",
+    "shareMessage": "Einladungscode für HomeOS: {{code}}",
+    "roles": {
+      "owner": "Eigentümer",
+      "admin": "Administrator",
+      "member": "Mitglied",
+      "viewer": "Betrachter"
+    }
+  },
+  "recipes": {
+    "tabs": {
+      "suggestions": "Vorschläge",
+      "saved": "Gespeichert"
+    },
+    "errorLoad": "Rezepte konnten nicht geladen werden.",
+    "emptySuggestions": "Derzeit passen keine Rezepte zu den vorhandenen Artikeln.",
+    "emptySaved": "Noch keine gespeicherten Rezepte.",
+    "allIngredientsAvailable": "Alle Zutaten vorhanden",
+    "missingIngredients_one": "{{count}} fehlende Zutat",
+    "missingIngredients_other": "{{count}} fehlende Zutaten",
+    "detail": {
+      "saveButton": "Speichern",
+      "savedButton": "Gespeichert ✓",
+      "coverageLabel": "Abdeckung mit vorhandenen Artikeln: {{percent}}%",
+      "ingredientsTitle": "Zutaten",
+      "instructionsTitle": "Zubereitung",
+      "optionalTag": " (optional)"
+    }
+  },
+  "assets": {
+    "emptyList": "Noch keine Gegenstände erfasst.",
+    "errorLoad": "Inventar konnte nicht geladen werden.",
+    "addA11y": "Gegenstand hinzufügen",
+    "categories": {
+      "Electronics": "Elektronik",
+      "Appliance": "Haushaltsgerät",
+      "Furniture": "Möbel",
+      "Other": "Sonstiges"
+    },
+    "archiveAction": "Archivieren",
+    "deleteAction": "Löschen",
+    "cancelAction": "Abbrechen",
+    "warranty": {
+      "none": "Keine Garantie",
+      "expired": "Garantie abgelaufen",
+      "today": "Läuft heute ab",
+      "daysLeft_one": "{{count}} Tag",
+      "daysLeft_other": "{{count}} Tage"
+    },
+    "form": {
+      "titleEdit": "Gegenstand bearbeiten",
+      "titleAdd": "Gegenstand hinzufügen",
+      "nameLabel": "Name des Gegenstands",
+      "namePlaceholder": "z. B. Fernseher",
+      "categoryLabel": "Kategorie",
+      "roomLabel": "Raum (optional)",
+      "roomPlaceholder": "z. B. Wohnzimmer",
+      "brandLabel": "Marke (optional)",
+      "serialNumberLabel": "Seriennummer (optional)",
+      "priceLabel": "Preis (optional)",
+      "purchaseDateLabel": "Kaufdatum (optional)",
+      "warrantyDateLabel": "Ende der Garantie (optional)",
+      "selectDateButton": "Datum auswählen",
+      "receiptLabel": "Kaufbeleg / Garantiedokument (optional)",
+      "scanReceiptButton": "Beleg scannen",
+      "receiptAddedButton": "Beleg hinzugefügt ✓",
+      "warrantyDocButton": "Garantiedokument hinzufügen",
+      "warrantyDocAddedButton": "Dokument hinzugefügt ✓",
+      "notesLabel": "Notizen (optional)",
+      "submitEdit": "Aktualisieren",
+      "submitAdd": "Hinzufügen",
+      "errorSave": "Gegenstand konnte nicht gespeichert werden, bitte erneut versuchen."
+    },
+    "medicines": {
+      "outOfStock": "Nicht vorrätig",
+      "addToShoppingButton": "Zur Einkaufsliste hinzufügen",
+      "takeDoseButton": "Dosis eingenommen",
+      "doseTimesLabel": "Zeiten: {{times}}",
+      "emptyList": "Noch keine Medikamente erfasst.",
+      "errorLoad": "Medikamente konnten nicht geladen werden."
+    }
+  },
+  "badges": {
+    "errorLoad": "Abzeichen konnten nicht geladen werden."
+  },
+  "settings": {
+    "sectionAccount": "Konto",
+    "nameLabel": "Name",
+    "saveButton": "Speichern",
+    "currentPasswordLabel": "Aktuelles Passwort",
+    "newPasswordLabel": "Neues Passwort",
+    "changePasswordButton": "Passwort ändern",
+    "passwordChangedMessage": "Passwort geändert",
+    "passwordErrorInvalid": "Das aktuelle Passwort ist falsch.",
+    "sectionNotifications": "Benachrichtigungen",
+    "notifExpiry": "Ablauferinnerungen",
+    "notifShopping": "Aktualisierungen der Einkaufsliste",
+    "notifWeekly": "Wöchentliche Zusammenfassung",
+    "sectionHome": "Zuhause",
+    "homeNameLabel": "Name des Zuhauses",
+    "saveHomeNameButton": "Namen speichern",
+    "ownerCannotLeaveHint": "Als Eigentümer können Sie dieses Zuhause nicht verlassen, solange andere Mitglieder vorhanden sind.",
+    "leaveHomeButton": "Zuhause verlassen",
+    "leaveHomeConfirmTitle": "Möchten Sie dieses Zuhause wirklich verlassen?",
+    "leaveHomeConfirmCancel": "Abbrechen",
+    "leaveHomeConfirmConfirm": "Verlassen",
+    "sectionApp": "App",
+    "languageLabel": "Sprache",
+    "themeLabel": "Design",
+    "themeValuePlaceholder": "Hell (v1)",
+    "logoutButton": "Abmelden",
+    "errorLoad": "Einstellungen konnten nicht geladen werden."
+  },
+  "validation": {
+    "nameMin2": "Mindestens 2 Zeichen",
+    "emailInvalid": "Geben Sie eine gültige E-Mail-Adresse ein",
+    "passwordMin8": "Mindestens 8 Zeichen",
+    "passwordRequired": "Passwort ist erforderlich",
+    "homeNameRequired": "Name des Zuhauses ist erforderlich",
+    "inviteCodeRequired": "Einladungscode ist erforderlich",
+    "itemNameRequired": "Artikelname ist erforderlich",
+    "locationRequired": "Wählen Sie einen Ort aus",
+    "categoryRequired": "Wählen Sie eine Kategorie aus",
+    "quantityPositive": "Die Menge muss größer als 0 sein",
+    "unitRequired": "Wählen Sie eine Einheit aus",
+    "assetNameRequired": "Name des Gegenstands ist erforderlich",
+    "currentPasswordRequired": "Aktuelles Passwort ist erforderlich"
+  },
+  "errors": {
+    "generic": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",
+    "ALREADY_MEMBER": "Sie sind bereits Mitglied dieses Zuhauses.",
+    "ASSET_NOT_FOUND": "Gegenstand nicht gefunden.",
+    "CANNOT_REMOVE_OWNER": "Der Eigentümer kann nicht entfernt werden.",
+    "EMAIL_IN_USE": "Diese E-Mail-Adresse wird bereits verwendet.",
+    "FILE_REQUIRED": "Eine Datei ist erforderlich.",
+    "HOME_NOT_FOUND": "Zuhause nicht gefunden.",
+    "INSUFFICIENT_ROLE": "Sie sind nicht berechtigt, dies zu tun.",
+    "INVALID_CREDENTIALS": "Falsche E-Mail-Adresse oder falsches Passwort.",
+    "INVALID_CURRENT_PASSWORD": "Das aktuelle Passwort ist falsch.",
+    "INVALID_INVITE_CODE": "Ungültiger Einladungscode.",
+    "INVALID_LOCATION": "Ungültiger Ort.",
+    "INVALID_REFRESH_TOKEN": "Sitzung abgelaufen, bitte melden Sie sich erneut an.",
+    "INVALID_TOKEN": "Sitzung abgelaufen, bitte melden Sie sich erneut an.",
+    "ITEM_NOT_FOUND": "Artikel nicht gefunden.",
+    "LOCATION_NOT_FOUND": "Ort nicht gefunden.",
+    "MEMBER_NOT_FOUND": "Mitglied nicht gefunden.",
+    "NOT_A_MEDICINE": "Dieser Artikel ist kein Medikament.",
+    "NOT_A_MEMBER": "Sie sind kein Mitglied dieses Zuhauses.",
+    "OWNER_CANNOT_LEAVE": "Als Eigentümer können Sie dieses Zuhause nicht verlassen, solange andere Mitglieder vorhanden sind.",
+    "RECIPE_NOT_FOUND": "Rezept nicht gefunden.",
+    "SHOPPING_ITEM_NOT_FOUND": "Artikel der Einkaufsliste nicht gefunden.",
+    "UNAUTHENTICATED": "Bitte melden Sie sich erneut an.",
+    "UPLOAD_ERROR": "Datei-Upload fehlgeschlagen.",
+    "USER_NOT_FOUND": "Benutzer nicht gefunden."
+  },
+  "notifications": {}
+}

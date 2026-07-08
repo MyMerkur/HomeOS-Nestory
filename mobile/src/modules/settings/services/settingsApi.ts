@@ -45,3 +45,10 @@ export async function updateNotificationPreferences(
   });
   return data.data.user;
 }
+
+export async function updateLanguage(language: string): Promise<UserProfile> {
+  const { data } = await apiClient.patch<ApiEnvelope<{ user: UserProfile }>>('/users/me/settings', {
+    language,
+  });
+  return data.data.user;
+}

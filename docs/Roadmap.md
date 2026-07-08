@@ -49,5 +49,10 @@ dolap fotoğrafı analizi.
 | Sprint 10 | Tasarım Sistemi Temeli | 16.1 Token/Font/İkon Altyapısı, 16.2 Ortak Component Library |
 | Sprint 11 | Aile & Ayarlar | 17.1 Backend (membership/user endpoints), 17.2 Mobile (Family/Settings ekranları) |
 | Sprint 12 | Ekran Geçişi | 18.1 Auth+Onboarding+Dashboard+Pantry restyle, 18.2 Shopping+Recipes+Dashboard-nested restyle |
+| Sprint 13 | Çoklu Dil (i18n) | 19.1 Altyapı+Backend (i18next, 8 dil, dil seçici), 19.2 Tüm ekranların string migrasyonu |
+| Sprint 14 | Dark Mode | 20.1 Tema altyapısı+Backend, 20.2 Bileşen/ekran refactor'ı + Ayarlar entegrasyonu |
+| Sprint 15 | Pull-to-Refresh, Skeleton, Toast | 21.1 Pull-to-refresh+Skeleton, 21.2 Toast/Snackbar+açılış animasyonu |
+| Sprint 16 | Bildirim: Yerel + Push | 22.1 Yerel bildirim profesyonelleştirme, 22.2 Push altyapısı (FCM) |
+| Sprint 17 | Yayın Öncesi Kalite | 23.1 A11y/safe area/keyboard/haptics, 23.2 Offline/retry/versiyon/gizlilik-şartlar |
 
 Kapsam büyümeye başlarsa buradaki v1 sınırlarına geri dönülür.

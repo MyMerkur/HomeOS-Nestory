@@ -1,0 +1,334 @@
+{
+  "common": {
+    "cancel": "İptal",
+    "save": "Kaydet",
+    "delete": "Sil",
+    "retry": "Tekrar dene",
+    "loading": "Yükleniyor…",
+    "languages": {
+      "en": "English",
+      "tr": "Türkçe",
+      "de": "Deutsch",
+      "fr": "Français",
+      "es": "Español",
+      "it": "Italiano",
+      "cs": "Čeština",
+      "pt": "Português"
+    }
+  },
+  "auth": {
+    "login": {
+      "wordmark": "HomeOS",
+      "tagline": "Evindeki her şey tek yerde.",
+      "emailLabel": "E-posta",
+      "passwordLabel": "Şifre",
+      "submitButton": "Giriş yap",
+      "errorInvalidCredentials": "E-posta veya şifre hatalı.",
+      "noAccountLink": "Hesabın yok mu? Kayıt ol"
+    },
+    "register": {
+      "title": "Hesap oluştur",
+      "nameLabel": "Ad Soyad",
+      "emailLabel": "E-posta",
+      "passwordLabel": "Şifre (en az 8 karakter)",
+      "submitButton": "Kayıt ol",
+      "errorGeneric": "Kayıt oluşturulamadı.",
+      "hasAccountLink": "Zaten hesabın var mı? Giriş yap"
+    }
+  },
+  "onboarding": {
+    "choice": {
+      "title": "Henüz bir evin yok",
+      "subtitle": "Yeni bir ev oluştur ya da davet koduyla mevcut bir eve katıl.",
+      "createButton": "Ev oluştur",
+      "joinButton": "Davet koduyla katıl"
+    },
+    "createHome": {
+      "title": "Ev oluştur",
+      "nameLabel": "Ev adı (ör. Ev, Yazlık)",
+      "submitButton": "Oluştur",
+      "errorGeneric": "Ev oluşturulamadı, tekrar dene.",
+      "createdTitle": "Ev oluşturuldu",
+      "createdSubtitle": "Aile üyelerini davet etmek için bu kodu paylaş. Bu kod yalnızca burada gösterilir.",
+      "continueButton": "Devam et"
+    },
+    "joinHome": {
+      "title": "Davet koduyla katıl",
+      "codeLabel": "Davet kodu",
+      "submitButton": "Katıl",
+      "errorGeneric": "Davet kodu geçersiz ya da bu eve zaten üyesin."
+    }
+  },
+  "dashboard": {
+    "shortcuts": {
+      "badges": "Rozetlerim",
+      "medicines": "İlaçlarım",
+      "assets": "Varlıklarım",
+      "family": "Ailem",
+      "settings": "Ayarlar"
+    },
+    "summary": {
+      "today": "Bugün",
+      "in3Days": "3 gün",
+      "inWeek": "Hafta",
+      "total": "Toplam"
+    },
+    "upcomingTitle": "Yaklaşan ürünler",
+    "emptyUpcoming": "Yaklaşan SKT'si olan ürün yok.",
+    "errorLoad": "Özet bilgiler yüklenemedi."
+  },
+  "pantry": {
+    "searchPlaceholder": "Ürün ara",
+    "tabAll": "Tümü",
+    "errorLoad": "Ürünler yüklenemedi.",
+    "emptyView": "Bu görünümde henüz ürün yok.",
+    "barcodeButton": "Barkod",
+    "addItemA11y": "Ürün ekle",
+    "actions": {
+      "consumed": "Tükettim",
+      "discarded": "Attım",
+      "frozen": "Dondurdum",
+      "addToShopping": "Alışveriş listesine ekle",
+      "cancel": "İptal"
+    },
+    "categories": {
+      "Dairy": "Süt Ürünleri",
+      "Meat": "Et",
+      "Vegetable": "Sebze",
+      "Fruit": "Meyve",
+      "Bakery": "Fırın",
+      "Drink": "İçecek",
+      "Frozen": "Dondurulmuş",
+      "Cleaning": "Temizlik",
+      "Medicine": "İlaç",
+      "Other": "Diğer"
+    },
+    "units": {
+      "piece": "Adet",
+      "gram": "Gram",
+      "kg": "Kilogram",
+      "ml": "Mililitre",
+      "liter": "Litre",
+      "pack": "Paket",
+      "bottle": "Şişe",
+      "box": "Kutu"
+    },
+    "itemForm": {
+      "titleEdit": "Ürünü düzenle",
+      "titleAdd": "Ürün ekle",
+      "nameLabel": "Ürün adı",
+      "namePlaceholder": "ör. Süt",
+      "barcodeLabel": "Barkod (opsiyonel)",
+      "barcodeFieldLabel": "Barkod",
+      "barcodePlaceholder": "Barkod numarası",
+      "scanBarcodeButton": "Barkod Tara",
+      "locationLabel": "Lokasyon",
+      "categoryLabel": "Kategori",
+      "quantityLabel": "Miktar",
+      "unitLabel": "Birim",
+      "doseAmountLabel": "Doz miktarı (opsiyonel)",
+      "doseAmountPlaceholder": "ör. 1",
+      "doseTimesLabel": "Doz saatleri (opsiyonel)",
+      "addTimeButton": "+ Saat Ekle",
+      "expiryDateLabel": "Son kullanma tarihi (opsiyonel)",
+      "selectDateButton": "Tarih seç",
+      "scanExpiryButton": "SKT Tara",
+      "submitEdit": "Güncelle",
+      "submitAdd": "Ekle",
+      "errorSave": "Ürün kaydedilemedi, tekrar dene.",
+      "barcodeNotFoundTitle": "Barkod bulunamadı",
+      "barcodeNotFoundMessage": "Fotoğrafta bir barkod tanınamadı, tekrar dene veya elle gir.",
+      "expiryNotFoundTitle": "Tarih bulunamadı",
+      "expiryNotFoundMessage": "Fotoğrafta bir SKT tarihi tanınamadı, elle girebilirsin."
+    },
+    "quickAdd": {
+      "scanBarcodeButton": "Barkodu Tara",
+      "newBarcodeTitle": "Bu barkod yeni",
+      "newBarcodeMessage": "Daha önce bu barkodla eklenmiş ürün yok. Tüm bilgileriyle eklemek için forma geçebilirsin.",
+      "cancelButton": "Vazgeç",
+      "goToFormButton": "Forma Git",
+      "quantityLabel": "Miktar",
+      "locationLabel": "Lokasyon",
+      "expiryDateLabel": "Son kullanma tarihi (opsiyonel)",
+      "notScannedLabel": "Taranmadı",
+      "scanExpiryButton": "SKT Tara",
+      "submitButton": "Hızlı Ekle",
+      "errorQuantity": "Miktar 0'dan büyük olmalı",
+      "errorSave": "Ürün kaydedilemedi, tekrar dene.",
+      "barcodeNotFoundTitle": "Barkod bulunamadı",
+      "barcodeNotFoundMessage": "Fotoğrafta bir barkod tanınamadı, tekrar dene.",
+      "expiryNotFoundTitle": "Tarih bulunamadı",
+      "expiryNotFoundMessage": "Fotoğrafta bir SKT tarihi tanınamadı, elle girebilirsin."
+    }
+  },
+  "shopping": {
+    "addPlaceholder": "Ürün ekle",
+    "addButton": "Ekle",
+    "errorLoad": "Alışveriş listesi yüklenemedi.",
+    "emptyList": "Alışveriş listesi boş.",
+    "deleteA11y": "{{name}} sil"
+  },
+  "family": {
+    "inviteButton": "Davet Et",
+    "emptyMembers": "Henüz üye yok",
+    "errorLoad": "Üyeler yüklenemedi.",
+    "removeButton": "Çıkar",
+    "removeConfirmTitle": "{{name}} çıkarılsın mı?",
+    "removeConfirmCancel": "İptal",
+    "removeConfirmConfirm": "Çıkar",
+    "shareMessage": "HomeOS evine katılmak için davet kodu: {{code}}",
+    "roles": {
+      "owner": "Sahip",
+      "admin": "Yönetici",
+      "member": "Üye",
+      "viewer": "İzleyici"
+    }
+  },
+  "recipes": {
+    "tabs": {
+      "suggestions": "Öneriler",
+      "saved": "Kaydedilenler"
+    },
+    "errorLoad": "Tarifler yüklenemedi.",
+    "emptySuggestions": "Şu an evdeki ürünlerle eşleşen bir tarif yok.",
+    "emptySaved": "Henüz kaydedilmiş bir tarif yok.",
+    "allIngredientsAvailable": "Tüm malzemeler evde",
+    "missingIngredients_one": "{{count}} eksik malzeme",
+    "missingIngredients_other": "{{count}} eksik malzeme",
+    "detail": {
+      "saveButton": "Kaydet",
+      "savedButton": "Kaydedildi ✓",
+      "coverageLabel": "Evdeki malzemelerle kapsama: %{{percent}}",
+      "ingredientsTitle": "Malzemeler",
+      "instructionsTitle": "Talimatlar",
+      "optionalTag": " (opsiyonel)"
+    }
+  },
+  "assets": {
+    "emptyList": "Henüz kayıtlı bir eşya yok.",
+    "errorLoad": "Eşyalar yüklenemedi.",
+    "addA11y": "Eşya ekle",
+    "categories": {
+      "Electronics": "Elektronik",
+      "Appliance": "Beyaz Eşya",
+      "Furniture": "Mobilya",
+      "Other": "Diğer"
+    },
+    "archiveAction": "Arşivle",
+    "deleteAction": "Sil",
+    "cancelAction": "İptal",
+    "warranty": {
+      "none": "Garanti yok",
+      "expired": "Garantisi bitti",
+      "today": "Bugün bitiyor",
+      "daysLeft_one": "{{count}} gün",
+      "daysLeft_other": "{{count}} gün"
+    },
+    "form": {
+      "titleEdit": "Eşyayı düzenle",
+      "titleAdd": "Eşya ekle",
+      "nameLabel": "Eşya adı",
+      "namePlaceholder": "ör. Televizyon",
+      "categoryLabel": "Kategori",
+      "roomLabel": "Oda (opsiyonel)",
+      "roomPlaceholder": "ör. Oturma Odası",
+      "brandLabel": "Marka (opsiyonel)",
+      "serialNumberLabel": "Seri numarası (opsiyonel)",
+      "priceLabel": "Fiyat (opsiyonel)",
+      "purchaseDateLabel": "Satın alma tarihi (opsiyonel)",
+      "warrantyDateLabel": "Garanti bitiş tarihi (opsiyonel)",
+      "selectDateButton": "Tarih seç",
+      "receiptLabel": "Fiş / Garanti Belgesi (opsiyonel)",
+      "scanReceiptButton": "Fişi Tara",
+      "receiptAddedButton": "Fiş Eklendi ✓",
+      "warrantyDocButton": "Garanti Belgesi Ekle",
+      "warrantyDocAddedButton": "Belge Eklendi ✓",
+      "notesLabel": "Notlar (opsiyonel)",
+      "submitEdit": "Güncelle",
+      "submitAdd": "Ekle",
+      "errorSave": "Eşya kaydedilemedi, tekrar dene."
+    },
+    "medicines": {
+      "outOfStock": "Stokta yok",
+      "addToShoppingButton": "Alışverişe ekle",
+      "takeDoseButton": "Doz Aldım",
+      "doseTimesLabel": "Saatler: {{times}}",
+      "emptyList": "Henüz kayıtlı bir ilaç yok.",
+      "errorLoad": "İlaçlar yüklenemedi."
+    }
+  },
+  "badges": {
+    "errorLoad": "Rozetler yüklenemedi."
+  },
+  "settings": {
+    "sectionAccount": "Hesap",
+    "nameLabel": "İsim",
+    "saveButton": "Kaydet",
+    "currentPasswordLabel": "Mevcut şifre",
+    "newPasswordLabel": "Yeni şifre",
+    "changePasswordButton": "Şifreyi değiştir",
+    "passwordChangedMessage": "Şifre değiştirildi",
+    "passwordErrorInvalid": "Mevcut şifre yanlış.",
+    "sectionNotifications": "Bildirimler",
+    "notifExpiry": "SKT hatırlatmaları",
+    "notifShopping": "Alışveriş güncellemeleri",
+    "notifWeekly": "Haftalık özet",
+    "sectionHome": "Ev",
+    "homeNameLabel": "Ev adı",
+    "saveHomeNameButton": "Ev adını kaydet",
+    "ownerCannotLeaveHint": "Ev sahibi olarak, başka üyeler varken bu evden ayrılamazsın.",
+    "leaveHomeButton": "Evden ayrıl",
+    "leaveHomeConfirmTitle": "Bu evden ayrılmak istediğine emin misin?",
+    "leaveHomeConfirmCancel": "İptal",
+    "leaveHomeConfirmConfirm": "Ayrıl",
+    "sectionApp": "Uygulama",
+    "languageLabel": "Dil",
+    "themeLabel": "Tema",
+    "themeValuePlaceholder": "Açık (v1)",
+    "logoutButton": "Çıkış yap",
+    "errorLoad": "Ayarlar yüklenemedi."
+  },
+  "validation": {
+    "nameMin2": "En az 2 karakter",
+    "emailInvalid": "Geçerli bir e-posta girin",
+    "passwordMin8": "En az 8 karakter",
+    "passwordRequired": "Şifre gerekli",
+    "homeNameRequired": "Ev adı gerekli",
+    "inviteCodeRequired": "Davet kodu gerekli",
+    "itemNameRequired": "Ürün adı gerekli",
+    "locationRequired": "Lokasyon seç",
+    "categoryRequired": "Kategori seç",
+    "quantityPositive": "Miktar 0'dan büyük olmalı",
+    "unitRequired": "Birim seç",
+    "assetNameRequired": "Eşya adı gerekli",
+    "currentPasswordRequired": "Mevcut şifre gerekli"
+  },
+  "errors": {
+    "generic": "Bir şeyler ters gitti. Lütfen tekrar dene.",
+    "ALREADY_MEMBER": "Bu evin zaten üyesisin.",
+    "ASSET_NOT_FOUND": "Eşya bulunamadı.",
+    "CANNOT_REMOVE_OWNER": "Ev sahibi çıkarılamaz.",
+    "EMAIL_IN_USE": "Bu e-posta zaten kullanımda.",
+    "FILE_REQUIRED": "Bir dosya gerekli.",
+    "HOME_NOT_FOUND": "Ev bulunamadı.",
+    "INSUFFICIENT_ROLE": "Bunu yapmak için yetkin yok.",
+    "INVALID_CREDENTIALS": "E-posta veya şifre hatalı.",
+    "INVALID_CURRENT_PASSWORD": "Mevcut şifre yanlış.",
+    "INVALID_INVITE_CODE": "Davet kodu geçersiz.",
+    "INVALID_LOCATION": "Geçersiz lokasyon.",
+    "INVALID_REFRESH_TOKEN": "Oturum süresi doldu, lütfen tekrar giriş yap.",
+    "INVALID_TOKEN": "Oturum süresi doldu, lütfen tekrar giriş yap.",
+    "ITEM_NOT_FOUND": "Ürün bulunamadı.",
+    "LOCATION_NOT_FOUND": "Lokasyon bulunamadı.",
+    "MEMBER_NOT_FOUND": "Üye bulunamadı.",
+    "NOT_A_MEDICINE": "Bu ürün bir ilaç değil.",
+    "NOT_A_MEMBER": "Bu evin üyesi değilsin.",
+    "OWNER_CANNOT_LEAVE": "Ev sahibi olarak, başka üyeler varken bu evden ayrılamazsın.",
+    "RECIPE_NOT_FOUND": "Tarif bulunamadı.",
+    "SHOPPING_ITEM_NOT_FOUND": "Alışveriş ürünü bulunamadı.",
+    "UNAUTHENTICATED": "Lütfen tekrar giriş yap.",
+    "UPLOAD_ERROR": "Dosya yüklenemedi.",
+    "USER_NOT_FOUND": "Kullanıcı bulunamadı."
+  },
+  "notifications": {}
+}
