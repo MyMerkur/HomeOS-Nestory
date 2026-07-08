@@ -15,7 +15,8 @@
       "cs": "Čeština",
       "pt": "Português"
     },
-    "daysLeftCaption": "giorni rimasti"
+    "daysLeftCaption": "giorni rimasti",
+    "offlineBanner": "Nessuna connessione Internet"
   },
   "auth": {
     "login": {
@@ -293,8 +294,15 @@
     "themeSystem": "Sistema",
     "themeLight": "Chiaro",
     "themeDark": "Scuro",
+    "appVersionLabel": "Versione {{version}}",
+    "privacyPolicyLink": "Informativa sulla privacy",
+    "termsLink": "Termini di servizio",
     "logoutButton": "Esci",
-    "errorLoad": "Impossibile caricare le impostazioni."
+    "errorLoad": "Impossibile caricare le impostazioni.",
+    "privacyPolicyTitle": "Informativa sulla privacy",
+    "privacyPolicyBody": "Questa app memorizza il tuo nome, la tua email e i dati di dispensa, spesa e famiglia che inserisci per fornire a te e ai membri della tua famiglia le sue funzionalità principali. Non vendiamo i tuoi dati a terzi. Per domande su come vengono trattati i tuoi dati, contatta l'indirizzo di supporto dell'app.\n\nQuesta è una bozza di informativa e sarà sostituita da una versione completa prima del rilascio pubblico dell'app.",
+    "termsTitle": "Termini di servizio",
+    "termsBody": "Utilizzando questa app, accetti di usarla solo per lo scopo previsto di gestire la dispensa, la spesa e le informazioni correlate della tua famiglia. L'app viene fornita così com'è, senza alcuna garanzia.\n\nQuesta è una bozza dei termini di servizio e sarà sostituita da una versione completa prima del rilascio pubblico dell'app."
   },
   "validation": {
     "nameMin2": "Almeno 2 caratteri",

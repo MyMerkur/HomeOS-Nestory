@@ -15,7 +15,8 @@
       "cs": "Čeština",
       "pt": "Português"
     },
-    "daysLeftCaption": "days left"
+    "daysLeftCaption": "days left",
+    "offlineBanner": "No internet connection"
   },
   "auth": {
     "login": {
@@ -293,8 +294,15 @@
     "themeSystem": "System",
     "themeLight": "Light",
     "themeDark": "Dark",
+    "appVersionLabel": "Version {{version}}",
+    "privacyPolicyLink": "Privacy Policy",
+    "termsLink": "Terms of Service",
     "logoutButton": "Log out",
-    "errorLoad": "Couldn't load settings."
+    "errorLoad": "Couldn't load settings.",
+    "privacyPolicyTitle": "Privacy Policy",
+    "privacyPolicyBody": "This app stores your name, email, and the pantry, shopping, and household data you enter so it can provide its core features to you and the members of your home. We do not sell your data to third parties. For questions about how your data is handled, contact the app's support address.\n\nThis is a draft policy and will be replaced with a complete version before the app is publicly released.",
+    "termsTitle": "Terms of Service",
+    "termsBody": "By using this app you agree to use it only for its intended purpose of managing your household's pantry, shopping, and related information. The app is provided as-is, without warranty of any kind.\n\nThese are draft terms of service and will be replaced with a complete version before the app is publicly released."
   },
   "validation": {
     "nameMin2": "At least 2 characters",

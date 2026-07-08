@@ -3,6 +3,7 @@ import { FlatList, StyleSheet, Text, View } from 'react-native';
 import { IconMoodEmpty } from '@tabler/icons-react-native';
 import { useTranslation } from 'react-i18next';
 import { ItemCard } from '../../pantry/components/ItemCard';
+import { Button } from '../../../ui/Button';
 import { Chip } from '../../../ui/Chip';
 import { EmptyState } from '../../../ui/EmptyState';
 import { Skeleton } from '../../../ui/Skeleton';
@@ -48,6 +49,7 @@ export function DashboardScreen({ navigation }: DashboardStackScreenProps<'Dashb
     return (
       <View style={styles.centered}>
         <Text style={styles.error}>{t('dashboard.errorLoad')}</Text>
+        <Button label={t('common.retry')} onPress={() => refetch()} variant="outline" />
       </View>
     );
   }
@@ -125,7 +127,13 @@ export function DashboardScreen({ navigation }: DashboardStackScreenProps<'Dashb
 function createStyles(colors: ThemeColors) {
   return StyleSheet.create({
     container: { flex: 1, backgroundColor: colors.background },
-    centered: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: spacing.xl },
+    centered: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: spacing.xl,
+      gap: spacing.md,
+    },
     error: {
       fontSize: fontSize.bodyMd,
       fontFamily: typography.body.fontFamily,

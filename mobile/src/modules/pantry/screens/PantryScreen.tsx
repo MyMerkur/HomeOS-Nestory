@@ -153,6 +153,7 @@ export function PantryScreen({ navigation }: PantryStackScreenProps<'Pantry'>) {
           isError ? (
             <View style={styles.centered}>
               <Text style={styles.error}>{t('pantry.errorLoad')}</Text>
+              <Button label={t('common.retry')} onPress={() => refetch()} variant="outline" />
             </View>
           ) : (
             <EmptyState icon={IconPackageOff} title={t('pantry.emptyView')} />
@@ -197,7 +198,13 @@ function createStyles(colors: ThemeColors) {
       paddingTop: spacing.sm,
       gap: spacing.sm,
     },
-    centered: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: spacing.xl },
+    centered: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: spacing.xl,
+      gap: spacing.md,
+    },
     error: { color: colors.dangerDark },
     list: { paddingHorizontal: spacing.lg },
     rowSkeleton: { marginBottom: spacing.sm },

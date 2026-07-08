@@ -31,8 +31,10 @@ import { useHomeStore } from '../../../store/useHomeStore';
 import { getStoredRefreshToken } from '../../../services/secureStorage';
 import { setStoredLanguage } from '../../../services/languageStorage';
 import { triggerHaptic } from '../../../services/haptics';
+import { APP_VERSION } from '../../../config/appInfo';
 import i18n, { SUPPORTED_LANGUAGES, type SupportedLanguage } from '../../../i18n';
 import { LANGUAGE_NATIVE_NAMES } from '../../../i18n/languages';
+import type { DashboardStackScreenProps } from '../../../app/navigation/types';
 import { logoutRequest } from '../../auth/services/authApi';
 import { HOMES_QUERY_KEY, useHomesQuery } from '../../home/hooks/useHomesQuery';
 import { leaveHome, updateHomeName } from '../../family/services/familyApi';
@@ -63,7 +65,7 @@ function hourToDate(hour: number): Date {
   return date;
 }
 
-export function SettingsScreen() {
+export function SettingsScreen({ navigation }: DashboardStackScreenProps<'Settings'>) {
   const { t } = useTranslation();
   const { showToast } = useToast();
   const { colors, mode, setMode } = useTheme();
@@ -73,7 +75,7 @@ export function SettingsScreen() {
   const clearSession = useAuthStore((state) => state.clearSession);
   const queryClient = useQueryClient();
 
-  const { data: profile, isLoading, isError } = useProfileQuery();
+  const { data: profile, isLoading, isError, refetch } = useProfileQuery();
   const { data: homes } = useHomesQuery();
   const currentHome = homes?.find((home) => home.id === homeId);
   const isOwner = currentHome?.role === 'owner';
@@ -233,6 +235,7 @@ export function SettingsScreen() {
     return (
       <View style={styles.centered}>
         <Text style={styles.error}>{t('settings.errorLoad')}</Text>
+        <Button label={t('common.retry')} onPress={() => refetch()} variant="outline" />
       </View>
     );
   }
@@ -421,6 +424,13 @@ export function SettingsScreen() {
             { value: 'dark', label: t('settings.themeDark'), testID: 'theme-option-dark' },
           ]}
         />
+        <Pressable onPress={() => navigation.navigate('PrivacyPolicy')}>
+          <Text style={styles.link}>{t('settings.privacyPolicyLink')}</Text>
+        </Pressable>
+        <Pressable onPress={() => navigation.navigate('Terms')}>
+          <Text style={styles.link}>{t('settings.termsLink')}</Text>
+        </Pressable>
+        <Text style={styles.hint}>{t('settings.appVersionLabel', { version: APP_VERSION })}</Text>
       </Card>
 
       <Button
@@ -438,7 +448,13 @@ function createStyles(colors: ThemeColors) {
   return StyleSheet.create({
     container: { flex: 1, backgroundColor: colors.background },
     content: { padding: spacing.lg, gap: spacing.md },
-    centered: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: spacing.xl },
+    centered: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: spacing.xl,
+      gap: spacing.md,
+    },
     error: {
       fontSize: fontSize.bodyMd,
       fontFamily: typography.body.fontFamily,
@@ -468,6 +484,11 @@ function createStyles(colors: ThemeColors) {
       fontSize: fontSize.caption,
       fontFamily: typography.caption.fontFamily,
       color: colors.textSecondary,
+    },
+    link: {
+      fontSize: fontSize.bodyMd,
+      fontFamily: typography.bodyMedium.fontFamily,
+      color: colors.primary,
     },
   });
 }

@@ -18,6 +18,7 @@ import { useAuthStore } from '../../../store/useAuthStore';
 import { ThemeProvider } from '../../../theme/ThemeContext';
 import { ToastProvider } from '../../../ui/ToastProvider';
 import * as secureStorage from '../../../services/secureStorage';
+import type { DashboardStackScreenProps } from '../../../app/navigation/types';
 
 jest.mock('../services/settingsApi');
 jest.mock('../../home/services/homeApi');
@@ -52,13 +53,17 @@ const OWNER_HOME = {
   role: 'owner' as const,
 };
 
+const mockNavigation = {
+  navigate: jest.fn(),
+} as unknown as DashboardStackScreenProps<'Settings'>['navigation'];
+
 function renderScreen() {
   const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   return render(
     <ThemeProvider>
       <ToastProvider>
         <QueryClientProvider client={queryClient}>
-          <SettingsScreen />
+          <SettingsScreen navigation={mockNavigation} route={{} as never} />
         </QueryClientProvider>
       </ToastProvider>
     </ThemeProvider>,
@@ -198,5 +203,29 @@ describe('SettingsScreen', () => {
 
     await waitFor(() => expect(logoutRequest).toHaveBeenCalledWith('refresh-token'));
     await waitFor(() => expect(useAuthStore.getState().accessToken).toBeNull());
+  });
+
+  it('shows the app version', async () => {
+    renderScreen();
+
+    expect(await screen.findByText(/Version 1\.0\.0/)).toBeTruthy();
+  });
+
+  it('navigates to the Privacy Policy screen', async () => {
+    renderScreen();
+    await screen.findByText('Privacy Policy');
+
+    fireEvent.press(screen.getByText('Privacy Policy'));
+
+    expect(mockNavigation.navigate).toHaveBeenCalledWith('PrivacyPolicy');
+  });
+
+  it('navigates to the Terms of Service screen', async () => {
+    renderScreen();
+    await screen.findByText('Terms of Service');
+
+    fireEvent.press(screen.getByText('Terms of Service'));
+
+    expect(mockNavigation.navigate).toHaveBeenCalledWith('Terms');
   });
 });

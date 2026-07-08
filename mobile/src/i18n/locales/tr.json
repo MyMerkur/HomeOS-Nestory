@@ -15,7 +15,8 @@
       "cs": "Čeština",
       "pt": "Português"
     },
-    "daysLeftCaption": "gün kaldı"
+    "daysLeftCaption": "gün kaldı",
+    "offlineBanner": "İnternet bağlantısı yok"
   },
   "auth": {
     "login": {
@@ -293,8 +294,15 @@
     "themeSystem": "Sistem",
     "themeLight": "Açık",
     "themeDark": "Koyu",
+    "appVersionLabel": "Sürüm {{version}}",
+    "privacyPolicyLink": "Gizlilik Politikası",
+    "termsLink": "Kullanım Şartları",
     "logoutButton": "Çıkış yap",
-    "errorLoad": "Ayarlar yüklenemedi."
+    "errorLoad": "Ayarlar yüklenemedi.",
+    "privacyPolicyTitle": "Gizlilik Politikası",
+    "privacyPolicyBody": "Bu uygulama, size ve evinizin üyelerine temel özellikleri sunabilmek için adınızı, e-postanızı ve girdiğiniz kiler, alışveriş ve ev verilerini saklar. Verilerinizi üçüncü taraflara satmıyoruz. Verilerinizin nasıl işlendiğiyle ilgili sorularınız için uygulamanın destek adresiyle iletişime geçebilirsiniz.\n\nBu bir taslak politikadır ve uygulama halka açık olarak yayınlanmadan önce tam bir sürümle değiştirilecektir.",
+    "termsTitle": "Kullanım Şartları",
+    "termsBody": "Bu uygulamayı kullanarak, onu yalnızca evinizin kiler, alışveriş ve ilgili bilgilerini yönetme amacına uygun şekilde kullanmayı kabul edersiniz. Uygulama olduğu gibi, hiçbir garanti verilmeksizin sunulmaktadır.\n\nBu bir taslak kullanım şartlarıdır ve uygulama halka açık olarak yayınlanmadan önce tam bir sürümle değiştirilecektir."
   },
   "validation": {
     "nameMin2": "En az 2 karakter",

@@ -119,6 +119,7 @@ export function ShoppingScreen() {
     return (
       <View style={styles.centered}>
         <Text style={styles.error}>{t('shopping.errorLoad')}</Text>
+        <Button label={t('common.retry')} onPress={() => refetch()} variant="outline" />
       </View>
     );
   }
@@ -174,7 +175,13 @@ function createStyles(colors: ThemeColors) {
     container: { flex: 1, backgroundColor: colors.background },
     addRow: { flexDirection: 'row', padding: spacing.lg, gap: spacing.sm, alignItems: 'flex-end' },
     addInput: { flex: 1 },
-    centered: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: spacing.xl },
+    centered: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: spacing.xl,
+      gap: spacing.md,
+    },
     error: {
       fontSize: fontSize.bodyMd,
       fontFamily: typography.body.fontFamily,

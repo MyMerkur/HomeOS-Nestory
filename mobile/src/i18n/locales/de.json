@@ -15,7 +15,8 @@
       "cs": "Čeština",
       "pt": "Português"
     },
-    "daysLeftCaption": "Tage übrig"
+    "daysLeftCaption": "Tage übrig",
+    "offlineBanner": "Keine Internetverbindung"
   },
   "auth": {
     "login": {
@@ -293,8 +294,15 @@
     "themeSystem": "System",
     "themeLight": "Hell",
     "themeDark": "Dunkel",
+    "appVersionLabel": "Version {{version}}",
+    "privacyPolicyLink": "Datenschutzrichtlinie",
+    "termsLink": "Nutzungsbedingungen",
     "logoutButton": "Abmelden",
-    "errorLoad": "Einstellungen konnten nicht geladen werden."
+    "errorLoad": "Einstellungen konnten nicht geladen werden.",
+    "privacyPolicyTitle": "Datenschutzrichtlinie",
+    "privacyPolicyBody": "Diese App speichert Ihren Namen, Ihre E-Mail-Adresse sowie die von Ihnen eingegebenen Vorrats-, Einkaufs- und Haushaltsdaten, um Ihnen und den Mitgliedern Ihres Haushalts die Kernfunktionen bereitzustellen. Wir verkaufen Ihre Daten nicht an Dritte. Bei Fragen zur Verarbeitung Ihrer Daten wenden Sie sich bitte an die Support-Adresse der App.\n\nDies ist eine Entwurfsrichtlinie und wird vor der öffentlichen Veröffentlichung der App durch eine vollständige Version ersetzt.",
+    "termsTitle": "Nutzungsbedingungen",
+    "termsBody": "Durch die Nutzung dieser App stimmen Sie zu, sie nur für ihren vorgesehenen Zweck – die Verwaltung der Vorrats-, Einkaufs- und Haushaltsdaten Ihres Haushalts – zu verwenden. Die App wird ohne jegliche Gewährleistung bereitgestellt.\n\nDies sind Entwurfsnutzungsbedingungen und werden vor der öffentlichen Veröffentlichung der App durch eine vollständige Version ersetzt."
   },
   "validation": {
     "nameMin2": "Mindestens 2 Zeichen",

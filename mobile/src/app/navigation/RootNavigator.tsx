@@ -21,6 +21,8 @@ import { AssetsScreen } from '../../modules/assets/screens/AssetsScreen';
 import { AssetFormScreen } from '../../modules/assets/screens/AssetFormScreen';
 import { FamilyScreen } from '../../modules/family/screens/FamilyScreen';
 import { SettingsScreen } from '../../modules/settings/screens/SettingsScreen';
+import { PrivacyPolicyScreen } from '../../modules/settings/screens/PrivacyPolicyScreen';
+import { TermsScreen } from '../../modules/settings/screens/TermsScreen';
 import { PantryScreen } from '../../modules/pantry/screens/PantryScreen';
 import { ItemFormScreen } from '../../modules/pantry/screens/ItemFormScreen';
 import { QuickAddItemScreen } from '../../modules/pantry/screens/QuickAddItemScreen';
@@ -111,6 +113,12 @@ function DashboardTabNavigator() {
       <DashboardStack.Screen name="AssetForm" component={AssetFormScreen} />
       <DashboardStack.Screen name="Family" component={FamilyScreen} options={{ title: 'Ailem' }} />
       <DashboardStack.Screen name="Settings" component={SettingsScreen} options={{ title: 'Ayarlar' }} />
+      <DashboardStack.Screen
+        name="PrivacyPolicy"
+        component={PrivacyPolicyScreen}
+        options={{ title: 'Gizlilik Politikası' }}
+      />
+      <DashboardStack.Screen name="Terms" component={TermsScreen} options={{ title: 'Kullanım Şartları' }} />
     </DashboardStack.Navigator>
   );
 }

@@ -15,7 +15,8 @@
       "cs": "Čeština",
       "pt": "Português"
     },
-    "daysLeftCaption": "dias restantes"
+    "daysLeftCaption": "dias restantes",
+    "offlineBanner": "Sem ligação à Internet"
   },
   "auth": {
     "login": {
@@ -293,8 +294,15 @@
     "themeSystem": "Sistema",
     "themeLight": "Claro",
     "themeDark": "Escuro",
+    "appVersionLabel": "Versão {{version}}",
+    "privacyPolicyLink": "Política de Privacidade",
+    "termsLink": "Termos de Serviço",
     "logoutButton": "Terminar sessão",
-    "errorLoad": "Não foi possível carregar as definições."
+    "errorLoad": "Não foi possível carregar as definições.",
+    "privacyPolicyTitle": "Política de Privacidade",
+    "privacyPolicyBody": "Esta aplicação armazena o seu nome, e-mail e os dados de despensa, compras e residência que introduz para lhe fornecer, a si e aos membros da sua residência, as suas funcionalidades principais. Não vendemos os seus dados a terceiros. Para questões sobre como os seus dados são tratados, contacte o endereço de suporte da aplicação.\n\nEsta é uma política provisória que será substituída por uma versão completa antes do lançamento público da aplicação.",
+    "termsTitle": "Termos de Serviço",
+    "termsBody": "Ao utilizar esta aplicação, concorda em usá-la apenas para o seu propósito previsto de gerir a despensa, as compras e as informações relacionadas da sua residência. A aplicação é fornecida tal como está, sem qualquer garantia.\n\nEstes são termos de serviço provisórios que serão substituídos por uma versão completa antes do lançamento público da aplicação."
   },
   "validation": {
     "nameMin2": "Pelo menos 2 caracteres",

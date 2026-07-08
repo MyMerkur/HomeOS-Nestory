@@ -856,3 +856,60 @@ navigasyon başlıkları da tema fontuna taşındı
   test suite'i yeşil (41 suite / 177 test). Sprint 17.1 tamamlandı —
   Sprint 17.2 (offline/retry, versiyon, gizlilik/şartlar, constants
   gözden geçirme) sıradaki ve son adım.
+
+---
+
+## Decision: Offline algılama, retry, versiyon, gizlilik/şartlar (Sprint 17.2)
+
+- **Date**: 2026-07-09
+- **Status**: Accepted
+- **Context**: Bağlantı koptuğunda kullanıcıya hiçbir geri bildirim
+  yoktu; sorgu hataları sadece statik bir metin gösteriyordu (Sprint
+  15.1'de eklenen `refetch` zaten mevcuttu ama hiçbir yerde bir "tekrar
+  dene" butonuna bağlanmamıştı); `mobile/package.json`'daki versiyon
+  (`0.0.1`) iOS/Android'in gerçek `1.0`/`1.0.0` sürümünden geride
+  kalmıştı; Gizlilik Politikası/Kullanım Şartları için gerçek bir URL
+  yoktu (kullanıcı onayıyla placeholder ekran kararı zaten en baştan
+  alınmıştı).
+- **Decision**: `@react-native-community/netinfo` kuruldu (npm +
+  `pod install` — Android autolinking `./gradlew :app:tasks` ile
+  doğrulandı). Yeni `mobile/src/app/providers/NetworkProvider.tsx`:
+  `useIsConnected()` hook'u + `NetInfo.addEventListener` ile takip
+  edilen bağlantı durumu; bağlantı koptuğunda `App.tsx` seviyesinde,
+  tüm ekranların üstünde sabit (tema-bağımsız, Toast/offline-banner
+  konvansiyonuyla tutarlı) koyu kırmızı bir "İnternet bağlantısı yok"
+  banner'ı gösteriliyor. 9 ekranın (`Dashboard`, `Badges`, `Medicines`,
+  `Assets`, `Family`, `Shopping`, `Recipes`, `Pantry`, `Settings`)
+  `isError` dallarına, o ekranın zaten sahip olduğu `refetch()`'i
+  çağıran bir "Tekrar dene" (`common.retry`) butonu eklendi — bu
+  mekanik değişiklik bir arka plan ajanıyla hızlandırıldı;
+  `SettingsScreen.tsx`'in `useProfileQuery()` çağrısına da bu adımda
+  `refetch` destructure edildi (önceden yoktu).
+  `mobile/package.json` versiyonu `1.0.0`'a yükseltildi (iOS/Android
+  ile hizalı). Yeni `mobile/src/config/appInfo.ts`
+  (`APP_VERSION = '1.0.0'`, native sürümlerle elle senkron tutulacak,
+  yeni bağımlılık eklenmedi). Yeni `PrivacyPolicyScreen.tsx`/
+  `TermsScreen.tsx` (basit `ScrollView` + i18n'lenmiş taslak metin, 8
+  dilin tamamında dolduruldu — kullanıcıya gösterilen metinde "taslak"
+  ibaresi yok, sadece bu ADR'de not düşülüyor). `SettingsScreen.tsx`
+  artık `navigation` prop'u alıyor (`DashboardStackScreenProps<
+  'Settings'>`), "Uygulama" kartına versiyon satırı +
+  Gizlilik Politikası/Kullanım Şartları linkleri eklendi.
+  Constants taraması: bu initiative boyunca eklenen sabitler
+  (`REMINDER_DAY_OPTIONS`, `TOAST_DURATION_MS`, bildirim kanal ID'leri)
+  zaten kendi dosyalarında uygun şekilde kapsamlı — hiçbiri birden
+  fazla dosyada tekrar etmiyor, bu yüzden yeni bir `settings/
+  constants.ts` veya global `src/constants/` açılmadı (mevcut
+  per-modül `constants.ts` konvansiyonu korunuyor, gereksiz soyutlama
+  eklenmedi).
+- **Consequences**: Mobile: lint temiz, `tsc --noEmit` sıfır hata,
+  44 suite / 184 test yeşil. Bu, Sprint 17'yi ve **"Yayın Kalitesi"
+  initiative'inin tamamını** (Sprint 13-17) tamamlıyor. Bilinen açık
+  kalemler: (1) de/fr/es/it/cs/pt çevirilerinin tamamı LLM tarafından
+  üretildi, mağaza yayınından önce anadil kontrolü öneriliyor; (2) push
+  bildirim gerçek cihazda uçtan uca doğrulanmadı; (3) APNs Auth Key
+  Firebase konsoluna kullanıcı tarafından yüklenmeli; (4) yeni ürünler
+  hâlâ backend'in genel SKT hatırlatma varsayılanını alıyor (kullanıcı
+  tercihi item oluşturma formuna geçirilmiyor); (5) `RootNavigator.tsx`
+  header başlıkları hâlâ hardcoded Türkçe (Sprint 13 ekran
+  migrasyonunun kapsamadığı bir dosya).

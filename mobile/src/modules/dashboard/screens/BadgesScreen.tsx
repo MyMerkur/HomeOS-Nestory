@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import { FlatList, StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
+import { Button } from '../../../ui/Button';
 import { Card } from '../../../ui/Card';
 import { Skeleton } from '../../../ui/Skeleton';
 import { fontSize, spacing, typography, type ThemeColors } from '../../../theme/theme';
@@ -50,6 +51,7 @@ export function BadgesScreen() {
     return (
       <View style={styles.centered}>
         <Text style={styles.error}>{t('badges.errorLoad')}</Text>
+        <Button label={t('common.retry')} onPress={() => refetch()} variant="outline" />
       </View>
     );
   }
@@ -69,7 +71,13 @@ export function BadgesScreen() {
 
 function createStyles(colors: ThemeColors) {
   return StyleSheet.create({
-    centered: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: spacing.xl },
+    centered: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: spacing.xl,
+      gap: spacing.md,
+    },
     error: {
       fontSize: fontSize.bodyMd,
       fontFamily: typography.body.fontFamily,

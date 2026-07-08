@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 import { StatusBar } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { QueryProvider } from './src/app/providers/QueryProvider';
+import { NetworkProvider } from './src/app/providers/NetworkProvider';
 import { RootNavigator } from './src/app/navigation/RootNavigator';
 import { LoadingScreen } from './src/app/screens/LoadingScreen';
 import { useAuthStore } from './src/store/useAuthStore';
@@ -34,11 +35,13 @@ function AppContent() {
   return (
     <SafeAreaProvider>
       <StatusBar barStyle={resolvedMode === 'dark' ? 'light-content' : 'dark-content'} />
-      <ToastProvider>
-        <QueryProvider>
-          <RootNavigator />
-        </QueryProvider>
-      </ToastProvider>
+      <NetworkProvider>
+        <ToastProvider>
+          <QueryProvider>
+            <RootNavigator />
+          </QueryProvider>
+        </ToastProvider>
+      </NetworkProvider>
     </SafeAreaProvider>
   );
 }

@@ -6,6 +6,7 @@ import { useTranslation } from 'react-i18next';
 import { WarrantyBadge } from '../components/WarrantyBadge';
 import { ASSETS_QUERY_KEY, useAssetsQuery } from '../hooks/useAssetsQuery';
 import { deleteAsset, updateAsset, type Asset } from '../services/assetApi';
+import { Button } from '../../../ui/Button';
 import { EmptyState } from '../../../ui/EmptyState';
 import { FAB } from '../../../ui/FAB';
 import { Skeleton } from '../../../ui/Skeleton';
@@ -86,6 +87,7 @@ export function AssetsScreen({ navigation }: DashboardStackScreenProps<'Assets'>
     return (
       <View style={styles.centered}>
         <Text style={styles.error}>{t('assets.errorLoad')}</Text>
+        <Button label={t('common.retry')} onPress={() => refetch()} variant="outline" />
       </View>
     );
   }
@@ -125,7 +127,13 @@ export function AssetsScreen({ navigation }: DashboardStackScreenProps<'Assets'>
 function createStyles(colors: ThemeColors) {
   return StyleSheet.create({
     container: { flex: 1, backgroundColor: colors.background },
-    centered: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: spacing.xl },
+    centered: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: spacing.xl,
+      gap: spacing.md,
+    },
     error: {
       fontSize: fontSize.bodyMd,
       fontFamily: typography.body.fontFamily,

@@ -15,7 +15,8 @@
       "cs": "Čeština",
       "pt": "Português"
     },
-    "daysLeftCaption": "dní zbývá"
+    "daysLeftCaption": "dní zbývá",
+    "offlineBanner": "Žádné internetové připojení"
   },
   "auth": {
     "login": {
@@ -293,8 +294,15 @@
     "themeSystem": "Systém",
     "themeLight": "Světlý",
     "themeDark": "Tmavý",
+    "appVersionLabel": "Verze {{version}}",
+    "privacyPolicyLink": "Zásady ochrany osobních údajů",
+    "termsLink": "Podmínky služby",
     "logoutButton": "Odhlásit se",
-    "errorLoad": "Nastavení se nepodařilo načíst."
+    "errorLoad": "Nastavení se nepodařilo načíst.",
+    "privacyPolicyTitle": "Zásady ochrany osobních údajů",
+    "privacyPolicyBody": "Tato aplikace ukládá vaše jméno, e-mail a údaje o spíži, nákupech a domácnosti, které zadáte, aby vám a členům vaší domácnosti mohla poskytovat své základní funkce. Vaše údaje neprodáváme třetím stranám. S dotazy ohledně zpracování vašich údajů se obraťte na podpůrnou adresu aplikace.\n\nJedná se o návrh zásad, který bude před veřejným vydáním aplikace nahrazen úplnou verzí.",
+    "termsTitle": "Podmínky služby",
+    "termsBody": "Používáním této aplikace souhlasíte s tím, že ji budete používat pouze k zamýšlenému účelu správy spíže, nákupů a souvisejících informací vaší domácnosti. Aplikace je poskytována tak, jak je, bez jakékoli záruky.\n\nJedná se o návrh podmínek služby, který bude před veřejným vydáním aplikace nahrazen úplnou verzí."
   },
   "validation": {
     "nameMin2": "Alespoň 2 znaky",

@@ -105,6 +105,7 @@ export function MedicinesScreen() {
     return (
       <View style={styles.centered}>
         <Text style={styles.error}>{t('assets.medicines.errorLoad')}</Text>
+        <Button label={t('common.retry')} onPress={() => refetch()} variant="outline" />
       </View>
     );
   }
@@ -135,7 +136,13 @@ export function MedicinesScreen() {
 
 function createStyles(colors: ThemeColors) {
   return StyleSheet.create({
-    centered: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: spacing.xl },
+    centered: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: spacing.xl,
+      gap: spacing.md,
+    },
     error: {
       fontSize: fontSize.bodyMd,
       fontFamily: typography.body.fontFamily,

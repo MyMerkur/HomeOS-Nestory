@@ -22,6 +22,8 @@ export type DashboardStackParamList = {
   AssetForm: { assetId?: string } | undefined;
   Family: undefined;
   Settings: undefined;
+  PrivacyPolicy: undefined;
+  Terms: undefined;
 };
 
 export type PantryStackParamList = {

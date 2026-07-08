@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import { IconToolsKitchen2 } from '@tabler/icons-react-native';
+import { Button } from '../../../ui/Button';
 import { EmptyState } from '../../../ui/EmptyState';
 import { SegmentedControl } from '../../../ui/SegmentedControl';
 import { Skeleton } from '../../../ui/Skeleton';
@@ -108,6 +109,7 @@ export function RecipesScreen({ navigation }: RecipesStackScreenProps<'Recipes'>
         {tabsRow}
         <View style={styles.centered}>
           <Text style={styles.error}>{t('recipes.errorLoad')}</Text>
+          <Button label={t('common.retry')} onPress={() => refetch()} variant="outline" />
         </View>
       </View>
     );
@@ -145,7 +147,13 @@ function createStyles(colors: ThemeColors) {
   return StyleSheet.create({
     container: { flex: 1, backgroundColor: colors.background },
     tabsRow: { paddingHorizontal: spacing.lg, paddingTop: spacing.md },
-    centered: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: spacing.xl },
+    centered: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: spacing.xl,
+      gap: spacing.md,
+    },
     error: {
       fontSize: fontSize.bodyMd,
       fontFamily: typography.body.fontFamily,
