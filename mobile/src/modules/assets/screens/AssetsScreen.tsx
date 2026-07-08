@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import { ActivityIndicator, Alert, FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
+import { Alert, FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import { IconDevicesOff, IconPlus } from '@tabler/icons-react-native';
 import { useTranslation } from 'react-i18next';
 import { WarrantyBadge } from '../components/WarrantyBadge';
@@ -8,10 +8,23 @@ import { ASSETS_QUERY_KEY, useAssetsQuery } from '../hooks/useAssetsQuery';
 import { deleteAsset, updateAsset, type Asset } from '../services/assetApi';
 import { EmptyState } from '../../../ui/EmptyState';
 import { FAB } from '../../../ui/FAB';
+import { Skeleton } from '../../../ui/Skeleton';
 import { fontSize, spacing, typography, type ThemeColors } from '../../../theme/theme';
 import { useTheme } from '../../../theme/ThemeContext';
 import { useHomeStore } from '../../../store/useHomeStore';
 import type { DashboardStackScreenProps } from '../../../app/navigation/types';
+
+function AssetsScreenSkeleton({ styles }: { styles: ReturnType<typeof createStyles> }) {
+  return (
+    <View style={styles.list}>
+      <Skeleton height={60} style={styles.skeletonRow} />
+      <Skeleton height={60} style={styles.skeletonRow} />
+      <Skeleton height={60} style={styles.skeletonRow} />
+      <Skeleton height={60} style={styles.skeletonRow} />
+      <Skeleton height={60} style={styles.skeletonRow} />
+    </View>
+  );
+}
 
 function AssetCard({ asset, onPress, onLongPress }: { asset: Asset; onPress: () => void; onLongPress: () => void }) {
   const { t } = useTranslation();
@@ -42,7 +55,7 @@ export function AssetsScreen({ navigation }: DashboardStackScreenProps<'Assets'>
   const styles = useMemo(() => createStyles(colors), [colors]);
   const homeId = useHomeStore((state) => state.selectedHomeId) as string;
   const queryClient = useQueryClient();
-  const { data, isLoading, isError } = useAssetsQuery({ status: 'active', limit: 100 });
+  const { data, isLoading, isError, refetch, isRefetching } = useAssetsQuery({ status: 'active', limit: 100 });
 
   const handleAssetAction = (asset: Asset) => {
     Alert.alert(asset.name, undefined, [
@@ -66,11 +79,7 @@ export function AssetsScreen({ navigation }: DashboardStackScreenProps<'Assets'>
   };
 
   if (isLoading) {
-    return (
-      <View style={styles.centered}>
-        <ActivityIndicator color={colors.primary} />
-      </View>
-    );
+    return <AssetsScreenSkeleton styles={styles} />;
   }
 
   if (isError || !data) {
@@ -87,9 +96,12 @@ export function AssetsScreen({ navigation }: DashboardStackScreenProps<'Assets'>
         <EmptyState icon={IconDevicesOff} title={t('assets.emptyList')} />
       ) : (
         <FlatList
+          testID="assets-list"
           data={data.assets}
           keyExtractor={(asset) => asset.id}
           contentContainerStyle={styles.list}
+          refreshing={isRefetching}
+          onRefresh={refetch}
           renderItem={({ item }) => (
             <AssetCard
               asset={item}
@@ -120,6 +132,7 @@ function createStyles(colors: ThemeColors) {
       color: colors.textSecondary,
     },
     list: { paddingHorizontal: spacing.lg },
+    skeletonRow: { marginBottom: spacing.sm },
     card: {
       flexDirection: 'row',
       alignItems: 'center',

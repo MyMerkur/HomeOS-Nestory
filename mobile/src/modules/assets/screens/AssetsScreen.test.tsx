@@ -113,4 +113,13 @@ describe('AssetsScreen', () => {
 
     expect(await screen.findByText('No assets registered yet.')).toBeTruthy();
   });
+
+  it('refetches when the list is pulled to refresh', async () => {
+    renderScreen();
+    await screen.findByText('Televizyon');
+
+    fireEvent(screen.getByTestId('assets-list'), 'refresh');
+
+    await waitFor(() => expect(listAssets).toHaveBeenCalledTimes(2));
+  });
 });

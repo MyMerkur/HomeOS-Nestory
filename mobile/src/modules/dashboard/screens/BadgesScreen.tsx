@@ -1,11 +1,23 @@
 import { useMemo } from 'react';
-import { ActivityIndicator, FlatList, StyleSheet, Text, View } from 'react-native';
+import { FlatList, StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { Card } from '../../../ui/Card';
+import { Skeleton } from '../../../ui/Skeleton';
 import { fontSize, spacing, typography, type ThemeColors } from '../../../theme/theme';
 import { useTheme } from '../../../theme/ThemeContext';
 import { useBadgesQuery } from '../hooks/useBadgesQuery';
 import type { Badge } from '../services/badgeApi';
+
+function BadgesScreenSkeleton({ styles }: { styles: ReturnType<typeof createStyles> }) {
+  return (
+    <View style={styles.list}>
+      <Skeleton height={64} style={styles.card} />
+      <Skeleton height={64} style={styles.card} />
+      <Skeleton height={64} style={styles.card} />
+      <Skeleton height={64} style={styles.card} />
+    </View>
+  );
+}
 
 function BadgeCard({ badge, styles }: { badge: Badge; styles: ReturnType<typeof createStyles> }) {
   return (
@@ -28,14 +40,10 @@ export function BadgesScreen() {
   const { t } = useTranslation();
   const { colors } = useTheme();
   const styles = useMemo(() => createStyles(colors), [colors]);
-  const { data: badges, isLoading, isError } = useBadgesQuery();
+  const { data: badges, isLoading, isError, refetch, isRefetching } = useBadgesQuery();
 
   if (isLoading) {
-    return (
-      <View style={styles.centered}>
-        <ActivityIndicator color={colors.primary} />
-      </View>
-    );
+    return <BadgesScreenSkeleton styles={styles} />;
   }
 
   if (isError || !badges) {
@@ -48,9 +56,12 @@ export function BadgesScreen() {
 
   return (
     <FlatList
+      testID="badges-list"
       data={badges}
       keyExtractor={(badge) => badge.id}
       contentContainerStyle={styles.list}
+      refreshing={isRefetching}
+      onRefresh={refetch}
       renderItem={({ item }) => <BadgeCard badge={item} styles={styles} />}
     />
   );

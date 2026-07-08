@@ -94,4 +94,13 @@ describe('ShoppingScreen', () => {
 
     await waitFor(() => expect(deleteShoppingItem).toHaveBeenCalledWith('home-1', 'item-1'));
   });
+
+  it('refetches when the list is pulled to refresh', async () => {
+    renderScreen();
+    await screen.findByText('Süt');
+
+    fireEvent(screen.getByTestId('shopping-list'), 'refresh');
+
+    await waitFor(() => expect(listShoppingItems).toHaveBeenCalledTimes(2));
+  });
 });

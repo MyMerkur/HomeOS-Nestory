@@ -1,17 +1,29 @@
 import { useMemo } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
-import { ActivityIndicator, FlatList, StyleSheet, Text, View } from 'react-native';
+import { FlatList, StyleSheet, Text, View } from 'react-native';
 import { IconPill } from '@tabler/icons-react-native';
 import { useTranslation } from 'react-i18next';
 import { Button } from '../../../ui/Button';
 import { Card } from '../../../ui/Card';
 import { EmptyState } from '../../../ui/EmptyState';
+import { Skeleton } from '../../../ui/Skeleton';
 import { fontSize, spacing, typography, type ThemeColors } from '../../../theme/theme';
 import { useTheme } from '../../../theme/ThemeContext';
 import { useHomeStore } from '../../../store/useHomeStore';
 import { INVENTORY_ITEMS_QUERY_KEY, useInventoryItemsQuery } from '../../pantry/hooks/useInventoryItemsQuery';
 import { addToShopping, takeDose, type InventoryItem } from '../../pantry/services/pantryApi';
 import { SHOPPING_ITEMS_QUERY_KEY } from '../../shopping/hooks/useShoppingItemsQuery';
+
+function MedicinesScreenSkeleton({ styles }: { styles: ReturnType<typeof createStyles> }) {
+  return (
+    <View style={styles.list}>
+      <Skeleton height={72} style={styles.card} />
+      <Skeleton height={72} style={styles.card} />
+      <Skeleton height={72} style={styles.card} />
+      <Skeleton height={72} style={styles.card} />
+    </View>
+  );
+}
 
 type MedicineRowProps = {
   item: InventoryItem;
@@ -63,7 +75,13 @@ export function MedicinesScreen() {
   const styles = useMemo(() => createStyles(colors), [colors]);
   const homeId = useHomeStore((state) => state.selectedHomeId) as string;
   const queryClient = useQueryClient();
-  const { data, isLoading, isError } = useInventoryItemsQuery({
+  const {
+    data,
+    isLoading,
+    isError,
+    refetch,
+    isRefetching,
+  } = useInventoryItemsQuery({
     category: 'Medicine',
     status: 'active',
     limit: 100,
@@ -80,11 +98,7 @@ export function MedicinesScreen() {
   };
 
   if (isLoading) {
-    return (
-      <View style={styles.centered}>
-        <ActivityIndicator color={colors.primary} />
-      </View>
-    );
+    return <MedicinesScreenSkeleton styles={styles} />;
   }
 
   if (isError || !data) {
@@ -101,9 +115,12 @@ export function MedicinesScreen() {
 
   return (
     <FlatList
+      testID="medicines-list"
       data={data.items}
       keyExtractor={(item) => item.id}
       contentContainerStyle={styles.list}
+      refreshing={isRefetching}
+      onRefresh={refetch}
       renderItem={({ item }) => (
         <MedicineRow
           item={item}

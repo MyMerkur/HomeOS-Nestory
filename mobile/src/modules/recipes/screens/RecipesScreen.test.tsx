@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { fireEvent, render, screen } from '@testing-library/react-native';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react-native';
 import { RecipesScreen } from './RecipesScreen';
 import { getSavedRecipes, getSuggestions } from '../services/recipeApi';
 import { useHomeStore } from '../../../store/useHomeStore';
@@ -65,6 +65,15 @@ describe('RecipesScreen', () => {
     expect(await screen.findByText('Menemen')).toBeTruthy();
     expect(screen.getByText('%100')).toBeTruthy();
     expect(screen.getByText('All ingredients at home')).toBeTruthy();
+  });
+
+  it('refetches when the list is pulled to refresh', async () => {
+    renderScreen();
+    await screen.findByText('Menemen');
+
+    fireEvent(screen.getByTestId('recipes-list'), 'refresh');
+
+    await waitFor(() => expect(getSuggestions).toHaveBeenCalledTimes(2));
   });
 
   it('navigates to the detail screen with the recipe payload on press', async () => {

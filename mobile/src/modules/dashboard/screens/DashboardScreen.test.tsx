@@ -1,5 +1,5 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { fireEvent, render, screen } from '@testing-library/react-native';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react-native';
 import { DashboardScreen } from './DashboardScreen';
 import { getDashboard } from '../services/dashboardApi';
 import { useHomeStore } from '../../../store/useHomeStore';
@@ -67,6 +67,15 @@ describe('DashboardScreen', () => {
     expect(screen.getByText('2')).toBeTruthy();
     expect(screen.getByText('3')).toBeTruthy();
     expect(screen.getByText('10')).toBeTruthy();
+  });
+
+  it('refetches when the list is pulled to refresh', async () => {
+    renderScreen();
+    await screen.findByText('Süt');
+
+    fireEvent(screen.getByTestId('dashboard-list'), 'refresh');
+
+    await waitFor(() => expect(getDashboard).toHaveBeenCalledTimes(2));
   });
 
   it('navigates to the item form in the Pantry tab when an upcoming item is pressed', async () => {

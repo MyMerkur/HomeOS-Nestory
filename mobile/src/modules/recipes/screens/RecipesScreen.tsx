@@ -1,9 +1,10 @@
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
+import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import { IconToolsKitchen2 } from '@tabler/icons-react-native';
 import { EmptyState } from '../../../ui/EmptyState';
 import { SegmentedControl } from '../../../ui/SegmentedControl';
+import { Skeleton } from '../../../ui/Skeleton';
 import { fontSize, radius, spacing, typography, type ThemeColors } from '../../../theme/theme';
 import { useTheme } from '../../../theme/ThemeContext';
 import { useRecipeSuggestionsQuery } from '../hooks/useRecipeSuggestionsQuery';
@@ -23,6 +24,16 @@ function coverageTextStyle(styles: ReturnType<typeof createStyles>, coveragePerc
   if (coveragePercent >= 80) return styles.coverageTextHigh;
   if (coveragePercent >= 50) return styles.coverageTextMedium;
   return styles.coverageTextLow;
+}
+
+function RecipesScreenSkeleton({ styles }: { styles: ReturnType<typeof createStyles> }) {
+  return (
+    <View style={styles.list}>
+      <Skeleton height={64} style={styles.rowSkeleton} />
+      <Skeleton height={64} style={styles.rowSkeleton} />
+      <Skeleton height={64} style={styles.rowSkeleton} />
+    </View>
+  );
 }
 
 function RecipeCard({
@@ -61,58 +72,71 @@ export function RecipesScreen({ navigation }: RecipesStackScreenProps<'Recipes'>
   const [tab, setTab] = useState<Tab>('suggestions');
   const suggestionsQuery = useRecipeSuggestionsQuery();
   const savedQuery = useSavedRecipesQuery();
-  const { data: recipes, isLoading, isError } = tab === 'suggestions' ? suggestionsQuery : savedQuery;
+  const {
+    data: recipes,
+    isLoading,
+    isError,
+    refetch,
+    isRefetching,
+  } = tab === 'suggestions' ? suggestionsQuery : savedQuery;
 
-  return (
-    <View style={styles.container}>
-      <View style={styles.tabsRow}>
-        <SegmentedControl
-          options={[
-            { value: 'suggestions', label: t('recipes.tabs.suggestions'), testID: 'recipes-tab-suggestions' },
-            { value: 'saved', label: t('recipes.tabs.saved'), testID: 'recipes-tab-saved' },
-          ]}
-          value={tab}
-          onChange={(value) => setTab(value as Tab)}
-        />
+  const tabsRow = (
+    <View style={styles.tabsRow}>
+      <SegmentedControl
+        options={[
+          { value: 'suggestions', label: t('recipes.tabs.suggestions'), testID: 'recipes-tab-suggestions' },
+          { value: 'saved', label: t('recipes.tabs.saved'), testID: 'recipes-tab-saved' },
+        ]}
+        value={tab}
+        onChange={(value) => setTab(value as Tab)}
+      />
+    </View>
+  );
+
+  if (isLoading) {
+    return (
+      <View style={styles.container}>
+        {tabsRow}
+        <RecipesScreenSkeleton styles={styles} />
       </View>
+    );
+  }
 
-      {isLoading && (
-        <View style={styles.centered}>
-          <ActivityIndicator color={colors.primary} />
-        </View>
-      )}
-
-      {!isLoading && isError && (
+  if (isError) {
+    return (
+      <View style={styles.container}>
+        {tabsRow}
         <View style={styles.centered}>
           <Text style={styles.error}>{t('recipes.errorLoad')}</Text>
         </View>
-      )}
+      </View>
+    );
+  }
 
-      {!isLoading && !isError && (recipes?.length ?? 0) === 0 && (
-        <EmptyState
-          icon={IconToolsKitchen2}
-          title={
-            tab === 'suggestions'
-              ? t('recipes.emptySuggestions')
-              : t('recipes.emptySaved')
-          }
-        />
-      )}
-
-      {!isLoading && !isError && (recipes?.length ?? 0) > 0 && (
-        <FlatList
-          data={recipes}
-          keyExtractor={(recipe) => recipe.id}
-          contentContainerStyle={styles.list}
-          renderItem={({ item }) => (
-            <RecipeCard
-              recipe={item}
-              styles={styles}
-              onPress={() => navigation.navigate('RecipeDetail', { recipe: item })}
-            />
-          )}
-        />
-      )}
+  return (
+    <View style={styles.container}>
+      {tabsRow}
+      <FlatList
+        testID="recipes-list"
+        data={recipes}
+        keyExtractor={(recipe) => recipe.id}
+        contentContainerStyle={styles.list}
+        refreshing={isRefetching}
+        onRefresh={refetch}
+        ListEmptyComponent={
+          <EmptyState
+            icon={IconToolsKitchen2}
+            title={tab === 'suggestions' ? t('recipes.emptySuggestions') : t('recipes.emptySaved')}
+          />
+        }
+        renderItem={({ item }) => (
+          <RecipeCard
+            recipe={item}
+            styles={styles}
+            onPress={() => navigation.navigate('RecipeDetail', { recipe: item })}
+          />
+        )}
+      />
     </View>
   );
 }
@@ -128,6 +152,7 @@ function createStyles(colors: ThemeColors) {
       color: colors.textSecondary,
     },
     list: { paddingHorizontal: spacing.lg, paddingTop: spacing.sm },
+    rowSkeleton: { marginBottom: spacing.sm },
     card: {
       flexDirection: 'row',
       alignItems: 'center',

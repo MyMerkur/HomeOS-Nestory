@@ -156,6 +156,15 @@ describe('PantryScreen', () => {
     await waitFor(() => expect(addToShopping).toHaveBeenCalledWith('home-1', 'item-1'));
   });
 
+  it('refetches when the list is pulled to refresh', async () => {
+    renderScreen();
+    await screen.findByText('Süt');
+
+    fireEvent(screen.getByTestId('pantry-list'), 'refresh');
+
+    await waitFor(() => expect(listItems).toHaveBeenCalledTimes(2));
+  });
+
   it('navigates to QuickAddItem when the barcode FAB is pressed', async () => {
     renderScreen();
     await screen.findByText('Süt');

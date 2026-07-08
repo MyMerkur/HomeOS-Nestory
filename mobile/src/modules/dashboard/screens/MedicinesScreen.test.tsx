@@ -102,4 +102,18 @@ describe('MedicinesScreen', () => {
 
     expect(await screen.findByText('No medicines registered yet.')).toBeTruthy();
   });
+
+  it('refetches when the list is pulled to refresh', async () => {
+    (listItems as jest.Mock).mockResolvedValue({
+      items: [buildMedicine()],
+      pagination: { page: 1, limit: 100, total: 1, totalPages: 1 },
+    });
+
+    renderScreen();
+    await screen.findByText('Parol');
+
+    fireEvent(screen.getByTestId('medicines-list'), 'refresh');
+
+    await waitFor(() => expect(listItems).toHaveBeenCalledTimes(2));
+  });
 });

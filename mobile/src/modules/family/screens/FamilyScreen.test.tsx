@@ -91,4 +91,13 @@ describe('FamilyScreen', () => {
       expect.objectContaining({ message: expect.stringContaining('ABC12345') }),
     );
   });
+
+  it('refetches when the list is pulled to refresh', async () => {
+    renderScreen();
+    await screen.findByText('Ayşe');
+
+    fireEvent(screen.getByTestId('family-list'), 'refresh');
+
+    await waitFor(() => expect(listMembers).toHaveBeenCalledTimes(2));
+  });
 });

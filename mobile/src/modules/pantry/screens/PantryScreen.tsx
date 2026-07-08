@@ -1,6 +1,6 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { useMemo, useState } from 'react';
-import { ActivityIndicator, Alert, FlatList, StyleSheet, Text, View } from 'react-native';
+import { Alert, FlatList, StyleSheet, Text, View } from 'react-native';
 import { IconPlus, IconPackageOff } from '@tabler/icons-react-native';
 import { useTranslation } from 'react-i18next';
 import { useHomeStore } from '../../../store/useHomeStore';
@@ -9,6 +9,7 @@ import { Button } from '../../../ui/Button';
 import { Chip } from '../../../ui/Chip';
 import { EmptyState } from '../../../ui/EmptyState';
 import { FAB } from '../../../ui/FAB';
+import { Skeleton } from '../../../ui/Skeleton';
 import { TextField } from '../../../ui/TextField';
 import { spacing, type ThemeColors } from '../../../theme/theme';
 import { useTheme } from '../../../theme/ThemeContext';
@@ -26,6 +27,27 @@ import type { PantryStackScreenProps } from '../../../app/navigation/types';
 
 const ALL_LOCATIONS = null;
 
+function PantrySkeleton({ styles }: { styles: ReturnType<typeof createStyles> }) {
+  return (
+    <View style={styles.container}>
+      <View style={styles.searchContainer}>
+        <Skeleton height={44} radius={12} />
+      </View>
+      <View style={styles.tabsRow}>
+        {[0, 1, 2].map((key) => (
+          <Skeleton key={key} width={80} height={32} radius={16} />
+        ))}
+      </View>
+      <View style={styles.list}>
+        <Skeleton height={64} style={styles.rowSkeleton} />
+        <Skeleton height={64} style={styles.rowSkeleton} />
+        <Skeleton height={64} style={styles.rowSkeleton} />
+        <Skeleton height={64} style={styles.rowSkeleton} />
+      </View>
+    </View>
+  );
+}
+
 export function PantryScreen({ navigation }: PantryStackScreenProps<'Pantry'>) {
   const { t } = useTranslation();
   const { colors } = useTheme();
@@ -40,6 +62,8 @@ export function PantryScreen({ navigation }: PantryStackScreenProps<'Pantry'>) {
     data: itemsResult,
     isLoading,
     isError,
+    refetch,
+    isRefetching,
   } = useInventoryItemsQuery({
     locationId: selectedLocationId ?? undefined,
     search: search.trim() || undefined,
@@ -80,67 +104,68 @@ export function PantryScreen({ navigation }: PantryStackScreenProps<'Pantry'>) {
     ]);
   };
 
+  if (isLoading) {
+    return <PantrySkeleton styles={styles} />;
+  }
+
   return (
     <View style={styles.container}>
-      <View style={styles.searchContainer}>
-        <TextField
-          testID="pantry-search"
-          label={t('pantry.searchPlaceholder')}
-          hideLabel
-          placeholder={t('pantry.searchPlaceholder')}
-          value={search}
-          onChangeText={setSearch}
-        />
-      </View>
+      <FlatList
+        testID="pantry-list"
+        data={itemsResult?.items}
+        keyExtractor={(item) => item.id}
+        contentContainerStyle={styles.list}
+        refreshing={isRefetching}
+        onRefresh={refetch}
+        ListHeaderComponent={
+          <>
+            <View style={styles.searchContainer}>
+              <TextField
+                testID="pantry-search"
+                label={t('pantry.searchPlaceholder')}
+                hideLabel
+                placeholder={t('pantry.searchPlaceholder')}
+                value={search}
+                onChangeText={setSearch}
+              />
+            </View>
 
-      <View style={styles.tabsRow}>
-        <Chip
-          testID="location-tab-all"
-          label={t('pantry.tabAll')}
-          selected={selectedLocationId === ALL_LOCATIONS}
-          onPress={() => setSelectedLocationId(ALL_LOCATIONS)}
-        />
-        {(locations ?? []).map((location) => (
-          <Chip
-            key={location.id}
-            testID={`location-tab-${location.id}`}
-            label={location.name}
-            selected={selectedLocationId === location.id}
-            onPress={() => setSelectedLocationId(location.id)}
+            <View style={styles.tabsRow}>
+              <Chip
+                testID="location-tab-all"
+                label={t('pantry.tabAll')}
+                selected={selectedLocationId === ALL_LOCATIONS}
+                onPress={() => setSelectedLocationId(ALL_LOCATIONS)}
+              />
+              {(locations ?? []).map((location) => (
+                <Chip
+                  key={location.id}
+                  testID={`location-tab-${location.id}`}
+                  label={location.name}
+                  selected={selectedLocationId === location.id}
+                  onPress={() => setSelectedLocationId(location.id)}
+                />
+              ))}
+            </View>
+          </>
+        }
+        ListEmptyComponent={
+          isError ? (
+            <View style={styles.centered}>
+              <Text style={styles.error}>{t('pantry.errorLoad')}</Text>
+            </View>
+          ) : (
+            <EmptyState icon={IconPackageOff} title={t('pantry.emptyView')} />
+          )
+        }
+        renderItem={({ item }) => (
+          <ItemCard
+            item={item}
+            onPress={() => navigation.navigate('ItemForm', { itemId: item.id })}
+            onLongPress={() => handleItemAction(item)}
           />
-        ))}
-      </View>
-
-      {isLoading && (
-        <View style={styles.centered}>
-          <ActivityIndicator color={colors.primary} />
-        </View>
-      )}
-
-      {isError && (
-        <View style={styles.centered}>
-          <Text style={styles.error}>{t('pantry.errorLoad')}</Text>
-        </View>
-      )}
-
-      {!isLoading && !isError && (itemsResult?.items.length ?? 0) === 0 && (
-        <EmptyState icon={IconPackageOff} title={t('pantry.emptyView')} />
-      )}
-
-      {!isLoading && !isError && (itemsResult?.items.length ?? 0) > 0 && (
-        <FlatList
-          data={itemsResult?.items}
-          keyExtractor={(item) => item.id}
-          contentContainerStyle={styles.list}
-          renderItem={({ item }) => (
-            <ItemCard
-              item={item}
-              onPress={() => navigation.navigate('ItemForm', { itemId: item.id })}
-              onLongPress={() => handleItemAction(item)}
-            />
-          )}
-        />
-      )}
+        )}
+      />
 
       <View style={styles.barcodeButton}>
         <Button
@@ -175,6 +200,7 @@ function createStyles(colors: ThemeColors) {
     centered: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: spacing.xl },
     error: { color: colors.dangerDark },
     list: { paddingHorizontal: spacing.lg },
+    rowSkeleton: { marginBottom: spacing.sm },
     barcodeButton: {
       position: 'absolute',
       right: spacing.lg,

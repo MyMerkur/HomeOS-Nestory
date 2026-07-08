@@ -1,11 +1,12 @@
 import { useQueryClient } from '@tanstack/react-query';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
+import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import { IconCheck, IconShoppingCartOff, IconTrash } from '@tabler/icons-react-native';
 import { useHomeStore } from '../../../store/useHomeStore';
 import { Button } from '../../../ui/Button';
 import { EmptyState } from '../../../ui/EmptyState';
+import { Skeleton } from '../../../ui/Skeleton';
 import { TextField } from '../../../ui/TextField';
 import { fontSize, radius, spacing, typography, type ThemeColors } from '../../../theme/theme';
 import { useTheme } from '../../../theme/ThemeContext';
@@ -16,6 +17,24 @@ import {
   toggleShoppingItemCheck,
   type ShoppingItem,
 } from '../services/shoppingApi';
+
+function ShoppingScreenSkeleton({ styles }: { styles: ReturnType<typeof createStyles> }) {
+  return (
+    <View style={styles.container}>
+      <View style={styles.addRow}>
+        <Skeleton height={44} style={styles.addInput} />
+        <Skeleton width={96} height={44} />
+      </View>
+      <View style={styles.list}>
+        <Skeleton height={44} style={styles.rowSkeleton} />
+        <Skeleton height={44} style={styles.rowSkeleton} />
+        <Skeleton height={44} style={styles.rowSkeleton} />
+        <Skeleton height={44} style={styles.rowSkeleton} />
+        <Skeleton height={44} style={styles.rowSkeleton} />
+      </View>
+    </View>
+  );
+}
 
 function ShoppingRow({
   item,
@@ -61,7 +80,7 @@ export function ShoppingScreen() {
   const styles = useMemo(() => createStyles(colors), [colors]);
   const homeId = useHomeStore((state) => state.selectedHomeId) as string;
   const queryClient = useQueryClient();
-  const { data: items, isLoading, isError } = useShoppingItemsQuery();
+  const { data: items, isLoading, isError, refetch, isRefetching } = useShoppingItemsQuery();
 
   const [name, setName] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -92,62 +111,61 @@ export function ShoppingScreen() {
     await invalidate();
   };
 
+  if (isLoading) {
+    return <ShoppingScreenSkeleton styles={styles} />;
+  }
+
+  if (isError) {
+    return (
+      <View style={styles.centered}>
+        <Text style={styles.error}>{t('shopping.errorLoad')}</Text>
+      </View>
+    );
+  }
+
   const pendingItems = (items ?? []).filter((item) => item.status === 'pending');
   const checkedItems = (items ?? []).filter((item) => item.status === 'checked');
 
   return (
-    <View style={styles.container}>
-      <View style={styles.addRow}>
-        <View style={styles.addInput}>
-          <TextField
-            testID="shopping-add-input"
-            label={t('shopping.addPlaceholder')}
-            hideLabel
-            placeholder={t('shopping.addPlaceholder')}
-            value={name}
-            onChangeText={setName}
-            onSubmitEditing={handleAdd}
+    <FlatList
+      testID="shopping-list"
+      style={styles.container}
+      data={[...pendingItems, ...checkedItems]}
+      keyExtractor={(item) => item.id}
+      contentContainerStyle={styles.list}
+      refreshing={isRefetching}
+      onRefresh={refetch}
+      ListHeaderComponent={
+        <View style={styles.addRow}>
+          <View style={styles.addInput}>
+            <TextField
+              testID="shopping-add-input"
+              label={t('shopping.addPlaceholder')}
+              hideLabel
+              placeholder={t('shopping.addPlaceholder')}
+              value={name}
+              onChangeText={setName}
+              onSubmitEditing={handleAdd}
+            />
+          </View>
+          <Button
+            testID="shopping-add-button"
+            label={t('shopping.addButton')}
+            onPress={handleAdd}
+            loading={isSubmitting}
           />
         </View>
-        <Button
-          testID="shopping-add-button"
-          label={t('shopping.addButton')}
-          onPress={handleAdd}
-          loading={isSubmitting}
-        />
-      </View>
-
-      {isLoading && (
-        <View style={styles.centered}>
-          <ActivityIndicator color={colors.primary} />
-        </View>
-      )}
-
-      {isError && (
-        <View style={styles.centered}>
-          <Text style={styles.error}>{t('shopping.errorLoad')}</Text>
-        </View>
-      )}
-
-      {!isLoading && !isError && (
-        <FlatList
-          data={[...pendingItems, ...checkedItems]}
-          keyExtractor={(item) => item.id}
-          contentContainerStyle={styles.list}
-          ListEmptyComponent={
-            <EmptyState icon={IconShoppingCartOff} title={t('shopping.emptyList')} />
-          }
-          renderItem={({ item }) => (
-            <ShoppingRow
-              item={item}
-              styles={styles}
-              onToggle={() => handleToggle(item.id)}
-              onDelete={() => handleDelete(item.id)}
-            />
-          )}
+      }
+      ListEmptyComponent={<EmptyState icon={IconShoppingCartOff} title={t('shopping.emptyList')} />}
+      renderItem={({ item }) => (
+        <ShoppingRow
+          item={item}
+          styles={styles}
+          onToggle={() => handleToggle(item.id)}
+          onDelete={() => handleDelete(item.id)}
         />
       )}
-    </View>
+    />
   );
 }
 
@@ -163,6 +181,7 @@ function createStyles(colors: ThemeColors) {
       color: colors.textSecondary,
     },
     list: { paddingHorizontal: spacing.lg },
+    rowSkeleton: { marginBottom: spacing.sm },
     row: {
       flexDirection: 'row',
       alignItems: 'center',

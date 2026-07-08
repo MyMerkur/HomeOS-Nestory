@@ -1,18 +1,34 @@
 import { useMemo, useState } from 'react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { ActivityIndicator, Alert, FlatList, Share, StyleSheet, Text, View } from 'react-native';
+import { Alert, FlatList, Share, StyleSheet, Text, View } from 'react-native';
 import { IconUsers } from '@tabler/icons-react-native';
 import { Button } from '../../../ui/Button';
 import { Card } from '../../../ui/Card';
 import { Chip } from '../../../ui/Chip';
 import { EmptyState } from '../../../ui/EmptyState';
+import { Skeleton } from '../../../ui/Skeleton';
 import { fontSize, spacing, typography, type ThemeColors } from '../../../theme/theme';
 import { useTheme } from '../../../theme/ThemeContext';
 import { useHomeStore } from '../../../store/useHomeStore';
 import { useAuthStore } from '../../../store/useAuthStore';
 import { MEMBERS_QUERY_KEY, useMembersQuery } from '../hooks/useMembersQuery';
 import { regenerateInviteCode, removeMember, type Member } from '../services/familyApi';
+
+function FamilyScreenSkeleton({ styles }: { styles: ReturnType<typeof createStyles> }) {
+  return (
+    <View style={styles.container}>
+      <View style={styles.inviteRow}>
+        <Skeleton height={44} radius={8} />
+      </View>
+      <View style={styles.list}>
+        <Skeleton height={68} style={styles.memberCard} />
+        <Skeleton height={68} style={styles.memberCard} />
+        <Skeleton height={68} style={styles.memberCard} />
+      </View>
+    </View>
+  );
+}
 
 function MemberRow({
   member,
@@ -49,7 +65,7 @@ export function FamilyScreen() {
   const homeId = useHomeStore((state) => state.selectedHomeId) as string;
   const currentUserId = useAuthStore((state) => state.user?.id);
   const queryClient = useQueryClient();
-  const { data: members, isLoading, isError } = useMembersQuery();
+  const { data: members, isLoading, isError, refetch, isRefetching } = useMembersQuery();
   const [isInviting, setIsInviting] = useState(false);
 
   const currentMember = members?.find((member) => member.userId === currentUserId);
@@ -82,11 +98,7 @@ export function FamilyScreen() {
   };
 
   if (isLoading) {
-    return (
-      <View style={styles.centered}>
-        <ActivityIndicator color={colors.primary} />
-      </View>
-    );
+    return <FamilyScreenSkeleton styles={styles} />;
   }
 
   if (isError || !members) {
@@ -111,9 +123,12 @@ export function FamilyScreen() {
         <EmptyState icon={IconUsers} title={t('family.emptyMembers')} />
       ) : (
         <FlatList
+          testID="family-list"
           data={members}
           keyExtractor={(member) => member.membershipId}
           contentContainerStyle={styles.list}
+          refreshing={isRefetching}
+          onRefresh={refetch}
           renderItem={({ item }) => (
             <MemberRow
               member={item}
