@@ -2,6 +2,7 @@ import type { CompositeScreenProps, NavigatorScreenParams } from '@react-navigat
 import type { BottomTabScreenProps } from '@react-navigation/bottom-tabs';
 import type { NativeStackScreenProps } from '@react-navigation/native-stack';
 import type { RecipeSuggestion } from '../../modules/recipes/services/recipeApi';
+import type { Category, Unit } from '../../modules/pantry/constants';
 
 export type AuthStackParamList = {
   Login: undefined;
@@ -28,7 +29,15 @@ export type DashboardStackParamList = {
 
 export type PantryStackParamList = {
   Pantry: undefined;
-  ItemForm: { itemId?: string; initialBarcode?: string } | undefined;
+  ItemForm:
+    | {
+        itemId?: string;
+        initialBarcode?: string;
+        initialName?: string;
+        initialCategory?: Category;
+        initialUnit?: Unit;
+      }
+    | undefined;
   QuickAddItem: undefined;
 };
 

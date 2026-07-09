@@ -24,7 +24,7 @@ import { useTheme } from '../../../theme/ThemeContext';
 import { CATEGORIES, UNITS } from '../constants';
 import { useLocationsQuery } from '../hooks/useLocationsQuery';
 import { INVENTORY_ITEMS_QUERY_KEY } from '../hooks/useInventoryItemsQuery';
-import { createItem, getItem, listItems, updateItem } from '../services/pantryApi';
+import { createItem, getItem, listItems, lookupProductByBarcode, updateItem } from '../services/pantryApi';
 import { scanBarcodeFromCamera } from '../services/barcodeScanner';
 import { scanExpiryDateFromCamera } from '../services/dateOcrScanner';
 import { triggerHaptic } from '../../../services/haptics';
@@ -38,6 +38,9 @@ export function ItemFormScreen({ navigation, route }: PantryStackScreenProps<'It
   const styles = useMemo(() => createStyles(colors), [colors]);
   const itemId = route.params?.itemId;
   const initialBarcode = route.params?.initialBarcode;
+  const initialName = route.params?.initialName;
+  const initialCategory = route.params?.initialCategory;
+  const initialUnit = route.params?.initialUnit;
   const isEditMode = !!itemId;
   const homeId = useHomeStore((state) => state.selectedHomeId) as string;
   const queryClient = useQueryClient();
@@ -66,11 +69,11 @@ export function ItemFormScreen({ navigation, route }: PantryStackScreenProps<'It
   } = useForm<ItemFormValues>({
     resolver: zodResolver(makeItemFormSchema(t)),
     defaultValues: {
-      name: '',
+      name: initialName ?? '',
       locationId: '',
-      category: undefined,
+      category: initialCategory,
       quantity: 1,
-      unit: undefined,
+      unit: initialUnit,
       barcode: initialBarcode,
       doseTimes: [],
     },
@@ -105,11 +108,19 @@ export function ItemFormScreen({ navigation, route }: PantryStackScreenProps<'It
       if (!getValues('name')) setValue('name', match.name);
       if (!getValues('category')) setValue('category', match.category);
       if (!getValues('unit')) setValue('unit', match.unit);
+      return;
+    }
+
+    const product = await lookupProductByBarcode(homeId, code);
+    if (product) {
+      if (!getValues('name')) setValue('name', product.name);
+      if (product.category && !getValues('category')) setValue('category', product.category);
     }
   };
 
   useEffect(() => {
-    if (initialBarcode && !isEditMode) {
+    // initialName means the caller (e.g. QuickAddItemScreen) already resolved the barcode.
+    if (initialBarcode && !isEditMode && !initialName) {
       applyBarcodeMatch(initialBarcode);
     }
     // Only meant to run once on mount with the barcode the screen was opened with.
@@ -131,6 +142,8 @@ export function ItemFormScreen({ navigation, route }: PantryStackScreenProps<'It
       if (!isEditMode) {
         await applyBarcodeMatch(outcome.value);
       }
+    } catch {
+      showToast({ message: t('pantry.itemForm.scanErrorMessage'), variant: 'error' });
     } finally {
       setIsScanningBarcode(false);
     }
@@ -146,6 +159,8 @@ export function ItemFormScreen({ navigation, route }: PantryStackScreenProps<'It
         return;
       }
       setValue('expiryDate', outcome.date);
+    } catch {
+      showToast({ message: t('pantry.itemForm.scanErrorMessage'), variant: 'error' });
     } finally {
       setIsScanningExpiryDate(false);
     }

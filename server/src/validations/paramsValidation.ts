@@ -19,6 +19,11 @@ export const homeItemIdParamSchema = z.object({
   itemId: objectId,
 });
 
+export const homeBarcodeParamSchema = z.object({
+  homeId: objectId,
+  barcode: z.string().trim().min(1).max(64),
+});
+
 export const homeShoppingItemIdParamSchema = z.object({
   homeId: objectId,
   itemId: objectId,

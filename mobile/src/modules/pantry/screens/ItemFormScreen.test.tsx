@@ -1,9 +1,17 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react-native';
 import { ItemFormScreen } from './ItemFormScreen';
-import { createItem, getItem, listItems, listLocations, updateItem } from '../services/pantryApi';
+import {
+  createItem,
+  getItem,
+  listItems,
+  listLocations,
+  lookupProductByBarcode,
+  updateItem,
+} from '../services/pantryApi';
 import { scanBarcodeFromCamera } from '../services/barcodeScanner';
 import { scanExpiryDateFromCamera } from '../services/dateOcrScanner';
+import type { Category, Unit } from '../constants';
 import { useHomeStore } from '../../../store/useHomeStore';
 import { ThemeProvider } from '../../../theme/ThemeContext';
 import { ToastProvider } from '../../../ui/ToastProvider';
@@ -21,7 +29,13 @@ const mockNavigation = {
   setOptions: jest.fn(),
 } as unknown as PantryStackScreenProps<'ItemForm'>['navigation'];
 
-function renderScreen(params?: { itemId?: string; initialBarcode?: string }) {
+function renderScreen(params?: {
+  itemId?: string;
+  initialBarcode?: string;
+  initialName?: string;
+  initialCategory?: Category;
+  initialUnit?: Unit;
+}) {
   const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   return render(
     <ThemeProvider>
@@ -222,6 +236,53 @@ describe('ItemFormScreen', () => {
     expect(
       screen.queryByText("Couldn't recognize an expiry date in the photo, you can enter it manually."),
     ).toBeNull();
+  });
+
+  it('auto-fills name/category from the external barcode database when there is no local match', async () => {
+    (scanBarcodeFromCamera as jest.Mock).mockResolvedValue({
+      status: 'found',
+      value: '3017620425035',
+    });
+    (listItems as jest.Mock).mockResolvedValue({
+      items: [],
+      pagination: { page: 1, limit: 1, total: 0, totalPages: 1 },
+    });
+    (lookupProductByBarcode as jest.Mock).mockResolvedValue({
+      barcode: '3017620425035',
+      name: 'Nutella',
+      brand: 'Nutella',
+      category: 'Other',
+      imageUrl: null,
+    });
+
+    renderScreen();
+
+    await screen.findByTestId('location-chip-loc-fridge');
+    fireEvent.press(screen.getByTestId('scan-barcode-button'));
+
+    expect(await screen.findByDisplayValue('Nutella')).toBeTruthy();
+    expect(lookupProductByBarcode).toHaveBeenCalledWith('home-1', '3017620425035');
+  });
+
+  it('shows an error toast when the barcode scan throws unexpectedly', async () => {
+    (scanBarcodeFromCamera as jest.Mock).mockRejectedValue(new Error('native scan failure'));
+
+    renderScreen();
+
+    await screen.findByTestId('location-chip-loc-fridge');
+    fireEvent.press(screen.getByTestId('scan-barcode-button'));
+
+    expect(await screen.findByText('Something went wrong while scanning, try again.')).toBeTruthy();
+  });
+
+  it('prefills name/category directly from navigation params without re-querying', async () => {
+    renderScreen({ initialBarcode: '3017620425035', initialName: 'Nutella', initialCategory: 'Other' });
+
+    await screen.findByTestId('location-chip-loc-fridge');
+
+    expect(await screen.findByDisplayValue('Nutella')).toBeTruthy();
+    expect(listItems).not.toHaveBeenCalled();
+    expect(lookupProductByBarcode).not.toHaveBeenCalled();
   });
 
   it('prefills the barcode field and matching item when opened with an initialBarcode', async () => {

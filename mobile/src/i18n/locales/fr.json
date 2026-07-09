@@ -141,7 +141,8 @@
       "barcodeNotFoundTitle": "Code-barres introuvable",
       "barcodeNotFoundMessage": "Impossible de reconnaître un code-barres sur la photo, réessayez ou saisissez-le manuellement.",
       "expiryNotFoundTitle": "Date introuvable",
-      "expiryNotFoundMessage": "Impossible de reconnaître une date de péremption sur la photo, vous pouvez la saisir manuellement."
+      "expiryNotFoundMessage": "Impossible de reconnaître une date de péremption sur la photo, vous pouvez la saisir manuellement.",
+      "scanErrorMessage": "Une erreur est survenue pendant la numérisation, réessaie."
     },
     "quickAdd": {
       "scanBarcodeButton": "Scanner le code-barres",
@@ -152,7 +153,7 @@
       "quantityLabel": "Quantité",
       "locationLabel": "Emplacement",
       "expiryDateLabel": "Date de péremption (facultatif)",
-      "notScannedLabel": "Non scanné",
+      "notScannedLabel": "Non défini (appuyez pour sélectionner)",
       "scanExpiryButton": "Scanner la date de péremption",
       "submitButton": "Ajout rapide",
       "errorQuantity": "La quantité doit être supérieure à 0",
@@ -160,7 +161,8 @@
       "barcodeNotFoundTitle": "Code-barres introuvable",
       "barcodeNotFoundMessage": "Impossible de reconnaître un code-barres sur la photo, veuillez réessayer.",
       "expiryNotFoundTitle": "Date introuvable",
-      "expiryNotFoundMessage": "Impossible de reconnaître une date de péremption sur la photo, vous pouvez la saisir manuellement."
+      "expiryNotFoundMessage": "Impossible de reconnaître une date de péremption sur la photo, vous pouvez la saisir manuellement.",
+      "scanErrorMessage": "Une erreur est survenue pendant la numérisation, réessaie."
     }
   },
   "shopping": {

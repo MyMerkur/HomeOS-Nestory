@@ -141,7 +141,8 @@
       "barcodeNotFoundTitle": "Código de barras não encontrado",
       "barcodeNotFoundMessage": "Não foi possível reconhecer um código de barras na foto, tente novamente ou introduza-o manualmente.",
       "expiryNotFoundTitle": "Data não encontrada",
-      "expiryNotFoundMessage": "Não foi possível reconhecer uma data de validade na foto, pode introduzi-la manualmente."
+      "expiryNotFoundMessage": "Não foi possível reconhecer uma data de validade na foto, pode introduzi-la manualmente.",
+      "scanErrorMessage": "Ocorreu um erro ao escanear, tenta novamente."
     },
     "quickAdd": {
       "scanBarcodeButton": "Digitalizar código de barras",
@@ -152,7 +153,7 @@
       "quantityLabel": "Quantidade",
       "locationLabel": "Localização",
       "expiryDateLabel": "Data de validade (opcional)",
-      "notScannedLabel": "Não digitalizado",
+      "notScannedLabel": "Não definida (toque para selecionar)",
       "scanExpiryButton": "Digitalizar data de validade",
       "submitButton": "Adição rápida",
       "errorQuantity": "A quantidade deve ser superior a 0",
@@ -160,7 +161,8 @@
       "barcodeNotFoundTitle": "Código de barras não encontrado",
       "barcodeNotFoundMessage": "Não foi possível reconhecer um código de barras na foto, tente novamente.",
       "expiryNotFoundTitle": "Data não encontrada",
-      "expiryNotFoundMessage": "Não foi possível reconhecer uma data de validade na foto, pode introduzi-la manualmente."
+      "expiryNotFoundMessage": "Não foi possível reconhecer uma data de validade na foto, pode introduzi-la manualmente.",
+      "scanErrorMessage": "Ocorreu um erro ao escanear, tenta novamente."
     }
   },
   "shopping": {

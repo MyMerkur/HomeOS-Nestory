@@ -1,6 +1,7 @@
 import { useQueryClient } from '@tanstack/react-query';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import { useMemo, useState } from 'react';
-import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { Alert, Platform, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useTranslation } from 'react-i18next';
 import { useHomeStore } from '../../../store/useHomeStore';
 import { Button } from '../../../ui/Button';
@@ -12,7 +13,7 @@ import { fontSize, spacing, typography, type ThemeColors } from '../../../theme/
 import { useTheme } from '../../../theme/ThemeContext';
 import { useLocationsQuery } from '../hooks/useLocationsQuery';
 import { INVENTORY_ITEMS_QUERY_KEY } from '../hooks/useInventoryItemsQuery';
-import { createItem, listItems, type InventoryItem } from '../services/pantryApi';
+import { createItem, listItems, lookupProductByBarcode, type InventoryItem } from '../services/pantryApi';
 import { scanBarcodeFromCamera } from '../services/barcodeScanner';
 import { scanExpiryDateFromCamera } from '../services/dateOcrScanner';
 import { triggerHaptic } from '../../../services/haptics';
@@ -31,6 +32,7 @@ export function QuickAddItemScreen({ navigation }: PantryStackScreenProps<'Quick
   const [isScanningExpiryDate, setIsScanningExpiryDate] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [serverError, setServerError] = useState<string | null>(null);
+  const [showDatePicker, setShowDatePicker] = useState(false);
 
   const [barcode, setBarcode] = useState<string | null>(null);
   const [matchedItem, setMatchedItem] = useState<InventoryItem | null>(null);
@@ -56,19 +58,32 @@ export function QuickAddItemScreen({ navigation }: PantryStackScreenProps<'Quick
         setMatchedItem(match);
         setQuantity(String(match.quantity));
         setLocationId(match.locationId);
-      } else {
-        Alert.alert(
-          t('pantry.quickAdd.newBarcodeTitle'),
-          t('pantry.quickAdd.newBarcodeMessage'),
-          [
-            { text: t('pantry.quickAdd.cancelButton'), style: 'cancel' },
-            {
-              text: t('pantry.quickAdd.goToFormButton'),
-              onPress: () => navigation.replace('ItemForm', { initialBarcode: outcome.value }),
-            },
-          ],
-        );
+        return;
       }
+
+      const product = await lookupProductByBarcode(homeId, outcome.value);
+      if (product) {
+        navigation.replace('ItemForm', {
+          initialBarcode: outcome.value,
+          initialName: product.name,
+          initialCategory: product.category ?? undefined,
+        });
+        return;
+      }
+
+      Alert.alert(
+        t('pantry.quickAdd.newBarcodeTitle'),
+        t('pantry.quickAdd.newBarcodeMessage'),
+        [
+          { text: t('pantry.quickAdd.cancelButton'), style: 'cancel' },
+          {
+            text: t('pantry.quickAdd.goToFormButton'),
+            onPress: () => navigation.replace('ItemForm', { initialBarcode: outcome.value }),
+          },
+        ],
+      );
+    } catch {
+      showToast({ message: t('pantry.quickAdd.scanErrorMessage'), variant: 'error' });
     } finally {
       setIsScanningBarcode(false);
     }
@@ -84,6 +99,8 @@ export function QuickAddItemScreen({ navigation }: PantryStackScreenProps<'Quick
         return;
       }
       setExpiryDate(outcome.date);
+    } catch {
+      showToast({ message: t('pantry.quickAdd.scanErrorMessage'), variant: 'error' });
     } finally {
       setIsScanningExpiryDate(false);
     }
@@ -159,11 +176,15 @@ export function QuickAddItemScreen({ navigation }: PantryStackScreenProps<'Quick
 
           <Text style={styles.label}>{t('pantry.quickAdd.expiryDateLabel')}</Text>
           <View style={styles.row}>
-            <View style={styles.expiryDisplay}>
+            <Pressable
+              testID="quick-add-expiry-date-button"
+              style={styles.expiryDisplay}
+              onPress={() => setShowDatePicker(true)}
+            >
               <Text style={styles.expiryDisplayText}>
                 {expiryDate ? expiryDate.toLocaleDateString(i18n.language) : t('pantry.quickAdd.notScannedLabel')}
               </Text>
-            </View>
+            </Pressable>
             <Button
               testID="quick-add-scan-expiry-date-button"
               label={t('pantry.quickAdd.scanExpiryButton')}
@@ -172,6 +193,17 @@ export function QuickAddItemScreen({ navigation }: PantryStackScreenProps<'Quick
               variant="outline"
             />
           </View>
+          {showDatePicker ? (
+            <DateTimePicker
+              value={expiryDate ?? new Date()}
+              mode="date"
+              display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+              onChange={(_event, selectedDate) => {
+                setShowDatePicker(Platform.OS === 'ios');
+                if (selectedDate) setExpiryDate(selectedDate);
+              }}
+            />
+          ) : null}
 
           {serverError ? <Text style={styles.error}>{serverError}</Text> : null}
 

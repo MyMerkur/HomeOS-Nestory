@@ -37,6 +37,7 @@ Route -> authenticate -> validateParams -> requireHomeMembership(role?) -> valid
 | Locations | GET/POST /api/homes/:homeId/locations | Lokasyon listele / oluştur | ✅ |
 | Locations | PATCH/DELETE /api/homes/:homeId/locations/:locationId | Lokasyon güncelle / sil | ✅ |
 | Inventory | GET/POST /api/homes/:homeId/items | Filtreli liste / ekleme | ✅ |
+| Inventory | GET /api/homes/:homeId/items/barcode-lookup/:barcode | Open Food Facts üzerinden ürün adı/kategori otomatik doldurma | ✅ |
 | Inventory | GET/PATCH/DELETE /api/homes/:homeId/items/:itemId | Detay / güncelle / sil | ✅ |
 | Inventory | POST /api/homes/:homeId/items/:itemId/{consume,discard,freeze,add-to-shopping} | Durum aksiyonları | ✅ |
 | Shopping | GET/POST /api/homes/:homeId/shopping/items | Filtreli liste / ekleme | ✅ |
@@ -207,6 +208,31 @@ status değişikliği garantili bir `AuditLog` kaydı üretir.
 `category: 'Medicine'` için opsiyonel `doseAmount` (number) ve `doseTimes`
 (`"HH:mm"` string dizisi, ör. `["09:00", "21:00"]`) alanları da kabul edilir —
 diğer kategorilerde anlamsızdır ama şema seviyesinde reddedilmez.
+
+### GET /api/homes/:homeId/items/barcode-lookup/:barcode
+
+`requireHomeMembership('viewer')`. Mobil, barkod tarandığında önce evin kendi
+envanterinde (`GET .../items?barcode=`) eşleşme arar; bulamazsa bu endpoint'i
+çağırıp [Open Food Facts](https://world.openfoodfacts.org) API'sine proxy yapar
+(`server/src/services/productLookupService.ts`). 5 saniyelik timeout, ağ hatası
+veya "ürün bulunamadı" durumunda `{ "product": null }` döner (hata fırlatmaz) —
+mobil taraf bu durumda kullanıcıya manuel giriş formunu sunar.
+
+```json
+// 200 — bulundu
+{ "success": true, "data": { "product": {
+  "barcode": "3017620425035", "name": "Nutella", "brand": "Nutella",
+  "category": "Other", "imageUrl": "https://..."
+} } }
+// 200 — bulunamadı
+{ "success": true, "data": { "product": null } }
+```
+
+`category` eşleşmesi Open Food Facts `categories_tags` alanındaki anahtar
+kelimelere göre yapılan kaba bir haritalama (`CATEGORY_TAG_MAP`); eşleşme
+bulunamazsa `null` döner ve kullanıcı formda kategori seçer. API anahtarı
+gerektirmez; ücretsiz katmanın kapsamı yalnızca gıda ürünleriyle sınırlıdır
+(temizlik/elektronik gibi gıda-dışı ürünlerde çoğunlukla `null` döner).
 
 ### GET/PATCH/DELETE /api/homes/:homeId/items/:itemId
 

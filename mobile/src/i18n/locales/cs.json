@@ -141,7 +141,8 @@
       "barcodeNotFoundTitle": "Čárový kód nenalezen",
       "barcodeNotFoundMessage": "Na fotografii se nepodařilo rozpoznat čárový kód, zkuste to znovu nebo jej zadejte ručně.",
       "expiryNotFoundTitle": "Datum nenalezeno",
-      "expiryNotFoundMessage": "Na fotografii se nepodařilo rozpoznat datum spotřeby, můžete jej zadat ručně."
+      "expiryNotFoundMessage": "Na fotografii se nepodařilo rozpoznat datum spotřeby, můžete jej zadat ručně.",
+      "scanErrorMessage": "Při skenování došlo k chybě, zkus to znovu."
     },
     "quickAdd": {
       "scanBarcodeButton": "Naskenovat čárový kód",
@@ -152,7 +153,7 @@
       "quantityLabel": "Množství",
       "locationLabel": "Umístění",
       "expiryDateLabel": "Datum spotřeby (nepovinné)",
-      "notScannedLabel": "Nenaskenováno",
+      "notScannedLabel": "Nenastaveno (klepnutím vyberte)",
       "scanExpiryButton": "Naskenovat datum spotřeby",
       "submitButton": "Rychlé přidání",
       "errorQuantity": "Množství musí být větší než 0",
@@ -160,7 +161,8 @@
       "barcodeNotFoundTitle": "Čárový kód nenalezen",
       "barcodeNotFoundMessage": "Na fotografii se nepodařilo rozpoznat čárový kód, zkuste to znovu.",
       "expiryNotFoundTitle": "Datum nenalezeno",
-      "expiryNotFoundMessage": "Na fotografii se nepodařilo rozpoznat datum spotřeby, můžete jej zadat ručně."
+      "expiryNotFoundMessage": "Na fotografii se nepodařilo rozpoznat datum spotřeby, můžete jej zadat ručně.",
+      "scanErrorMessage": "Při skenování došlo k chybě, zkus to znovu."
     }
   },
   "shopping": {

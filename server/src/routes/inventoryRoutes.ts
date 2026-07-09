@@ -4,6 +4,7 @@ import {
   deleteItemHandler,
   getItemHandler,
   listItemsHandler,
+  lookupProductByBarcodeHandler,
   updateItemHandler,
 } from '../controllers/inventoryController';
 import {
@@ -15,7 +16,11 @@ import {
 } from '../controllers/inventoryActionController';
 import { requireHomeMembership } from '../middlewares/requireHomeMembership';
 import { validateBody, validateParams, validateQuery } from '../middlewares/validate';
-import { homeIdParamSchema, homeItemIdParamSchema } from '../validations/paramsValidation';
+import {
+  homeBarcodeParamSchema,
+  homeIdParamSchema,
+  homeItemIdParamSchema,
+} from '../validations/paramsValidation';
 import {
   createItemSchema,
   listItemsQuerySchema,
@@ -39,6 +44,13 @@ router.post(
   requireHomeMembership('member'),
   validateBody(createItemSchema),
   catchAsync(createItemHandler),
+);
+
+router.get(
+  '/barcode-lookup/:barcode',
+  validateParams(homeBarcodeParamSchema),
+  requireHomeMembership('viewer'),
+  catchAsync(lookupProductByBarcodeHandler),
 );
 
 router.get(

@@ -1,5 +1,6 @@
 import type { Request, Response } from 'express';
 import * as inventoryService from '../services/inventoryService';
+import { lookupProductByBarcode } from '../services/productLookupService';
 import { sendSuccess } from '../utils/apiResponse';
 import type {
   CreateItemInput,
@@ -22,6 +23,11 @@ export async function createItemHandler(req: Request, res: Response) {
     req.body as CreateItemInput,
   );
   sendSuccess(res, { item }, 'Item created successfully', 201);
+}
+
+export async function lookupProductByBarcodeHandler(req: Request, res: Response) {
+  const product = await lookupProductByBarcode(req.params.barcode);
+  sendSuccess(res, { product }, 'Product lookup completed');
 }
 
 export async function getItemHandler(req: Request, res: Response) {

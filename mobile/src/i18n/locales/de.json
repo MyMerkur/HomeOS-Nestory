@@ -141,7 +141,8 @@
       "barcodeNotFoundTitle": "Barcode nicht gefunden",
       "barcodeNotFoundMessage": "Auf dem Foto konnte kein Barcode erkannt werden. Versuchen Sie es erneut oder geben Sie ihn manuell ein.",
       "expiryNotFoundTitle": "Datum nicht gefunden",
-      "expiryNotFoundMessage": "Auf dem Foto konnte kein Ablaufdatum erkannt werden, Sie können es manuell eingeben."
+      "expiryNotFoundMessage": "Auf dem Foto konnte kein Ablaufdatum erkannt werden, Sie können es manuell eingeben.",
+      "scanErrorMessage": "Beim Scannen ist ein Fehler aufgetreten, versuche es erneut."
     },
     "quickAdd": {
       "scanBarcodeButton": "Barcode scannen",
@@ -152,7 +153,7 @@
       "quantityLabel": "Menge",
       "locationLabel": "Ort",
       "expiryDateLabel": "Ablaufdatum (optional)",
-      "notScannedLabel": "Nicht gescannt",
+      "notScannedLabel": "Nicht festgelegt (zum Auswählen tippen)",
       "scanExpiryButton": "Ablaufdatum scannen",
       "submitButton": "Schnell hinzufügen",
       "errorQuantity": "Die Menge muss größer als 0 sein",
@@ -160,7 +161,8 @@
       "barcodeNotFoundTitle": "Barcode nicht gefunden",
       "barcodeNotFoundMessage": "Auf dem Foto konnte kein Barcode erkannt werden, bitte erneut versuchen.",
       "expiryNotFoundTitle": "Datum nicht gefunden",
-      "expiryNotFoundMessage": "Auf dem Foto konnte kein Ablaufdatum erkannt werden, Sie können es manuell eingeben."
+      "expiryNotFoundMessage": "Auf dem Foto konnte kein Ablaufdatum erkannt werden, Sie können es manuell eingeben.",
+      "scanErrorMessage": "Beim Scannen ist ein Fehler aufgetreten, versuche es erneut."
     }
   },
   "shopping": {

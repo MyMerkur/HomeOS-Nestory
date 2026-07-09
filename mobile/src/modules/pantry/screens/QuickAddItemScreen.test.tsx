@@ -2,7 +2,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react-native';
 import { Alert } from 'react-native';
 import { QuickAddItemScreen } from './QuickAddItemScreen';
-import { createItem, listItems, listLocations } from '../services/pantryApi';
+import { createItem, listItems, listLocations, lookupProductByBarcode } from '../services/pantryApi';
 import { scanBarcodeFromCamera } from '../services/barcodeScanner';
 import { scanExpiryDateFromCamera } from '../services/dateOcrScanner';
 import { useHomeStore } from '../../../store/useHomeStore';
@@ -58,7 +58,7 @@ describe('QuickAddItemScreen', () => {
     expect(listItems).not.toHaveBeenCalled();
   });
 
-  it('offers to open the full form when the barcode has no match', async () => {
+  it('offers to open the full form when the barcode has no match anywhere', async () => {
     (scanBarcodeFromCamera as jest.Mock).mockResolvedValue({
       status: 'found',
       value: '8690000000001',
@@ -67,6 +67,7 @@ describe('QuickAddItemScreen', () => {
       items: [],
       pagination: { page: 1, limit: 1, total: 0, totalPages: 1 },
     });
+    (lookupProductByBarcode as jest.Mock).mockResolvedValue(null);
     jest.spyOn(Alert, 'alert').mockImplementation((_title, _message, buttons) => {
       buttons?.find((button) => button.text === 'Go to form')?.onPress?.();
     });
@@ -79,6 +80,44 @@ describe('QuickAddItemScreen', () => {
         initialBarcode: '8690000000001',
       }),
     );
+  });
+
+  it('auto-fills the product form from the external barcode database when not in the home inventory', async () => {
+    (scanBarcodeFromCamera as jest.Mock).mockResolvedValue({
+      status: 'found',
+      value: '3017620425035',
+    });
+    (listItems as jest.Mock).mockResolvedValue({
+      items: [],
+      pagination: { page: 1, limit: 1, total: 0, totalPages: 1 },
+    });
+    (lookupProductByBarcode as jest.Mock).mockResolvedValue({
+      barcode: '3017620425035',
+      name: 'Nutella',
+      brand: 'Nutella',
+      category: 'Other',
+      imageUrl: null,
+    });
+
+    renderScreen();
+    fireEvent.press(screen.getByTestId('quick-add-scan-barcode-button'));
+
+    await waitFor(() =>
+      expect(mockNavigation.replace).toHaveBeenCalledWith('ItemForm', {
+        initialBarcode: '3017620425035',
+        initialName: 'Nutella',
+        initialCategory: 'Other',
+      }),
+    );
+  });
+
+  it('shows an error toast when the barcode scan throws unexpectedly', async () => {
+    (scanBarcodeFromCamera as jest.Mock).mockRejectedValue(new Error('native scan failure'));
+
+    renderScreen();
+    fireEvent.press(screen.getByTestId('quick-add-scan-barcode-button'));
+
+    expect(await screen.findByText('Something went wrong while scanning, try again.')).toBeTruthy();
   });
 
   it('shows a quick-add form pre-filled with the matched item and its location', async () => {

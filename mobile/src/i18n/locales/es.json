@@ -141,7 +141,8 @@
       "barcodeNotFoundTitle": "Código de barras no encontrado",
       "barcodeNotFoundMessage": "No se pudo reconocer un código de barras en la foto, inténtalo de nuevo o introdúcelo manualmente.",
       "expiryNotFoundTitle": "Fecha no encontrada",
-      "expiryNotFoundMessage": "No se pudo reconocer una fecha de caducidad en la foto, puedes introducirla manualmente."
+      "expiryNotFoundMessage": "No se pudo reconocer una fecha de caducidad en la foto, puedes introducirla manualmente.",
+      "scanErrorMessage": "Ocurrió un error al escanear, inténtalo de nuevo."
     },
     "quickAdd": {
       "scanBarcodeButton": "Escanear código de barras",
@@ -152,7 +153,7 @@
       "quantityLabel": "Cantidad",
       "locationLabel": "Ubicación",
       "expiryDateLabel": "Fecha de caducidad (opcional)",
-      "notScannedLabel": "No escaneada",
+      "notScannedLabel": "Sin definir (toca para seleccionar)",
       "scanExpiryButton": "Escanear fecha de caducidad",
       "submitButton": "Añadir rápido",
       "errorQuantity": "La cantidad debe ser mayor que 0",
@@ -160,7 +161,8 @@
       "barcodeNotFoundTitle": "Código de barras no encontrado",
       "barcodeNotFoundMessage": "No se pudo reconocer un código de barras en la foto, inténtalo de nuevo.",
       "expiryNotFoundTitle": "Fecha no encontrada",
-      "expiryNotFoundMessage": "No se pudo reconocer una fecha de caducidad en la foto, puedes introducirla manualmente."
+      "expiryNotFoundMessage": "No se pudo reconocer una fecha de caducidad en la foto, puedes introducirla manualmente.",
+      "scanErrorMessage": "Ocurrió un error al escanear, inténtalo de nuevo."
     }
   },
   "shopping": {

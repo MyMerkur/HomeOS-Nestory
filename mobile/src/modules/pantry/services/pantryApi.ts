@@ -70,6 +70,24 @@ export async function getItem(homeId: string, itemId: string): Promise<Inventory
   return data.data.item;
 }
 
+export type ProductLookupResult = {
+  barcode: string;
+  name: string;
+  brand: string | null;
+  category: Category | null;
+  imageUrl: string | null;
+};
+
+export async function lookupProductByBarcode(
+  homeId: string,
+  barcode: string,
+): Promise<ProductLookupResult | null> {
+  const { data } = await apiClient.get<ApiEnvelope<{ product: ProductLookupResult | null }>>(
+    `/homes/${homeId}/items/barcode-lookup/${encodeURIComponent(barcode)}`,
+  );
+  return data.data.product;
+}
+
 export type ItemInput = {
   name: string;
   locationId: string;

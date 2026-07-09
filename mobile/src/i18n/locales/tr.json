@@ -141,7 +141,8 @@
       "barcodeNotFoundTitle": "Barkod bulunamadı",
       "barcodeNotFoundMessage": "Fotoğrafta bir barkod tanınamadı, tekrar dene veya elle gir.",
       "expiryNotFoundTitle": "Tarih bulunamadı",
-      "expiryNotFoundMessage": "Fotoğrafta bir SKT tarihi tanınamadı, elle girebilirsin."
+      "expiryNotFoundMessage": "Fotoğrafta bir SKT tarihi tanınamadı, elle girebilirsin.",
+      "scanErrorMessage": "Tarama sırasında bir sorun oluştu, tekrar dene."
     },
     "quickAdd": {
       "scanBarcodeButton": "Barkodu Tara",
@@ -152,7 +153,7 @@
       "quantityLabel": "Miktar",
       "locationLabel": "Lokasyon",
       "expiryDateLabel": "Son kullanma tarihi (opsiyonel)",
-      "notScannedLabel": "Taranmadı",
+      "notScannedLabel": "Seçilmedi (dokunarak seç)",
       "scanExpiryButton": "SKT Tara",
       "submitButton": "Hızlı Ekle",
       "errorQuantity": "Miktar 0'dan büyük olmalı",
@@ -160,7 +161,8 @@
       "barcodeNotFoundTitle": "Barkod bulunamadı",
       "barcodeNotFoundMessage": "Fotoğrafta bir barkod tanınamadı, tekrar dene.",
       "expiryNotFoundTitle": "Tarih bulunamadı",
-      "expiryNotFoundMessage": "Fotoğrafta bir SKT tarihi tanınamadı, elle girebilirsin."
+      "expiryNotFoundMessage": "Fotoğrafta bir SKT tarihi tanınamadı, elle girebilirsin.",
+      "scanErrorMessage": "Tarama sırasında bir sorun oluştu, tekrar dene."
     }
   },
   "shopping": {

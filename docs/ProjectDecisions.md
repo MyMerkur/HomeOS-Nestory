@@ -913,3 +913,85 @@ navigasyon başlıkları da tema fontuna taşındı
   tercihi item oluşturma formuna geçirilmiyor); (5) `RootNavigator.tsx`
   header başlıkları hâlâ hardcoded Türkçe (Sprint 13 ekran
   migrasyonunun kapsamadığı bir dosya).
+
+## Decision: Gerçek cihazda Firebase crash'i ve dev API host'u düzeltildi
+
+- **Date**: 2026-07-09
+- **Status**: Accepted
+- **Context**: "Yayın Kalitesi" initiative'i simulator'de tamamlandı
+  ama ilk kez gerçek bir iPhone'da denendiğinde uygulama açılışta
+  crash oluyordu. Kök neden: `mobile/ios/NestoryMobile/GoogleService-
+  Info.plist` diskte vardı ama Xcode projesine (`project.pbxproj`)
+  hiç eklenmemişti (dosya build'e kopyalanmıyordu), bu yüzden
+  `AppDelegate.swift`'teki `FirebaseApp.configure()` her açılışta
+  `NSException` fırlatıp anlık crash'e yol açıyordu (crash raporunda
+  `+[FIRApp configure]` doğrulandı). Ayrıca `mobile/src/config/
+  env.ts`'deki iOS dev host'u `localhost` idi — bu simulator'de Mac'in
+  kendisine işaret eder ama gerçek cihazda cihazın kendi localhost'una
+  işaret eder, yani backend'e hiç ulaşılamıyor, login dahil hiçbir
+  API isteği çalışmıyordu.
+- **Decision**: `xcodeproj` Ruby gem'iyle `GoogleService-Info.plist`
+  doğru grup/path (`NestoryMobile/GoogleService-Info.plist`) ile
+  projeye eklendi ve Resources build fazına dahil edildi (`pod
+  install` + temiz `xcodebuild` ile doğrulandı). `env.ts`'de iOS dev
+  host'u sabit bir LAN IP'sine (`DEV_LAN_IP`) çevrildi — hem simulator
+  hem gerçek cihaz aynı ağdaki Mac'e bu şekilde ulaşabiliyor.
+- **Consequences**: Uygulama artık gerçek cihazda crash olmadan
+  açılıyor ve backend'e bağlanabiliyor. `DEV_LAN_IP` Mac'in ağı
+  değiştiğinde (farklı Wi-Fi/DHCP) elle güncellenmesi gereken bir
+  değer — kalıcı çözüm (Sprint 1'de planlanan `react-native-config`
+  ile ortam bazlı konfigürasyon) hâlâ yapılmadı, bu geçici bir dev-only
+  düzeltme. Android fiziksel cihaz için henüz aynı sorun
+  doğrulanmadı/çözülmedi (yalnızca Android emulator'ün `10.0.2.2`'si
+  test edildi).
+
+## Decision: Barkod/SKT tarama akışına gerçek ürün veritabanı entegrasyonu eklendi
+
+- **Date**: 2026-07-09
+- **Status**: Accepted
+- **Context**: Kullanıcı gerçek cihazda barkod ve SKT taramayı
+  denedi; her ikisi de "hata verip elle girmeye yönlendiriyor" olarak
+  raporlandı. İncelemede ortaya çıktı ki bu bir crash değildi: kamera/
+  ML Kit (`@react-native-ml-kit/barcode-scanning`,
+  `@react-native-ml-kit/text-recognition`) barkodu doğru okuyordu,
+  ama uygulama barkodu yalnızca **evin kendi envanterinde**
+  (`GET /items?barcode=`) arıyordu — dış bir ürün veritabanı
+  entegrasyonu hiç yoktu. Bu yüzden daha önce hiç eklenmemiş her ürün
+  "Bu barkod yeni" diyaloğuna düşüp kullanıcıyı manuel forma
+  yönlendiriyordu — pratikte neredeyse her tarama. Ayrıca
+  `QuickAddItemScreen`'de SKT OCR başarısız olduğunda manuel tarih
+  girme imkânı yoktu (sadece "Taranmadı" etiketi + tara butonu), ve
+  her iki ekranın da tarama handler'larında `catch` bloğu yoktu (native
+  bir hata unhandled promise rejection olarak red-box'a düşerdi).
+- **Decision**: Backend'e API anahtarı gerektirmeyen, hem global hem
+  Türkiye kapsamı olan [Open Food Facts](https://world.openfoodfacts.org)
+  proxy'si eklendi: `server/src/services/productLookupService.ts`
+  (5s timeout, ağ/parse hatasında `null` döner, asla fırlatmaz) +
+  `GET /api/homes/:homeId/items/barcode-lookup/:barcode` (bkz.
+  `docs/API.md`). Mobilde: iç envanterde eşleşme yoksa artık bu
+  endpoint'e düşülüyor; ürün bulunursa kullanıcı "yeni barkod"
+  diyaloğunu hiç görmeden doğrudan ad/kategori önceden doldurulmuş
+  `ItemFormScreen`'e yönlendiriliyor (`PantryStackParamList['ItemForm']`
+  parametrelerine `initialName`/`initialCategory`/`initialUnit`
+  eklendi). `ItemFormScreen`'in kendi tara butonu da aynı fallback'i
+  kullanıyor. `QuickAddItemScreen`'e SKT alanı artık dokunulabilir bir
+  `Pressable` + `DateTimePicker` (ItemFormScreen'deki desenle birebir)
+  — OCR başarısız olursa kullanıcı elle seçebiliyor. Her iki ekranın
+  tara handler'larına `catch` eklendi, native hata durumunda kullanıcı
+  şimdi genel bir "tarama sırasında sorun oluştu" toast'ı görüyor
+  (8 dilde `scanErrorMessage`).
+- **Consequences**: Backend: `productLookupService.test.ts` (6 test,
+  gerçek ağ çağrısı yapılmadan `global.fetch` mock'lanarak), 19 suite /
+  105 test yeşil, lint+tsc temiz. Mobile: `QuickAddItemScreen.test.tsx`
+  ve `ItemFormScreen.test.tsx`'e yeni senaryolar eklendi, 44 suite /
+  189 test yeşil, lint+tsc temiz. Bilinen kapsam dışı kalan noktalar:
+  (1) Open Food Facts esasen **gıda** ürünlerini kapsıyor — temizlik
+  malzemesi, ilaç, elektronik gibi gıda-dışı kategorilerde çoğunlukla
+  eşleşme bulunamayacak ve kullanıcı yine manuel giriş yapacak (bu,
+  Türkiye+global kapsamı olan ücretsiz/anahtarsız en iyi seçenekti;
+  ücretli bir barkod API'sine geçiş gelecekte değerlendirilebilir);
+  (2) `categories_tags` → dahili kategori haritalaması basit anahtar
+  kelime eşleştirmesi (`CATEGORY_TAG_MAP`), kapsamlı bir taksonomi
+  eşlemesi değil; (3) OCR'ın kendisi (tarih tanıma doğruluğu, kamera
+  netliği/ışık koşulları) bu değişiklikle iyileştirilmedi — sadece
+  başarısız olduğunda artık bir manuel giriş yolu var.
