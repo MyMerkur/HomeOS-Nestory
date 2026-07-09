@@ -1,6 +1,7 @@
 import type { ComponentType } from 'react';
 import { useEffect, useRef } from 'react';
 import { Animated, Dimensions, Modal, Pressable, StyleSheet, Text } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { fontSize, radius, spacing, typography, type ThemeColors } from '../theme/theme';
 
 type IconProps = { color: string; size: number };
@@ -22,6 +23,7 @@ type Props = {
 const PANEL_WIDTH = Math.min(Dimensions.get('window').width * 0.78, 320);
 
 export function SideMenu({ visible, onClose, items, colors }: Props) {
+  const insets = useSafeAreaInsets();
   const translateX = useRef(new Animated.Value(-PANEL_WIDTH)).current;
   const backdropOpacity = useRef(new Animated.Value(0)).current;
 
@@ -49,7 +51,14 @@ export function SideMenu({ visible, onClose, items, colors }: Props) {
       </Pressable>
       <Animated.View
         testID="side-menu-panel"
-        style={[styles.panel, { transform: [{ translateX }] }]}
+        style={[
+          styles.panel,
+          {
+            paddingTop: insets.top + spacing.md,
+            paddingBottom: insets.bottom + spacing.md,
+            transform: [{ translateX }],
+          },
+        ]}
       >
         {items.map((item) => (
           <Pressable
@@ -81,7 +90,6 @@ function createStyles(colors: ThemeColors) {
       bottom: 0,
       width: PANEL_WIDTH,
       backgroundColor: colors.surface,
-      paddingTop: spacing.xxl,
       paddingHorizontal: spacing.md,
       gap: spacing.xs,
     },

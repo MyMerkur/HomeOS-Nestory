@@ -1,5 +1,6 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react-native';
+import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { DashboardScreen } from './DashboardScreen';
 import { getDashboard } from '../services/dashboardApi';
 import { useHomeStore } from '../../../store/useHomeStore';
@@ -48,11 +49,15 @@ const mockDashboard = {
 function renderScreen() {
   const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   return render(
-    <ThemeProvider>
-      <QueryClientProvider client={queryClient}>
-        <DashboardScreen navigation={mockNavigation} route={{} as never} />
-      </QueryClientProvider>
-    </ThemeProvider>,
+    <SafeAreaProvider
+      initialMetrics={{ frame: { x: 0, y: 0, width: 0, height: 0 }, insets: { top: 0, left: 0, right: 0, bottom: 0 } }}
+    >
+      <ThemeProvider>
+        <QueryClientProvider client={queryClient}>
+          <DashboardScreen navigation={mockNavigation} route={{} as never} />
+        </QueryClientProvider>
+      </ThemeProvider>
+    </SafeAreaProvider>,
   );
 }
 
