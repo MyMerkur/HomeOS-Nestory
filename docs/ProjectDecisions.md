@@ -1154,3 +1154,102 @@ navigasyon başlıkları da tema fontuna taşındı
   açılıyor; (4) uygulama adı değişikliği native rebuild gerektiriyor
   (Info.plist bundle'a derleme zamanında gömülür), cihaza henüz yeni
   build kurulmadı.
+
+## Decision: Yayın hazırlığı — bundle ID/imzalama, app icon, VPS'e prod deploy
+
+- **Date**: 2026-07-09
+- **Status**: Accepted
+- **Context**: Yayın-öncesi denetimde bulunan 5 blocker kapatıldı: iOS
+  bundle ID hâlâ `org.reactjs.native.example.*` placeholder'dı, App
+  Icon setinde gerçek PNG yoktu, Android release build debug keystore
+  ile imzalanıyordu, Gizlilik/Kullanım Koşulları taslak metindi, ve
+  production API domaini (`api.homeos-nestory.com`) gerçekte deploy
+  edilmemişti. Kullanıcı `nestoryhomekit.com` domainini satın aldı,
+  backend için `api.nestoryhomekit.com` alt alan adını ayırdı, 3 icon
+  kaynak dosyası sağladı (SVG + 1024px PNG + şeffaf foreground PNG,
+  arka plan `#4B7F52`) ve bir Hostinger VPS'e (CyberPanel + OpenLiteSpeed,
+  paylaşımlı, birden fazla domain zaten barındırıyor) tam yetkiyle SSH
+  erişimi verdi.
+- **Decision**:
+  - **Bundle ID / applicationId**: Her iki platformda da
+    `com.nestoryhomekit.app`. iOS'ta `PRODUCT_BUNDLE_IDENTIFIER`
+    doğrudan sabitlendi, `PRODUCT_NAME` (NestoryMobile, Pods hedef
+    adları vb.) kasıtlı olarak değiştirilmedi — yalnızca CFBundleIdentifier
+    etkileniyor, iç derleme adı aynı kalınca pod/scheme yeniden adlandırma
+    riski alınmadı. Android'de de `namespace` (`com.nestorymobile`,
+    Kotlin paket yoluyla eşleşiyor) sabit bırakıldı, yalnızca
+    `applicationId` değişti — namespace ve applicationId'nin ayrı
+    olabildiği AGP davranışından yararlanıldı.
+  - **App icon**: Pillow ile Python script — 1024px kaynağı `#4B7F52`
+    üzerine flatten edip (alpha kanalı App Store 1024 icon'da
+    reddedilir) iOS'un 9 slotuna resize edildi; Android'de adaptive
+    icon deseni kuruldu (`mipmap-anydpi-v26/ic_launcher*.xml` +
+    `colors.xml` background + her yoğunlukta `ic_launcher_foreground.png`),
+    API 25 altı cihazlar için de flatten edilmiş legacy `ic_launcher.png`/
+    `ic_launcher_round.png` (dairesel maskeli) üretildi.
+  - **Android release imzalama**: Yerel makinede `keytool` ile
+    `nestory-release.keystore` (PKCS12, 10000 gün geçerli) üretildi.
+    Kimlik bilgileri **repoya değil**, kullanıcının
+    `~/.gradle/gradle.properties` dosyasına yazıldı (React Native'in
+    resmi önerdiği desen); `build.gradle`'da
+    `project.hasProperty('NESTORY_RELEASE_STORE_FILE')` kontrolüyle bu
+    özellik yoksa debug imzalamaya düşülüyor — böylece CI/başka
+    makinelerde build kırılmıyor. Keystore dosyası `*.keystore`
+    gitignore kuralıyla zaten korunuyordu.
+  - **Gizlilik Politikası / Kullanım Koşulları**: Taslak uyarıları
+    kaldırıldı, gerçek içerik yazıldı (faturalar/varlıklar/ilaç/push
+    token toplama dahil güncel özellik seti), 8 dilin tamamına
+    çevrildi (i18n parite: 344 anahtar/dil korundu). Statik HTML olarak
+    `https://nestoryhomekit.com/privacy.html` ve `/terms.html`'e
+    deploy edildi — App Store Connect/Play Console **URL** talep
+    ettiği için bu şart.
+  - **VPS deploy mimarisi**: VPS zaten CyberPanel ile yönetiliyor;
+    `api.nestoryhomekit.com` için CyberPanel üzerinden bir website daha
+    önce oluşturulmuş (SSL sertifikası dahil, Let's Encrypt). Backend,
+    diğer sitelerle aynı desende `/home/api.nestoryhomekit.com/public_html/`
+    içine `dist/` + `package.json` olarak yüklendi, `npm install
+    --omit=dev` ile bağımlılıklar kuruldu (lockfile npm 10.8.2 ile
+    hafif farklı optional-dep çözümü nedeniyle `npm ci` yerine `npm
+    install` kullanıldı), site'ın kendi Linux kullanıcısı
+    (`apine9534`) altında **kendi PM2 daemon'ında** `pm2 start
+    dist/server.js --name nestory-api` ile ayağa kaldırıldı (port
+    8877 — diğer sitelerin kullandığı 3030/4050/5050 ile çakışmıyor),
+    `pm2 save` + `pm2 startup systemd -u apine9534` ile reboot sonrası
+    otomatik başlama sağlandı. OpenLiteSpeed vhost.conf'a
+    `extprocessor`/`context /` proxy bloğu eklendi (aynı VPS'teki
+    `api.evginlerevtekstil.com` ile birebir aynı desen).
+  - **Bulunan bug**: İlk denemede proxy bloğunun adı (`nodeApiProxy`)
+    referans alınan `api.evginlerevtekstil.com`'daki extprocessor ile
+    aynıydı — bu isim çakışması OpenLiteSpeed'in isteği yanlış
+    yönlendirmesine/karışmasına yol açtı (doğrudan `127.0.0.1:8877`
+    çalışırken proxy üzerinden 404 dönüyordu). `nestoryApiProxy` olarak
+    yeniden adlandırılınca düzeldi. **Öğrenilen ders**: bu VPS'te
+    extprocessor adları vhost'lar arası paylaşılan bir isim alanında —
+    her yeni proxy bloğu için domain'e özgü, benzersiz bir isim
+    kullanılmalı.
+  - **MongoDB**: VPS'te zaten çalışan yerel `mongod` (127.0.0.1:27017,
+    auth kapalı) kullanıldı, ayrı bir `nestory` veritabanı adıyla — yeni
+    bir MongoDB kurulumuna gerek kalmadı.
+  - **Firebase Admin SDK**: Kullanıcının yerel makinesindeki
+    `Firebase İlgili Dosyalar/` klasöründeki service account JSON'u
+    tek satıra minify edilip `FIREBASE_SERVICE_ACCOUNT` env değişkeni
+    olarak production `.env`'e yazıldı — push bildirimleri artık
+    production'da aktif (önceden no-op'tu).
+- **Consequences**: Mobile: 46 suite / 205 test yeşil, lint+tsc temiz
+  (icon/bundle-id/signing değişiklikleri native config, JS testlerini
+  etkilemedi). Server: 20 suite / 123 test yeşil, lint+tsc temiz,
+  `npm run build` ile prod bundle üretiliyor. `https://api.nestoryhomekit.com/api/health`
+  ve `https://nestoryhomekit.com/{privacy,terms}.html` dışarıdan
+  doğrulandı (200 OK). Bilinen açık kalemler: (1) Android release
+  keystore'u yalnızca bu Mac'in `~/.gradle/gradle.properties`'inde —
+  başka bir makineden release build almak isterse aynı keystore +
+  kimlik bilgileri o makineye de taşınmalı (yedek:
+  `~/nestory-release-keystore-credentials-BACKUP.txt`, repo dışında);
+  (2) VPS'teki MongoDB auth'suz (yalnızca 127.0.0.1'e bound, paylaşımlı
+  sunucudaki diğer local process'ler teorik olarak erişebilir — tek
+  kullanıcılı/düşük riskli bir VPS için kabul edilebilir görüldü, ama
+  ileride auth eklenmesi önerilir); (3) Gizlilik/Kullanım Koşulları
+  metinleri Claude tarafından yazıldı, gerçek bir hukuki inceleme
+  yerine geçmez (özellikle KVKK/GDPR uyumluluğu için); (4) `support@`/
+  `privacy@nestoryhomekit.com` posta kutuları henüz CyberPanel'de
+  oluşturulmadı — e-postalar şu an hiçbir yere düşmüyor.

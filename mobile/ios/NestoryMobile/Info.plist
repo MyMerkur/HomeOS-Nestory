@@ -35,8 +35,6 @@
 	</dict>
 	<key>NSCameraUsageDescription</key>
 	<string>Barkod taramak ve son kullanma tarihini fotoğraftan okumak için kameraya ihtiyaç duyulur.</string>
-	<key>NSLocationWhenInUseUsageDescription</key>
-	<string/>
 	<key>RCTNewArchEnabled</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>

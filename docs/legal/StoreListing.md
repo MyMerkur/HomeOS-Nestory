@@ -1,8 +1,8 @@
-# Store Listing Taslağı (App Store / Google Play)
+# Store Listing (App Store / Google Play)
 
-> **⚠️ Bu bir taslaktır.** Gerçek gönderim öncesi ekran görüntüleri, app icon ve
-> yerelleştirilmiş metinler eklenmeli; App Store/Play Store'un güncel içerik/
-> derecelendirme kurallarına göre gözden geçirilmelidir.
+> Gönderim öncesi ekran görüntüleri eklenmeli; App Store/Play Store'un güncel
+> içerik/derecelendirme kurallarına göre son kez gözden geçirilmelidir. App icon
+> ve gizlilik politikası/kullanım koşulları URL'leri aşağıda hazır.
 
 ## Uygulama Adı
 
@@ -51,7 +51,11 @@ ev yönetimi, aile paylaşımı, gıda takibi
 4+ / Everyone (tıbbi tavsiye içermez, kullanıcı üretimi içerik sınırlıdır — sadece
 ürün adı/notu gibi kısa metinler).
 
-## Destek
+## Destek ve Yasal Bağlantılar
 
-Destek e-postası ve gizlilik politikası linki: _(yayın öncesi eklenecek — bkz.
-[PrivacyPolicy.md](./PrivacyPolicy.md), [TermsOfService.md](./TermsOfService.md))_
+- Destek e-postası: support@nestoryhomekit.com
+- Gizlilik Politikası: https://nestoryhomekit.com/privacy.html
+- Kullanım Koşulları: https://nestoryhomekit.com/terms.html
+- Backend API: https://api.nestoryhomekit.com
+- Bundle ID (iOS): `com.nestoryhomekit.app`
+- Application ID (Android): `com.nestoryhomekit.app`
