@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import {
   changePasswordHandler,
+  deleteAccountHandler,
   getProfileHandler,
   registerPushTokenHandler,
   removePushTokenHandler,
@@ -11,6 +12,7 @@ import { authenticate } from '../middlewares/authenticate';
 import { validateBody } from '../middlewares/validate';
 import {
   changePasswordSchema,
+  deleteAccountSchema,
   updateProfileSchema,
   updateUserSettingsSchema,
 } from '../validations/userValidation';
@@ -31,5 +33,6 @@ router.post(
   catchAsync(registerPushTokenHandler),
 );
 router.delete('/me/push-tokens/:token', catchAsync(removePushTokenHandler));
+router.delete('/me', validateBody(deleteAccountSchema), catchAsync(deleteAccountHandler));
 
 export default router;

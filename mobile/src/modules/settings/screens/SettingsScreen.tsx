@@ -1,5 +1,6 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useQueryClient } from '@tanstack/react-query';
+import axios from 'axios';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useEffect, useMemo, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
@@ -41,6 +42,7 @@ import { leaveHome, updateHomeName } from '../../family/services/familyApi';
 import { PROFILE_QUERY_KEY, useProfileQuery } from '../hooks/useProfileQuery';
 import {
   changePassword,
+  deleteAccount,
   updateLanguage,
   updateNotificationPreferences,
   updateProfile,
@@ -89,6 +91,10 @@ export function SettingsScreen({ navigation }: DashboardStackScreenProps<'Settin
   const [showTimePicker, setShowTimePicker] = useState(false);
   const [isLeavingHome, setIsLeavingHome] = useState(false);
   const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [showDeleteAccount, setShowDeleteAccount] = useState(false);
+  const [deletePassword, setDeletePassword] = useState('');
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [isDeletingAccount, setIsDeletingAccount] = useState(false);
 
   useEffect(() => {
     if (profile) {
@@ -215,6 +221,36 @@ export function SettingsScreen({ navigation }: DashboardStackScreenProps<'Settin
     } finally {
       setIsLoggingOut(false);
     }
+  };
+
+  const handleDeleteAccount = () => {
+    if (!deletePassword) return;
+
+    Alert.alert(t('settings.deleteAccountConfirmTitle'), t('settings.deleteAccountConfirmMessage'), [
+      { text: t('settings.leaveHomeConfirmCancel'), style: 'cancel' },
+      {
+        text: t('settings.deleteAccountConfirmConfirm'),
+        style: 'destructive',
+        onPress: async () => {
+          setDeleteError(null);
+          setIsDeletingAccount(true);
+          try {
+            await deleteAccount(deletePassword);
+            triggerHaptic('notificationWarning');
+            await clearSession();
+          } catch (err) {
+            const code = axios.isAxiosError(err) ? err.response?.data?.error?.code : undefined;
+            setDeleteError(
+              code === 'HOME_OWNERSHIP_BLOCKS_DELETION'
+                ? t('settings.deleteAccountErrorOwner')
+                : t('settings.deleteAccountErrorPassword'),
+            );
+          } finally {
+            setIsDeletingAccount(false);
+          }
+        },
+      },
+    ]);
   };
 
   const handleChangeTheme = async (nextMode: ThemeMode) => {
@@ -439,6 +475,36 @@ export function SettingsScreen({ navigation }: DashboardStackScreenProps<'Settin
         loading={isLoggingOut}
         variant="outline"
       />
+
+      <SectionTitle title={t('settings.sectionDanger')} style={styles.sectionTitle} />
+      <Card style={styles.card}>
+        {showDeleteAccount ? (
+          <>
+            <TextField
+              testID="delete-account-password"
+              label={t('settings.deleteAccountPasswordLabel')}
+              value={deletePassword}
+              onChangeText={setDeletePassword}
+              secureTextEntry
+            />
+            {deleteError ? <Text style={styles.errorText}>{deleteError}</Text> : null}
+            <Button
+              testID="delete-account-confirm-button"
+              label={t('settings.deleteAccountButton')}
+              onPress={handleDeleteAccount}
+              loading={isDeletingAccount}
+              variant="warningOutline"
+            />
+          </>
+        ) : (
+          <Button
+            testID="delete-account-button"
+            label={t('settings.deleteAccountButton')}
+            onPress={() => setShowDeleteAccount(true)}
+            variant="outline"
+          />
+        )}
+      </Card>
       </ScrollView>
     </KeyboardAvoidingView>
   );

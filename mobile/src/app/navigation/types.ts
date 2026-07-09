@@ -21,6 +21,8 @@ export type DashboardStackParamList = {
   Medicines: undefined;
   Assets: undefined;
   AssetForm: { assetId?: string } | undefined;
+  Bills: undefined;
+  BillForm: { billId?: string } | undefined;
   Family: undefined;
   Settings: undefined;
   PrivacyPolicy: undefined;

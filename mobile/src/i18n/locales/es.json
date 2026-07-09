@@ -67,13 +67,17 @@
       "medicines": "Medicamentos",
       "assets": "Bienes",
       "family": "Familia",
-      "settings": "Ajustes"
+      "settings": "Ajustes",
+      "bills": "Facturas"
     },
     "summary": {
       "today": "Hoy",
       "in3Days": "3 días",
       "inWeek": "Semana",
-      "total": "Total"
+      "total": "Total",
+      "pantryItems": "Despensa",
+      "medicines": "Medicinas",
+      "assets": "Bienes"
     },
     "upcomingTitle": "Próximos artículos",
     "emptyUpcoming": "No hay artículos con fecha de caducidad próxima.",
@@ -190,11 +194,11 @@
   },
   "recipes": {
     "tabs": {
-      "suggestions": "Sugerencias",
+      "all": "Todas",
       "saved": "Guardadas"
     },
     "errorLoad": "No se pudieron cargar las recetas.",
-    "emptySuggestions": "Ninguna receta coincide actualmente con los artículos de casa.",
+    "emptyAll": "Aún no hay recetas disponibles.",
     "emptySaved": "Todavía no hay recetas guardadas.",
     "allIngredientsAvailable": "Todos los ingredientes en casa",
     "missingIngredients_one": "Falta {{count}} ingrediente",
@@ -304,7 +308,15 @@
     "privacyPolicyTitle": "Política de privacidad",
     "privacyPolicyBody": "Esta aplicación almacena tu nombre, correo electrónico y los datos de despensa, compras y hogar que introduces para poder ofrecerte a ti y a los miembros de tu hogar sus funciones principales. No vendemos tus datos a terceros. Si tienes preguntas sobre cómo se tratan tus datos, contacta con la dirección de soporte de la aplicación.\n\nEsta es una política provisional que será sustituida por una versión completa antes del lanzamiento público de la aplicación.",
     "termsTitle": "Términos de servicio",
-    "termsBody": "Al usar esta aplicación, aceptas utilizarla únicamente para su propósito previsto de gestionar la despensa, las compras y la información relacionada de tu hogar. La aplicación se proporciona tal cual, sin garantía de ningún tipo.\n\nEstos son términos de servicio provisionales que serán sustituidos por una versión completa antes del lanzamiento público de la aplicación."
+    "termsBody": "Al usar esta aplicación, aceptas utilizarla únicamente para su propósito previsto de gestionar la despensa, las compras y la información relacionada de tu hogar. La aplicación se proporciona tal cual, sin garantía de ningún tipo.\n\nEstos son términos de servicio provisionales que serán sustituidos por una versión completa antes del lanzamiento público de la aplicación.",
+    "sectionDanger": "Zona de peligro",
+    "deleteAccountButton": "Eliminar cuenta",
+    "deleteAccountPasswordLabel": "Confirma con tu contraseña",
+    "deleteAccountConfirmTitle": "¿Eliminar tu cuenta?",
+    "deleteAccountConfirmMessage": "Esto elimina tu cuenta de forma permanente y no se puede deshacer.",
+    "deleteAccountConfirmConfirm": "Eliminar",
+    "deleteAccountErrorPassword": "Contraseña incorrecta.",
+    "deleteAccountErrorOwner": "Transfiere la propiedad o elimina a los demás miembros de tu hogar antes de eliminar tu cuenta."
   },
   "validation": {
     "nameMin2": "Al menos 2 caracteres",
@@ -319,7 +331,10 @@
     "quantityPositive": "La cantidad debe ser mayor que 0",
     "unitRequired": "Selecciona una unidad",
     "assetNameRequired": "El nombre del bien es obligatorio",
-    "currentPasswordRequired": "La contraseña actual es obligatoria"
+    "currentPasswordRequired": "La contraseña actual es obligatoria",
+    "billNameRequired": "El nombre de la factura es obligatorio",
+    "amountRequired": "Introduce un importe válido",
+    "dueDateRequired": "Selecciona una fecha de vencimiento"
   },
   "errors": {
     "generic": "Algo salió mal. Inténtalo de nuevo.",
@@ -368,5 +383,44 @@
     ],
     "weeklySummaryTitle": "Resumen semanal de la despensa",
     "weeklySummaryBody": "Mira qué ha cambiado en tu despensa esta semana."
+  },
+  "bills": {
+    "emptyList": "Aún no hay facturas registradas.",
+    "errorLoad": "No se pudieron cargar las facturas.",
+    "addA11y": "Añadir factura",
+    "recurringTag": "Recurrente",
+    "markPaidAction": "Marcar como pagada",
+    "deleteAction": "Eliminar",
+    "cancelAction": "Cancelar",
+    "categories": {
+      "Electricity": "Electricidad",
+      "Water": "Agua",
+      "Gas": "Gas",
+      "Internet": "Internet",
+      "Rent": "Alquiler",
+      "Subscription": "Suscripción",
+      "Other": "Otro"
+    },
+    "status": {
+      "paid": "Pagada",
+      "overdue": "Vencida",
+      "daysLeft_one": "Queda {{count}} día",
+      "daysLeft_other": "Quedan {{count}} días"
+    },
+    "form": {
+      "titleEdit": "Editar factura",
+      "titleAdd": "Añadir factura",
+      "nameLabel": "Nombre de la factura",
+      "namePlaceholder": "ej. Electricidad",
+      "categoryLabel": "Categoría",
+      "amountLabel": "Importe",
+      "dueDateLabel": "Fecha de vencimiento",
+      "selectDateButton": "Seleccionar fecha",
+      "recurringLabel": "Se repite cada mes",
+      "notesLabel": "Notas (opcional)",
+      "submitEdit": "Actualizar",
+      "submitAdd": "Añadir",
+      "errorSave": "No se pudo guardar la factura, inténtalo de nuevo."
+    }
   }
 }

@@ -67,13 +67,17 @@
       "medicines": "Medicamentos",
       "assets": "Bens",
       "family": "Família",
-      "settings": "Definições"
+      "settings": "Definições",
+      "bills": "Contas"
     },
     "summary": {
       "today": "Hoje",
       "in3Days": "3 dias",
       "inWeek": "Semana",
-      "total": "Total"
+      "total": "Total",
+      "pantryItems": "Despensa",
+      "medicines": "Remédios",
+      "assets": "Bens"
     },
     "upcomingTitle": "Itens a expirar em breve",
     "emptyUpcoming": "Sem itens com data de validade próxima.",
@@ -190,11 +194,11 @@
   },
   "recipes": {
     "tabs": {
-      "suggestions": "Sugestões",
+      "all": "Todas",
       "saved": "Guardadas"
     },
     "errorLoad": "Não foi possível carregar as receitas.",
-    "emptySuggestions": "De momento, nenhuma receita corresponde aos itens em casa.",
+    "emptyAll": "Ainda não há receitas disponíveis.",
     "emptySaved": "Ainda não há receitas guardadas.",
     "allIngredientsAvailable": "Todos os ingredientes em casa",
     "missingIngredients_one": "Falta {{count}} ingrediente",
@@ -304,7 +308,15 @@
     "privacyPolicyTitle": "Política de Privacidade",
     "privacyPolicyBody": "Esta aplicação armazena o seu nome, e-mail e os dados de despensa, compras e residência que introduz para lhe fornecer, a si e aos membros da sua residência, as suas funcionalidades principais. Não vendemos os seus dados a terceiros. Para questões sobre como os seus dados são tratados, contacte o endereço de suporte da aplicação.\n\nEsta é uma política provisória que será substituída por uma versão completa antes do lançamento público da aplicação.",
     "termsTitle": "Termos de Serviço",
-    "termsBody": "Ao utilizar esta aplicação, concorda em usá-la apenas para o seu propósito previsto de gerir a despensa, as compras e as informações relacionadas da sua residência. A aplicação é fornecida tal como está, sem qualquer garantia.\n\nEstes são termos de serviço provisórios que serão substituídos por uma versão completa antes do lançamento público da aplicação."
+    "termsBody": "Ao utilizar esta aplicação, concorda em usá-la apenas para o seu propósito previsto de gerir a despensa, as compras e as informações relacionadas da sua residência. A aplicação é fornecida tal como está, sem qualquer garantia.\n\nEstes são termos de serviço provisórios que serão substituídos por uma versão completa antes do lançamento público da aplicação.",
+    "sectionDanger": "Zona de perigo",
+    "deleteAccountButton": "Excluir conta",
+    "deleteAccountPasswordLabel": "Confirma com a tua senha",
+    "deleteAccountConfirmTitle": "Excluir a tua conta?",
+    "deleteAccountConfirmMessage": "Isto exclui permanentemente a tua conta e não pode ser desfeito.",
+    "deleteAccountConfirmConfirm": "Excluir",
+    "deleteAccountErrorPassword": "Senha incorreta.",
+    "deleteAccountErrorOwner": "Transfere a propriedade ou remove os outros membros da tua casa antes de excluir a conta."
   },
   "validation": {
     "nameMin2": "Pelo menos 2 caracteres",
@@ -319,7 +331,10 @@
     "quantityPositive": "A quantidade deve ser superior a 0",
     "unitRequired": "Selecione uma unidade",
     "assetNameRequired": "O nome do bem é obrigatório",
-    "currentPasswordRequired": "A palavra-passe atual é obrigatória"
+    "currentPasswordRequired": "A palavra-passe atual é obrigatória",
+    "billNameRequired": "O nome da conta é obrigatório",
+    "amountRequired": "Insere um valor válido",
+    "dueDateRequired": "Seleciona uma data de vencimento"
   },
   "errors": {
     "generic": "Algo correu mal. Tente novamente.",
@@ -368,5 +383,44 @@
     ],
     "weeklySummaryTitle": "Resumo semanal da despensa",
     "weeklySummaryBody": "Veja o que mudou na sua despensa esta semana."
+  },
+  "bills": {
+    "emptyList": "Ainda não há contas registadas.",
+    "errorLoad": "Não foi possível carregar as contas.",
+    "addA11y": "Adicionar conta",
+    "recurringTag": "Recorrente",
+    "markPaidAction": "Marcar como paga",
+    "deleteAction": "Eliminar",
+    "cancelAction": "Cancelar",
+    "categories": {
+      "Electricity": "Eletricidade",
+      "Water": "Água",
+      "Gas": "Gás",
+      "Internet": "Internet",
+      "Rent": "Renda",
+      "Subscription": "Subscrição",
+      "Other": "Outro"
+    },
+    "status": {
+      "paid": "Paga",
+      "overdue": "Atrasada",
+      "daysLeft_one": "Falta {{count}} dia",
+      "daysLeft_other": "Faltam {{count}} dias"
+    },
+    "form": {
+      "titleEdit": "Editar conta",
+      "titleAdd": "Adicionar conta",
+      "nameLabel": "Nome da conta",
+      "namePlaceholder": "ex. Eletricidade",
+      "categoryLabel": "Categoria",
+      "amountLabel": "Valor",
+      "dueDateLabel": "Data de vencimento",
+      "selectDateButton": "Selecionar data",
+      "recurringLabel": "Repete todos os meses",
+      "notesLabel": "Notas (opcional)",
+      "submitEdit": "Atualizar",
+      "submitAdd": "Adicionar",
+      "errorSave": "Não foi possível guardar a conta, tenta novamente."
+    }
   }
 }

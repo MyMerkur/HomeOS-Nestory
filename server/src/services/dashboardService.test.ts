@@ -5,6 +5,7 @@ import * as homeService from './homeService';
 import * as locationService from './locationService';
 import * as inventoryService from './inventoryService';
 import * as inventoryActionService from './inventoryActionService';
+import * as assetService from './assetService';
 import * as dashboardService from './dashboardService';
 
 let mongo: MongoMemoryServer;
@@ -96,6 +97,36 @@ describe('dashboardService', () => {
     expect(dashboard.totalActive).toBe(5);
     expect(dashboard.upcomingItems).toHaveLength(4);
     expect(dashboard.upcomingItems[0].name).toBe('Expires Today');
+  });
+
+  it('breaks down pantry items vs medicines and counts active assets', async () => {
+    const { homeId, userId, fridgeId } = await setupHome();
+
+    await inventoryService.createItem(homeId, userId, {
+      name: 'Milk',
+      locationId: fridgeId,
+      category: 'Dairy',
+      quantity: 1,
+      unit: 'piece',
+    });
+    await inventoryService.createItem(homeId, userId, {
+      name: 'Parol',
+      locationId: fridgeId,
+      category: 'Medicine',
+      quantity: 1,
+      unit: 'piece',
+    });
+    await assetService.createAsset(homeId, userId, {
+      name: 'Fridge',
+      category: 'Appliance',
+    });
+
+    const dashboard = await dashboardService.getDashboard(homeId);
+
+    expect(dashboard.totalActive).toBe(2);
+    expect(dashboard.medicineCount).toBe(1);
+    expect(dashboard.pantryItemCount).toBe(1);
+    expect(dashboard.assetCount).toBe(1);
   });
 
   it('excludes non-active items from the counts', async () => {

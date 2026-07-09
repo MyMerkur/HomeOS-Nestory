@@ -2,9 +2,9 @@ import type { Request, Response } from 'express';
 import * as recipeService from '../services/recipeService';
 import { sendSuccess } from '../utils/apiResponse';
 
-export async function getSuggestionsHandler(req: Request, res: Response) {
-  const recipes = await recipeService.getSuggestions(req.params.homeId);
-  sendSuccess(res, { recipes }, 'Recipe suggestions fetched successfully');
+export async function getAllRecipesHandler(req: Request, res: Response) {
+  const recipes = await recipeService.getAllRecipes(req.params.homeId);
+  sendSuccess(res, { recipes }, 'All recipes fetched successfully');
 }
 
 export async function getSavedRecipesHandler(req: Request, res: Response) {

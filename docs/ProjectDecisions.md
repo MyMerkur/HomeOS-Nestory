@@ -1048,3 +1048,109 @@ navigasyon başlıkları da tema fontuna taşındı
   adını görebilir — kullanıcı-özel bir bilgi değil (sadece barkod→genel
   ürün adı eşlemesi), bu kabul edilebilir görüldü ama KVKK/gizlilik
   açısından ileride gözden geçirilebilir.
+
+## Decision: Yayın sonrası geri bildirim turu — ana sayfa, tarifler, hesap silme, faturalar
+
+- **Date**: 2026-07-09
+- **Status**: Accepted
+- **Context**: Kullanıcı gerçek cihazda barkod tarama akışını test edip
+  memnun kaldıktan sonra tek bir mesajda 8 ayrı iyileştirme/hata talep
+  etti: (1) ana sayfanın "boş" görünmesi (sadece "yaklaşan ürün yok"
+  yazıyordu, envanter/ilaç/varlık sayıları yoktu); (2) `ItemFormScreen`'de
+  SKT tarih seçicinin ekrandan taşması ve cihaz Türkçe olsa bile İngilizce
+  ay adları (May, August) göstermesi; (3) Tarifler sayfasının yalnızca
+  ilk 10 "öneri"yi (>0% kapsama) gösterip tüm tarif kataloğunu
+  gezilebilir kılmaması; (4) App Store/Play Store yayını için zorunlu
+  olan hesap silme özelliğinin eksikliği; (5) Rozetlerim/İlaçlarım/
+  Varlıklarım/Ailem/Ayarlar kısayollarının ana sayfayı kalabalık
+  göstermesi, bunun yerine sol taraftan açılır bir menüde toplanması
+  isteği; (6) uygulamanın cihaza "NestoryMobile" olarak kurulması;
+  (7) bir "Faturalar" (fatura/tekrarlayan ödeme takibi) modülü eksikliği;
+  (8) "aklına başka özellikler de geliyorsa ekle" — açık uçlu delegasyon.
+- **Decision**:
+  - **Tarih seçici hatası**: `@react-native-community/datetimepicker`
+    (v9.1.0) `locale` prop'unu destekliyor ama hiçbir yerde
+    kullanılmıyordu — üç `DateTimePicker` çağrısına (`ItemFormScreen`
+    SKT+doz saati, `QuickAddItemScreen` SKT) `locale={i18n.language}`
+    eklendi. Taşma sorunu: `ItemFormScreen`'de picker, `Pressable` tarih
+    butonu ve "SKT Tara" butonuyla aynı `flexDirection:'row'` içine
+    sıkıştırılmıştı (iOS `spinner` görünümü geniş bir intrinsic width
+    istiyor) — picker, satırın dışına, tam genişlikte ayrı bir satıra
+    taşındı (`QuickAddItemScreen`'de zaten bu düzendeydi, oradan
+    örneklendi).
+  - **Ana sayfa boşluğu**: `dashboardService.getDashboard`'a
+    `pantryItemCount` (Medicine hariç aktif ürün), `medicineCount`,
+    `assetCount` eklendi (tek round-trip, mevcut `Promise.all`'a
+    dahil edildi). `DashboardScreen`'e ikinci bir `SummaryCard` satırı
+    eklendi. Bu değişiklik, kısayol chip'lerinin sol menüye taşınmasıyla
+    aynı anda yapıldı (aşağıya bkz.) — ana sayfanın üst kısmı artık
+    hamburger butonu + 7 istatistik kartından oluşuyor, boş görünmüyor.
+  - **Sol menü**: `@react-navigation/drawer` + `react-native-gesture-
+    handler`/`reanimated` eklemek yeni native bağımlılık + pod install +
+    native rebuild gerektirirdi — bugünkü Firebase/GoogleService-Info.plist
+    olayında yaşanan riskin aynısı. Onun yerine yeni `mobile/src/ui/
+    SideMenu.tsx`: `Modal` + `Animated.timing` ile soldan kayan bir panel,
+    hiçbir yeni native bağımlılık yok. `DashboardScreen`'deki eski
+    kısayol `Chip` satırı kaldırıldı, yerine hamburger `IconMenu2`
+    butonu (ekran gövdesinde, native header'da **değil** — `navigation.
+    setOptions({headerLeft})` mock navigasyonla yazılan unit testlerde
+    hiç render edilmediği için test edilemez olurdu, bu yüzden ekran
+    gövdesine taşındı) SideMenu'yü açıyor.
+  - **Tarifler**: `recipeService.getSuggestions` (yalnızca >0% kapsama,
+    en fazla 10, `SUGGESTIONS_LIMIT`) tamamen kaldırıldı, yerine
+    `getAllRecipes` (0% dahil tüm tarifler, kapsamaya göre sıralı,
+    limitsiz) geçti — iki paralel implementasyon bırakmak yerine tam
+    değişim yapıldı (`/recipes/suggestions` route'u silindi, `/recipes`
+    eklendi; mobilde `useRecipeSuggestionsQuery` → `useAllRecipesQuery`,
+    `RECIPE_SUGGESTIONS_QUERY_KEY` → `ALL_RECIPES_QUERY_KEY` olarak
+    yeniden adlandırıldı). `RecipesScreen`'in 3'lü kapsama rengi
+    (yüksek/orta/düşük, ikisi aynı turuncu tonu paylaşıyordu) ikili
+    yeşil (=100%) / gri (`colors.border`+`colors.textMuted`, <100%)
+    rengine indirgendi — kullanıcının tam olarak istediği "yeşil/gri"
+    şeması.
+  - **Hesap silme**: `userService.deleteAccount(userId, password)` —
+    `changePassword` ile aynı şifre-onayı çıtası. Ev sahipliği güvenlik
+    kuralı, `membershipService.leaveHome`'un zaten uyguladığı
+    `OWNER_CANNOT_LEAVE` mantığının genişletilmiş hali: kullanıcı,
+    başka aktif üyeleri olan bir evin tek sahibiyse `400
+    HOME_OWNERSHIP_BLOCKS_DELETION` ile reddedilir. Tek başına sahip
+    olunan evler tüm verisiyle (Inventory/PantryLocation/ShoppingList/
+    ShoppingItem/Asset/SavedRecipe/Membership) cascade silinir;
+    paylaşımlı evlerdeki üyelik ise sadece kaldırılır. `AuditLog`
+    kasıtlı olarak silinmiyor (geçmiş kayıt tutma). Mobilde
+    `SettingsScreen`'e yeni "Tehlikeli Alan" bölümü: şifre alanı +
+    `Alert.alert` destructive onayı + hata mesajları (yanlış şifre vs.
+    ev sahipliği engeli için farklı metinler, axios error code'una göre
+    ayırt ediliyor).
+  - **Uygulama adı**: `Info.plist`'teki `CFBundleDisplayName` ve
+    Android `strings.xml`'deki `app_name` `"NestoryMobile"` →
+    `"Nestory"` (Xcode proje/klasör adı değişmedi, sadece görünen isim).
+  - **Faturalar modülü**: Yeni `Bill` modeli + tam CRUD (`billService`/
+    `billController`/`billRoutes`, Asset modülünün deseni birebir
+    kopyalandı) + `markBillPaid` aksiyonu (tekrarlayan faturada bir
+    sonraki ayın kaydını otomatik oluşturur). Mobilde tam yeni bir
+    `bills` modülü (Assets modülü şablon alındı): liste, form, durum
+    rozeti (`BillStatusBadge` — ödendi/gecikti/X gün kaldı, `WarrantyBadge`
+    deseninden esinlenildi). Sol menüye "Faturalarım" eklendi. Kasıtlı
+    olarak kapsam dışı bırakılan: fiş fotoğrafı yükleme (Asset'teki
+    receipt-upload'a benzer bir şey istenirse ayrı bir iterasyonda
+    eklenebilir — bu turda scope'u büyütmemek için atlandı).
+  - **"Aklına başka bir şey geliyorsa ekle" için**: Kasıtlı olarak
+    yeni, istenmemiş özellik eklenmedi (ör. Open Food Facts görsel
+    ürün tanıma, ayrı bir bütçe/analiz modülü) — mevcut talimatlara
+    ("gerekenden fazla özellik ekleme") sadık kalındı, yalnızca
+    kullanıcının açıkça listelediği 7 madde uygulandı.
+- **Consequences**: Backend: `productLookupService`/`recipeService`/
+  `dashboardService`/`userService`/`billService` testleri güncellendi/
+  eklendi, 20 suite / 123 test yeşil, lint+tsc temiz. Mobile: 46 suite /
+  205 test yeşil, lint+tsc temiz. 8 dilin tamamına yeni anahtarlar
+  eklendi (344 anahtar/dil, parite doğrulandı). Bilinen açık kalemler:
+  (1) Bills modülünde fiş fotoğrafı yükleme yok; (2) `recurring` bill
+  rollover'ı yalnızca kullanıcı "ödendi" işaretlediğinde tetikleniyor,
+  arka planda otomatik bir cron/job yok (vadesi geçmiş tekrarlayan bir
+  fatura, kullanıcı elle işaretlemedikçe bir sonraki ayın kaydını
+  oluşturmaz); (3) `SideMenu` gerçek bir `@react-navigation/drawer`
+  değil — kaydırma jesti (swipe-to-open) yok, yalnızca buton ile
+  açılıyor; (4) uygulama adı değişikliği native rebuild gerektiriyor
+  (Info.plist bundle'a derleme zamanında gömülür), cihaza henüz yeni
+  build kurulmadı.

@@ -374,6 +374,7 @@ export function ItemFormScreen({ navigation, route }: PantryStackScreenProps<'It
                       value={new Date()}
                       mode="time"
                       display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+                      locale={i18n.language}
                       onChange={(_event, selectedTime) => {
                         setShowDoseTimePicker(Platform.OS === 'ios');
                         if (selectedTime) {
@@ -391,12 +392,12 @@ export function ItemFormScreen({ navigation, route }: PantryStackScreenProps<'It
       ) : null}
 
       <Text style={styles.label}>{t('pantry.itemForm.expiryDateLabel')}</Text>
-      <View style={styles.row}>
-        <Controller
-          control={control}
-          name="expiryDate"
-          render={({ field: { onChange, value } }) => (
-            <>
+      <Controller
+        control={control}
+        name="expiryDate"
+        render={({ field: { onChange, value } }) => (
+          <>
+            <View style={styles.row}>
               <Pressable
                 testID="expiry-date-button"
                 style={styles.dateButton}
@@ -406,28 +407,29 @@ export function ItemFormScreen({ navigation, route }: PantryStackScreenProps<'It
                   {value ? value.toLocaleDateString(i18n.language) : t('pantry.itemForm.selectDateButton')}
                 </Text>
               </Pressable>
-              {showDatePicker ? (
-                <DateTimePicker
-                  value={value ?? new Date()}
-                  mode="date"
-                  display={Platform.OS === 'ios' ? 'spinner' : 'default'}
-                  onChange={(_event, selectedDate) => {
-                    setShowDatePicker(Platform.OS === 'ios');
-                    if (selectedDate) onChange(selectedDate);
-                  }}
-                />
-              ) : null}
-            </>
-          )}
-        />
-        <Button
-          testID="scan-expiry-date-button"
-          label={t('pantry.itemForm.scanExpiryButton')}
-          onPress={handleScanExpiryDate}
-          loading={isScanningExpiryDate}
-          variant="outline"
-        />
-      </View>
+              <Button
+                testID="scan-expiry-date-button"
+                label={t('pantry.itemForm.scanExpiryButton')}
+                onPress={handleScanExpiryDate}
+                loading={isScanningExpiryDate}
+                variant="outline"
+              />
+            </View>
+            {showDatePicker ? (
+              <DateTimePicker
+                value={value ?? new Date()}
+                mode="date"
+                display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+                locale={i18n.language}
+                onChange={(_event, selectedDate) => {
+                  setShowDatePicker(Platform.OS === 'ios');
+                  if (selectedDate) onChange(selectedDate);
+                }}
+              />
+            ) : null}
+          </>
+        )}
+      />
 
       {serverError ? <Text style={styles.error}>{serverError}</Text> : null}
 

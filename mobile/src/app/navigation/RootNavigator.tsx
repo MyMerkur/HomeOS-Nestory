@@ -19,6 +19,8 @@ import { BadgesScreen } from '../../modules/dashboard/screens/BadgesScreen';
 import { MedicinesScreen } from '../../modules/dashboard/screens/MedicinesScreen';
 import { AssetsScreen } from '../../modules/assets/screens/AssetsScreen';
 import { AssetFormScreen } from '../../modules/assets/screens/AssetFormScreen';
+import { BillsScreen } from '../../modules/bills/screens/BillsScreen';
+import { BillFormScreen } from '../../modules/bills/screens/BillFormScreen';
 import { FamilyScreen } from '../../modules/family/screens/FamilyScreen';
 import { SettingsScreen } from '../../modules/settings/screens/SettingsScreen';
 import { PrivacyPolicyScreen } from '../../modules/settings/screens/PrivacyPolicyScreen';
@@ -111,6 +113,8 @@ function DashboardTabNavigator() {
       />
       <DashboardStack.Screen name="Assets" component={AssetsScreen} options={{ title: 'Varlıklarım' }} />
       <DashboardStack.Screen name="AssetForm" component={AssetFormScreen} />
+      <DashboardStack.Screen name="Bills" component={BillsScreen} options={{ title: 'Faturalarım' }} />
+      <DashboardStack.Screen name="BillForm" component={BillFormScreen} />
       <DashboardStack.Screen name="Family" component={FamilyScreen} options={{ title: 'Ailem' }} />
       <DashboardStack.Screen name="Settings" component={SettingsScreen} options={{ title: 'Ayarlar' }} />
       <DashboardStack.Screen

@@ -10,6 +10,7 @@ jest.mock('../services/dashboardApi');
 
 const mockNavigation = {
   navigate: jest.fn(),
+  setOptions: jest.fn(),
 } as unknown as DashboardStackScreenProps<'Dashboard'>['navigation'];
 
 const mockDashboard = {
@@ -17,6 +18,9 @@ const mockDashboard = {
   expiringIn3Days: 2,
   expiringInWeek: 3,
   totalActive: 10,
+  pantryItemCount: 8,
+  medicineCount: 5,
+  assetCount: 6,
   upcomingItems: [
     {
       id: 'item-1',
@@ -67,6 +71,9 @@ describe('DashboardScreen', () => {
     expect(screen.getByText('2')).toBeTruthy();
     expect(screen.getByText('3')).toBeTruthy();
     expect(screen.getByText('10')).toBeTruthy();
+    expect(screen.getByText('8')).toBeTruthy();
+    expect(screen.getByText('5')).toBeTruthy();
+    expect(screen.getByText('6')).toBeTruthy();
   });
 
   it('refetches when the list is pulled to refresh', async () => {
@@ -89,43 +96,74 @@ describe('DashboardScreen', () => {
     });
   });
 
-  it('navigates to the Badges screen when the Badges button is pressed', async () => {
+  it('navigates to the Badges screen from the side menu', async () => {
     renderScreen();
+    await screen.findByText('Süt');
+    fireEvent.press(screen.getByTestId('open-side-menu'));
 
     fireEvent.press(await screen.findByTestId('go-to-badges'));
 
     expect(mockNavigation.navigate).toHaveBeenCalledWith('Badges');
   });
 
-  it('navigates to the Medicines screen when the Medicines button is pressed', async () => {
+  it('navigates to the Medicines screen from the side menu', async () => {
     renderScreen();
+    await screen.findByText('Süt');
+    fireEvent.press(screen.getByTestId('open-side-menu'));
 
     fireEvent.press(await screen.findByTestId('go-to-medicines'));
 
     expect(mockNavigation.navigate).toHaveBeenCalledWith('Medicines');
   });
 
-  it('navigates to the Assets screen when the Assets button is pressed', async () => {
+  it('navigates to the Assets screen from the side menu', async () => {
     renderScreen();
+    await screen.findByText('Süt');
+    fireEvent.press(screen.getByTestId('open-side-menu'));
 
     fireEvent.press(await screen.findByTestId('go-to-assets'));
 
     expect(mockNavigation.navigate).toHaveBeenCalledWith('Assets');
   });
 
-  it('navigates to the Family screen when the Family button is pressed', async () => {
+  it('navigates to the Family screen from the side menu', async () => {
     renderScreen();
+    await screen.findByText('Süt');
+    fireEvent.press(screen.getByTestId('open-side-menu'));
 
     fireEvent.press(await screen.findByTestId('go-to-family'));
 
     expect(mockNavigation.navigate).toHaveBeenCalledWith('Family');
   });
 
-  it('navigates to the Settings screen when the Settings button is pressed', async () => {
+  it('navigates to the Settings screen from the side menu', async () => {
     renderScreen();
+    await screen.findByText('Süt');
+    fireEvent.press(screen.getByTestId('open-side-menu'));
 
     fireEvent.press(await screen.findByTestId('go-to-settings'));
 
     expect(mockNavigation.navigate).toHaveBeenCalledWith('Settings');
+  });
+
+  it('navigates to the Bills screen from the side menu', async () => {
+    renderScreen();
+    await screen.findByText('Süt');
+    fireEvent.press(screen.getByTestId('open-side-menu'));
+
+    fireEvent.press(await screen.findByTestId('go-to-bills'));
+
+    expect(mockNavigation.navigate).toHaveBeenCalledWith('Bills');
+  });
+
+  it('closes the side menu when the backdrop is pressed', async () => {
+    renderScreen();
+    await screen.findByText('Süt');
+    fireEvent.press(screen.getByTestId('open-side-menu'));
+    await screen.findByTestId('go-to-badges');
+
+    fireEvent.press(screen.getByTestId('side-menu-backdrop'));
+
+    await waitFor(() => expect(screen.queryByTestId('go-to-badges')).toBeNull());
   });
 });

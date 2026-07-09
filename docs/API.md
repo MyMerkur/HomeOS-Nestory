@@ -43,7 +43,7 @@ Route -> authenticate -> validateParams -> requireHomeMembership(role?) -> valid
 | Shopping | GET/POST /api/homes/:homeId/shopping/items | Filtreli liste / ekleme | ✅ |
 | Shopping | PATCH/DELETE /api/homes/:homeId/shopping/items/:itemId | Güncelle / sil | ✅ |
 | Shopping | PATCH /api/homes/:homeId/shopping/items/:itemId/check | İşaretle/kaldır (toggle) | ✅ |
-| Recipes | GET /api/homes/:homeId/recipes/suggestions | Tarif eşleşmeleri | ✅ |
+| Recipes | GET /api/homes/:homeId/recipes | Tüm tarifler, kapsama yüzdesine göre sıralı (0% dahil) | ✅ |
 | Recipes | GET /api/homes/:homeId/recipes/saved | Kaydedilen tarifler (ev geneli) | ✅ |
 | Recipes | POST/DELETE /api/homes/:homeId/recipes/:recipeId/save | Tarif kaydet / kaldır | ✅ |
 | Notifications | — | Yerel bildirim (mobile-only, backend endpoint yok — bkz. docs/ProjectDecisions.md) | ✅ |
@@ -51,6 +51,10 @@ Route -> authenticate -> validateParams -> requireHomeMembership(role?) -> valid
 | Assets | GET/POST /api/homes/:homeId/assets | Filtreli liste / ekleme (v2, gıda dışı envanter) | ✅ |
 | Assets | GET/PATCH/DELETE /api/homes/:homeId/assets/:assetId | Detay / güncelle / sil | ✅ |
 | Assets | POST /api/homes/:homeId/assets/:assetId/{receipt,warranty-document} | Fiş/garanti belgesi fotoğrafı yükleme | ✅ |
+| Bills | GET/POST /api/homes/:homeId/bills | Filtreli liste (status/category) / ekleme | ✅ |
+| Bills | GET/PATCH/DELETE /api/homes/:homeId/bills/:billId | Detay / güncelle / sil | ✅ |
+| Bills | POST /api/homes/:homeId/bills/:billId/mark-paid | Ödendi işaretle (tekrarlayansa gelecek ay otomatik oluşturulur) | ✅ |
+| Users | DELETE /api/users/me | Hesabı kalıcı siler (şifre onayı gerekir) | ✅ |
 
 ## Auth endpoint detayları
 
@@ -347,9 +351,12 @@ Hard delete.
 
 ## Recipes endpoint detayı
 
-### GET /api/homes/:homeId/recipes/suggestions
+### GET /api/homes/:homeId/recipes
 
-`requireHomeMembership('viewer')` ile korunur.
+`requireHomeMembership('viewer')` ile korunur. Sistemdeki **tüm** tarifleri döner
+(0% kapsama dahil, herhangi bir limit/kesme yok) — mobil Tarifler sayfası bunu
+tek bir liste olarak gösterir, %100 kapsayanlar yeşil, diğerleri nötr/gri
+rozetle işaretlenir.
 
 ```json
 {
@@ -373,10 +380,12 @@ Hard delete.
   **zorunlu** (`optional: false`) malzemelerinin normalizedName'i karşılaştırılarak
   hesaplanır — AI/LLM kullanılmaz (`docs/Roadmap.md`: "AI olmadan tarif önerisi").
   `optional: true` malzemeler kapsama hesabına dahil edilmez, eksik olsa da listelenmez.
-- Sadece `coveragePercent > 0` olan tarifler döner, `coveragePercent` azalan sırada,
-  en fazla 10 tarif.
+- Sıralama `coveragePercent` azalan, sonra isim alfabetik.
 - Tam malzeme/talimat listesi yanıta dahildir — ayrı bir detay endpoint'i yoktur.
 - `isSaved`, evin `SavedRecipe` kayıtlarına bakılarak hesaplanır.
+- Eskiden ayrı bir `/recipes/suggestions` (yalnızca >0% kapsama, en fazla 10 tarif)
+  endpoint'i vardı; mobil artık tüm tarifleri tek listede gösterdiği için bu
+  endpoint kaldırıldı, `getAllRecipes` onun yerini aldı.
 
 ### GET /api/homes/:homeId/recipes/saved
 
@@ -454,6 +463,55 @@ edilir, 5MB üst sınır (`server/src/middlewares/upload.ts`). Dosya
 yoluyla statik olarak sunulur (`server/src/app.ts`). Geçersiz dosya türü/boyutu
 `400 UPLOAD_ERROR`, dosya eksikse `400 FILE_REQUIRED` döner. Response:
 `{ "asset": {...} }` (güncellenmiş `receiptImageUrl`/`warrantyDocumentUrl` ile).
+
+## Bills (Faturalar) endpoint detayları
+
+Tüm bill endpointleri `requireHomeMembership` ile korunur: GET için `viewer`,
+POST/PATCH/DELETE/mark-paid için `member`. Model: `server/src/models/Bill.ts`.
+
+### GET /api/homes/:homeId/bills
+
+```
+?status=unpaid&category=Electricity&page=1&limit=20&sort=dueDate:asc
+```
+
+```json
+{ "bills": [{ "id", "name", "category", "amount", "dueDate", "isRecurring", "status", "paidAt", "reminderDaysBefore", "notes" }],
+  "pagination": { "page": 1, "limit": 20, "total": 3, "totalPages": 1 } }
+```
+
+Varsayılan sıralama `dueDate:asc` (en yakın son ödeme tarihi önce) —
+Inventory/Asset listelerinin `createdAt:desc` varsayılanından kasıtlı olarak
+farklı, çünkü burada kullanıcının asıl ihtiyacı "sıradaki ödeme ne" sorusu.
+
+### POST /api/homes/:homeId/bills
+
+```json
+{ "name": "Elektrik", "category": "Electricity", "amount": 450, "dueDate": "2026-08-01", "isRecurring": true }
+```
+
+`category` sabit bir enum'dur (`server/src/constants/bill.ts`:
+Electricity/Water/Gas/Internet/Rent/Subscription/Other). Yeni fatura her zaman
+`status: 'unpaid'` ile başlar.
+
+### GET/PATCH/DELETE /api/homes/:homeId/bills/:billId
+
+Body'deki her alan PATCH'te opsiyoneldir. `status`/`paidAt` bu endpoint'ten
+**ayarlanamaz** — yalnızca aşağıdaki `mark-paid` aksiyonu üzerinden değişir
+(Inventory'nin consume/discard aksiyon deseniyle tutarlı).
+
+### POST /api/homes/:homeId/bills/:billId/mark-paid
+
+Body almaz. Faturayı `status: 'paid'` + `paidAt: now()` yapar. Fatura
+`isRecurring: true` ise, **aynı anda** `dueDate`'i bir ay ileri alınmış,
+`status: 'unpaid'` yeni bir fatura kaydı otomatik oluşturulur — kullanıcı
+kira/elektrik gibi tekrarlayan faturaları her ay elle yeniden girmek zorunda
+kalmaz. Zaten `paid` olan bir faturada tekrar çağrılırsa idempotent şekilde
+no-op'tur (ikinci bir takip kaydı oluşturmaz).
+
+- Bilinen kapsam dışı: fiş/makbuz fotoğrafı yükleme (Asset modülündeki
+  receipt-upload deseni) bu ilk sürüme dahil edilmedi — `Bill` modelinde
+  böyle bir alan yok, yalnızca metin tabanlı takip var.
 
 ## Membership (Aile) endpoint detayları
 
@@ -555,6 +613,27 @@ Push gönderimi `server/src/services/pushService.ts`'teki `sendToUser()` ile
 yapılır — Firebase Admin SDK kimlik bilgisi (`FIREBASE_SERVICE_ACCOUNT` env
 değişkeni) ayarlanmadığı sürece bu fonksiyon sessizce no-op'tur (bkz.
 `docs/ProjectDecisions.md`, Sprint 16.2).
+
+### DELETE /api/users/me
+
+```json
+{ "password": "..." }
+```
+
+Hesabı **kalıcı ve geri alınamaz** şekilde siler — app store'ların
+(Apple/Google) zorunlu tuttuğu bir özellik. Şifre onayı gerekir; yanlışsa
+`401 INVALID_CURRENT_PASSWORD`. Kullanıcı, başka aktif üyeleri olan bir evin
+tek sahibiyse `400 HOME_OWNERSHIP_BLOCKS_DELETION` ile reddedilir (önce
+sahipliği devret veya diğer üyeleri çıkar) — bu, `leaveHome`'un zaten
+uyguladığı `OWNER_CANNOT_LEAVE` kuralının hesap silmeye genişletilmiş hali.
+Silme işlemi: kullanıcının tek başına sahip olduğu her ev **tüm verisiyle**
+(InventoryItem/PantryLocation/ShoppingList/ShoppingItem/Asset/SavedRecipe/
+Membership) cascade silinir; üye olduğu paylaşımlı evlerde ise sadece
+üyeliği kaldırılır (ev dokunulmaz kalır). Ardından kullanıcının tüm
+`RefreshToken`/`PushToken` kayıtları ve `User` dokümanı silinir. `AuditLog`
+kayıtları kasıtlı olarak silinmez (geçmiş kayıt tutma, bkz.
+`docs/ProjectDecisions.md`). Detaylar: `server/src/services/userService.ts`
+(`deleteAccount`).
 
 ## Pagination
 

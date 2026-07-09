@@ -1,7 +1,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react-native';
 import { RecipesScreen } from './RecipesScreen';
-import { getSavedRecipes, getSuggestions } from '../services/recipeApi';
+import { getAllRecipes, getSavedRecipes } from '../services/recipeApi';
 import { useHomeStore } from '../../../store/useHomeStore';
 import { ThemeProvider } from '../../../theme/ThemeContext';
 import type { RecipesStackScreenProps } from '../../../app/navigation/types';
@@ -55,7 +55,7 @@ describe('RecipesScreen', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     useHomeStore.setState({ selectedHomeId: 'home-1' });
-    (getSuggestions as jest.Mock).mockResolvedValue(mockRecipes);
+    (getAllRecipes as jest.Mock).mockResolvedValue(mockRecipes);
     (getSavedRecipes as jest.Mock).mockResolvedValue(mockSavedRecipes);
   });
 
@@ -73,7 +73,7 @@ describe('RecipesScreen', () => {
 
     fireEvent(screen.getByTestId('recipes-list'), 'refresh');
 
-    await waitFor(() => expect(getSuggestions).toHaveBeenCalledTimes(2));
+    await waitFor(() => expect(getAllRecipes).toHaveBeenCalledTimes(2));
   });
 
   it('navigates to the detail screen with the recipe payload on press', async () => {
@@ -84,11 +84,20 @@ describe('RecipesScreen', () => {
     expect(mockNavigation.navigate).toHaveBeenCalledWith('RecipeDetail', { recipe: mockRecipes[0] });
   });
 
-  it('shows an empty state when there are no matching recipes', async () => {
-    (getSuggestions as jest.Mock).mockResolvedValue([]);
+  it('shows an empty state when there are no recipes at all', async () => {
+    (getAllRecipes as jest.Mock).mockResolvedValue([]);
     renderScreen();
 
-    expect(await screen.findByText('No recipes currently match items at home.')).toBeTruthy();
+    expect(await screen.findByText('No recipes available yet.')).toBeTruthy();
+  });
+
+  it('shows recipes with less than 100% coverage in a neutral (not green) badge', async () => {
+    (getAllRecipes as jest.Mock).mockResolvedValue([
+      { ...mockRecipes[0], coveragePercent: 60, missingIngredients: ['Tuz'] },
+    ]);
+    renderScreen();
+
+    expect(await screen.findByText('%60')).toBeTruthy();
   });
 
   it('switches to the saved-recipes list when the Saved tab is pressed', async () => {

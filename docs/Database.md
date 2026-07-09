@@ -325,6 +325,36 @@ değil. `receiptImageUrl`/`warrantyDocumentUrl` genel PATCH ile ayarlanamaz —
 yalnızca `POST /:assetId/receipt` ve `POST /:assetId/warranty-document` upload
 endpoint'leri bu alanları set eder (bkz. `docs/API.md`).
 
+### Bill (`server/src/models/Bill.ts`) ✅
+
+```
+{
+  homeId: ObjectId (ref Home, indexed),
+  createdBy: ObjectId (ref User),
+  name: string (max 120),
+  category: 'Electricity' | 'Water' | 'Gas' | 'Internet' | 'Rent' | 'Subscription' | 'Other',
+  amount: number (>= 0),
+  dueDate: Date,
+  isRecurring: boolean (default false),
+  status: 'unpaid' | 'paid' (default 'unpaid', indexed),
+  paidAt?: Date,
+  reminderDaysBefore: number[] (default [3,1,0]),
+  notes?: string (max 500),
+  createdAt, updatedAt
+}
+```
+
+indexler: `(homeId, status)`, `(homeId, dueDate)`. Asset'e benzer şekilde
+`InventoryItem`'dan ayrı bir model — quantity/unit/pantry-lokasyonu bir
+elektrik faturası için anlamlı değil. `status`/`paidAt` genel PATCH ile
+ayarlanamaz, yalnızca `POST /:billId/mark-paid` üzerinden değişir (Asset'in
+receipt-upload deseniyle aynı "aksiyon endpoint'i" yaklaşımı). `isRecurring:
+true` bir fatura ödendi işaretlendiğinde, `billService.markBillPaid`
+`dueDate`'i bir ay ileri alınmış yeni bir `unpaid` kayıt otomatik oluşturur
+— ayrı bir "recurrence job/cron" yok, tamamen kullanıcı aksiyonuyla tetiklenir.
+Bilinen kapsam dışı: fiş fotoğrafı yükleme (Asset'teki `receiptImageUrl`
+deseni) bu modele henüz eklenmedi.
+
 Kalan şemalar (`NotificationJob`) ilgili modül implementasyonu sırasında buraya
 eklenecektir — kod ile bu doküman senkron tutulmalıdır. Bildirimler v1'de tamamen
 cihazda zamanlandığı için (`docs/ProjectDecisions.md`) `NotificationJob` şu an planlanmıyor.

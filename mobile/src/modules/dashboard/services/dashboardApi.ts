@@ -6,6 +6,9 @@ export type DashboardSummary = {
   expiringIn3Days: number;
   expiringInWeek: number;
   totalActive: number;
+  pantryItemCount: number;
+  medicineCount: number;
+  assetCount: number;
   upcomingItems: InventoryItem[];
 };
 

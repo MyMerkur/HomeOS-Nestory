@@ -6,7 +6,7 @@ import { Button } from '../../../ui/Button';
 import { fontSize, radius, spacing, typography, type ThemeColors } from '../../../theme/theme';
 import { useTheme } from '../../../theme/ThemeContext';
 import { useHomeStore } from '../../../store/useHomeStore';
-import { RECIPE_SUGGESTIONS_QUERY_KEY } from '../hooks/useRecipeSuggestionsQuery';
+import { ALL_RECIPES_QUERY_KEY } from '../hooks/useAllRecipesQuery';
 import { SAVED_RECIPES_QUERY_KEY } from '../hooks/useSavedRecipesQuery';
 import { saveRecipe, unsaveRecipe } from '../services/recipeApi';
 import type { RecipesStackScreenProps } from '../../../app/navigation/types';
@@ -37,7 +37,7 @@ export function RecipeDetailScreen({ navigation, route }: RecipesStackScreenProp
       }
       setIsSaved(!isSaved);
       await Promise.all([
-        queryClient.invalidateQueries({ queryKey: [RECIPE_SUGGESTIONS_QUERY_KEY] }),
+        queryClient.invalidateQueries({ queryKey: [ALL_RECIPES_QUERY_KEY] }),
         queryClient.invalidateQueries({ queryKey: [SAVED_RECIPES_QUERY_KEY] }),
       ]);
     } finally {

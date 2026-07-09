@@ -70,7 +70,7 @@ describe('recipeService', () => {
       unit: 'piece',
     });
 
-    const suggestions = await recipeService.getSuggestions(homeId);
+    const suggestions = await recipeService.getAllRecipes(homeId);
 
     expect(suggestions).toHaveLength(1);
     expect(suggestions[0].name).toBe('Menemen');
@@ -96,26 +96,11 @@ describe('recipeService', () => {
       unit: 'kg',
     });
 
-    const suggestions = await recipeService.getSuggestions(homeId);
+    const suggestions = await recipeService.getAllRecipes(homeId);
 
     expect(suggestions).toHaveLength(1);
     expect(suggestions[0].coveragePercent).toBe(33);
     expect(suggestions[0].missingIngredients.sort()).toEqual(['Havuç', 'Soğan']);
-  });
-
-  it('excludes recipes with zero matching ingredients', async () => {
-    const { homeId } = await setupHome();
-
-    await Recipe.create({
-      name: 'Süt Muhallebisi',
-      category: 'Tatlı',
-      ingredients: [ingredient('Süt'), ingredient('Nişasta')],
-      instructions: ['Pişirin.'],
-    });
-
-    const suggestions = await recipeService.getSuggestions(homeId);
-
-    expect(suggestions).toHaveLength(0);
   });
 
   it('ignores non-active inventory items when computing coverage', async () => {
@@ -137,12 +122,14 @@ describe('recipeService', () => {
     });
     await inventoryActionService.consumeItem(homeId, userId, item.id);
 
-    const suggestions = await recipeService.getSuggestions(homeId);
+    const recipes = await recipeService.getAllRecipes(homeId);
 
-    expect(suggestions).toHaveLength(0);
+    expect(recipes).toHaveLength(1);
+    expect(recipes[0].coveragePercent).toBe(0);
+    expect(recipes[0].missingIngredients).toEqual(['Yumurta']);
   });
 
-  it('marks a suggestion as saved after saveRecipe and reflects it in getSuggestions', async () => {
+  it('marks a recipe as saved after saveRecipe and reflects it in getAllRecipes', async () => {
     const { homeId, userId, fridgeId } = await setupHome();
 
     const recipe = await Recipe.create({
@@ -159,12 +146,12 @@ describe('recipeService', () => {
       unit: 'piece',
     });
 
-    let suggestions = await recipeService.getSuggestions(homeId);
+    let suggestions = await recipeService.getAllRecipes(homeId);
     expect(suggestions[0].isSaved).toBe(false);
 
     await recipeService.saveRecipe(homeId, recipe.id, userId);
 
-    suggestions = await recipeService.getSuggestions(homeId);
+    suggestions = await recipeService.getAllRecipes(homeId);
     expect(suggestions[0].isSaved).toBe(true);
   });
 
@@ -214,6 +201,36 @@ describe('recipeService', () => {
     expect(savedRecipes[0].name).toBe('Süt Muhallebisi');
     expect(savedRecipes[0].coveragePercent).toBe(0);
     expect(savedRecipes[0].isSaved).toBe(true);
+  });
+
+  it('getAllRecipes includes zero-coverage recipes and sorts by coverage desc', async () => {
+    const { homeId, userId, fridgeId } = await setupHome();
+
+    await Recipe.create({
+      name: 'Süt Muhallebisi',
+      ingredients: [ingredient('Süt'), ingredient('Nişasta')],
+      instructions: ['Pişirin.'],
+    });
+    await Recipe.create({
+      name: 'Omlet',
+      ingredients: [ingredient('Yumurta')],
+      instructions: ['Pişirin.'],
+    });
+    await inventoryService.createItem(homeId, userId, {
+      name: 'Yumurta',
+      locationId: fridgeId,
+      category: 'Other',
+      quantity: 6,
+      unit: 'piece',
+    });
+
+    const all = await recipeService.getAllRecipes(homeId);
+
+    expect(all).toHaveLength(2);
+    expect(all[0].name).toBe('Omlet');
+    expect(all[0].coveragePercent).toBe(100);
+    expect(all[1].name).toBe('Süt Muhallebisi');
+    expect(all[1].coveragePercent).toBe(0);
   });
 
   it('unsaveRecipe removes a recipe from the saved list and is idempotent', async () => {

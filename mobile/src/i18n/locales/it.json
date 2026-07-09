@@ -67,13 +67,17 @@
       "medicines": "Farmaci",
       "assets": "Beni",
       "family": "Famiglia",
-      "settings": "Impostazioni"
+      "settings": "Impostazioni",
+      "bills": "Bollette"
     },
     "summary": {
       "today": "Oggi",
       "in3Days": "3 giorni",
       "inWeek": "Settimana",
-      "total": "Totale"
+      "total": "Totale",
+      "pantryItems": "Dispensa",
+      "medicines": "Medicine",
+      "assets": "Beni"
     },
     "upcomingTitle": "Articoli in scadenza",
     "emptyUpcoming": "Nessun articolo con scadenza imminente.",
@@ -190,11 +194,11 @@
   },
   "recipes": {
     "tabs": {
-      "suggestions": "Suggerimenti",
+      "all": "Tutte",
       "saved": "Salvate"
     },
     "errorLoad": "Impossibile caricare le ricette.",
-    "emptySuggestions": "Al momento nessuna ricetta corrisponde agli articoli in casa.",
+    "emptyAll": "Nessuna ricetta disponibile ancora.",
     "emptySaved": "Ancora nessuna ricetta salvata.",
     "allIngredientsAvailable": "Tutti gli ingredienti in casa",
     "missingIngredients_one": "Manca {{count}} ingrediente",
@@ -304,7 +308,15 @@
     "privacyPolicyTitle": "Informativa sulla privacy",
     "privacyPolicyBody": "Questa app memorizza il tuo nome, la tua email e i dati di dispensa, spesa e famiglia che inserisci per fornire a te e ai membri della tua famiglia le sue funzionalità principali. Non vendiamo i tuoi dati a terzi. Per domande su come vengono trattati i tuoi dati, contatta l'indirizzo di supporto dell'app.\n\nQuesta è una bozza di informativa e sarà sostituita da una versione completa prima del rilascio pubblico dell'app.",
     "termsTitle": "Termini di servizio",
-    "termsBody": "Utilizzando questa app, accetti di usarla solo per lo scopo previsto di gestire la dispensa, la spesa e le informazioni correlate della tua famiglia. L'app viene fornita così com'è, senza alcuna garanzia.\n\nQuesta è una bozza dei termini di servizio e sarà sostituita da una versione completa prima del rilascio pubblico dell'app."
+    "termsBody": "Utilizzando questa app, accetti di usarla solo per lo scopo previsto di gestire la dispensa, la spesa e le informazioni correlate della tua famiglia. L'app viene fornita così com'è, senza alcuna garanzia.\n\nQuesta è una bozza dei termini di servizio e sarà sostituita da una versione completa prima del rilascio pubblico dell'app.",
+    "sectionDanger": "Zona pericolosa",
+    "deleteAccountButton": "Elimina account",
+    "deleteAccountPasswordLabel": "Conferma con la tua password",
+    "deleteAccountConfirmTitle": "Eliminare il tuo account?",
+    "deleteAccountConfirmMessage": "Questa azione elimina definitivamente il tuo account e non può essere annullata.",
+    "deleteAccountConfirmConfirm": "Elimina",
+    "deleteAccountErrorPassword": "Password errata.",
+    "deleteAccountErrorOwner": "Trasferisci la proprietà o rimuovi gli altri membri della tua casa prima di eliminare l'account."
   },
   "validation": {
     "nameMin2": "Almeno 2 caratteri",
@@ -319,7 +331,10 @@
     "quantityPositive": "La quantità deve essere maggiore di 0",
     "unitRequired": "Seleziona un'unità",
     "assetNameRequired": "Il nome del bene è obbligatorio",
-    "currentPasswordRequired": "La password attuale è obbligatoria"
+    "currentPasswordRequired": "La password attuale è obbligatoria",
+    "billNameRequired": "Il nome della bolletta è obbligatorio",
+    "amountRequired": "Inserisci un importo valido",
+    "dueDateRequired": "Seleziona una data di scadenza"
   },
   "errors": {
     "generic": "Qualcosa è andato storto. Riprova.",
@@ -368,5 +383,44 @@
     ],
     "weeklySummaryTitle": "Riepilogo settimanale della dispensa",
     "weeklySummaryBody": "Scopri cosa è cambiato nella tua dispensa questa settimana."
+  },
+  "bills": {
+    "emptyList": "Nessuna bolletta registrata ancora.",
+    "errorLoad": "Impossibile caricare le bollette.",
+    "addA11y": "Aggiungi bolletta",
+    "recurringTag": "Ricorrente",
+    "markPaidAction": "Segna come pagata",
+    "deleteAction": "Elimina",
+    "cancelAction": "Annulla",
+    "categories": {
+      "Electricity": "Elettricità",
+      "Water": "Acqua",
+      "Gas": "Gas",
+      "Internet": "Internet",
+      "Rent": "Affitto",
+      "Subscription": "Abbonamento",
+      "Other": "Altro"
+    },
+    "status": {
+      "paid": "Pagata",
+      "overdue": "Scaduta",
+      "daysLeft_one": "Manca {{count}} giorno",
+      "daysLeft_other": "Mancano {{count}} giorni"
+    },
+    "form": {
+      "titleEdit": "Modifica bolletta",
+      "titleAdd": "Aggiungi bolletta",
+      "nameLabel": "Nome bolletta",
+      "namePlaceholder": "es. Elettricità",
+      "categoryLabel": "Categoria",
+      "amountLabel": "Importo",
+      "dueDateLabel": "Data di scadenza",
+      "selectDateButton": "Seleziona data",
+      "recurringLabel": "Si ripete ogni mese",
+      "notesLabel": "Note (opzionale)",
+      "submitEdit": "Aggiorna",
+      "submitAdd": "Aggiungi",
+      "errorSave": "Impossibile salvare la bolletta, riprova."
+    }
   }
 }

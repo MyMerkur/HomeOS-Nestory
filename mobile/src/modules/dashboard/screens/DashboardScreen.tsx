@@ -1,12 +1,21 @@
-import { useMemo } from 'react';
-import { FlatList, StyleSheet, Text, View } from 'react-native';
-import { IconMoodEmpty } from '@tabler/icons-react-native';
+import { useMemo, useState } from 'react';
+import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
+import {
+  IconAward,
+  IconDevices,
+  IconMenu2,
+  IconMoodEmpty,
+  IconPill,
+  IconReceipt2,
+  IconSettings,
+  IconUsers,
+} from '@tabler/icons-react-native';
 import { useTranslation } from 'react-i18next';
 import { ItemCard } from '../../pantry/components/ItemCard';
 import { Button } from '../../../ui/Button';
-import { Chip } from '../../../ui/Chip';
 import { EmptyState } from '../../../ui/EmptyState';
 import { Skeleton } from '../../../ui/Skeleton';
+import { SideMenu } from '../../../ui/SideMenu';
 import { SummaryCard } from '../../../ui/SummaryCard';
 import { fontSize, spacing, typography, type ThemeColors } from '../../../theme/theme';
 import { useTheme } from '../../../theme/ThemeContext';
@@ -16,13 +25,13 @@ import type { DashboardStackScreenProps } from '../../../app/navigation/types';
 function DashboardSkeleton({ styles }: { styles: ReturnType<typeof createStyles> }) {
   return (
     <View style={styles.container}>
-      <View style={styles.shortcutsRow}>
-        {[0, 1, 2, 3, 4].map((key) => (
-          <Skeleton key={key} width={80} height={32} radius={16} />
+      <View style={styles.summaryRow}>
+        {[0, 1, 2, 3].map((key) => (
+          <Skeleton key={key} height={72} style={styles.summarySkeleton} />
         ))}
       </View>
       <View style={styles.summaryRow}>
-        {[0, 1, 2, 3].map((key) => (
+        {[0, 1, 2].map((key) => (
           <Skeleton key={key} height={72} style={styles.summarySkeleton} />
         ))}
       </View>
@@ -35,92 +44,122 @@ function DashboardSkeleton({ styles }: { styles: ReturnType<typeof createStyles>
   );
 }
 
+function MenuButton({ onPress, colors }: { onPress: () => void; colors: ThemeColors }) {
+  return (
+    <Pressable testID="open-side-menu" onPress={onPress} hitSlop={12} style={menuButtonStyle}>
+      <IconMenu2 color={colors.primary} size={24} />
+    </Pressable>
+  );
+}
+
+const menuButtonStyle = {
+  paddingHorizontal: spacing.lg,
+  paddingTop: spacing.md,
+  paddingBottom: spacing.xs,
+};
+
 export function DashboardScreen({ navigation }: DashboardStackScreenProps<'Dashboard'>) {
   const { t } = useTranslation();
   const { colors } = useTheme();
   const styles = useMemo(() => createStyles(colors), [colors]);
   const { data, isLoading, isError, refetch, isRefetching } = useDashboardQuery();
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  const topBar = <MenuButton onPress={() => setIsMenuOpen(true)} colors={colors} />;
+
+  const menuItems = [
+    { testID: 'go-to-badges', label: t('dashboard.shortcuts.badges'), icon: IconAward, onPress: () => navigation.navigate('Badges') },
+    { testID: 'go-to-medicines', label: t('dashboard.shortcuts.medicines'), icon: IconPill, onPress: () => navigation.navigate('Medicines') },
+    { testID: 'go-to-assets', label: t('dashboard.shortcuts.assets'), icon: IconDevices, onPress: () => navigation.navigate('Assets') },
+    { testID: 'go-to-bills', label: t('dashboard.shortcuts.bills'), icon: IconReceipt2, onPress: () => navigation.navigate('Bills') },
+    { testID: 'go-to-family', label: t('dashboard.shortcuts.family'), icon: IconUsers, onPress: () => navigation.navigate('Family') },
+    { testID: 'go-to-settings', label: t('dashboard.shortcuts.settings'), icon: IconSettings, onPress: () => navigation.navigate('Settings') },
+  ];
+
+  const menu = (
+    <SideMenu visible={isMenuOpen} onClose={() => setIsMenuOpen(false)} items={menuItems} colors={colors} />
+  );
 
   if (isLoading) {
-    return <DashboardSkeleton styles={styles} />;
+    return (
+      <>
+        {topBar}
+        <DashboardSkeleton styles={styles} />
+        {menu}
+      </>
+    );
   }
 
   if (isError || !data) {
     return (
-      <View style={styles.centered}>
-        <Text style={styles.error}>{t('dashboard.errorLoad')}</Text>
-        <Button label={t('common.retry')} onPress={() => refetch()} variant="outline" />
-      </View>
+      <>
+        {topBar}
+        <View style={styles.centered}>
+          <Text style={styles.error}>{t('dashboard.errorLoad')}</Text>
+          <Button label={t('common.retry')} onPress={() => refetch()} variant="outline" />
+        </View>
+        {menu}
+      </>
     );
   }
 
   return (
-    <FlatList
-      testID="dashboard-list"
-      style={styles.container}
-      data={data.upcomingItems}
-      keyExtractor={(item) => item.id}
-      contentContainerStyle={styles.list}
-      refreshing={isRefetching}
-      onRefresh={refetch}
-      ListHeaderComponent={
-        <>
-          <View style={styles.shortcutsRow}>
-            <Chip
-              testID="go-to-badges"
-              label={t('dashboard.shortcuts.badges')}
-              onPress={() => navigation.navigate('Badges')}
-            />
-            <Chip
-              testID="go-to-medicines"
-              label={t('dashboard.shortcuts.medicines')}
-              onPress={() => navigation.navigate('Medicines')}
-            />
-            <Chip
-              testID="go-to-assets"
-              label={t('dashboard.shortcuts.assets')}
-              onPress={() => navigation.navigate('Assets')}
-            />
-            <Chip
-              testID="go-to-family"
-              label={t('dashboard.shortcuts.family')}
-              onPress={() => navigation.navigate('Family')}
-            />
-            <Chip
-              testID="go-to-settings"
-              label={t('dashboard.shortcuts.settings')}
-              onPress={() => navigation.navigate('Settings')}
-            />
-          </View>
+    <>
+      {topBar}
+      <FlatList
+        testID="dashboard-list"
+        style={styles.container}
+        data={data.upcomingItems}
+        keyExtractor={(item) => item.id}
+        contentContainerStyle={styles.list}
+        refreshing={isRefetching}
+        onRefresh={refetch}
+        ListHeaderComponent={
+          <>
+            <View style={styles.summaryRow}>
+              <SummaryCard value={data.expiringToday} caption={t('dashboard.summary.today')} tint="danger" />
+              <SummaryCard
+                value={data.expiringIn3Days}
+                caption={t('dashboard.summary.in3Days')}
+                tint="warning"
+              />
+              <SummaryCard
+                value={data.expiringInWeek}
+                caption={t('dashboard.summary.inWeek')}
+                tint="warning"
+              />
+              <SummaryCard value={data.totalActive} caption={t('dashboard.summary.total')} tint="primary" />
+            </View>
 
-          <View style={styles.summaryRow}>
-            <SummaryCard value={data.expiringToday} caption={t('dashboard.summary.today')} tint="danger" />
-            <SummaryCard
-              value={data.expiringIn3Days}
-              caption={t('dashboard.summary.in3Days')}
-              tint="warning"
-            />
-            <SummaryCard
-              value={data.expiringInWeek}
-              caption={t('dashboard.summary.inWeek')}
-              tint="warning"
-            />
-            <SummaryCard value={data.totalActive} caption={t('dashboard.summary.total')} tint="primary" />
-          </View>
+            <View style={styles.summaryRow}>
+              <SummaryCard
+                value={data.pantryItemCount}
+                caption={t('dashboard.summary.pantryItems')}
+                tint="primary"
+              />
+              <SummaryCard
+                value={data.medicineCount}
+                caption={t('dashboard.summary.medicines')}
+                tint="primary"
+              />
+              <SummaryCard value={data.assetCount} caption={t('dashboard.summary.assets')} tint="primary" />
+            </View>
 
-          <Text style={styles.sectionTitle}>{t('dashboard.upcomingTitle')}</Text>
-        </>
-      }
-      ListEmptyComponent={<EmptyState icon={IconMoodEmpty} title={t('dashboard.emptyUpcoming')} />}
-      renderItem={({ item }) => (
-        <ItemCard
-          item={item}
-          onPress={() =>
-            navigation.navigate('PantryTab', { screen: 'ItemForm', params: { itemId: item.id } })
-          }
-        />
-      )}
-    />
+            <Text style={styles.sectionTitle}>{t('dashboard.upcomingTitle')}</Text>
+          </>
+        }
+        ListEmptyComponent={<EmptyState icon={IconMoodEmpty} title={t('dashboard.emptyUpcoming')} />}
+        renderItem={({ item }) => (
+          <ItemCard
+            item={item}
+            onPress={() =>
+              navigation.navigate('PantryTab', { screen: 'ItemForm', params: { itemId: item.id } })
+            }
+          />
+        )}
+      />
+      {menu}
+    </>
   );
 }
 
@@ -139,13 +178,12 @@ function createStyles(colors: ThemeColors) {
       fontFamily: typography.body.fontFamily,
       color: colors.textSecondary,
     },
-    shortcutsRow: {
+    summaryRow: {
       flexDirection: 'row',
-      flexWrap: 'wrap',
+      paddingHorizontal: spacing.md,
       gap: spacing.sm,
-      margin: spacing.md,
+      marginTop: spacing.sm,
     },
-    summaryRow: { flexDirection: 'row', paddingHorizontal: spacing.md, gap: spacing.sm },
     sectionTitle: {
       fontSize: fontSize.bodyMd,
       fontFamily: typography.heading.fontFamily,

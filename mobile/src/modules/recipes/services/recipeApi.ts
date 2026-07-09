@@ -19,9 +19,9 @@ export type RecipeSuggestion = {
 
 type ApiEnvelope<T> = { success: boolean; data: T; message: string };
 
-export async function getSuggestions(homeId: string): Promise<RecipeSuggestion[]> {
+export async function getAllRecipes(homeId: string): Promise<RecipeSuggestion[]> {
   const { data } = await apiClient.get<ApiEnvelope<{ recipes: RecipeSuggestion[] }>>(
-    `/homes/${homeId}/recipes/suggestions`,
+    `/homes/${homeId}/recipes`,
   );
   return data.data.recipes;
 }

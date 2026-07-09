@@ -67,13 +67,17 @@
       "medicines": "Léky",
       "assets": "Vybavení",
       "family": "Rodina",
-      "settings": "Nastavení"
+      "settings": "Nastavení",
+      "bills": "Účty"
     },
     "summary": {
       "today": "Dnes",
       "in3Days": "3 dny",
       "inWeek": "Týden",
-      "total": "Celkem"
+      "total": "Celkem",
+      "pantryItems": "Spíž",
+      "medicines": "Léky",
+      "assets": "Majetek"
     },
     "upcomingTitle": "Blížící se položky",
     "emptyUpcoming": "Žádné položky s blížícím se datem spotřeby.",
@@ -190,11 +194,11 @@
   },
   "recipes": {
     "tabs": {
-      "suggestions": "Návrhy",
+      "all": "Vše",
       "saved": "Uložené"
     },
     "errorLoad": "Recepty se nepodařilo načíst.",
-    "emptySuggestions": "Aktuálně žádné recepty neodpovídají položkám doma.",
+    "emptyAll": "Zatím nejsou k dispozici žádné recepty.",
     "emptySaved": "Zatím žádné uložené recepty.",
     "allIngredientsAvailable": "Všechny ingredience doma",
     "missingIngredients_one": "Chybí {{count}} ingredience",
@@ -304,7 +308,15 @@
     "privacyPolicyTitle": "Zásady ochrany osobních údajů",
     "privacyPolicyBody": "Tato aplikace ukládá vaše jméno, e-mail a údaje o spíži, nákupech a domácnosti, které zadáte, aby vám a členům vaší domácnosti mohla poskytovat své základní funkce. Vaše údaje neprodáváme třetím stranám. S dotazy ohledně zpracování vašich údajů se obraťte na podpůrnou adresu aplikace.\n\nJedná se o návrh zásad, který bude před veřejným vydáním aplikace nahrazen úplnou verzí.",
     "termsTitle": "Podmínky služby",
-    "termsBody": "Používáním této aplikace souhlasíte s tím, že ji budete používat pouze k zamýšlenému účelu správy spíže, nákupů a souvisejících informací vaší domácnosti. Aplikace je poskytována tak, jak je, bez jakékoli záruky.\n\nJedná se o návrh podmínek služby, který bude před veřejným vydáním aplikace nahrazen úplnou verzí."
+    "termsBody": "Používáním této aplikace souhlasíte s tím, že ji budete používat pouze k zamýšlenému účelu správy spíže, nákupů a souvisejících informací vaší domácnosti. Aplikace je poskytována tak, jak je, bez jakékoli záruky.\n\nJedná se o návrh podmínek služby, který bude před veřejným vydáním aplikace nahrazen úplnou verzí.",
+    "sectionDanger": "Nebezpečná zóna",
+    "deleteAccountButton": "Smazat účet",
+    "deleteAccountPasswordLabel": "Potvrď heslem",
+    "deleteAccountConfirmTitle": "Smazat účet?",
+    "deleteAccountConfirmMessage": "Tímto trvale smažeš svůj účet a nelze to vrátit zpět.",
+    "deleteAccountConfirmConfirm": "Smazat",
+    "deleteAccountErrorPassword": "Nesprávné heslo.",
+    "deleteAccountErrorOwner": "Než smažeš účet, převeď vlastnictví nebo odeber ostatní členy své domácnosti."
   },
   "validation": {
     "nameMin2": "Alespoň 2 znaky",
@@ -319,7 +331,10 @@
     "quantityPositive": "Množství musí být větší než 0",
     "unitRequired": "Vyberte jednotku",
     "assetNameRequired": "Název vybavení je povinný",
-    "currentPasswordRequired": "Současné heslo je povinné"
+    "currentPasswordRequired": "Současné heslo je povinné",
+    "billNameRequired": "Název účtu je povinný",
+    "amountRequired": "Zadej platnou částku",
+    "dueDateRequired": "Vyber datum splatnosti"
   },
   "errors": {
     "generic": "Něco se pokazilo. Zkuste to prosím znovu.",
@@ -368,5 +383,44 @@
     ],
     "weeklySummaryTitle": "Týdenní kontrola spíže",
     "weeklySummaryBody": "Podívejte se, co se tento týden změnilo ve vaší spíži."
+  },
+  "bills": {
+    "emptyList": "Zatím nejsou zaznamenány žádné účty.",
+    "errorLoad": "Účty se nepodařilo načíst.",
+    "addA11y": "Přidat účet",
+    "recurringTag": "Opakující se",
+    "markPaidAction": "Označit jako zaplaceno",
+    "deleteAction": "Smazat",
+    "cancelAction": "Zrušit",
+    "categories": {
+      "Electricity": "Elektřina",
+      "Water": "Voda",
+      "Gas": "Plyn",
+      "Internet": "Internet",
+      "Rent": "Nájem",
+      "Subscription": "Předplatné",
+      "Other": "Ostatní"
+    },
+    "status": {
+      "paid": "Zaplaceno",
+      "overdue": "Po splatnosti",
+      "daysLeft_one": "Zbývá {{count}} den",
+      "daysLeft_other": "Zbývá {{count}} dní"
+    },
+    "form": {
+      "titleEdit": "Upravit účet",
+      "titleAdd": "Přidat účet",
+      "nameLabel": "Název účtu",
+      "namePlaceholder": "např. Elektřina",
+      "categoryLabel": "Kategorie",
+      "amountLabel": "Částka",
+      "dueDateLabel": "Datum splatnosti",
+      "selectDateButton": "Vybrat datum",
+      "recurringLabel": "Opakuje se každý měsíc",
+      "notesLabel": "Poznámky (volitelné)",
+      "submitEdit": "Aktualizovat",
+      "submitAdd": "Přidat",
+      "errorSave": "Účet se nepodařilo uložit, zkus to znovu."
+    }
   }
 }

@@ -15,8 +15,6 @@ type RecipeSuggestion = {
   isSaved: boolean;
 };
 
-const SUGGESTIONS_LIMIT = 10;
-
 function toSuggestion(
   recipe: RecipeDocument & { _id: unknown },
   inventoryNames: Set<string>,
@@ -64,7 +62,9 @@ async function getSavedRecipeIds(homeId: string): Promise<string[]> {
   return savedRecipes.map((saved) => saved.recipeId.toString());
 }
 
-export async function getSuggestions(homeId: string): Promise<RecipeSuggestion[]> {
+// Returns every recipe (including 0% coverage), sorted by how ready-to-cook
+// it is, so the Recipes screen can list the full catalog.
+export async function getAllRecipes(homeId: string): Promise<RecipeSuggestion[]> {
   const [inventoryNames, savedRecipeIds] = await Promise.all([
     getInventoryNames(homeId),
     getSavedRecipeIds(homeId),
@@ -75,9 +75,7 @@ export async function getSuggestions(homeId: string): Promise<RecipeSuggestion[]
 
   return recipes
     .map((recipe) => toSuggestion(recipe, inventoryNames, savedRecipeIdSet))
-    .filter((suggestion) => suggestion.coveragePercent > 0)
-    .sort((a, b) => b.coveragePercent - a.coveragePercent || a.name.localeCompare(b.name))
-    .slice(0, SUGGESTIONS_LIMIT);
+    .sort((a, b) => b.coveragePercent - a.coveragePercent || a.name.localeCompare(b.name));
 }
 
 export async function getSavedRecipes(homeId: string): Promise<RecipeSuggestion[]> {

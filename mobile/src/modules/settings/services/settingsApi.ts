@@ -40,6 +40,10 @@ export async function changePassword(input: {
   await apiClient.patch('/users/me/password', input);
 }
 
+export async function deleteAccount(password: string): Promise<void> {
+  await apiClient.delete('/users/me', { data: { password } });
+}
+
 export async function updateNotificationPreferences(
   notificationPreferences: Partial<NotificationPreferences>,
 ): Promise<UserProfile> {

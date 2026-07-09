@@ -8,7 +8,7 @@ import {
 } from '../controllers/homeController';
 import { getDashboardHandler } from '../controllers/dashboardController';
 import {
-  getSuggestionsHandler,
+  getAllRecipesHandler,
   getSavedRecipesHandler,
   saveRecipeHandler,
   unsaveRecipeHandler,
@@ -33,6 +33,7 @@ import locationRoutes from './locationRoutes';
 import inventoryRoutes from './inventoryRoutes';
 import shoppingRoutes from './shoppingRoutes';
 import assetRoutes from './assetRoutes';
+import billRoutes from './billRoutes';
 
 const router = Router();
 
@@ -48,10 +49,10 @@ router.get(
   catchAsync(getDashboardHandler),
 );
 router.get(
-  '/:homeId/recipes/suggestions',
+  '/:homeId/recipes',
   validateParams(homeIdParamSchema),
   requireHomeMembership('viewer'),
-  catchAsync(getSuggestionsHandler),
+  catchAsync(getAllRecipesHandler),
 );
 router.get(
   '/:homeId/recipes/saved',
@@ -113,5 +114,6 @@ router.use('/:homeId/locations', locationRoutes);
 router.use('/:homeId/items', inventoryRoutes);
 router.use('/:homeId/shopping', shoppingRoutes);
 router.use('/:homeId/assets', assetRoutes);
+router.use('/:homeId/bills', billRoutes);
 
 export default router;

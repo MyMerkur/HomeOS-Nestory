@@ -4,6 +4,7 @@ import { Alert } from 'react-native';
 import { SettingsScreen } from './SettingsScreen';
 import {
   changePassword,
+  deleteAccount,
   getProfile,
   updateNotificationPreferences,
   updateProfile,
@@ -227,5 +228,36 @@ describe('SettingsScreen', () => {
     fireEvent.press(screen.getByText('Terms of Service'));
 
     expect(mockNavigation.navigate).toHaveBeenCalledWith('Terms');
+  });
+
+  it('deletes the account after password confirmation and clears the session', async () => {
+    (deleteAccount as jest.Mock).mockResolvedValue(undefined);
+    jest.spyOn(Alert, 'alert').mockImplementation((_title, _msg, buttons) => {
+      buttons?.find((button) => button.text === 'Delete')?.onPress?.();
+    });
+    renderScreen();
+    await screen.findByTestId('delete-account-button');
+
+    fireEvent.press(screen.getByTestId('delete-account-button'));
+    fireEvent.changeText(screen.getByTestId('delete-account-password'), 'Min8Chars!');
+    fireEvent.press(screen.getByTestId('delete-account-confirm-button'));
+
+    await waitFor(() => expect(deleteAccount).toHaveBeenCalledWith('Min8Chars!'));
+    await waitFor(() => expect(useAuthStore.getState().accessToken).toBeNull());
+  });
+
+  it('shows an error when the account deletion password is wrong', async () => {
+    (deleteAccount as jest.Mock).mockRejectedValue(new Error('invalid'));
+    jest.spyOn(Alert, 'alert').mockImplementation((_title, _msg, buttons) => {
+      buttons?.find((button) => button.text === 'Delete')?.onPress?.();
+    });
+    renderScreen();
+    await screen.findByTestId('delete-account-button');
+
+    fireEvent.press(screen.getByTestId('delete-account-button'));
+    fireEvent.changeText(screen.getByTestId('delete-account-password'), 'WrongPass!');
+    fireEvent.press(screen.getByTestId('delete-account-confirm-button'));
+
+    expect(await screen.findByText('Incorrect password.')).toBeTruthy();
   });
 });

@@ -67,13 +67,17 @@
       "medicines": "Médicaments",
       "assets": "Biens",
       "family": "Famille",
-      "settings": "Paramètres"
+      "settings": "Paramètres",
+      "bills": "Factures"
     },
     "summary": {
       "today": "Aujourd'hui",
       "in3Days": "3 jours",
       "inWeek": "Semaine",
-      "total": "Total"
+      "total": "Total",
+      "pantryItems": "Garde-manger",
+      "medicines": "Médicaments",
+      "assets": "Biens"
     },
     "upcomingTitle": "Articles à venir",
     "emptyUpcoming": "Aucun article avec une date de péremption proche.",
@@ -190,11 +194,11 @@
   },
   "recipes": {
     "tabs": {
-      "suggestions": "Suggestions",
+      "all": "Toutes",
       "saved": "Enregistrées"
     },
     "errorLoad": "Impossible de charger les recettes.",
-    "emptySuggestions": "Aucune recette ne correspond actuellement aux articles disponibles.",
+    "emptyAll": "Aucune recette disponible pour le moment.",
     "emptySaved": "Aucune recette enregistrée pour le moment.",
     "allIngredientsAvailable": "Tous les ingrédients sont disponibles",
     "missingIngredients_one": "{{count}} ingrédient manquant",
@@ -304,7 +308,15 @@
     "privacyPolicyTitle": "Politique de confidentialité",
     "privacyPolicyBody": "Cette application stocke votre nom, votre e-mail ainsi que les données de garde-manger, de courses et de foyer que vous saisissez afin de vous fournir, à vous et aux membres de votre foyer, ses fonctionnalités principales. Nous ne vendons pas vos données à des tiers. Pour toute question sur le traitement de vos données, contactez l'adresse d'assistance de l'application.\n\nCeci est une politique provisoire qui sera remplacée par une version complète avant la publication officielle de l'application.",
     "termsTitle": "Conditions d'utilisation",
-    "termsBody": "En utilisant cette application, vous acceptez de l'utiliser uniquement dans le but prévu de gérer le garde-manger, les courses et les informations connexes de votre foyer. L'application est fournie telle quelle, sans garantie d'aucune sorte.\n\nCe sont des conditions d'utilisation provisoires qui seront remplacées par une version complète avant la publication officielle de l'application."
+    "termsBody": "En utilisant cette application, vous acceptez de l'utiliser uniquement dans le but prévu de gérer le garde-manger, les courses et les informations connexes de votre foyer. L'application est fournie telle quelle, sans garantie d'aucune sorte.\n\nCe sont des conditions d'utilisation provisoires qui seront remplacées par une version complète avant la publication officielle de l'application.",
+    "sectionDanger": "Zone dangereuse",
+    "deleteAccountButton": "Supprimer le compte",
+    "deleteAccountPasswordLabel": "Confirmer avec ton mot de passe",
+    "deleteAccountConfirmTitle": "Supprimer ton compte ?",
+    "deleteAccountConfirmMessage": "Cette action supprime définitivement ton compte et est irréversible.",
+    "deleteAccountConfirmConfirm": "Supprimer",
+    "deleteAccountErrorPassword": "Mot de passe incorrect.",
+    "deleteAccountErrorOwner": "Transfère la propriété ou retire les autres membres de ton foyer avant de supprimer ton compte."
   },
   "validation": {
     "nameMin2": "2 caractères minimum",
@@ -319,7 +331,10 @@
     "quantityPositive": "La quantité doit être supérieure à 0",
     "unitRequired": "Sélectionnez une unité",
     "assetNameRequired": "Le nom du bien est requis",
-    "currentPasswordRequired": "Le mot de passe actuel est requis"
+    "currentPasswordRequired": "Le mot de passe actuel est requis",
+    "billNameRequired": "Le nom de la facture est requis",
+    "amountRequired": "Entre un montant valide",
+    "dueDateRequired": "Choisis une date d'échéance"
   },
   "errors": {
     "generic": "Une erreur s'est produite. Veuillez réessayer.",
@@ -368,5 +383,44 @@
     ],
     "weeklySummaryTitle": "Bilan hebdomadaire du garde-manger",
     "weeklySummaryBody": "Découvrez ce qui a changé dans votre garde-manger cette semaine."
+  },
+  "bills": {
+    "emptyList": "Aucune facture enregistrée pour le moment.",
+    "errorLoad": "Impossible de charger les factures.",
+    "addA11y": "Ajouter une facture",
+    "recurringTag": "Récurrente",
+    "markPaidAction": "Marquer comme payée",
+    "deleteAction": "Supprimer",
+    "cancelAction": "Annuler",
+    "categories": {
+      "Electricity": "Électricité",
+      "Water": "Eau",
+      "Gas": "Gaz",
+      "Internet": "Internet",
+      "Rent": "Loyer",
+      "Subscription": "Abonnement",
+      "Other": "Autre"
+    },
+    "status": {
+      "paid": "Payée",
+      "overdue": "En retard",
+      "daysLeft_one": "{{count}} jour restant",
+      "daysLeft_other": "{{count}} jours restants"
+    },
+    "form": {
+      "titleEdit": "Modifier la facture",
+      "titleAdd": "Ajouter une facture",
+      "nameLabel": "Nom de la facture",
+      "namePlaceholder": "ex. Électricité",
+      "categoryLabel": "Catégorie",
+      "amountLabel": "Montant",
+      "dueDateLabel": "Date d'échéance",
+      "selectDateButton": "Choisir une date",
+      "recurringLabel": "Se répète chaque mois",
+      "notesLabel": "Notes (optionnel)",
+      "submitEdit": "Mettre à jour",
+      "submitAdd": "Ajouter",
+      "errorSave": "Impossible d'enregistrer la facture, réessaie."
+    }
   }
 }

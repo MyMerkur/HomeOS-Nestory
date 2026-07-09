@@ -67,13 +67,17 @@
       "medicines": "Medikamente",
       "assets": "Inventar",
       "family": "Familie",
-      "settings": "Einstellungen"
+      "settings": "Einstellungen",
+      "bills": "Rechnungen"
     },
     "summary": {
       "today": "Heute",
       "in3Days": "3 Tage",
       "inWeek": "Woche",
-      "total": "Gesamt"
+      "total": "Gesamt",
+      "pantryItems": "Vorrat",
+      "medicines": "Medikamente",
+      "assets": "Gegenstände"
     },
     "upcomingTitle": "Bald ablaufende Artikel",
     "emptyUpcoming": "Keine Artikel mit bevorstehendem Ablaufdatum.",
@@ -190,11 +194,11 @@
   },
   "recipes": {
     "tabs": {
-      "suggestions": "Vorschläge",
+      "all": "Alle",
       "saved": "Gespeichert"
     },
     "errorLoad": "Rezepte konnten nicht geladen werden.",
-    "emptySuggestions": "Derzeit passen keine Rezepte zu den vorhandenen Artikeln.",
+    "emptyAll": "Noch keine Rezepte verfügbar.",
     "emptySaved": "Noch keine gespeicherten Rezepte.",
     "allIngredientsAvailable": "Alle Zutaten vorhanden",
     "missingIngredients_one": "{{count}} fehlende Zutat",
@@ -304,7 +308,15 @@
     "privacyPolicyTitle": "Datenschutzrichtlinie",
     "privacyPolicyBody": "Diese App speichert Ihren Namen, Ihre E-Mail-Adresse sowie die von Ihnen eingegebenen Vorrats-, Einkaufs- und Haushaltsdaten, um Ihnen und den Mitgliedern Ihres Haushalts die Kernfunktionen bereitzustellen. Wir verkaufen Ihre Daten nicht an Dritte. Bei Fragen zur Verarbeitung Ihrer Daten wenden Sie sich bitte an die Support-Adresse der App.\n\nDies ist eine Entwurfsrichtlinie und wird vor der öffentlichen Veröffentlichung der App durch eine vollständige Version ersetzt.",
     "termsTitle": "Nutzungsbedingungen",
-    "termsBody": "Durch die Nutzung dieser App stimmen Sie zu, sie nur für ihren vorgesehenen Zweck – die Verwaltung der Vorrats-, Einkaufs- und Haushaltsdaten Ihres Haushalts – zu verwenden. Die App wird ohne jegliche Gewährleistung bereitgestellt.\n\nDies sind Entwurfsnutzungsbedingungen und werden vor der öffentlichen Veröffentlichung der App durch eine vollständige Version ersetzt."
+    "termsBody": "Durch die Nutzung dieser App stimmen Sie zu, sie nur für ihren vorgesehenen Zweck – die Verwaltung der Vorrats-, Einkaufs- und Haushaltsdaten Ihres Haushalts – zu verwenden. Die App wird ohne jegliche Gewährleistung bereitgestellt.\n\nDies sind Entwurfsnutzungsbedingungen und werden vor der öffentlichen Veröffentlichung der App durch eine vollständige Version ersetzt.",
+    "sectionDanger": "Gefahrenzone",
+    "deleteAccountButton": "Konto löschen",
+    "deleteAccountPasswordLabel": "Mit Passwort bestätigen",
+    "deleteAccountConfirmTitle": "Konto löschen?",
+    "deleteAccountConfirmMessage": "Dies löscht dein Konto dauerhaft und kann nicht rückgängig gemacht werden.",
+    "deleteAccountConfirmConfirm": "Löschen",
+    "deleteAccountErrorPassword": "Falsches Passwort.",
+    "deleteAccountErrorOwner": "Übertrage den Besitz oder entferne andere Mitglieder deiner Haushalte, bevor du dein Konto löschst."
   },
   "validation": {
     "nameMin2": "Mindestens 2 Zeichen",
@@ -319,7 +331,10 @@
     "quantityPositive": "Die Menge muss größer als 0 sein",
     "unitRequired": "Wählen Sie eine Einheit aus",
     "assetNameRequired": "Name des Gegenstands ist erforderlich",
-    "currentPasswordRequired": "Aktuelles Passwort ist erforderlich"
+    "currentPasswordRequired": "Aktuelles Passwort ist erforderlich",
+    "billNameRequired": "Rechnungsname ist erforderlich",
+    "amountRequired": "Gib einen gültigen Betrag ein",
+    "dueDateRequired": "Wähle ein Fälligkeitsdatum"
   },
   "errors": {
     "generic": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",
@@ -368,5 +383,44 @@
     ],
     "weeklySummaryTitle": "Wöchentlicher Speisekammer-Check",
     "weeklySummaryBody": "Sieh dir an, was sich diese Woche in deiner Speisekammer geändert hat."
+  },
+  "bills": {
+    "emptyList": "Noch keine Rechnungen erfasst.",
+    "errorLoad": "Rechnungen konnten nicht geladen werden.",
+    "addA11y": "Rechnung hinzufügen",
+    "recurringTag": "Wiederkehrend",
+    "markPaidAction": "Als bezahlt markieren",
+    "deleteAction": "Löschen",
+    "cancelAction": "Abbrechen",
+    "categories": {
+      "Electricity": "Strom",
+      "Water": "Wasser",
+      "Gas": "Gas",
+      "Internet": "Internet",
+      "Rent": "Miete",
+      "Subscription": "Abo",
+      "Other": "Sonstiges"
+    },
+    "status": {
+      "paid": "Bezahlt",
+      "overdue": "Überfällig",
+      "daysLeft_one": "Noch {{count}} Tag",
+      "daysLeft_other": "Noch {{count}} Tage"
+    },
+    "form": {
+      "titleEdit": "Rechnung bearbeiten",
+      "titleAdd": "Rechnung hinzufügen",
+      "nameLabel": "Rechnungsname",
+      "namePlaceholder": "z. B. Strom",
+      "categoryLabel": "Kategorie",
+      "amountLabel": "Betrag",
+      "dueDateLabel": "Fälligkeitsdatum",
+      "selectDateButton": "Datum wählen",
+      "recurringLabel": "Monatlich wiederholen",
+      "notesLabel": "Notizen (optional)",
+      "submitEdit": "Aktualisieren",
+      "submitAdd": "Hinzufügen",
+      "errorSave": "Rechnung konnte nicht gespeichert werden, versuche es erneut."
+    }
   }
 }

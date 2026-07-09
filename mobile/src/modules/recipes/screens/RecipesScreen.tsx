@@ -8,23 +8,19 @@ import { SegmentedControl } from '../../../ui/SegmentedControl';
 import { Skeleton } from '../../../ui/Skeleton';
 import { fontSize, radius, spacing, typography, type ThemeColors } from '../../../theme/theme';
 import { useTheme } from '../../../theme/ThemeContext';
-import { useRecipeSuggestionsQuery } from '../hooks/useRecipeSuggestionsQuery';
+import { useAllRecipesQuery } from '../hooks/useAllRecipesQuery';
 import { useSavedRecipesQuery } from '../hooks/useSavedRecipesQuery';
 import type { RecipeSuggestion } from '../services/recipeApi';
 import type { RecipesStackScreenProps } from '../../../app/navigation/types';
 
-type Tab = 'suggestions' | 'saved';
+type Tab = 'all' | 'saved';
 
 function coverageStyle(styles: ReturnType<typeof createStyles>, coveragePercent: number) {
-  if (coveragePercent >= 80) return styles.coverageHigh;
-  if (coveragePercent >= 50) return styles.coverageMedium;
-  return styles.coverageLow;
+  return coveragePercent === 100 ? styles.coverageReady : styles.coverageNotReady;
 }
 
 function coverageTextStyle(styles: ReturnType<typeof createStyles>, coveragePercent: number) {
-  if (coveragePercent >= 80) return styles.coverageTextHigh;
-  if (coveragePercent >= 50) return styles.coverageTextMedium;
-  return styles.coverageTextLow;
+  return coveragePercent === 100 ? styles.coverageTextReady : styles.coverageTextNotReady;
 }
 
 function RecipesScreenSkeleton({ styles }: { styles: ReturnType<typeof createStyles> }) {
@@ -70,8 +66,8 @@ export function RecipesScreen({ navigation }: RecipesStackScreenProps<'Recipes'>
   const { t } = useTranslation();
   const { colors } = useTheme();
   const styles = useMemo(() => createStyles(colors), [colors]);
-  const [tab, setTab] = useState<Tab>('suggestions');
-  const suggestionsQuery = useRecipeSuggestionsQuery();
+  const [tab, setTab] = useState<Tab>('all');
+  const allQuery = useAllRecipesQuery();
   const savedQuery = useSavedRecipesQuery();
   const {
     data: recipes,
@@ -79,13 +75,13 @@ export function RecipesScreen({ navigation }: RecipesStackScreenProps<'Recipes'>
     isError,
     refetch,
     isRefetching,
-  } = tab === 'suggestions' ? suggestionsQuery : savedQuery;
+  } = tab === 'all' ? allQuery : savedQuery;
 
   const tabsRow = (
     <View style={styles.tabsRow}>
       <SegmentedControl
         options={[
-          { value: 'suggestions', label: t('recipes.tabs.suggestions'), testID: 'recipes-tab-suggestions' },
+          { value: 'all', label: t('recipes.tabs.all'), testID: 'recipes-tab-all' },
           { value: 'saved', label: t('recipes.tabs.saved'), testID: 'recipes-tab-saved' },
         ]}
         value={tab}
@@ -128,7 +124,7 @@ export function RecipesScreen({ navigation }: RecipesStackScreenProps<'Recipes'>
         ListEmptyComponent={
           <EmptyState
             icon={IconToolsKitchen2}
-            title={tab === 'suggestions' ? t('recipes.emptySuggestions') : t('recipes.emptySaved')}
+            title={tab === 'all' ? t('recipes.emptyAll') : t('recipes.emptySaved')}
           />
         }
         renderItem={({ item }) => (
@@ -188,11 +184,9 @@ function createStyles(colors: ThemeColors) {
       fontFamily: typography.bodyMedium.fontFamily,
       fontWeight: typography.bodyMedium.fontWeight,
     },
-    coverageHigh: { backgroundColor: colors.primaryTint },
-    coverageTextHigh: { color: colors.primaryDark },
-    coverageMedium: { backgroundColor: colors.warningTint },
-    coverageTextMedium: { color: colors.warningDark },
-    coverageLow: { backgroundColor: colors.warningTint },
-    coverageTextLow: { color: colors.warningDark },
+    coverageReady: { backgroundColor: colors.primaryTint },
+    coverageTextReady: { color: colors.primaryDark },
+    coverageNotReady: { backgroundColor: colors.border },
+    coverageTextNotReady: { color: colors.textMuted },
   });
 }

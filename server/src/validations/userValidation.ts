@@ -10,6 +10,10 @@ export const changePasswordSchema = z.object({
   newPassword: z.string().min(8),
 });
 
+export const deleteAccountSchema = z.object({
+  password: z.string().min(1),
+});
+
 export const SUPPORTED_LANGUAGES = ['en', 'tr', 'de', 'fr', 'es', 'it', 'cs', 'pt'] as const;
 
 export const updateUserSettingsSchema = z.object({
@@ -30,3 +34,4 @@ export const updateUserSettingsSchema = z.object({
 export type UpdateProfileInput = z.infer<typeof updateProfileSchema>;
 export type ChangePasswordInput = z.infer<typeof changePasswordSchema>;
 export type UpdateUserSettingsInput = z.infer<typeof updateUserSettingsSchema>;
+export type DeleteAccountInput = z.infer<typeof deleteAccountSchema>;

@@ -39,6 +39,11 @@ export const homeAssetIdParamSchema = z.object({
   assetId: objectId,
 });
 
+export const homeBillIdParamSchema = z.object({
+  homeId: objectId,
+  billId: objectId,
+});
+
 export const homeUserIdParamSchema = z.object({
   homeId: objectId,
   userId: objectId,

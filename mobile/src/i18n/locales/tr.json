@@ -67,13 +67,17 @@
       "medicines": "İlaçlarım",
       "assets": "Varlıklarım",
       "family": "Ailem",
-      "settings": "Ayarlar"
+      "settings": "Ayarlar",
+      "bills": "Faturalar"
     },
     "summary": {
       "today": "Bugün",
       "in3Days": "3 gün",
       "inWeek": "Hafta",
-      "total": "Toplam"
+      "total": "Toplam",
+      "pantryItems": "Dolapta",
+      "medicines": "İlaç",
+      "assets": "Varlık"
     },
     "upcomingTitle": "Yaklaşan ürünler",
     "emptyUpcoming": "Yaklaşan SKT'si olan ürün yok.",
@@ -190,11 +194,11 @@
   },
   "recipes": {
     "tabs": {
-      "suggestions": "Öneriler",
+      "all": "Tümü",
       "saved": "Kaydedilenler"
     },
     "errorLoad": "Tarifler yüklenemedi.",
-    "emptySuggestions": "Şu an evdeki ürünlerle eşleşen bir tarif yok.",
+    "emptyAll": "Henüz tarif bulunmuyor.",
     "emptySaved": "Henüz kaydedilmiş bir tarif yok.",
     "allIngredientsAvailable": "Tüm malzemeler evde",
     "missingIngredients_one": "{{count}} eksik malzeme",
@@ -304,7 +308,15 @@
     "privacyPolicyTitle": "Gizlilik Politikası",
     "privacyPolicyBody": "Bu uygulama, size ve evinizin üyelerine temel özellikleri sunabilmek için adınızı, e-postanızı ve girdiğiniz kiler, alışveriş ve ev verilerini saklar. Verilerinizi üçüncü taraflara satmıyoruz. Verilerinizin nasıl işlendiğiyle ilgili sorularınız için uygulamanın destek adresiyle iletişime geçebilirsiniz.\n\nBu bir taslak politikadır ve uygulama halka açık olarak yayınlanmadan önce tam bir sürümle değiştirilecektir.",
     "termsTitle": "Kullanım Şartları",
-    "termsBody": "Bu uygulamayı kullanarak, onu yalnızca evinizin kiler, alışveriş ve ilgili bilgilerini yönetme amacına uygun şekilde kullanmayı kabul edersiniz. Uygulama olduğu gibi, hiçbir garanti verilmeksizin sunulmaktadır.\n\nBu bir taslak kullanım şartlarıdır ve uygulama halka açık olarak yayınlanmadan önce tam bir sürümle değiştirilecektir."
+    "termsBody": "Bu uygulamayı kullanarak, onu yalnızca evinizin kiler, alışveriş ve ilgili bilgilerini yönetme amacına uygun şekilde kullanmayı kabul edersiniz. Uygulama olduğu gibi, hiçbir garanti verilmeksizin sunulmaktadır.\n\nBu bir taslak kullanım şartlarıdır ve uygulama halka açık olarak yayınlanmadan önce tam bir sürümle değiştirilecektir.",
+    "sectionDanger": "Tehlikeli Alan",
+    "deleteAccountButton": "Hesabı Sil",
+    "deleteAccountPasswordLabel": "Şifrenle onayla",
+    "deleteAccountConfirmTitle": "Hesabını sil?",
+    "deleteAccountConfirmMessage": "Bu işlem hesabını kalıcı olarak siler ve geri alınamaz.",
+    "deleteAccountConfirmConfirm": "Sil",
+    "deleteAccountErrorPassword": "Şifre yanlış.",
+    "deleteAccountErrorOwner": "Hesabını silmeden önce evini/evlerini başkasına devret veya diğer üyeleri çıkar."
   },
   "validation": {
     "nameMin2": "En az 2 karakter",
@@ -319,7 +331,10 @@
     "quantityPositive": "Miktar 0'dan büyük olmalı",
     "unitRequired": "Birim seç",
     "assetNameRequired": "Eşya adı gerekli",
-    "currentPasswordRequired": "Mevcut şifre gerekli"
+    "currentPasswordRequired": "Mevcut şifre gerekli",
+    "billNameRequired": "Fatura adı gerekli",
+    "amountRequired": "Geçerli bir tutar gir",
+    "dueDateRequired": "Son ödeme tarihi seç"
   },
   "errors": {
     "generic": "Bir şeyler ters gitti. Lütfen tekrar dene.",
@@ -368,5 +383,44 @@
     ],
     "weeklySummaryTitle": "Haftalık Kiler Kontrolü",
     "weeklySummaryBody": "Bu hafta kilerinizde neler değişti bir bakın."
+  },
+  "bills": {
+    "emptyList": "Henüz fatura eklenmedi.",
+    "errorLoad": "Faturalar yüklenemedi.",
+    "addA11y": "Fatura ekle",
+    "recurringTag": "Tekrarlayan",
+    "markPaidAction": "Ödendi olarak işaretle",
+    "deleteAction": "Sil",
+    "cancelAction": "Vazgeç",
+    "categories": {
+      "Electricity": "Elektrik",
+      "Water": "Su",
+      "Gas": "Doğalgaz",
+      "Internet": "İnternet",
+      "Rent": "Kira",
+      "Subscription": "Abonelik",
+      "Other": "Diğer"
+    },
+    "status": {
+      "paid": "Ödendi",
+      "overdue": "Gecikti",
+      "daysLeft_one": "{{count}} gün kaldı",
+      "daysLeft_other": "{{count}} gün kaldı"
+    },
+    "form": {
+      "titleEdit": "Faturayı düzenle",
+      "titleAdd": "Fatura ekle",
+      "nameLabel": "Fatura adı",
+      "namePlaceholder": "ör. Elektrik",
+      "categoryLabel": "Kategori",
+      "amountLabel": "Tutar",
+      "dueDateLabel": "Son ödeme tarihi",
+      "selectDateButton": "Tarih seç",
+      "recurringLabel": "Her ay tekrarlar",
+      "notesLabel": "Notlar (opsiyonel)",
+      "submitEdit": "Güncelle",
+      "submitAdd": "Ekle",
+      "errorSave": "Fatura kaydedilemedi, tekrar dene."
+    }
   }
 }

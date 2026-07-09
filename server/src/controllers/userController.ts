@@ -4,6 +4,7 @@ import { registerPushToken, removePushToken } from '../services/pushService';
 import { sendSuccess } from '../utils/apiResponse';
 import type {
   ChangePasswordInput,
+  DeleteAccountInput,
   UpdateProfileInput,
   UpdateUserSettingsInput,
 } from '../validations/userValidation';
@@ -22,6 +23,12 @@ export async function updateProfileHandler(req: Request, res: Response) {
 export async function changePasswordHandler(req: Request, res: Response) {
   await userService.changePassword(req.userId!, req.body as ChangePasswordInput);
   sendSuccess(res, null, 'Password changed successfully');
+}
+
+export async function deleteAccountHandler(req: Request, res: Response) {
+  const { password } = req.body as DeleteAccountInput;
+  await userService.deleteAccount(req.userId!, password);
+  sendSuccess(res, null, 'Account deleted successfully');
 }
 
 export async function updateSettingsHandler(req: Request, res: Response) {

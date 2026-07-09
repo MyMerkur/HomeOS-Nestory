@@ -199,6 +199,7 @@ export function QuickAddItemScreen({ navigation }: PantryStackScreenProps<'Quick
               value={expiryDate ?? new Date()}
               mode="date"
               display={Platform.OS === 'ios' ? 'spinner' : 'default'}
+              locale={i18n.language}
               onChange={(_event, selectedDate) => {
                 setShowDatePicker(Platform.OS === 'ios');
                 if (selectedDate) setExpiryDate(selectedDate);
