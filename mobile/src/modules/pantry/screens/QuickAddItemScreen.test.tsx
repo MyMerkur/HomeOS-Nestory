@@ -96,6 +96,7 @@ describe('QuickAddItemScreen', () => {
       name: 'Nutella',
       brand: 'Nutella',
       category: 'Other',
+      unit: 'piece',
       imageUrl: null,
     });
 
@@ -107,6 +108,7 @@ describe('QuickAddItemScreen', () => {
         initialBarcode: '3017620425035',
         initialName: 'Nutella',
         initialCategory: 'Other',
+        initialUnit: 'piece',
       }),
     );
   });

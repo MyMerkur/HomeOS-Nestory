@@ -995,3 +995,56 @@ navigasyon başlıkları da tema fontuna taşındı
   eşlemesi değil; (3) OCR'ın kendisi (tarih tanıma doğruluğu, kamera
   netliği/ışık koşulları) bu değişiklikle iyileştirilmedi — sadece
   başarısız olduğunda artık bir manuel giriş yolu var.
+
+## Decision: Barkod kapsamını büyütmek için kendi kullanıcı-kaynaklı barkod kataloğumuz eklendi
+
+- **Date**: 2026-07-09
+- **Status**: Accepted
+- **Context**: Önceki adımda eklenen Open Food Facts entegrasyonunu
+  kullanıcı gerçek cihazda test etti ve barkod+ürün adının hâlâ boş/
+  faydasız kaldığını raporladı. Araştırma: Open Food Facts esasen
+  **gıda** ürünlerini kapsıyor ve crowdsourced olduğu için Türkiye'deki
+  birçok ürün (özellikle gıda-dışı: temizlik, kişisel bakım vb.) hiç
+  kayıtlı değil. Alternatif ücretsiz kaynaklar test edildi: Open Food
+  Facts'in kardeş projeleri (Open Products Facts, Open Beauty Facts) ve
+  UPCitemdb'nin ücretsiz trial API'si — gerçek Türk marka barkodlarıyla
+  (Ülker, Bingo) test edildiğinde üçü de sıfır sonuç döndü. Sonuç:
+  Türkiye'yi kapsamlı şekilde kapsayan, ücretsiz, hazır bir barkod
+  veritabanı yok — bu "free" kısıtı altında değiştirilemeyecek bir
+  gerçek.
+- **Decision**: Dış kaynaklara bağımlılığı azaltan, uygulamanın
+  kendi kullanımıyla büyüyen bir çözüm kuruldu: yeni ev-bağımsız
+  `ProductCatalog` koleksiyonu (`server/src/models/ProductCatalog.ts`).
+  `productLookupService.lookupProductByBarcode` artık önce bu
+  kataloğa bakıyor (anında, dış servise gitmeden); yoksa Open Food
+  Facts'e düşüyor ve bulunan sonucu `source: "openfoodfacts"` ile
+  kataloğa cache'liyor. Daha da önemlisi: `inventoryService.createItem`
+  içine `recordUserProvidedProduct` çağrısı eklendi — bir kullanıcı,
+  sistemin bilmediği bir barkod için formu elle doldurup ürün
+  oluşturduğunda, o barkod+ad+kategori+birim otomatik olarak
+  `source: "user"` ile kataloğa yazılıyor (`$setOnInsert`+`upsert`,
+  var olan kaydın üzerine asla yazmıyor). Sonuç: bir ev bir barkodu bir
+  kez elle girdiğinde, **tamamen farklı bir ev** aynı barkodu
+  taradığında artık otomatik doluyor — kapsam, kullanıcı tabanı
+  büyüdükçe organik olarak Türkiye'ye özgü ürünlerle zenginleşiyor.
+  Mobilde `ProductLookupResult`'a `unit` alanı eklendi (Open Food
+  Facts hiç unit vermiyor, sadece kullanıcı-kaynaklı kayıtlarda dolu)
+  ve hem `QuickAddItemScreen`'in `ItemForm`'a yönlendirme
+  parametrelerine hem de `ItemFormScreen.applyBarcodeMatch`'e
+  işlendi.
+- **Consequences**: Backend: `productLookupService.test.ts` artık
+  gerçek `mongodb-memory-server` kullanıyor (DB'ye dokunduğu için
+  fetch-only mock yeterli değildi), `inventoryService.test.ts`'e 2 yeni
+  entegrasyon testi eklendi (barkodlu ürün kataloğa yazılıyor mu,
+  barkodsuz ürün kataloğa dokunmuyor mu). 19 suite / 109 test yeşil,
+  lint+tsc temiz. Mobile: 44 suite / 189 test yeşil, lint+tsc temiz.
+  Bilinen sınırlar: (1) katalog boş başlıyor — ilk birkaç hafta hâlâ
+  çoğu Türk ürünü için manuel giriş gerekecek, fayda kullanıcı sayısı
+  ve zamanla artacak (soğuk başlangıç problemi, çözümü yok); (2) "ilk
+  yazan kazanır" kuralı bir kullanıcının barkodu yanlış/eksik girmesi
+  durumunda o hatayı kalıcı hale getirebilir — düzeltme/moderasyon
+  akışı bu kapsamda eklenmedi; (3) evler arası veri paylaşımı olduğu
+  için teorik olarak bir ev başka bir evin daha önce girdiği ürün
+  adını görebilir — kullanıcı-özel bir bilgi değil (sadece barkod→genel
+  ürün adı eşlemesi), bu kabul edilebilir görüldü ama KVKK/gizlilik
+  açısından ileride gözden geçirilebilir.

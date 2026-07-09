@@ -213,16 +213,30 @@ diğer kategorilerde anlamsızdır ama şema seviyesinde reddedilmez.
 
 `requireHomeMembership('viewer')`. Mobil, barkod tarandığında önce evin kendi
 envanterinde (`GET .../items?barcode=`) eşleşme arar; bulamazsa bu endpoint'i
-çağırıp [Open Food Facts](https://world.openfoodfacts.org) API'sine proxy yapar
-(`server/src/services/productLookupService.ts`). 5 saniyelik timeout, ağ hatası
-veya "ürün bulunamadı" durumunda `{ "product": null }` döner (hata fırlatmaz) —
-mobil taraf bu durumda kullanıcıya manuel giriş formunu sunar.
+çağırır. Sunucu tarafında arama sırası (`server/src/services/
+productLookupService.ts`):
+
+1. **`ProductCatalog` koleksiyonu** (kendi veritabanımız, ev-bağımsız/global) —
+   anında, dış servise hiç gitmeden döner.
+2. Orada yoksa [Open Food Facts](https://world.openfoodfacts.org) API'sine
+   proxy yapılır (API anahtarı gerektirmez, 5 saniyelik timeout, ağ hatasında
+   sessizce `null`'a düşer). Bulunursa sonuç `ProductCatalog`'a
+   `source: "openfoodfacts"` olarak cache'lenir — aynı barkod bir daha
+   sorulduğunda dış servise hiç gidilmez.
+3. Hiçbirinde yoksa `{ "product": null }` döner; mobil kullanıcıya manuel
+   giriş formunu sunar. Kullanıcı formu doldurup ürünü oluşturursa
+   (`inventoryService.createItem`), girdiği barkod/ad/kategori/birim
+   otomatik olarak `source: "user"` ile `ProductCatalog`'a yazılır
+   (`recordUserProvidedProduct`, "ilk yazan kazanır" — mevcut bir kaydın
+   üzerine yazmaz). Böylece bir ev bir barkodu bir kez elle girdiğinde,
+   **başka bir ev aynı barkodu taradığında** otomatik dolduruluyor — kapsam
+   uygulamanın kullanımıyla birlikte büyür.
 
 ```json
 // 200 — bulundu
 { "success": true, "data": { "product": {
   "barcode": "3017620425035", "name": "Nutella", "brand": "Nutella",
-  "category": "Other", "imageUrl": "https://..."
+  "category": "Other", "unit": null, "imageUrl": "https://..."
 } } }
 // 200 — bulunamadı
 { "success": true, "data": { "product": null } }
@@ -230,9 +244,13 @@ mobil taraf bu durumda kullanıcıya manuel giriş formunu sunar.
 
 `category` eşleşmesi Open Food Facts `categories_tags` alanındaki anahtar
 kelimelere göre yapılan kaba bir haritalama (`CATEGORY_TAG_MAP`); eşleşme
-bulunamazsa `null` döner ve kullanıcı formda kategori seçer. API anahtarı
-gerektirmez; ücretsiz katmanın kapsamı yalnızca gıda ürünleriyle sınırlıdır
-(temizlik/elektronik gibi gıda-dışı ürünlerde çoğunlukla `null` döner).
+bulunamazsa `null` döner ve kullanıcı formda kategori seçer. `unit`, Open
+Food Facts'ten hiç gelmez (serbest metin `quantity` alanından güvenilir
+ayrıştırma yapılmıyor) — yalnızca daha önce bir kullanıcının elle girdiği
+kayıtlarda dolu olur. Open Food Facts'in ücretsiz katmanı yalnızca gıda
+ürünleriyle sınırlı (temizlik/elektronik gibi gıda-dışı ürünlerde
+çoğunlukla `null` döner) — bu durumda kapsamı büyüten tek mekanizma
+yukarıdaki kullanıcı-kaynaklı kataloglama.
 
 ### GET/PATCH/DELETE /api/homes/:homeId/items/:itemId
 

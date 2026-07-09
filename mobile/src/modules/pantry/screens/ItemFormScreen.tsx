@@ -115,6 +115,7 @@ export function ItemFormScreen({ navigation, route }: PantryStackScreenProps<'It
     if (product) {
       if (!getValues('name')) setValue('name', product.name);
       if (product.category && !getValues('category')) setValue('category', product.category);
+      if (product.unit && !getValues('unit')) setValue('unit', product.unit);
     }
   };
 

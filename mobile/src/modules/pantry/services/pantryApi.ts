@@ -75,6 +75,7 @@ export type ProductLookupResult = {
   name: string;
   brand: string | null;
   category: Category | null;
+  unit: Unit | null;
   imageUrl: string | null;
 };
 

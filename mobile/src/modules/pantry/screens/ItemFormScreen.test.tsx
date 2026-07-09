@@ -252,6 +252,7 @@ describe('ItemFormScreen', () => {
       name: 'Nutella',
       brand: 'Nutella',
       category: 'Other',
+      unit: 'piece',
       imageUrl: null,
     });
 
@@ -262,6 +263,7 @@ describe('ItemFormScreen', () => {
 
     expect(await screen.findByDisplayValue('Nutella')).toBeTruthy();
     expect(lookupProductByBarcode).toHaveBeenCalledWith('home-1', '3017620425035');
+    expect(screen.getByTestId('unit-chip-piece').props.accessibilityState).toEqual({ selected: true });
   });
 
   it('shows an error toast when the barcode scan throws unexpectedly', async () => {

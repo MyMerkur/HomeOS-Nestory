@@ -4,6 +4,7 @@ import * as authService from './authService';
 import * as homeService from './homeService';
 import * as locationService from './locationService';
 import * as inventoryService from './inventoryService';
+import { ProductCatalog } from '../models/ProductCatalog';
 import { AppError } from '../middlewares/errorHandler';
 import type { ListItemsQuery } from '../validations/inventoryValidation';
 
@@ -58,6 +59,37 @@ describe('inventoryService', () => {
 
     const fetched = await inventoryService.getItem(homeId, item.id);
     expect(fetched.id).toBe(item.id);
+  });
+
+  it('records a barcode in the shared product catalog so other homes benefit from it', async () => {
+    const { homeId, userId, fridgeId } = await setupHome();
+
+    await inventoryService.createItem(homeId, userId, {
+      name: 'Bingo Çamaşır Suyu',
+      locationId: fridgeId,
+      category: 'Cleaning',
+      quantity: 1,
+      unit: 'bottle',
+      barcode: '8691234567890',
+    });
+
+    const catalogEntry = await ProductCatalog.findOne({ barcode: '8691234567890' });
+    expect(catalogEntry?.name).toBe('Bingo Çamaşır Suyu');
+    expect(catalogEntry?.source).toBe('user');
+  });
+
+  it('does not touch the product catalog when no barcode is given', async () => {
+    const { homeId, userId, fridgeId } = await setupHome();
+
+    await inventoryService.createItem(homeId, userId, {
+      name: 'Loose apples',
+      locationId: fridgeId,
+      category: 'Fruit',
+      quantity: 3,
+      unit: 'piece',
+    });
+
+    expect(await ProductCatalog.countDocuments()).toBe(0);
   });
 
   it('rejects a location that does not belong to the home', async () => {

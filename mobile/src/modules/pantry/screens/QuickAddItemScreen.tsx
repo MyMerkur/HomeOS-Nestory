@@ -67,6 +67,7 @@ export function QuickAddItemScreen({ navigation }: PantryStackScreenProps<'Quick
           initialBarcode: outcome.value,
           initialName: product.name,
           initialCategory: product.category ?? undefined,
+          initialUnit: product.unit ?? undefined,
         });
         return;
       }

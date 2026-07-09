@@ -3,6 +3,7 @@ import { InventoryItem, type InventoryItemDocument } from '../models/InventoryIt
 import { PantryLocation } from '../models/PantryLocation';
 import { AppError } from '../middlewares/errorHandler';
 import { normalizeName } from '../utils/normalize';
+import { recordUserProvidedProduct } from './productLookupService';
 import type { CreateItemInput, ListItemsQuery, UpdateItemInput } from '../validations/inventoryValidation';
 
 export type ItemSummary = {
@@ -82,6 +83,10 @@ export async function createItem(
     doseAmount: input.doseAmount,
     doseTimes: input.doseTimes,
   });
+
+  if (input.barcode) {
+    await recordUserProvidedProduct(input.barcode, input.name, input.category, input.unit);
+  }
 
   return toSummary(item);
 }

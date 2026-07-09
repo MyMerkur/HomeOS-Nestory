@@ -215,6 +215,32 @@ Sabitler `server/src/constants/inventory.ts`'de tutulur (mobile tarafından da r
 zaten bu modelden geliyor, bkz. `docs/ProjectDecisions.md`). Stok miktarı hâlâ mevcut
 `quantity`/`unit` alanlarıyla tutulur; yeni bir "doz birimi" enum'u eklenmedi.
 
+### ProductCatalog (`server/src/models/ProductCatalog.ts`) ✅
+
+```
+{
+  barcode: string (unique),
+  name: string (max 120),
+  category?: Category,
+  unit?: Unit,
+  brand?: string,
+  imageUrl?: string,
+  source: 'openfoodfacts' | 'user',
+  createdAt, updatedAt
+}
+```
+
+Ev-bağımsız (global), barkod → ürün bilgisi eşlemesi. `InventoryItem`'daki
+per-home `barcode` alanından farklı: burası tüm evlerin paylaştığı ortak bir
+"barkod bilgi bankası". `server/src/services/productLookupService.ts`
+tarafından iki kaynaktan beslenir: (1) Open Food Facts'te bulunan bir barkod
+`source: "openfoodfacts"` ile cache'lenir (dış API'ye tekrar gidilmesin diye);
+(2) bir kullanıcı, sistemin bilmediği bir barkod için formu elle doldurup ürün
+oluşturduğunda `source: "user"` ile kaydedilir (`recordUserProvidedProduct`,
+`inventoryService.createItem` içinden çağrılır). Her iki yol da `$setOnInsert`
++ `upsert` kullanır — var olan bir kayıt asla üzerine yazılmaz ("ilk yazan
+kazanır"). Sprint sonrası eklendi, bkz. `docs/ProjectDecisions.md`.
+
 ### AuditLog (`server/src/models/AuditLog.ts`) ✅
 
 ```
