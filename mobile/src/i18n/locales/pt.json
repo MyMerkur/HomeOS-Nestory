@@ -77,7 +77,9 @@
       "total": "Total",
       "pantryItems": "Despensa",
       "medicines": "Remédios",
-      "assets": "Bens"
+      "assets": "Bens",
+      "paidThisMonth": "Pago este mês",
+      "unpaidTotal": "Faturas por pagar"
     },
     "upcomingTitle": "Itens a expirar em breve",
     "emptyUpcoming": "Sem itens com data de validade próxima.",
@@ -167,6 +169,18 @@
       "expiryNotFoundTitle": "Data não encontrada",
       "expiryNotFoundMessage": "Não foi possível reconhecer uma data de validade na foto, pode introduzi-la manualmente.",
       "scanErrorMessage": "Ocorreu um erro ao escanear, tenta novamente."
+    },
+    "receiptScanButton": "Adicionar do recibo",
+    "receiptScan": {
+      "itemNameA11y": "Nome do produto",
+      "captureButton": "Fotografar o recibo",
+      "noItemsFoundMessage": "Não foi possível detetar produtos no recibo.",
+      "scanErrorMessage": "Ocorreu um erro ao digitalizar.",
+      "locationLabel": "Localização",
+      "itemsLabel": "Itens detetados ({{count}})",
+      "submitButton": "Adicionar {{count}} itens",
+      "errorSaveAll": "Não foi possível guardar nenhum item, tente novamente.",
+      "successMessage": "{{count}} itens adicionados."
     }
   },
   "shopping": {
@@ -421,6 +435,32 @@
       "submitEdit": "Atualizar",
       "submitAdd": "Adicionar",
       "errorSave": "Não foi possível guardar a conta, tenta novamente."
+    }
+  },
+  "errorBoundary": {
+    "title": "Algo correu mal",
+    "body": "Ocorreu um erro inesperado. Pode tentar novamente.",
+    "retryButton": "Tentar novamente"
+  },
+  "welcomeTour": {
+    "skip": "Saltar",
+    "next": "Seguinte",
+    "getStarted": "Começar",
+    "pantry": {
+      "title": "Digitalize a sua despensa",
+      "body": "Adicione os seus produtos, acompanhe as datas de validade e nunca mais desperdice nada."
+    },
+    "barcode": {
+      "title": "Digitalize para adicionar instantaneamente",
+      "body": "Adicione produtos em segundos digitalizando o código de barras."
+    },
+    "family": {
+      "title": "Partilhe com a sua família",
+      "body": "Partilhe a sua lista de compras, faturas e muito mais com os membros da sua residência."
+    },
+    "reminders": {
+      "title": "Não perca nada",
+      "body": "Mantenha-se sempre um passo à frente com lembretes de validade, faturas e medicamentos."
     }
   }
 }

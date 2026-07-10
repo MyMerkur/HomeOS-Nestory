@@ -35,6 +35,11 @@ function DashboardSkeleton({ styles }: { styles: ReturnType<typeof createStyles>
           <Skeleton key={key} height={72} style={styles.summarySkeleton} />
         ))}
       </View>
+      <View style={styles.summaryRow}>
+        {[0, 1].map((key) => (
+          <Skeleton key={key} height={72} style={styles.summarySkeleton} />
+        ))}
+      </View>
       <View style={styles.list}>
         <Skeleton height={64} style={styles.rowSkeleton} />
         <Skeleton height={64} style={styles.rowSkeleton} />
@@ -59,7 +64,7 @@ const menuButtonStyle = {
 };
 
 export function DashboardScreen({ navigation }: DashboardStackScreenProps<'Dashboard'>) {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const { colors } = useTheme();
   const styles = useMemo(() => createStyles(colors), [colors]);
   const { data, isLoading, isError, refetch, isRefetching } = useDashboardQuery();
@@ -143,6 +148,19 @@ export function DashboardScreen({ navigation }: DashboardStackScreenProps<'Dashb
                 tint="primary"
               />
               <SummaryCard value={data.assetCount} caption={t('dashboard.summary.assets')} tint="primary" />
+            </View>
+
+            <View style={styles.summaryRow}>
+              <SummaryCard
+                value={`${data.spending.paidThisMonth.toLocaleString(i18n.language)} ₺`}
+                caption={t('dashboard.summary.paidThisMonth')}
+                tint="primary"
+              />
+              <SummaryCard
+                value={`${data.spending.unpaidTotal.toLocaleString(i18n.language)} ₺`}
+                caption={t('dashboard.summary.unpaidTotal')}
+                tint="warning"
+              />
             </View>
 
             <Text style={styles.sectionTitle}>{t('dashboard.upcomingTitle')}</Text>

@@ -77,7 +77,9 @@
       "total": "Total",
       "pantryItems": "Despensa",
       "medicines": "Medicinas",
-      "assets": "Bienes"
+      "assets": "Bienes",
+      "paidThisMonth": "Pagado este mes",
+      "unpaidTotal": "Facturas pendientes"
     },
     "upcomingTitle": "Próximos artículos",
     "emptyUpcoming": "No hay artículos con fecha de caducidad próxima.",
@@ -167,6 +169,18 @@
       "expiryNotFoundTitle": "Fecha no encontrada",
       "expiryNotFoundMessage": "No se pudo reconocer una fecha de caducidad en la foto, puedes introducirla manualmente.",
       "scanErrorMessage": "Ocurrió un error al escanear, inténtalo de nuevo."
+    },
+    "receiptScanButton": "Añadir desde el ticket",
+    "receiptScan": {
+      "itemNameA11y": "Nombre del producto",
+      "captureButton": "Fotografiar el ticket",
+      "noItemsFoundMessage": "No se detectaron productos en el ticket.",
+      "scanErrorMessage": "Algo salió mal al escanear.",
+      "locationLabel": "Ubicación",
+      "itemsLabel": "Artículos detectados ({{count}})",
+      "submitButton": "Añadir {{count}} artículos",
+      "errorSaveAll": "No se pudo guardar ningún artículo, inténtalo de nuevo.",
+      "successMessage": "{{count}} artículos añadidos."
     }
   },
   "shopping": {
@@ -421,6 +435,32 @@
       "submitEdit": "Actualizar",
       "submitAdd": "Añadir",
       "errorSave": "No se pudo guardar la factura, inténtalo de nuevo."
+    }
+  },
+  "errorBoundary": {
+    "title": "Algo salió mal",
+    "body": "Se produjo un error inesperado. Puedes intentarlo de nuevo.",
+    "retryButton": "Reintentar"
+  },
+  "welcomeTour": {
+    "skip": "Omitir",
+    "next": "Siguiente",
+    "getStarted": "Empezar",
+    "pantry": {
+      "title": "Digitaliza tu despensa",
+      "body": "Añade tus productos, controla las fechas de caducidad y no desperdicies nada."
+    },
+    "barcode": {
+      "title": "Escanea para añadir al instante",
+      "body": "Añade productos en segundos escaneando su código de barras."
+    },
+    "family": {
+      "title": "Comparte con tu familia",
+      "body": "Comparte tu lista de la compra, facturas y más con los miembros de tu hogar."
+    },
+    "reminders": {
+      "title": "No te pierdas nada",
+      "body": "Mantente un paso por delante con recordatorios de caducidad, facturas y medicamentos."
     }
   }
 }

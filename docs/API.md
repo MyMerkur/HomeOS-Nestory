@@ -303,6 +303,10 @@ Response: `{ "item": {...} }` (add-to-shopping'de ayrıca `"shoppingItem": {...}
     "expiringIn3Days": 5,
     "expiringInWeek": 9,
     "totalActive": 41,
+    "pantryItemCount": 35,
+    "medicineCount": 6,
+    "assetCount": 8,
+    "spending": { "paidThisMonth": 250, "unpaidTotal": 90 },
     "upcomingItems": [{ "id", "name", "category", "quantity", "unit", "locationId", "expiryDate", "status", "..." }]
   }
 }
@@ -310,6 +314,9 @@ Response: `{ "item": {...} }` (add-to-shopping'de ayrıca `"shoppingItem": {...}
 
 - Sayaçlar yalnızca `status: 'active'` ürünleri kapsar.
 - `expiringToday/expiringIn3Days/expiringInWeek` kümülatiftir (`expiringInWeek`, `expiringIn3Days`'i de içerir).
+- `pantryItemCount` = `totalActive - medicineCount` (kategori `Medicine` olan ürünler ayrı sayılıyor).
+- `assetCount`: yalnızca `status: 'active'` varlıklar.
+- `spending.paidThisMonth`: içinde bulunulan takvim ayında `status: 'paid'` olan faturaların (`paidAt` bazlı) toplam tutarı. `spending.unpaidTotal`: tüm `status: 'unpaid'` faturaların toplam tutarı (vade tarihinden bağımsız). Alışveriş listesi harcamaya dahil değil — `ShoppingItem` şemasında fiyat alanı yok.
 - `upcomingItems`: SKT'si en yakın (ve SKT'si tanımlı) 5 aktif ürün, `expiryDate` artan sırada.
 
 ## Shopping endpoint detayları

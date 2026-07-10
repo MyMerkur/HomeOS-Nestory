@@ -10,6 +10,7 @@ export type DashboardSummary = {
   medicineCount: number;
   assetCount: number;
   upcomingItems: InventoryItem[];
+  spending: { paidThisMonth: number; unpaidTotal: number };
 };
 
 type ApiEnvelope<T> = { success: boolean; data: T; message: string };

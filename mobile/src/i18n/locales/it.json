@@ -77,7 +77,9 @@
       "total": "Totale",
       "pantryItems": "Dispensa",
       "medicines": "Medicine",
-      "assets": "Beni"
+      "assets": "Beni",
+      "paidThisMonth": "Pagato questo mese",
+      "unpaidTotal": "Bollette non pagate"
     },
     "upcomingTitle": "Articoli in scadenza",
     "emptyUpcoming": "Nessun articolo con scadenza imminente.",
@@ -167,6 +169,18 @@
       "expiryNotFoundTitle": "Data non trovata",
       "expiryNotFoundMessage": "Impossibile riconoscere una data di scadenza nella foto, puoi inserirla manualmente.",
       "scanErrorMessage": "Si è verificato un errore durante la scansione, riprova."
+    },
+    "receiptScanButton": "Aggiungi dallo scontrino",
+    "receiptScan": {
+      "itemNameA11y": "Nome del prodotto",
+      "captureButton": "Fotografa lo scontrino",
+      "noItemsFoundMessage": "Nessun prodotto rilevato sullo scontrino.",
+      "scanErrorMessage": "Qualcosa è andato storto durante la scansione.",
+      "locationLabel": "Posizione",
+      "itemsLabel": "Articoli rilevati ({{count}})",
+      "submitButton": "Aggiungi {{count}} articoli",
+      "errorSaveAll": "Non è stato possibile salvare alcun articolo, riprova.",
+      "successMessage": "{{count}} articoli aggiunti."
     }
   },
   "shopping": {
@@ -421,6 +435,32 @@
       "submitEdit": "Aggiorna",
       "submitAdd": "Aggiungi",
       "errorSave": "Impossibile salvare la bolletta, riprova."
+    }
+  },
+  "errorBoundary": {
+    "title": "Qualcosa è andato storto",
+    "body": "Si è verificato un errore imprevisto. Puoi riprovare.",
+    "retryButton": "Riprova"
+  },
+  "welcomeTour": {
+    "skip": "Salta",
+    "next": "Avanti",
+    "getStarted": "Inizia",
+    "pantry": {
+      "title": "Digitalizza la tua dispensa",
+      "body": "Aggiungi i tuoi prodotti, tieni traccia delle date di scadenza e non sprecare più nulla."
+    },
+    "barcode": {
+      "title": "Scansiona per aggiungere all'istante",
+      "body": "Aggiungi prodotti in pochi secondi scansionando il codice a barre."
+    },
+    "family": {
+      "title": "Condividi con la tua famiglia",
+      "body": "Condividi la lista della spesa, le bollette e altro con i membri della tua famiglia."
+    },
+    "reminders": {
+      "title": "Non perdere nulla",
+      "body": "Resta sempre un passo avanti con i promemoria di scadenza, bollette e farmaci."
     }
   }
 }

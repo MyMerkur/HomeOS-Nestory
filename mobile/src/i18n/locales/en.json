@@ -77,7 +77,9 @@
       "total": "Total",
       "pantryItems": "Pantry",
       "medicines": "Medicines",
-      "assets": "Assets"
+      "assets": "Assets",
+      "paidThisMonth": "Paid this month",
+      "unpaidTotal": "Unpaid bills"
     },
     "upcomingTitle": "Upcoming items",
     "emptyUpcoming": "No items with an upcoming expiry date.",
@@ -167,6 +169,18 @@
       "expiryNotFoundTitle": "Date not found",
       "expiryNotFoundMessage": "Couldn't recognize an expiry date in the photo, you can enter it manually.",
       "scanErrorMessage": "Something went wrong while scanning, try again."
+    },
+    "receiptScanButton": "Add from Receipt",
+    "receiptScan": {
+      "itemNameA11y": "Product name",
+      "captureButton": "Take Receipt Photo",
+      "noItemsFoundMessage": "Couldn't detect any products on the receipt.",
+      "scanErrorMessage": "Something went wrong while scanning.",
+      "locationLabel": "Location",
+      "itemsLabel": "Detected items ({{count}})",
+      "submitButton": "Add {{count}} items",
+      "errorSaveAll": "Couldn't save any of the items, try again.",
+      "successMessage": "{{count}} items added."
     }
   },
   "shopping": {
@@ -421,6 +435,32 @@
       "submitEdit": "Update",
       "submitAdd": "Add",
       "errorSave": "Couldn't save bill, try again."
+    }
+  },
+  "errorBoundary": {
+    "title": "Something went wrong",
+    "body": "An unexpected error occurred. You can try again.",
+    "retryButton": "Try Again"
+  },
+  "welcomeTour": {
+    "skip": "Skip",
+    "next": "Next",
+    "getStarted": "Get Started",
+    "pantry": {
+      "title": "Digitize Your Pantry",
+      "body": "Add your products, track expiry dates, and never let anything go to waste."
+    },
+    "barcode": {
+      "title": "Scan to Add Instantly",
+      "body": "Add products in seconds by scanning their barcode."
+    },
+    "family": {
+      "title": "Share With Your Family",
+      "body": "Share your shopping list, bills, and more with the members of your home."
+    },
+    "reminders": {
+      "title": "Never Miss a Thing",
+      "body": "Stay a step ahead with expiry, bill, and medicine reminders."
     }
   }
 }

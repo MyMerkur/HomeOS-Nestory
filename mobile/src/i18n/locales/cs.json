@@ -77,7 +77,9 @@
       "total": "Celkem",
       "pantryItems": "Spíž",
       "medicines": "Léky",
-      "assets": "Majetek"
+      "assets": "Majetek",
+      "paidThisMonth": "Zaplaceno tento měsíc",
+      "unpaidTotal": "Nezaplacené účty"
     },
     "upcomingTitle": "Blížící se položky",
     "emptyUpcoming": "Žádné položky s blížícím se datem spotřeby.",
@@ -167,6 +169,18 @@
       "expiryNotFoundTitle": "Datum nenalezeno",
       "expiryNotFoundMessage": "Na fotografii se nepodařilo rozpoznat datum spotřeby, můžete jej zadat ručně.",
       "scanErrorMessage": "Při skenování došlo k chybě, zkus to znovu."
+    },
+    "receiptScanButton": "Přidat z účtenky",
+    "receiptScan": {
+      "itemNameA11y": "Název produktu",
+      "captureButton": "Vyfotit účtenku",
+      "noItemsFoundMessage": "Na účtence nebyly rozpoznány žádné produkty.",
+      "scanErrorMessage": "Při skenování se něco pokazilo.",
+      "locationLabel": "Umístění",
+      "itemsLabel": "Rozpoznané položky ({{count}})",
+      "submitButton": "Přidat {{count}} položek",
+      "errorSaveAll": "Nepodařilo se uložit žádnou položku, zkuste to znovu.",
+      "successMessage": "Přidáno {{count}} položek."
     }
   },
   "shopping": {
@@ -421,6 +435,32 @@
       "submitEdit": "Aktualizovat",
       "submitAdd": "Přidat",
       "errorSave": "Účet se nepodařilo uložit, zkus to znovu."
+    }
+  },
+  "errorBoundary": {
+    "title": "Něco se pokazilo",
+    "body": "Došlo k neočekávané chybě. Můžete to zkusit znovu.",
+    "retryButton": "Zkusit znovu"
+  },
+  "welcomeTour": {
+    "skip": "Přeskočit",
+    "next": "Další",
+    "getStarted": "Začít",
+    "pantry": {
+      "title": "Digitalizujte svou spíž",
+      "body": "Přidejte své produkty, sledujte data spotřeby a už nic nevyhazujte."
+    },
+    "barcode": {
+      "title": "Naskenujte a okamžitě přidejte",
+      "body": "Přidejte produkty za pár sekund naskenováním čárového kódu."
+    },
+    "family": {
+      "title": "Sdílejte s rodinou",
+      "body": "Sdílejte nákupní seznam, účty a další s členy vaší domácnosti."
+    },
+    "reminders": {
+      "title": "O nic nepřijdete",
+      "body": "Buďte vždy o krok napřed díky připomínkám o expiraci, účtech a lécích."
     }
   }
 }

@@ -5,6 +5,7 @@ import {
   setStoredRefreshToken,
 } from '../services/secureStorage';
 import { unregisterPushToken } from '../services/pushNotifications';
+import { setCrashReportingUserId } from '../services/crashReporting';
 import { refreshRequest, type AuthSession, type AuthUser } from '../modules/auth/services/authApi';
 
 type AuthState = {
@@ -23,12 +24,14 @@ export const useAuthStore = create<AuthState>((set) => ({
 
   setSession: async (session) => {
     await setStoredRefreshToken(session.refreshToken);
+    setCrashReportingUserId(session.user.id);
     set({ user: session.user, accessToken: session.accessToken });
   },
 
   clearSession: async () => {
     await unregisterPushToken();
     await clearStoredRefreshToken();
+    setCrashReportingUserId(null);
     set({ user: null, accessToken: null });
   },
 
@@ -43,6 +46,7 @@ export const useAuthStore = create<AuthState>((set) => ({
     try {
       const session = await refreshRequest(storedRefreshToken);
       await setStoredRefreshToken(session.refreshToken);
+      setCrashReportingUserId(session.user.id);
       set({ user: session.user, accessToken: session.accessToken, isBootstrapping: false });
     } catch {
       await clearStoredRefreshToken();

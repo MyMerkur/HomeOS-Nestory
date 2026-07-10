@@ -77,7 +77,9 @@
       "total": "Toplam",
       "pantryItems": "Dolapta",
       "medicines": "İlaç",
-      "assets": "Varlık"
+      "assets": "Varlık",
+      "paidThisMonth": "Bu ay ödenen",
+      "unpaidTotal": "Bekleyen fatura"
     },
     "upcomingTitle": "Yaklaşan ürünler",
     "emptyUpcoming": "Yaklaşan SKT'si olan ürün yok.",
@@ -167,6 +169,18 @@
       "expiryNotFoundTitle": "Tarih bulunamadı",
       "expiryNotFoundMessage": "Fotoğrafta bir SKT tarihi tanınamadı, elle girebilirsin.",
       "scanErrorMessage": "Tarama sırasında bir sorun oluştu, tekrar dene."
+    },
+    "receiptScanButton": "Fişten Ekle",
+    "receiptScan": {
+      "itemNameA11y": "Ürün adı",
+      "captureButton": "Fiş Fotoğrafı Çek",
+      "noItemsFoundMessage": "Fişte ürün tespit edilemedi.",
+      "scanErrorMessage": "Tarama sırasında bir şeyler ters gitti.",
+      "locationLabel": "Konum",
+      "itemsLabel": "Tespit edilen ürünler ({{count}})",
+      "submitButton": "{{count}} ürünü ekle",
+      "errorSaveAll": "Hiçbir ürün kaydedilemedi, tekrar deneyin.",
+      "successMessage": "{{count}} ürün eklendi."
     }
   },
   "shopping": {
@@ -421,6 +435,32 @@
       "submitEdit": "Güncelle",
       "submitAdd": "Ekle",
       "errorSave": "Fatura kaydedilemedi, tekrar dene."
+    }
+  },
+  "errorBoundary": {
+    "title": "Bir şeyler ters gitti",
+    "body": "Beklenmedik bir hata oluştu. Tekrar deneyebilirsiniz.",
+    "retryButton": "Tekrar Dene"
+  },
+  "welcomeTour": {
+    "skip": "Geç",
+    "next": "İleri",
+    "getStarted": "Başla",
+    "pantry": {
+      "title": "Dolabını Dijitalleştir",
+      "body": "Ürünlerini ekle, son kullanma tarihlerini takip et, hiçbir şeyi israf etme."
+    },
+    "barcode": {
+      "title": "Tara, Anında Ekle",
+      "body": "Barkodunu okutarak ürünlerini saniyeler içinde ekle."
+    },
+    "family": {
+      "title": "Ailenle Paylaş",
+      "body": "Alışveriş listeni, faturalarını ve daha fazlasını ev üyelerinle paylaş."
+    },
+    "reminders": {
+      "title": "Hiçbir Şeyi Kaçırma",
+      "body": "SKT, fatura ve ilaç hatırlatmalarıyla her zaman bir adım önde ol."
     }
   }
 }

@@ -1,5 +1,7 @@
+import { Types } from 'mongoose';
 import { InventoryItem } from '../models/InventoryItem';
 import { Asset } from '../models/Asset';
+import { Bill } from '../models/Bill';
 import { toSummary, type ItemSummary } from './inventoryService';
 
 type DashboardSummary = {
@@ -11,6 +13,7 @@ type DashboardSummary = {
   medicineCount: number;
   assetCount: number;
   upcomingItems: ItemSummary[];
+  spending: { paidThisMonth: number; unpaidTotal: number };
 };
 
 function endOfDay(daysFromNow: number): Date {
@@ -20,8 +23,28 @@ function endOfDay(daysFromNow: number): Date {
   return date;
 }
 
+function startOfCurrentMonth(): Date {
+  const now = new Date();
+  return new Date(now.getFullYear(), now.getMonth(), 1);
+}
+
+function startOfNextMonth(): Date {
+  const now = new Date();
+  return new Date(now.getFullYear(), now.getMonth() + 1, 1);
+}
+
+async function sumBillAmounts(match: Record<string, unknown>): Promise<number> {
+  const [result] = await Bill.aggregate<{ total: number }>([
+    { $match: match },
+    { $group: { _id: null, total: { $sum: '$amount' } } },
+  ]);
+  return result?.total ?? 0;
+}
+
 export async function getDashboard(homeId: string): Promise<DashboardSummary> {
   const activeFilter = { homeId, status: 'active' };
+
+  const homeObjectId = new Types.ObjectId(homeId);
 
   const [
     expiringToday,
@@ -31,6 +54,8 @@ export async function getDashboard(homeId: string): Promise<DashboardSummary> {
     medicineCount,
     assetCount,
     upcomingItems,
+    paidThisMonth,
+    unpaidTotal,
   ] = await Promise.all([
     InventoryItem.countDocuments({
       ...activeFilter,
@@ -50,6 +75,12 @@ export async function getDashboard(homeId: string): Promise<DashboardSummary> {
     InventoryItem.find({ ...activeFilter, expiryDate: { $exists: true, $ne: null } })
       .sort({ expiryDate: 1 })
       .limit(5),
+    sumBillAmounts({
+      homeId: homeObjectId,
+      status: 'paid',
+      paidAt: { $gte: startOfCurrentMonth(), $lt: startOfNextMonth() },
+    }),
+    sumBillAmounts({ homeId: homeObjectId, status: 'unpaid' }),
   ]);
 
   return {
@@ -61,5 +92,6 @@ export async function getDashboard(homeId: string): Promise<DashboardSummary> {
     medicineCount,
     assetCount,
     upcomingItems: upcomingItems.map(toSummary),
+    spending: { paidThisMonth, unpaidTotal },
   };
 }

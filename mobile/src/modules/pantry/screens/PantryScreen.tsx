@@ -168,7 +168,13 @@ export function PantryScreen({ navigation }: PantryStackScreenProps<'Pantry'>) {
         )}
       />
 
-      <View style={styles.barcodeButton}>
+      <View style={styles.quickActions}>
+        <Button
+          testID="receipt-scan-button"
+          label={t('pantry.receiptScanButton')}
+          onPress={() => navigation.navigate('ReceiptScan')}
+          variant="outline"
+        />
         <Button
           testID="quick-add-barcode-button"
           label={t('pantry.barcodeButton')}
@@ -208,10 +214,12 @@ function createStyles(colors: ThemeColors) {
     error: { color: colors.dangerDark },
     list: { paddingHorizontal: spacing.lg },
     rowSkeleton: { marginBottom: spacing.sm },
-    barcodeButton: {
+    quickActions: {
       position: 'absolute',
       right: spacing.lg,
       bottom: 88,
+      gap: spacing.sm,
+      alignItems: 'flex-end',
     },
   });
 }

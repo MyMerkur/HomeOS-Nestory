@@ -77,7 +77,9 @@
       "total": "Total",
       "pantryItems": "Garde-manger",
       "medicines": "Médicaments",
-      "assets": "Biens"
+      "assets": "Biens",
+      "paidThisMonth": "Payé ce mois-ci",
+      "unpaidTotal": "Factures impayées"
     },
     "upcomingTitle": "Articles à venir",
     "emptyUpcoming": "Aucun article avec une date de péremption proche.",
@@ -167,6 +169,18 @@
       "expiryNotFoundTitle": "Date introuvable",
       "expiryNotFoundMessage": "Impossible de reconnaître une date de péremption sur la photo, vous pouvez la saisir manuellement.",
       "scanErrorMessage": "Une erreur est survenue pendant la numérisation, réessaie."
+    },
+    "receiptScanButton": "Ajouter depuis le ticket",
+    "receiptScan": {
+      "itemNameA11y": "Nom du produit",
+      "captureButton": "Photographier le ticket",
+      "noItemsFoundMessage": "Aucun produit détecté sur le ticket.",
+      "scanErrorMessage": "Une erreur s'est produite lors du scan.",
+      "locationLabel": "Emplacement",
+      "itemsLabel": "Articles détectés ({{count}})",
+      "submitButton": "Ajouter {{count}} articles",
+      "errorSaveAll": "Aucun article n'a pu être enregistré, réessayez.",
+      "successMessage": "{{count}} articles ajoutés."
     }
   },
   "shopping": {
@@ -421,6 +435,32 @@
       "submitEdit": "Mettre à jour",
       "submitAdd": "Ajouter",
       "errorSave": "Impossible d'enregistrer la facture, réessaie."
+    }
+  },
+  "errorBoundary": {
+    "title": "Un problème est survenu",
+    "body": "Une erreur inattendue s'est produite. Vous pouvez réessayer.",
+    "retryButton": "Réessayer"
+  },
+  "welcomeTour": {
+    "skip": "Passer",
+    "next": "Suivant",
+    "getStarted": "Commencer",
+    "pantry": {
+      "title": "Numérisez votre garde-manger",
+      "body": "Ajoutez vos produits, suivez les dates de péremption et ne gaspillez plus rien."
+    },
+    "barcode": {
+      "title": "Scannez pour ajouter instantanément",
+      "body": "Ajoutez des produits en quelques secondes en scannant leur code-barres."
+    },
+    "family": {
+      "title": "Partagez avec votre famille",
+      "body": "Partagez votre liste de courses, vos factures et plus encore avec les membres de votre foyer."
+    },
+    "reminders": {
+      "title": "Ne manquez plus rien",
+      "body": "Gardez une longueur d'avance grâce aux rappels de péremption, de factures et de médicaments."
     }
   }
 }

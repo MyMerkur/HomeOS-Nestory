@@ -41,6 +41,7 @@ export type PantryStackParamList = {
       }
     | undefined;
   QuickAddItem: undefined;
+  ReceiptScan: undefined;
 };
 
 export type ShoppingStackParamList = {

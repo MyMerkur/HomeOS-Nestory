@@ -8,12 +8,22 @@ import { StatusBar } from 'react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { QueryProvider } from './src/app/providers/QueryProvider';
 import { NetworkProvider } from './src/app/providers/NetworkProvider';
+import { ErrorBoundary } from './src/app/providers/ErrorBoundary';
 import { RootNavigator } from './src/app/navigation/RootNavigator';
 import { LoadingScreen } from './src/app/screens/LoadingScreen';
 import { useAuthStore } from './src/store/useAuthStore';
 import { initI18n } from './src/i18n';
 import { ThemeProvider, useTheme } from './src/theme/ThemeContext';
 import { ToastProvider } from './src/ui/ToastProvider';
+import { initCrashReporting, recordError } from './src/services/crashReporting';
+
+initCrashReporting();
+
+const previousGlobalHandler = ErrorUtils.getGlobalHandler();
+ErrorUtils.setGlobalHandler((error, isFatal) => {
+  recordError(error, isFatal ? 'GlobalHandler: fatal' : 'GlobalHandler: non-fatal');
+  previousGlobalHandler(error, isFatal);
+});
 
 function AppContent() {
   const { resolvedMode } = useTheme();
@@ -49,7 +59,9 @@ function AppContent() {
 function App() {
   return (
     <ThemeProvider>
-      <AppContent />
+      <ErrorBoundary>
+        <AppContent />
+      </ErrorBoundary>
     </ThemeProvider>
   );
 }

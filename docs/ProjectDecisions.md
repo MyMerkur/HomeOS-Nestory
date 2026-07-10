@@ -1253,3 +1253,234 @@ navigasyon başlıkları da tema fontuna taşındı
   yerine geçmez (özellikle KVKK/GDPR uyumluluğu için); (4) `support@`/
   `privacy@nestoryhomekit.com` posta kutuları henüz CyberPanel'de
   oluşturulmadı — e-postalar şu an hiçbir yere düşmüyor.
+
+**Ek düzeltme (aynı gün)**: Bundle ID/applicationId değişikliği fark
+edilmeden `GoogleService-Info.plist`/`google-services.json`'ı eski ID
+(`org.reactjs.native.example.NestoryMobile` / `com.nestorymobile`) ile
+uyumsuz bıraktı — Android'de bu `google-services` Gradle eklentisinin
+build'i tamamen kırmasına yol açardı (eşleşen client bulunamıyor
+hatası), iOS'ta ise push/Firebase servislerinin sessizce bozuk
+çalışması riski vardı. Firebase Admin SDK service account'unun
+(zaten mevcut, `Firebase İlgili Dosyalar/`) Firebase Management API
+üzerinde yeterli yetkisi olduğu görüldü; Firebase CLI kurulu olmasa da
+`google-auth`+`requests` ile REST API'ye doğrudan istek atılarak
+`nestory-faf7f` projesine `com.nestoryhomekit.app` için yeni bir iOS
+app ve yeni bir Android app kaydı açıldı, güncel config dosyaları
+indirilip ilgili (gitignore'lu, repoya girmeyen) dosyaların yerine
+kondu. Eski bundle ID'li app kayıtları Firebase projesinde silinmedi
+(zararsız, ileride referans/rollback için durabilir). Gerçek cihazda
+(iPhone 11) yeni bundle ID ile build+install+launch doğrulandı, süreç
+çökmeden ayakta kaldı.
+
+**TestFlight'a ilk yükleme denemesi ve bilinen actool kusuru**: İlk
+archive+export'ta App Store Connect ITMS-90023 hatası alındı ("Missing
+required icon file... 167x167... 152x152... outside of an asset
+catalog"). Kök sebep iki katmanlı: (1) `AppIcon.appiconset/Contents.json`
+başlangıçta yalnızca `iphone`/`ios-marketing` idiom'larını içeriyordu,
+`ipad` hiç yoktu — 9 iPad slotu (20/29/40/76/83.5 pt, @1x/@2x) eklenip
+karşılık gelen PNG'ler üretildi. (2) Bu düzeltmeden sonra bile Xcode'un
+asset catalog compiler'ı (`actool`, Xcode 26.5) `83.5x83.5` (iPad Pro,
+167px) boyutunu derlenmiş `Assets.car`'a doğru gömüyor ama otomatik
+oluşturduğu `Info.plist`'in `CFBundleIcons~ipad.CFBundlePrimaryIcon.
+CFBundleIconFiles` listesine eklemeyi atlıyor, ve karşılık gelen gevşek
+(asset catalog dışı) `AppIcon83.5x83.5@2x~ipad.png` dosyasını bundle
+köküne çıkarmıyor — App Store Connect'in doğrulayıcısı tam olarak bunu
+kontrol ediyor. Kaynak `Info.plist`'e `CFBundleIcons`/`CFBundleIcons~ipad`
+elle eklenerek kalıcı çözüm denendi ama `actool` build sırasında bu
+anahtarları kendi (eksik) hesaplamasıyla **eziyor** — kaynakta kalıcı bir
+düzeltme yok. **Bilinen kısıtlama**: her yeni Release archive'ından sonra,
+export'tan önce, archive'in `.app` paketindeki `Info.plist`'e elle
+`AppIcon83.5x83.5` girdisi eklenip (`PlistBuddy -c "Add
+:CFBundleIcons~ipad:CFBundlePrimaryIcon:CFBundleIconFiles: string
+AppIcon83.5x83.5"`) eşlik eden `AppIcon83.5x83.5@2x~ipad.png` (167×167,
+`icon-ipad-83.5@2x.png`'den kopyalanabilir) bundle köküne elle
+kopyalanmalı, sonra export tekrar çalıştırılmalı. `xcodebuild -exportArchive`
+archive'i olduğu gibi yeniden imzaladığı için bu elle yapılan değişiklik
+export'a sağlıklı şekilde taşınıyor (kod imzası export sırasında yeniden
+hesaplanıyor, bozulmuyor).
+
+## Decision: Yayın sonrası iyileştirme turu — Crashlytics ile başlangıç
+
+- **Date**: 2026-07-10
+- **Status**: Accepted (devam ediyor — çok maddeli bir liste sırayla ele
+  alınıyor: crash reporting, onboarding, fiş OCR toplu ekleme, harcama
+  özeti, mağaza değerlendirme isteği, mağaza listesi cilası)
+- **Context**: Kullanıcı TestFlight'a başarıyla yükleme yaptıktan sonra
+  "bu proje için başka neler yapabiliriz" diye sordu; birlikte
+  önceliklendirilmiş bir liste çıkarıldı, kullanıcı hepsinin sırayla
+  ele alınmasını istedi. İlk madde: analytics kasıtlı kapalı
+  (`IS_ANALYTICS_ENABLED=false`, gizlilik tercihi) ama crash reporting
+  hiç yoktu — üretimde gerçek kullanıcıların yaşadığı çökmeler
+  görünmüyordu.
+- **Decision**: `@react-native-firebase/crashlytics` eklendi
+  (`^25.1.0`, mevcut `app`/`messaging` paketleriyle aynı versiyon).
+  `firebase.json`'da `crashlytics_disable_auto_disabler: true` set
+  edildi (RNFB'nin build script'i bu olmadan collection'ı otomatik
+  kapatıyor). Android'e `com.google.firebase.crashlytics` gradle
+  plugin'i eklendi. Yeni `crashReporting.ts` servisi: `initCrashReporting`
+  (yalnızca `!__DEV__`'de collection açık), `recordError` (context
+  breadcrumb + hata kaydı), `setCrashReportingUserId` (login/logout'ta
+  `useAuthStore`'dan çağrılıyor). `App.tsx`'e `ErrorUtils.setGlobalHandler`
+  ile global JS hata yakalayıcı eklendi (önceki handler'ı da çağırıyor,
+  RN'in kendi kırmızı ekranını bozmuyor). Yeni bir `ErrorBoundary`
+  class component'i (`app/providers/ErrorBoundary.tsx`) tüm uygulamayı
+  sarıyor — render hatalarını Crashlytics'e kaydedip beyaz/kırmızı ekran
+  yerine "Tekrar Dene" butonlu dostane bir ekran gösteriyor (8 dile
+  çevrildi, `errorBoundary.*` anahtarları, 347 anahtar/dil parite
+  korundu).
+- **Bulunan ve düzeltilen yan hatalar**: (1) `pod install` bağımlılık
+  grafiğini yeniden çözerken bir alt bağımlılık (ML Kit'in `MLKReporting`'i)
+  artık iOS 15.5 istiyordu ama proje `IPHONEOS_DEPLOYMENT_TARGET = 15.1`
+  idi (Podfile zaten `platform :ios, '15.5'` diyordu — ikisi arasında
+  önceden var olan ama tetiklenmemiş bir uyumsuzluktu); tüm
+  Debug/Release config'lerinde 15.5'e çekildi. (2) Bu düzeltmeden sonra
+  bile linker'da devasa "undefined symbols" hatası (`facebook::react::
+  DebugStringConvertible` vb. — Fabric/New Architecture ABI uyumsuzluğu)
+  alındı; kök sebep `Pods/`+`Podfile.lock`+DerivedData'nın yeni pod
+  eklenince tutarsız bir ara duruma düşmesiydi — `Pods/`, `Podfile.lock`
+  ve DerivedData tamamen silinip sıfırdan `pod install` ile çözüldü.
+  (3) Android `assembleDebug` ilk denemede `:app:packageDebug` adımında
+  açıklanamayan bir hatayla başarısız oldu, ikinci denemede (hiçbir
+  değişiklik yapılmadan) sorunsuz geçti — geçici bir kaynak/kilit
+  çakışması olarak değerlendirildi, kod tarafında bir düzeltme
+  gerekmedi.
+- **Consequences**: Mobile 48 suite / 214 test yeşil, lint+tsc temiz.
+  Gerçek cihazda (iPhone 11) yeni deployment target + Crashlytics ile
+  build+install+launch doğrulandı, süreç ayakta kaldı. Android
+  `assembleDebug` yeşil (fiziksel cihazda kurulum test edilmedi, bağlı
+  Android cihaz yoktu). Bilinen açık kalem: Crashlytics dashboard'da
+  gerçek bir crash event'i henüz doğrulanmadı (yalnızca SDK
+  entegrasyonu ve `recordError`/`ErrorBoundary` akışı test edildi) —
+  ilk gerçek çökme/production kullanımıyla birlikte Firebase Console'da
+  görünürlüğü teyit edilmeli.
+
+**İkinci madde: İlk açılış onboarding turu**. 4 slaytlık kaydırmalı bir
+tanıtım (`OnboardingScreen.tsx`, yeni native bağımlılık yok — düz
+`FlatList` + `pagingEnabled`, `react-native-pager-view` gibi ekstra bir
+pod riske edilmedi) — kiler/barkod/aile paylaşımı/hatırlatmalar
+konularını anlatıyor. `AsyncStorage`'da `homeos.onboardingSeen` bayrağı
+(`onboardingStorage.ts`, mevcut `notificationPromptStorage.ts` deseni
+birebir kopyalandı) ile yalnızca bir kez gösteriliyor; `RootNavigator`'da
+`AuthenticatedNavigator` içine, ev kurulduktan/katılındıktan sonra ama
+`MainNavigator`'dan önce eklendi. **Önemli bir hata bulundu ve
+düzeltildi**: i18n içeriğini eklerken kullanılan Python script'i
+`data["onboarding"] = texts` ile yazdı — ama `"onboarding"` anahtarı
+zaten `HomeSetupChoiceScreen`/`CreateHomeScreen`/`JoinHomeScreen`
+tarafından kullanılıyordu (ev oluşturma/katılma ekranları), script bu
+mevcut içeriği tamamen **ezdi**. `git checkout --` ile 8 dil dosyası da
+geri alınıp (bu arada henüz commit edilmemiş `errorBoundary` anahtarları
+da yanlışlıkla geri alındı, o da yeniden eklendi), yeni tur içeriği
+çakışmayan `welcomeTour` anahtarı altına taşındı. **Öğrenilen ders**: i18n
+dosyalarına toplu script ile yeni bir üst-seviye anahtar eklerken, o
+anahtarın zaten kullanımda olup olmadığı `grep -rn "t('anahtarAdı\."`
+ile önceden kontrol edilmeli.
+- **Consequences**: Mobile 50 suite / 219 test yeşil (yeni: `onboardingStorage.test.ts`,
+  `OnboardingScreen.test.tsx`), lint+tsc temiz, 358 anahtar/dil parite
+  korundu. Gerçek cihazda build+install+launch doğrulandı. Bilinen açık
+  kalem: "ilk kez görülüyor" davranışı gerçek bir temiz kurulumla değil,
+  kod okumasıyla doğrulandı — kullanıcı isterse `AsyncStorage`'ı
+  temizleyip (ya da uygulamayı silip) manuel olarak da test edebilir.
+
+**Üçüncü madde: Fiş fotoğrafından toplu ürün ekleme**. Yeni native
+bağımlılık yok — zaten kurulu `@react-native-ml-kit/text-recognition`
+(SKT OCR'da kullanılan aynı kütüphane) ve `cameraCapture.ts` yeniden
+kullanıldı. Yeni `receiptParser.ts`: OCR'dan gelen ham metni satırlara
+böler, sezgisel olarak gürültüyü eler (fiyat/sembol-only satırlar,
+"TOPLAM"/"KDV"/"NAKİT" gibi fiş bilgilendirme satırları, çok kısa
+satırlar, tekrarlar) — kesin bir ayrıştırıcı değil, kalan satırlar
+`ReceiptScanScreen`'de bir onay listesi olarak gösteriliyor (her satır
+işaretlenip/işareti kaldırılıp adı düzenlenebiliyor), kullanıcı bir
+konum seçip onayladıktan sonra seçili satırlar `createItem` ile tek tek
+(kategori: Other, birim: piece, adet: 1 varsayılanıyla) oluşturuluyor —
+backend'de yeni bir bulk-create endpoint'i eklenmedi, kapsam bilerek
+küçük tutuldu. `PantryScreen`'e barkod butonunun yanına "Fişten Ekle"
+butonu eklendi. **Bulunan hata**: gürültü filtresindeki regex `/i`
+bayrağı Türkçe büyük "İ" harfini doğru küçültmüyordu (bilinen "Turkish I
+problem" — `"İ".toLowerCase()` locale'siz ortamda `"i̇"` üretiyor, düz
+`"i"` değil), bu yüzden "TARİH"/"NAKİT" gibi satırlar süzülmeden
+kalıyordu; `toLocaleLowerCase('tr-TR')` ile normalize edip pattern'i
+lowercase-only yaparak düzeltildi.
+- **Consequences**: Mobile 52 suite / 231 test yeşil (yeni:
+  `receiptParser.test.ts` 7 test, `ReceiptScanScreen.test.tsx` 5 test),
+  lint+tsc temiz, 368 anahtar/dil parite korundu. Gerçek cihazda
+  build+install doğrulandı (launch adımı cihaz ekranı kilitli olduğu
+  için atlandı — kod kaynaklı değil). Bilinen açık kalem: satır ayrıştırma
+  sezgisel/kesin değil, özellikle Türkiye dışı fiş formatlarında veya
+  çok satırlı ürün adlarında (fiyat aynı satırda değilse) yanlış
+  pozitif/negatif verebilir — bu yüzden tasarım gereği kullanıcı
+  eklemeden önce her satırı gözden geçirip düzenleyebiliyor.
+
+**Dördüncü madde: Harcama özeti**. `ShoppingItem` şemasında hiç fiyat
+alanı olmadığı görüldü (ürünler yalnızca ad/miktar/kategori/durum
+taşıyor) — bu yüzden "fatura + alışveriş" birleşik özeti yerine, mevcut
+veriyle dürüstçe karşılanabilecek bir **yalnızca fatura** özetine
+karar verildi: `dashboardService.getDashboard`'a `spending: {
+paidThisMonth, unpaidTotal }` eklendi (MongoDB `$group`/`$sum`
+aggregation, bu projede ilk `.aggregate()` kullanımı — `homeId` diğer
+Mongoose sorgularının aksine aggregate pipeline'da otomatik cast
+edilmediği için elle `new Types.ObjectId(homeId)`'ye çevrildi).
+Dashboard ekranına üçüncü bir özet satırı eklendi ("Bu ay ödenen" /
+"Bekleyen fatura", `bill.amount.toLocaleString(i18n.language) + ' ₺'`
+deseni `BillsScreen`'den birebir alındı). Backend prod sunucusuna
+(api.nestoryhomekit.com) yeniden build+deploy edildi ve `/api/health`
+ile doğrulandı.
+- **Consequences**: Server 20 suite / 125 test yeşil (yeni: 2 test
+  `dashboardService.test.ts`'e eklendi), mobile 52 suite / 231 test
+  yeşil, lint+tsc her iki tarafta da temiz, 370 anahtar/dil parite
+  korundu. Gerçek cihaz testi bu turda da atlandı (ekran kilitli) —
+  kod tarafı native değişiklik içermediği için düşük risk olarak
+  değerlendirildi. Bilinen kapsam dışı bırakma: alışveriş listesi
+  harcamaya dahil değil (şemada fiyat yok); ileride gerçekten
+  istenirse `ShoppingItem`'a opsiyonel bir `price` alanı eklenmesi
+  gerekir.
+
+**Beşinci madde: Mağaza değerlendirme isteği**. `react-native-in-app-review`
+paketi eklendi (iOS'ta `SKStoreReviewController`, Android'de Play Core
+In-App Review API — iki platformda da gerçek uygulama-içi diyalog,
+mağazaya yönlendiren bir deep link değil; paketin kendisi hiçbir
+transitive bağımlılık taşımıyor, bu yüzden Crashlytics'te yaşanan
+deployment-target/ABI sorunları tekrarlanmadı). Yeni `storeReview.ts` +
+`storeReviewStorage.ts`: `AsyncStorage`'da açılış sayacı tutuluyor,
+3. açılışta (ve yalnızca bir kez, `hasRequestedReview` bayrağı ile)
+`InAppReview.RequestInAppReview()` çağrılıyor — hem platformların kendi
+kota/sıklık kısıtlamalarına güveniliyor hem de kendi tarafımızda
+"birden fazla sorma" önleniyor. `RootNavigator`'daki mevcut
+`NotificationSync` bileşenine (zaten push kaydı için "uygulama tam
+açıldı" anını temsil eden tek noktaya) ikinci bir `useEffect` olarak
+eklendi — yeni bir global effect noktası icat etmek yerine var olan
+deseni kullanmayı tercih ettim. Hata durumunda (native çağrı
+başarısız/mevcut değil) sessizce `recordError`'a düşüyor, kullanıcı
+akışını hiçbir şekilde kesmiyor.
+- **Consequences**: Mobile 54 suite / 240 test yeşil (yeni:
+  `storeReview.test.ts` 5 test, `storeReviewStorage.test.ts` 4 test),
+  lint+tsc temiz. Android `assembleDebug` yeşil. Gerçek cihazda
+  build+install doğrulandı (launch adımı yine ekran kilidi yüzünden
+  atlandı — art arda üçüncü kez aynı harici sebep, kod kaynaklı değil).
+
+**Altıncı madde: Mağaza ekran görüntüleri + metin cilası**. Mağaza metni
+(`docs/legal/StoreListing.md`) tamamen yenilendi: subtitle, promotional
+text, güncel özellik listesi (fatura/ilaç/varlık/fiş-OCR dahil), App
+Store'da kullanılan gerçek isim ("Kilerim - Ev Envanteri") ile cihazdaki
+görünen adın ("Nestory") farkı netleştirildi. Ekran görüntüleri için:
+gerçekçi Türkçe demo veri üreten bir seed script'i (`seed_demo.mjs`,
+local dev API'ye karşı) yazılıp çalıştırıldı (kiler ürünleri, ilaç,
+ödenmiş/bekleyen faturalar, varlıklar). Uygulama App Store ekran
+görüntüsü boyutundaki bir simülatörde (iPhone 17 Pro Max, 1320×2868)
+derlenip başlatıldı. **Sınır**: bu ortamda gerçek dokunma/gezinme
+otomasyonu (Detox/XCUITest gibi bir çerçeve kurulu değil, macOS'un
+Accessibility izni de terminale verilmemiş — bu izin yalnızca kullanıcı
+tarafından GUI'den onaylanabilir) yapılamadı, bu yüzden ekranlar arası
+gezip her ekranı tek tek yakalamak mümkün olmadı. Simülatör zaten
+kullanıcının kendi eski test hesabıyla (Keychain'de kalan bir oturum)
+otomatik açılmış durumda göründü — bu, benim seed ettiğim hesap değil.
+Dashboard ekranının bir örneği yakalanıp masaüstüne kaydedildi
+(`~/Desktop/nestory-screenshot-dashboard-sample.png`); kalan ekranlar
+(Dolap, Faturalar, İlaçlar, Tarifler vb.) için kullanıcının simülatörde
+elle gezip Cmd+S ile (ya da `xcrun simctl io booted screenshot`)
+yakalaması gerekiyor.
+- **Consequences**: Mağaza metni yayına hazır (kopyala-yapıştır). Demo
+  hesap bilgileri kullanıcıya iletildi (gerçekçi Türkçe veri isteyen
+  taraflı çekimler için). Ekran görüntüsü üretimi tam otomatikleştirilemedi
+  — bu, projeye kod değişikliği olarak yansımadı (yalnızca dokümantasyon +
+  yardımcı script), gelecekte gerçek UI otomasyonu istenirse Detox veya
+  Maestro kurulumu ayrı bir iş kalemi olarak değerlendirilmeli.

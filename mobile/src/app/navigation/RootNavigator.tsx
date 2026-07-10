@@ -2,10 +2,12 @@ import { DarkTheme, DefaultTheme, NavigationContainer } from '@react-navigation/
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { IconChefHat, IconFridge, IconHome2, IconShoppingCart } from '@tabler/icons-react-native';
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { typography, type ThemeColors } from '../../theme/theme';
 import { useTheme } from '../../theme/ThemeContext';
 import { LoadingScreen } from '../screens/LoadingScreen';
+import { OnboardingScreen } from '../screens/OnboardingScreen';
+import { hasSeenOnboarding, markOnboardingSeen } from '../../services/onboardingStorage';
 import { useAuthStore } from '../../store/useAuthStore';
 import { useHomeStore } from '../../store/useHomeStore';
 import { LoginScreen } from '../../modules/auth/screens/LoginScreen';
@@ -28,11 +30,13 @@ import { TermsScreen } from '../../modules/settings/screens/TermsScreen';
 import { PantryScreen } from '../../modules/pantry/screens/PantryScreen';
 import { ItemFormScreen } from '../../modules/pantry/screens/ItemFormScreen';
 import { QuickAddItemScreen } from '../../modules/pantry/screens/QuickAddItemScreen';
+import { ReceiptScanScreen } from '../../modules/pantry/screens/ReceiptScanScreen';
 import { ShoppingScreen } from '../../modules/shopping/screens/ShoppingScreen';
 import { RecipesScreen } from '../../modules/recipes/screens/RecipesScreen';
 import { RecipeDetailScreen } from '../../modules/recipes/screens/RecipeDetailScreen';
 import { useNotificationSync } from '../../modules/pantry/hooks/useNotificationSync';
 import { registerForPushNotifications, subscribeToForegroundMessages } from '../../services/pushNotifications';
+import { maybeRequestReview } from '../../services/storeReview';
 import type {
   AuthStackParamList,
   DashboardStackParamList,
@@ -138,6 +142,11 @@ function PantryTabNavigator() {
         component={QuickAddItemScreen}
         options={{ title: 'Barkodla Hızlı Ekle' }}
       />
+      <PantryStack.Screen
+        name="ReceiptScan"
+        component={ReceiptScanScreen}
+        options={{ title: 'Fişten Ekle' }}
+      />
     </PantryStack.Navigator>
   );
 }
@@ -167,6 +176,10 @@ function NotificationSync() {
   useEffect(() => {
     registerForPushNotifications();
     return subscribeToForegroundMessages();
+  }, []);
+
+  useEffect(() => {
+    maybeRequestReview();
   }, []);
 
   return null;
@@ -233,6 +246,7 @@ function AuthenticatedNavigator() {
   const { data: homes, isLoading } = useHomesQuery();
   const selectedHomeId = useHomeStore((state) => state.selectedHomeId);
   const setSelectedHomeId = useHomeStore((state) => state.setSelectedHomeId);
+  const [onboardingStatus, setOnboardingStatus] = useState<'checking' | 'pending' | 'done'>('checking');
 
   useEffect(() => {
     if (!selectedHomeId && homes && homes.length > 0) {
@@ -240,12 +254,25 @@ function AuthenticatedNavigator() {
     }
   }, [homes, selectedHomeId, setSelectedHomeId]);
 
-  if (isLoading) {
+  useEffect(() => {
+    hasSeenOnboarding().then((seen) => setOnboardingStatus(seen ? 'done' : 'pending'));
+  }, []);
+
+  const handleOnboardingDone = () => {
+    markOnboardingSeen();
+    setOnboardingStatus('done');
+  };
+
+  if (isLoading || onboardingStatus === 'checking') {
     return <LoadingScreen />;
   }
 
   if (!homes || homes.length === 0) {
     return <HomeSetupNavigator />;
+  }
+
+  if (onboardingStatus === 'pending') {
+    return <OnboardingScreen onDone={handleOnboardingDone} />;
   }
 
   return <MainNavigator />;

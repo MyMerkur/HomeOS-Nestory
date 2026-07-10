@@ -77,7 +77,9 @@
       "total": "Gesamt",
       "pantryItems": "Vorrat",
       "medicines": "Medikamente",
-      "assets": "Gegenstände"
+      "assets": "Gegenstände",
+      "paidThisMonth": "Diesen Monat bezahlt",
+      "unpaidTotal": "Offene Rechnungen"
     },
     "upcomingTitle": "Bald ablaufende Artikel",
     "emptyUpcoming": "Keine Artikel mit bevorstehendem Ablaufdatum.",
@@ -167,6 +169,18 @@
       "expiryNotFoundTitle": "Datum nicht gefunden",
       "expiryNotFoundMessage": "Auf dem Foto konnte kein Ablaufdatum erkannt werden, Sie können es manuell eingeben.",
       "scanErrorMessage": "Beim Scannen ist ein Fehler aufgetreten, versuche es erneut."
+    },
+    "receiptScanButton": "Vom Kassenbon hinzufügen",
+    "receiptScan": {
+      "itemNameA11y": "Produktname",
+      "captureButton": "Kassenbon fotografieren",
+      "noItemsFoundMessage": "Auf dem Kassenbon konnten keine Produkte erkannt werden.",
+      "scanErrorMessage": "Beim Scannen ist etwas schiefgelaufen.",
+      "locationLabel": "Ort",
+      "itemsLabel": "Erkannte Artikel ({{count}})",
+      "submitButton": "{{count}} Artikel hinzufügen",
+      "errorSaveAll": "Es konnten keine Artikel gespeichert werden, versuchen Sie es erneut.",
+      "successMessage": "{{count}} Artikel hinzugefügt."
     }
   },
   "shopping": {
@@ -421,6 +435,32 @@
       "submitEdit": "Aktualisieren",
       "submitAdd": "Hinzufügen",
       "errorSave": "Rechnung konnte nicht gespeichert werden, versuche es erneut."
+    }
+  },
+  "errorBoundary": {
+    "title": "Etwas ist schiefgelaufen",
+    "body": "Ein unerwarteter Fehler ist aufgetreten. Sie können es erneut versuchen.",
+    "retryButton": "Erneut versuchen"
+  },
+  "welcomeTour": {
+    "skip": "Überspringen",
+    "next": "Weiter",
+    "getStarted": "Loslegen",
+    "pantry": {
+      "title": "Digitalisiere deine Vorratskammer",
+      "body": "Füge deine Produkte hinzu, verfolge Verfallsdaten und verschwende nie wieder etwas."
+    },
+    "barcode": {
+      "title": "Scannen und sofort hinzufügen",
+      "body": "Füge Produkte in Sekunden hinzu, indem du den Barcode scannst."
+    },
+    "family": {
+      "title": "Teile mit deiner Familie",
+      "body": "Teile deine Einkaufsliste, Rechnungen und mehr mit den Mitgliedern deines Haushalts."
+    },
+    "reminders": {
+      "title": "Verpasse nichts mehr",
+      "body": "Bleibe mit Erinnerungen zu Verfallsdaten, Rechnungen und Medikamenten immer einen Schritt voraus."
     }
   }
 }
