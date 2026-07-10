@@ -181,6 +181,11 @@
       "submitButton": "Add {{count}} items",
       "errorSaveAll": "Couldn't save any of the items, try again.",
       "successMessage": "{{count}} items added."
+    },
+    "identifyPhotoButton": "Identify by Photo",
+    "identifyPhoto": {
+      "notFoundMessage": "Couldn't recognize the product — you can add it manually.",
+      "errorMessage": "Something went wrong while identifying, try again."
     }
   },
   "shopping": {

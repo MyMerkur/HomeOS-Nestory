@@ -89,6 +89,32 @@ export async function lookupProductByBarcode(
   return data.data.product;
 }
 
+export type ProductPhotoResult = {
+  name: string;
+  category: Category | null;
+};
+
+function buildPhotoFormData(uri: string): FormData {
+  const filename = uri.split('/').pop() ?? 'photo.jpg';
+  const extension = filename.split('.').pop()?.toLowerCase();
+  const type = extension === 'png' ? 'image/png' : 'image/jpeg';
+
+  const formData = new FormData();
+  formData.append('file', { uri, name: filename, type } as unknown as Blob);
+  return formData;
+}
+
+export async function identifyProductPhoto(
+  homeId: string,
+  uri: string,
+): Promise<ProductPhotoResult | null> {
+  const { data } = await apiClient.post<ApiEnvelope<{ product: ProductPhotoResult | null }>>(
+    `/homes/${homeId}/items/identify-photo`,
+    buildPhotoFormData(uri),
+  );
+  return data.data.product;
+}
+
 export type ItemInput = {
   name: string;
   locationId: string;

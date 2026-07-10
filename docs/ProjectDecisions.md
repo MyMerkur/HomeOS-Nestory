@@ -1544,3 +1544,53 @@ yakalaması gerekiyor.
   tarif görünür. Mobile/server tam test paketleri yeşil (mobile
   243/243, server 126/126), i18n 8 dilde 380/380 anahtar paritesi
   korundu.
+
+## Fotoğrafla ürün tanıma (barkodsuz ürünler için)
+
+- **Context**: Kullanıcı, barkodu olmayan taze ürünlerin (domates, soğan
+  vb.) barkod taramayla eklenemediğini fark etti ve fotoğraf çekip
+  ürünü otomatik tanıyan bir alternatif istedi. En ucuz görsel tanıma
+  API'si araştırıldı: **Google Gemini Flash-Lite** — Google Cloud
+  Vision Label Detection'dan (~$1.50/1000 görsel) ve GPT-4o-mini'den
+  (~$0.15/1M token) daha ucuz/rekabetçi. **Not**: ilk araştırmada
+  bulunan `gemini-2.5-flash-lite` fiyatı ($0.10/1M girdi, $0.40/1M
+  çıktı) baz alınmıştı, ama kullanıcının API anahtarıyla gerçek
+  entegrasyon test edilirken bu modelin **yeni anahtarlar için
+  kullanımdan kaldırıldığı** (404 "no longer available to new users")
+  görüldü. Güncel model `gemini-3.1-flash-lite` (`gemini-flash-lite-latest`
+  stabil alias'ı üzerinden çağrılıyor, ileride tekrar aynı 404'e
+  düşmemek için) — gerçek fiyatı $0.25/1M girdi, $1.50/1M çıktı token.
+  Tarama başına maliyet ≈ **$0.0004** (görsel ~1300 token + kısa JSON
+  cevap ~50 token) — ilk tahminden ~2.5x yüksek ama yine de erken
+  aşamadaki bir uygulama için aylık maliyet pratikte birkaç doların
+  altında (ör. 5.000 tarama/ay ≈ $2, 10.000 tarama/ay ≈ $4).
+- **Decision**: Barkod-arama akışıyla (`productLookupService.ts`) aynı
+  desende yeni bir `productPhotoService.ts` eklendi:
+  - `GEMINI_API_KEY` opsiyonel env değişkeni (`FIREBASE_SERVICE_ACCOUNT`
+    ile aynı "yapılandırılmadıysa no-op" deseni) — key yoksa özellik
+    sessizce devre dışı kalır, hata fırlatmaz.
+  - Gemini'ye `generationConfig.responseSchema` ile katı JSON şeması
+    zorlanıyor (`{name, category, confident}`), `category` mevcut
+    `CATEGORIES` enum'una kısıtlanmış. `confident: false` dönerse veya
+    ürün adı boşsa `null` dönülüyor (belirsiz/bulanık fotoğraflarda
+    kullanıcıyı yanlış yönlendirmemek için).
+  - Fotoğraf **kalıcı olarak saklanmıyor**: yeni bir bellek-tabanlı
+    (disk yerine `multer.memoryStorage()`) middleware
+    (`uploadSingleImageToMemory`) eklendi — mevcut `uploadSingleImage`
+    (fatura/garanti belgeleri gibi kalıcı dosyalar için) disk'e yazıyordu,
+    burada buna gerek yok, fotoğraf sadece Gemini'ye gönderilip atılıyor.
+  - Yeni endpoint: `POST /homes/:homeId/items/identify-photo`
+    (multipart, `member` yetkisi gerektiriyor).
+  - Mobilde `PantryScreen`'e üçüncü hızlı eylem butonu eklendi
+    ("Fotoğrafla Tanı"), mevcut `captureImage()` servisiyle fotoğraf
+    çekilip sonuç `ItemForm`'a `initialName`/`initialCategory` olarak
+    aktarılıyor — barkod-bulundu akışıyla birebir aynı desen, kullanıcı
+    kaydetmeden önce her zaman gözden geçirip düzenleyebiliyor.
+- **Consequences**: Kullanıcı kendi Gemini API anahtarını verdi, yerel
+  `.env`'e eklendi (git'e commit edilmiyor, `.gitignore`'da) ve gerçek
+  bir domates fotoğrafıyla uçtan uca test edildi — doğru şekilde
+  "Domates" / "Vegetable" olarak tanındı. **VPS `.env`'ine henüz
+  eklenmedi** — production'da özellik aktif olması için VPS'e SSH ile
+  bağlanıp `GEMINI_API_KEY` eklenmesi ve `pm2 restart nestory-api`
+  gerekiyor. Server 133/133, mobile 247/247 test yeşil; i18n 8 dilde
+  383/383 anahtar paritesi korundu.

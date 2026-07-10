@@ -181,6 +181,11 @@
       "submitButton": "{{count}} ürünü ekle",
       "errorSaveAll": "Hiçbir ürün kaydedilemedi, tekrar deneyin.",
       "successMessage": "{{count}} ürün eklendi."
+    },
+    "identifyPhotoButton": "Fotoğrafla Tanı",
+    "identifyPhoto": {
+      "notFoundMessage": "Üründen emin olamadım, elle ekleyebilirsin.",
+      "errorMessage": "Tanıma sırasında bir sorun oluştu, tekrar dene."
     }
   },
   "shopping": {

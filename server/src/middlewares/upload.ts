@@ -41,3 +41,25 @@ export function uploadSingleImage(fieldName: string) {
     });
   };
 }
+
+// In-memory (not persisted to disk) — used for photos that are only needed
+// transiently, e.g. sending to an external identification API.
+const uploadImageToMemory = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: MAX_FILE_SIZE },
+  fileFilter: imageOnlyFilter,
+});
+
+export function uploadSingleImageToMemory(fieldName: string) {
+  const middleware = uploadImageToMemory.single(fieldName);
+  return (req: Request, res: Response, next: NextFunction) => {
+    middleware(req, res, (err: unknown) => {
+      if (err) {
+        const message = err instanceof Error ? err.message : 'Upload failed';
+        next(new AppError(message, 400, 'UPLOAD_ERROR'));
+        return;
+      }
+      next();
+    });
+  };
+}

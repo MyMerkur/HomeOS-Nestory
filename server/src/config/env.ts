@@ -16,6 +16,9 @@ const envSchema = z.object({
   // Firebase Admin SDK service account JSON (as a single-line string). Optional —
   // until it's provided, push notifications are a no-op (see pushService.ts).
   FIREBASE_SERVICE_ACCOUNT: z.string().optional(),
+  // Google Gemini API key for photo-based product identification. Optional —
+  // until it's provided, photo identification is a no-op (see productPhotoService.ts).
+  GEMINI_API_KEY: z.string().optional(),
 });
 
 export const env = envSchema.parse(process.env);

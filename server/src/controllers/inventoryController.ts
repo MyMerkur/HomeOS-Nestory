@@ -1,6 +1,8 @@
 import type { Request, Response } from 'express';
 import * as inventoryService from '../services/inventoryService';
 import { lookupProductByBarcode } from '../services/productLookupService';
+import { identifyProductFromPhoto } from '../services/productPhotoService';
+import { AppError } from '../middlewares/errorHandler';
 import { sendSuccess } from '../utils/apiResponse';
 import type {
   CreateItemInput,
@@ -28,6 +30,14 @@ export async function createItemHandler(req: Request, res: Response) {
 export async function lookupProductByBarcodeHandler(req: Request, res: Response) {
   const product = await lookupProductByBarcode(req.params.barcode);
   sendSuccess(res, { product }, 'Product lookup completed');
+}
+
+export async function identifyProductPhotoHandler(req: Request, res: Response) {
+  if (!req.file) {
+    throw new AppError('Photo file is required', 400, 'PHOTO_REQUIRED');
+  }
+  const product = await identifyProductFromPhoto(req.file.buffer, req.file.mimetype);
+  sendSuccess(res, { product }, 'Product photo lookup completed');
 }
 
 export async function getItemHandler(req: Request, res: Response) {

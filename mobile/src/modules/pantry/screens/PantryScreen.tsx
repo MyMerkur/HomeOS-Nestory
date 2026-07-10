@@ -11,8 +11,10 @@ import { EmptyState } from '../../../ui/EmptyState';
 import { FAB } from '../../../ui/FAB';
 import { Skeleton } from '../../../ui/Skeleton';
 import { TextField } from '../../../ui/TextField';
+import { useToast } from '../../../ui/ToastProvider';
 import { spacing, type ThemeColors } from '../../../theme/theme';
 import { useTheme } from '../../../theme/ThemeContext';
+import { captureImage } from '../../../services/cameraCapture';
 import { useLocationsQuery } from '../hooks/useLocationsQuery';
 import { INVENTORY_ITEMS_QUERY_KEY, useInventoryItemsQuery } from '../hooks/useInventoryItemsQuery';
 import { SHOPPING_ITEMS_QUERY_KEY } from '../../shopping/hooks/useShoppingItemsQuery';
@@ -21,6 +23,7 @@ import {
   consumeItem,
   discardItem,
   freezeItem,
+  identifyProductPhoto,
   type InventoryItem,
 } from '../services/pantryApi';
 import type { PantryStackScreenProps } from '../../../app/navigation/types';
@@ -50,12 +53,14 @@ function PantrySkeleton({ styles }: { styles: ReturnType<typeof createStyles> })
 
 export function PantryScreen({ navigation }: PantryStackScreenProps<'Pantry'>) {
   const { t } = useTranslation();
+  const { showToast } = useToast();
   const { colors } = useTheme();
   const styles = useMemo(() => createStyles(colors), [colors]);
   const homeId = useHomeStore((state) => state.selectedHomeId) as string;
   const queryClient = useQueryClient();
   const [selectedLocationId, setSelectedLocationId] = useState<string | null>(ALL_LOCATIONS);
   const [search, setSearch] = useState('');
+  const [isIdentifyingPhoto, setIsIdentifyingPhoto] = useState(false);
 
   const { data: locations } = useLocationsQuery();
   const {
@@ -102,6 +107,29 @@ export function PantryScreen({ navigation }: PantryStackScreenProps<'Pantry'>) {
       },
       { text: t('pantry.actions.cancel'), style: 'cancel' },
     ]);
+  };
+
+  const handleIdentifyPhoto = async () => {
+    setIsIdentifyingPhoto(true);
+    try {
+      const uri = await captureImage();
+      if (!uri) return;
+
+      const product = await identifyProductPhoto(homeId, uri);
+      if (!product) {
+        showToast({ message: t('pantry.identifyPhoto.notFoundMessage'), variant: 'info' });
+        return;
+      }
+
+      navigation.navigate('ItemForm', {
+        initialName: product.name,
+        initialCategory: product.category ?? undefined,
+      });
+    } catch {
+      showToast({ message: t('pantry.identifyPhoto.errorMessage'), variant: 'error' });
+    } finally {
+      setIsIdentifyingPhoto(false);
+    }
   };
 
   if (isLoading) {
@@ -169,6 +197,13 @@ export function PantryScreen({ navigation }: PantryStackScreenProps<'Pantry'>) {
       />
 
       <View style={styles.quickActions}>
+        <Button
+          testID="identify-photo-button"
+          label={t('pantry.identifyPhotoButton')}
+          onPress={handleIdentifyPhoto}
+          loading={isIdentifyingPhoto}
+          variant="outline"
+        />
         <Button
           testID="receipt-scan-button"
           label={t('pantry.receiptScanButton')}

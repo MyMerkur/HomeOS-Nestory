@@ -3,6 +3,7 @@ import {
   createItemHandler,
   deleteItemHandler,
   getItemHandler,
+  identifyProductPhotoHandler,
   listItemsHandler,
   lookupProductByBarcodeHandler,
   updateItemHandler,
@@ -15,6 +16,7 @@ import {
   takeDoseHandler,
 } from '../controllers/inventoryActionController';
 import { requireHomeMembership } from '../middlewares/requireHomeMembership';
+import { uploadSingleImageToMemory } from '../middlewares/upload';
 import { validateBody, validateParams, validateQuery } from '../middlewares/validate';
 import {
   homeBarcodeParamSchema,
@@ -51,6 +53,14 @@ router.get(
   validateParams(homeBarcodeParamSchema),
   requireHomeMembership('viewer'),
   catchAsync(lookupProductByBarcodeHandler),
+);
+
+router.post(
+  '/identify-photo',
+  validateParams(homeIdParamSchema),
+  requireHomeMembership('member'),
+  uploadSingleImageToMemory('file'),
+  catchAsync(identifyProductPhotoHandler),
 );
 
 router.get(

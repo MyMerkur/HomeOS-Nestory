@@ -181,6 +181,11 @@
       "submitButton": "Přidat {{count}} položek",
       "errorSaveAll": "Nepodařilo se uložit žádnou položku, zkuste to znovu.",
       "successMessage": "Přidáno {{count}} položek."
+    },
+    "identifyPhotoButton": "Rozpoznat podle fotky",
+    "identifyPhoto": {
+      "notFoundMessage": "Produkt se nepodařilo rozpoznat — můžeš ho přidat ručně.",
+      "errorMessage": "Při rozpoznávání došlo k chybě, zkus to znovu."
     }
   },
   "shopping": {

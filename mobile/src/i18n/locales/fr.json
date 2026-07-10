@@ -181,6 +181,11 @@
       "submitButton": "Ajouter {{count}} articles",
       "errorSaveAll": "Aucun article n'a pu être enregistré, réessayez.",
       "successMessage": "{{count}} articles ajoutés."
+    },
+    "identifyPhotoButton": "Identifier par photo",
+    "identifyPhoto": {
+      "notFoundMessage": "Impossible de reconnaître le produit — vous pouvez l'ajouter manuellement.",
+      "errorMessage": "Une erreur s'est produite lors de la reconnaissance, réessayez."
     }
   },
   "shopping": {

@@ -181,6 +181,11 @@
       "submitButton": "Aggiungi {{count}} articoli",
       "errorSaveAll": "Non è stato possibile salvare alcun articolo, riprova.",
       "successMessage": "{{count}} articoli aggiunti."
+    },
+    "identifyPhotoButton": "Identifica con foto",
+    "identifyPhoto": {
+      "notFoundMessage": "Impossibile riconoscere il prodotto — puoi aggiungerlo manualmente.",
+      "errorMessage": "Si è verificato un errore durante il riconoscimento, riprova."
     }
   },
   "shopping": {

@@ -7,14 +7,18 @@ import {
   consumeItem,
   discardItem,
   freezeItem,
+  identifyProductPhoto,
   listItems,
   listLocations,
 } from '../services/pantryApi';
+import { captureImage } from '../../../services/cameraCapture';
 import { useHomeStore } from '../../../store/useHomeStore';
 import { ThemeProvider } from '../../../theme/ThemeContext';
+import { ToastProvider } from '../../../ui/ToastProvider';
 import type { PantryStackScreenProps } from '../../../app/navigation/types';
 
 jest.mock('../services/pantryApi');
+jest.mock('../../../services/cameraCapture');
 
 const mockNavigation = {
   navigate: jest.fn(),
@@ -52,9 +56,11 @@ function renderScreen() {
   const queryClient = new QueryClient({ defaultOptions: { queries: { retry: false } } });
   return render(
     <ThemeProvider>
-      <QueryClientProvider client={queryClient}>
-        <PantryScreen navigation={mockNavigation} route={{} as never} />
-      </QueryClientProvider>
+      <ToastProvider>
+        <QueryClientProvider client={queryClient}>
+          <PantryScreen navigation={mockNavigation} route={{} as never} />
+        </QueryClientProvider>
+      </ToastProvider>
     </ThemeProvider>,
   );
 }
@@ -172,5 +178,60 @@ describe('PantryScreen', () => {
     fireEvent.press(screen.getByTestId('quick-add-barcode-button'));
 
     expect(mockNavigation.navigate).toHaveBeenCalledWith('QuickAddItem');
+  });
+
+  it('navigates to ItemForm prefilled with the identified product on a successful photo scan', async () => {
+    (captureImage as jest.Mock).mockResolvedValue('file:///tmp/tomato.jpg');
+    (identifyProductPhoto as jest.Mock).mockResolvedValue({ name: 'Domates', category: 'Vegetable' });
+
+    renderScreen();
+    await screen.findByText('Süt');
+
+    fireEvent.press(screen.getByTestId('identify-photo-button'));
+
+    await waitFor(() =>
+      expect(mockNavigation.navigate).toHaveBeenCalledWith('ItemForm', {
+        initialName: 'Domates',
+        initialCategory: 'Vegetable',
+      }),
+    );
+  });
+
+  it('shows a toast and does not navigate when the photo cannot be identified', async () => {
+    (captureImage as jest.Mock).mockResolvedValue('file:///tmp/blurry.jpg');
+    (identifyProductPhoto as jest.Mock).mockResolvedValue(null);
+
+    renderScreen();
+    await screen.findByText('Süt');
+
+    fireEvent.press(screen.getByTestId('identify-photo-button'));
+
+    expect(await screen.findByText("Couldn't recognize the product — you can add it manually.")).toBeTruthy();
+    expect(mockNavigation.navigate).not.toHaveBeenCalledWith('ItemForm', expect.anything());
+  });
+
+  it('does nothing when the user cancels the camera', async () => {
+    (captureImage as jest.Mock).mockResolvedValue(null);
+
+    renderScreen();
+    await screen.findByText('Süt');
+
+    fireEvent.press(screen.getByTestId('identify-photo-button'));
+
+    await waitFor(() => expect(captureImage).toHaveBeenCalled());
+    expect(identifyProductPhoto).not.toHaveBeenCalled();
+    expect(mockNavigation.navigate).not.toHaveBeenCalledWith('ItemForm', expect.anything());
+  });
+
+  it('shows an error toast when identifying the photo throws', async () => {
+    (captureImage as jest.Mock).mockResolvedValue('file:///tmp/tomato.jpg');
+    (identifyProductPhoto as jest.Mock).mockRejectedValue(new Error('network error'));
+
+    renderScreen();
+    await screen.findByText('Süt');
+
+    fireEvent.press(screen.getByTestId('identify-photo-button'));
+
+    expect(await screen.findByText('Something went wrong while identifying, try again.')).toBeTruthy();
   });
 });
