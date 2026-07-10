@@ -224,7 +224,19 @@
       "ingredientsTitle": "Zutaten",
       "instructionsTitle": "Zubereitung",
       "optionalTag": " (optional)"
-    }
+    },
+    "categories": {
+      "All": "Alle",
+      "Main": "Hauptgerichte",
+      "Soup": "Suppen",
+      "Breakfast": "Frühstück",
+      "Salad": "Salate",
+      "Appetizer": "Vorspeisen & Meze",
+      "Drink": "Getränke",
+      "Dessert": "Desserts",
+      "Baking": "Backwaren"
+    },
+    "emptyCategory": "In dieser Kategorie gibt es noch keine Rezepte."
   },
   "assets": {
     "emptyList": "Noch keine Gegenstände erfasst.",

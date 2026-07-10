@@ -47,6 +47,10 @@ export function RecipeDetailScreen({ navigation, route }: RecipesStackScreenProp
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
+      {recipe.category ? (
+        <Text style={styles.category}>{t(`recipes.categories.${recipe.category}`)}</Text>
+      ) : null}
+
       <Button
         testID="recipe-detail-save-button"
         label={isSaved ? t('recipes.detail.savedButton') : t('recipes.detail.saveButton')}
@@ -86,6 +90,13 @@ export function RecipeDetailScreen({ navigation, route }: RecipesStackScreenProp
 function createStyles(colors: ThemeColors) {
   return StyleSheet.create({
     container: { padding: spacing.lg, gap: spacing.xs, backgroundColor: colors.background },
+    category: {
+      fontSize: fontSize.bodySm,
+      fontFamily: typography.bodyMedium.fontFamily,
+      fontWeight: typography.bodyMedium.fontWeight,
+      color: colors.primaryDark,
+      marginBottom: spacing.xs,
+    },
     coverage: {
       fontSize: fontSize.bodyMd,
       fontFamily: typography.body.fontFamily,

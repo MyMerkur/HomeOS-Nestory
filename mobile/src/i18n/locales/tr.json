@@ -224,7 +224,19 @@
       "ingredientsTitle": "Malzemeler",
       "instructionsTitle": "Talimatlar",
       "optionalTag": " (opsiyonel)"
-    }
+    },
+    "categories": {
+      "All": "Tümü",
+      "Main": "Ana Yemek",
+      "Soup": "Çorba",
+      "Breakfast": "Kahvaltı",
+      "Salad": "Salata",
+      "Appetizer": "Aperatif & Meze",
+      "Drink": "İçecek",
+      "Dessert": "Tatlı",
+      "Baking": "Fırın & Hamur İşi"
+    },
+    "emptyCategory": "Bu kategoride henüz tarif yok."
   },
   "assets": {
     "emptyList": "Henüz kayıtlı bir eşya yok.",

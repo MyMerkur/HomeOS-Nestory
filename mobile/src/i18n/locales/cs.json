@@ -224,7 +224,19 @@
       "ingredientsTitle": "Ingredience",
       "instructionsTitle": "Postup",
       "optionalTag": " (nepovinné)"
-    }
+    },
+    "categories": {
+      "All": "Vše",
+      "Main": "Hlavní jídla",
+      "Soup": "Polévky",
+      "Breakfast": "Snídaně",
+      "Salad": "Saláty",
+      "Appetizer": "Předkrmy a Meze",
+      "Drink": "Nápoje",
+      "Dessert": "Dezerty",
+      "Baking": "Pečivo"
+    },
+    "emptyCategory": "V této kategorii zatím nejsou žádné recepty."
   },
   "assets": {
     "emptyList": "Zatím není registrováno žádné vybavení.",

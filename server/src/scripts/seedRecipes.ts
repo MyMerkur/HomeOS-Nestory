@@ -13,13 +13,16 @@ async function seedRecipes() {
       { name: recipe.name },
       {
         name: recipe.name,
+        nameEn: recipe.nameEn,
         category: recipe.category,
         ingredients: recipe.ingredients.map((ingredient) => ({
           name: ingredient.name,
+          nameEn: ingredient.nameEn,
           normalizedName: normalizeName(ingredient.name),
           optional: ingredient.optional ?? false,
         })),
         instructions: recipe.instructions,
+        instructionsEn: recipe.instructionsEn,
       },
       { upsert: true, new: true },
     );

@@ -16,7 +16,7 @@ const mockRecipes = [
   {
     id: 'recipe-1',
     name: 'Menemen',
-    category: 'Kahvaltı',
+    category: 'Breakfast',
     imageUrl: null,
     coveragePercent: 100,
     missingIngredients: [],
@@ -30,7 +30,7 @@ const mockSavedRecipes = [
   {
     id: 'recipe-2',
     name: 'Mercimek Çorbası',
-    category: 'Çorba',
+    category: 'Soup',
     imageUrl: null,
     coveragePercent: 0,
     missingIngredients: ['Soğan'],
@@ -117,5 +117,30 @@ describe('RecipesScreen', () => {
     fireEvent.press(screen.getByTestId('recipes-tab-saved'));
 
     expect(await screen.findByText('No saved recipes yet.')).toBeTruthy();
+  });
+
+  it('filters the list by category when a category chip is pressed', async () => {
+    (getAllRecipes as jest.Mock).mockResolvedValue([
+      mockRecipes[0],
+      { ...mockRecipes[0], id: 'recipe-3', name: 'Domates Çorbası', category: 'Soup' },
+    ]);
+    renderScreen();
+
+    await screen.findByText('Menemen');
+    expect(screen.getByText('Domates Çorbası')).toBeTruthy();
+
+    fireEvent.press(screen.getByTestId('recipes-category-Breakfast'));
+
+    expect(await screen.findByText('Menemen')).toBeTruthy();
+    expect(screen.queryByText('Domates Çorbası')).toBeNull();
+  });
+
+  it('shows a category-specific empty state when the filter matches nothing', async () => {
+    renderScreen();
+
+    await screen.findByText('Menemen');
+    fireEvent.press(screen.getByTestId('recipes-category-Soup'));
+
+    expect(await screen.findByText('No recipes in this category yet.')).toBeTruthy();
   });
 });

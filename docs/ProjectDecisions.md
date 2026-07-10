@@ -1484,3 +1484,63 @@ yakalaması gerekiyor.
   — bu, projeye kod değişikliği olarak yansımadı (yalnızca dokümantasyon +
   yardımcı script), gelecekte gerçek UI otomasyonu istenirse Detox veya
   Maestro kurulumu ayrı bir iş kalemi olarak değerlendirilmeli.
+
+## Tarif kataloğunun genişletilmesi (200+ tarif, kategori filtresi, iki dilli içerik)
+
+- **Context**: Kullanıcı, Tarifler (Recipes) özelliğinin çok dar olduğunu
+  belirtti — sadece 15 tarif vardı, hepsi yemek/çorba/kahvaltı/salata/tatlı
+  ağırlıklı, kategori bilgisi UI'da hiç kullanılmıyordu (düz liste).
+  İstek: en az 200 tarife çıkarmak, içecek/tatlı gibi kategorileri de
+  öne çıkaracak şekilde geniş bir kategori seti sunmak, kategorileri
+  ekranın üstünde sıralamak (filtre).
+- **Decision**:
+  - **Kategori seti** (kullanıcı onayıyla "geniş set"): `Main` (Ana Yemek),
+    `Soup` (Çorba), `Breakfast` (Kahvaltı), `Salad` (Salata), `Appetizer`
+    (Aperatif & Meze), `Drink` (İçecek), `Dessert` (Tatlı), `Baking`
+    (Fırın & Hamur İşi). Kategori değeri artık serbest Türkçe metin değil,
+    sabit İngilizce enum key (`server/src/constants/recipe.ts`,
+    `mobile/src/modules/recipes/constants.ts`) — asset kategorileriyle
+    (`assets.categories.*`) aynı desen: DB'de/API'de enum key taşınır,
+    görünen etiket `t('recipes.categories.KEY')` ile 8 dilde çevrilir.
+  - **İçerik dili** (kullanıcı onayıyla "Türkçe + İngilizce"): Her tarifin
+    `name`/`nameEn`, her malzemenin `name`/`nameEn`, `instructions`/
+    `instructionsEn` alanları var (`Recipe` modeli, `RecipeSeed` tipi).
+    Diğer 6 arayüz dili (de/fr/es/it/cs/pt) için tarif içeriği çevrilmedi
+    — mobile `resolveRecipeLang()` bu dillerde İngilizce içeriğe düşer
+    (fallback), sadece `tr` için Türkçe gösterilir. API `?lang=tr|en`
+    query param'ı alır (`recipeController.ts`), servis katmanı
+    (`recipeService.ts`) `RecipeLang` parametresine göre localize edilmiş
+    alanı döner; `nameEn`/`instructionsEn` boşsa Türkçe'ye düşer (geriye
+    dönük uyumluluk, eski seed verisi kırılmasın diye zorunlu değil).
+  - **Malzeme eşleştirme (kapsama %) dilden etkilenmez**: `normalizedName`
+    her zaman Türkçe `name` alanından hesaplanır (`normalizeName`),
+    çünkü kilerdeki ürünler kullanıcılar tarafından büyük çoğunlukla
+    Türkçe yazılıyor. İngilizce arayüzde bir tarifin malzeme *adı*
+    İngilizce görünür ama eşleştirme anahtarı hep Türkçe kalır — çok
+    dilli kiler eşleştirmesi bu görevin kapsamı dışında bırakıldı.
+  - **İçerik üretimi**: 200 yeni tarif (kategori başına 25) 8 paralel
+    ajana dağıtılarak üretildi (her biri kendi kategorisi için katı JSON
+    şemasında yazdı). Birleştirme sırasında 5 çapraz-kategori kopya
+    bulundu (ör. "Sigara Böreği" hem Kahvaltı hem Aperatif hem Fırın
+    kategorisinde önerilmişti) — bunlar `Baking` kategorisinde tutulup
+    diğerlerinden çıkarıldı. Sonuç: **210 tarif** (15 eski + 195 yeni),
+    kategori dağılımı: Main 31, Soup 28, Salad 27, Dessert 26, Baking 25,
+    Drink 25, Appetizer 24, Breakfast 24.
+  - **UI**: `RecipesScreen`'de Tümü/Kaydedilenler sekmesinin altına
+    yatay kaydırmalı kategori çipleri eklendi (`Chip` bileşeni, mevcut
+    UI kit'ten), varsayılan "Tümü". Filtre client-side (zaten çekilmiş
+    listeyi süzüyor). Kategori boş sonuç verirse ayrı bir empty-state
+    mesajı (`recipes.emptyCategory`) gösteriliyor — "hiç tarif yok"
+    mesajından ayrıştırıldı çünkü kafa karıştırıcı olurdu. Tarif detay
+    ekranına da çevrilmiş kategori etiketi eklendi.
+- **Consequences**: `Recipe` modelinde `category` artık enum ile
+  kısıtlı (`server/src/models/Recipe.ts`) — herhangi bir yerde eski
+  serbest-metin Türkçe kategori değeri (`'Çorba'`, `'Kahvaltı'` vb.)
+  kalırsa Mongoose validation hatası verir; mevcut 15 tarif ve testler
+  yeni enum'a taşındı. Seed script'i (`npm run seed:recipes`) dev
+  veritabanına karşı çalıştırılıp 210 kayıt doğrulandı; **prod
+  veritabanına henüz seed edilmedi** — production'a deploy edilirken bu
+  script prod ortamına karşı da çalıştırılmalı, yoksa canlıda hâlâ 15
+  tarif görünür. Mobile/server tam test paketleri yeşil (mobile
+  243/243, server 126/126), i18n 8 dilde 380/380 anahtar paritesi
+  korundu.

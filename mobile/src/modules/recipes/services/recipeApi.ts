@@ -19,16 +19,26 @@ export type RecipeSuggestion = {
 
 type ApiEnvelope<T> = { success: boolean; data: T; message: string };
 
-export async function getAllRecipes(homeId: string): Promise<RecipeSuggestion[]> {
+export type RecipeLang = 'tr' | 'en';
+
+// Recipe content only exists in Turkish and English; other supported UI
+// languages fall back to English rather than showing untranslated Turkish.
+export function resolveRecipeLang(language: string): RecipeLang {
+  return language.startsWith('tr') ? 'tr' : 'en';
+}
+
+export async function getAllRecipes(homeId: string, lang: RecipeLang = 'tr'): Promise<RecipeSuggestion[]> {
   const { data } = await apiClient.get<ApiEnvelope<{ recipes: RecipeSuggestion[] }>>(
     `/homes/${homeId}/recipes`,
+    { params: { lang } },
   );
   return data.data.recipes;
 }
 
-export async function getSavedRecipes(homeId: string): Promise<RecipeSuggestion[]> {
+export async function getSavedRecipes(homeId: string, lang: RecipeLang = 'tr'): Promise<RecipeSuggestion[]> {
   const { data } = await apiClient.get<ApiEnvelope<{ recipes: RecipeSuggestion[] }>>(
     `/homes/${homeId}/recipes/saved`,
+    { params: { lang } },
   );
   return data.data.recipes;
 }

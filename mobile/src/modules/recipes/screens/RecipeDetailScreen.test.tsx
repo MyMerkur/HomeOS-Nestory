@@ -15,7 +15,7 @@ const mockNavigation = {
 const recipe = {
   id: 'recipe-1',
   name: 'Mercimek Çorbası',
-  category: 'Çorba',
+  category: 'Soup',
   imageUrl: null,
   coveragePercent: 66,
   missingIngredients: ['Havuç'],
@@ -58,6 +58,12 @@ describe('RecipeDetailScreen', () => {
     expect(screen.getByText(/✓ Soğan/)).toBeTruthy();
     expect(screen.getByText('Sebzeleri kavurun.')).toBeTruthy();
     expect(screen.getByText('Kaynatın.')).toBeTruthy();
+  });
+
+  it('shows the translated category label', () => {
+    renderScreen();
+
+    expect(screen.getByText('Soups')).toBeTruthy();
   });
 
   it('sets the screen title to the recipe name', () => {

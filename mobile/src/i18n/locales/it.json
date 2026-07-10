@@ -224,7 +224,19 @@
       "ingredientsTitle": "Ingredienti",
       "instructionsTitle": "Istruzioni",
       "optionalTag": " (opzionale)"
-    }
+    },
+    "categories": {
+      "All": "Tutti",
+      "Main": "Piatti principali",
+      "Soup": "Zuppe",
+      "Breakfast": "Colazione",
+      "Salad": "Insalate",
+      "Appetizer": "Antipasti e Meze",
+      "Drink": "Bevande",
+      "Dessert": "Dolci",
+      "Baking": "Prodotti da forno"
+    },
+    "emptyCategory": "Ancora nessuna ricetta in questa categoria."
   },
   "assets": {
     "emptyList": "Ancora nessun bene registrato.",

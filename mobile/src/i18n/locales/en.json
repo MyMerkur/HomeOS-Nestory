@@ -224,7 +224,19 @@
       "ingredientsTitle": "Ingredients",
       "instructionsTitle": "Instructions",
       "optionalTag": " (optional)"
-    }
+    },
+    "categories": {
+      "All": "All",
+      "Main": "Main Dishes",
+      "Soup": "Soups",
+      "Breakfast": "Breakfast",
+      "Salad": "Salads",
+      "Appetizer": "Appetizers & Meze",
+      "Drink": "Drinks",
+      "Dessert": "Desserts",
+      "Baking": "Baking & Pastries"
+    },
+    "emptyCategory": "No recipes in this category yet."
   },
   "assets": {
     "emptyList": "No assets registered yet.",

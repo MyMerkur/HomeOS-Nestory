@@ -1,8 +1,9 @@
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
+import { FlatList, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { IconToolsKitchen2 } from '@tabler/icons-react-native';
 import { Button } from '../../../ui/Button';
+import { Chip } from '../../../ui/Chip';
 import { EmptyState } from '../../../ui/EmptyState';
 import { SegmentedControl } from '../../../ui/SegmentedControl';
 import { Skeleton } from '../../../ui/Skeleton';
@@ -10,10 +11,14 @@ import { fontSize, radius, spacing, typography, type ThemeColors } from '../../.
 import { useTheme } from '../../../theme/ThemeContext';
 import { useAllRecipesQuery } from '../hooks/useAllRecipesQuery';
 import { useSavedRecipesQuery } from '../hooks/useSavedRecipesQuery';
+import { RECIPE_CATEGORIES, type RecipeCategory } from '../constants';
 import type { RecipeSuggestion } from '../services/recipeApi';
 import type { RecipesStackScreenProps } from '../../../app/navigation/types';
 
 type Tab = 'all' | 'saved';
+type CategoryFilter = 'All' | RecipeCategory;
+
+const CATEGORY_FILTERS: CategoryFilter[] = ['All', ...RECIPE_CATEGORIES];
 
 function coverageStyle(styles: ReturnType<typeof createStyles>, coveragePercent: number) {
   return coveragePercent === 100 ? styles.coverageReady : styles.coverageNotReady;
@@ -67,6 +72,7 @@ export function RecipesScreen({ navigation }: RecipesStackScreenProps<'Recipes'>
   const { colors } = useTheme();
   const styles = useMemo(() => createStyles(colors), [colors]);
   const [tab, setTab] = useState<Tab>('all');
+  const [category, setCategory] = useState<CategoryFilter>('All');
   const allQuery = useAllRecipesQuery();
   const savedQuery = useSavedRecipesQuery();
   const {
@@ -76,6 +82,11 @@ export function RecipesScreen({ navigation }: RecipesStackScreenProps<'Recipes'>
     refetch,
     isRefetching,
   } = tab === 'all' ? allQuery : savedQuery;
+
+  const filteredRecipes = useMemo(
+    () => (category === 'All' ? recipes : recipes?.filter((recipe) => recipe.category === category)),
+    [recipes, category],
+  );
 
   const tabsRow = (
     <View style={styles.tabsRow}>
@@ -87,6 +98,22 @@ export function RecipesScreen({ navigation }: RecipesStackScreenProps<'Recipes'>
         value={tab}
         onChange={(value) => setTab(value as Tab)}
       />
+      <ScrollView
+        horizontal
+        showsHorizontalScrollIndicator={false}
+        style={styles.categoryRow}
+        contentContainerStyle={styles.categoryRowContent}
+      >
+        {CATEGORY_FILTERS.map((option) => (
+          <Chip
+            key={option}
+            testID={`recipes-category-${option}`}
+            label={t(`recipes.categories.${option}`)}
+            selected={category === option}
+            onPress={() => setCategory(option)}
+          />
+        ))}
+      </ScrollView>
     </View>
   );
 
@@ -116,7 +143,7 @@ export function RecipesScreen({ navigation }: RecipesStackScreenProps<'Recipes'>
       {tabsRow}
       <FlatList
         testID="recipes-list"
-        data={recipes}
+        data={filteredRecipes}
         keyExtractor={(recipe) => recipe.id}
         contentContainerStyle={styles.list}
         refreshing={isRefetching}
@@ -124,7 +151,13 @@ export function RecipesScreen({ navigation }: RecipesStackScreenProps<'Recipes'>
         ListEmptyComponent={
           <EmptyState
             icon={IconToolsKitchen2}
-            title={tab === 'all' ? t('recipes.emptyAll') : t('recipes.emptySaved')}
+            title={
+              category !== 'All' && (recipes?.length ?? 0) > 0
+                ? t('recipes.emptyCategory')
+                : tab === 'all'
+                  ? t('recipes.emptyAll')
+                  : t('recipes.emptySaved')
+            }
           />
         }
         renderItem={({ item }) => (
@@ -142,7 +175,9 @@ export function RecipesScreen({ navigation }: RecipesStackScreenProps<'Recipes'>
 function createStyles(colors: ThemeColors) {
   return StyleSheet.create({
     container: { flex: 1, backgroundColor: colors.background },
-    tabsRow: { paddingHorizontal: spacing.lg, paddingTop: spacing.md },
+    tabsRow: { paddingHorizontal: spacing.lg, paddingTop: spacing.md, gap: spacing.sm },
+    categoryRow: { marginHorizontal: -spacing.lg },
+    categoryRowContent: { paddingHorizontal: spacing.lg, gap: spacing.xs },
     centered: {
       flex: 1,
       alignItems: 'center',

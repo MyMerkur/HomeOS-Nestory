@@ -50,7 +50,7 @@ describe('recipeService', () => {
 
     await Recipe.create({
       name: 'Menemen',
-      category: 'Kahvaltı',
+      category: 'Breakfast',
       ingredients: [ingredient('Yumurta'), ingredient('Domates'), ingredient('Tuz', true)],
       instructions: ['Pişirin.'],
     });
@@ -83,7 +83,7 @@ describe('recipeService', () => {
 
     await Recipe.create({
       name: 'Mercimek Çorbası',
-      category: 'Çorba',
+      category: 'Soup',
       ingredients: [ingredient('Kırmızı Mercimek'), ingredient('Soğan'), ingredient('Havuç')],
       instructions: ['Kaynatın.'],
     });
@@ -108,7 +108,7 @@ describe('recipeService', () => {
 
     await Recipe.create({
       name: 'Omlet',
-      category: 'Kahvaltı',
+      category: 'Breakfast',
       ingredients: [ingredient('Yumurta')],
       instructions: ['Pişirin.'],
     });
@@ -134,7 +134,7 @@ describe('recipeService', () => {
 
     const recipe = await Recipe.create({
       name: 'Menemen',
-      category: 'Kahvaltı',
+      category: 'Breakfast',
       ingredients: [ingredient('Yumurta')],
       instructions: ['Pişirin.'],
     });
@@ -231,6 +231,42 @@ describe('recipeService', () => {
     expect(all[0].coveragePercent).toBe(100);
     expect(all[1].name).toBe('Süt Muhallebisi');
     expect(all[1].coveragePercent).toBe(0);
+  });
+
+  it('returns English content when lang is "en", falling back to Turkish fields when English is missing', async () => {
+    const { homeId, userId, fridgeId } = await setupHome();
+
+    await Recipe.create({
+      name: 'Menemen',
+      nameEn: 'Turkish Scrambled Eggs',
+      category: 'Breakfast',
+      ingredients: [
+        { ...ingredient('Yumurta'), nameEn: 'Eggs' },
+        { ...ingredient('Domates', true) },
+      ],
+      instructions: ['Pişirin.'],
+      instructionsEn: ['Cook it.'],
+    });
+    await inventoryService.createItem(homeId, userId, {
+      name: 'Yumurta',
+      locationId: fridgeId,
+      category: 'Other',
+      quantity: 6,
+      unit: 'piece',
+    });
+
+    const englishSuggestions = await recipeService.getAllRecipes(homeId, 'en');
+    expect(englishSuggestions[0].name).toBe('Turkish Scrambled Eggs');
+    expect(englishSuggestions[0].instructions).toEqual(['Cook it.']);
+    expect(englishSuggestions[0].ingredients[0].name).toBe('Eggs');
+    expect(englishSuggestions[0].ingredients[1].name).toBe('Domates');
+
+    const turkishSuggestions = await recipeService.getAllRecipes(homeId, 'tr');
+    expect(turkishSuggestions[0].name).toBe('Menemen');
+    expect(turkishSuggestions[0].instructions).toEqual(['Pişirin.']);
+
+    const defaultSuggestions = await recipeService.getAllRecipes(homeId);
+    expect(defaultSuggestions[0].name).toBe('Menemen');
   });
 
   it('unsaveRecipe removes a recipe from the saved list and is idempotent', async () => {
