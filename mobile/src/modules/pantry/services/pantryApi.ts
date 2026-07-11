@@ -19,6 +19,7 @@ export type InventoryItem = {
   purchaseDate: string | null;
   brand: string | null;
   barcode: string | null;
+  price: number | null;
   status: string;
   notes: string | null;
   imageUrl: string | null;
@@ -123,6 +124,7 @@ export type ItemInput = {
   unit: Unit;
   expiryDate?: string;
   barcode?: string;
+  price?: number;
   doseAmount?: number;
   doseTimes?: string[];
 };

@@ -79,7 +79,9 @@
       "medicines": "Medicine",
       "assets": "Beni",
       "paidThisMonth": "Pagato questo mese",
-      "unpaidTotal": "Bollette non pagate"
+      "unpaidTotal": "Bollette non pagate",
+      "wasteValue": "Sprecato questo mese",
+      "wasteCount": "Articoli scartati"
     },
     "upcomingTitle": "Articoli in scadenza",
     "emptyUpcoming": "Nessun articolo con scadenza imminente.",
@@ -148,7 +150,9 @@
       "barcodeNotFoundMessage": "Impossibile riconoscere un codice a barre nella foto, riprova oppure inseriscilo manualmente.",
       "expiryNotFoundTitle": "Data non trovata",
       "expiryNotFoundMessage": "Impossibile riconoscere una data di scadenza nella foto, puoi inserirla manualmente.",
-      "scanErrorMessage": "Si è verificato un errore durante la scansione, riprova."
+      "scanErrorMessage": "Si è verificato un errore durante la scansione, riprova.",
+      "priceLabel": "Prezzo (opzionale)",
+      "pricePlaceholder": "es. 45.90"
     },
     "quickAdd": {
       "scanBarcodeButton": "Scansiona codice a barre",
@@ -180,7 +184,8 @@
       "itemsLabel": "Articoli rilevati ({{count}})",
       "submitButton": "Aggiungi {{count}} articoli",
       "errorSaveAll": "Non è stato possibile salvare alcun articolo, riprova.",
-      "successMessage": "{{count}} articoli aggiunti."
+      "successMessage": "{{count}} articoli aggiunti.",
+      "itemPriceA11y": "Prezzo"
     },
     "identifyPhotoButton": "Identifica con foto",
     "identifyPhoto": {
@@ -193,7 +198,13 @@
     "addButton": "Aggiungi",
     "errorLoad": "Impossibile caricare la lista della spesa.",
     "emptyList": "La lista della spesa è vuota.",
-    "deleteA11y": "Elimina {{name}}"
+    "deleteA11y": "Elimina {{name}}",
+    "suggestions": {
+      "title": "Suggerimenti per la tua lista",
+      "overdueBy_one": "In ritardo di {{count}} giorno",
+      "overdueBy_other": "In ritardo di {{count}} giorni",
+      "addA11y": "Aggiungi {{name}}"
+    }
   },
   "family": {
     "inviteButton": "Invita",

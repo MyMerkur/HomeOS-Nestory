@@ -12,9 +12,38 @@ const ONLY_SYMBOLS_OR_DIGITS_PATTERN = /^[\d\s.,:%*/₺$€xX-]+$/;
 const MAX_LINES = 40;
 const MIN_LINE_LENGTH = 3;
 
-export function parseReceiptLines(rawText: string): string[] {
+// Matches a trailing price like "45,90", "1.234,56" or "45.90", optionally
+// followed by a currency symbol/code — the price a POS receipt line usually
+// ends with (unit price/quantity columns, if present, come before this).
+const TRAILING_PRICE_PATTERN = /(\d{1,3}(?:[.,]\d{3})*[.,]\d{2})\s*(?:₺|TL)?\s*$/i;
+
+function parsePriceToken(token: string): number {
+  if (token.includes(',')) {
+    // Turkish convention: '.' is the thousands separator, ',' is decimal.
+    return Number(token.replace(/\./g, '').replace(',', '.'));
+  }
+  // No comma present — the token is already valid float syntax (e.g. "45.90").
+  return Number(token);
+}
+
+export type ReceiptLine = { name: string; price?: number };
+
+function splitNameAndPrice(line: string): ReceiptLine {
+  const match = line.match(TRAILING_PRICE_PATTERN);
+  if (!match) return { name: line };
+
+  const price = parsePriceToken(match[1]);
+  const name = line.slice(0, match.index).trim();
+  if (!Number.isFinite(price) || price <= 0 || name.length < MIN_LINE_LENGTH) {
+    return { name: line };
+  }
+
+  return { name, price };
+}
+
+export function parseReceiptLines(rawText: string): ReceiptLine[] {
   const seen = new Set<string>();
-  const candidates: string[] = [];
+  const candidates: ReceiptLine[] = [];
 
   for (const rawLine of rawText.split('\n')) {
     const line = rawLine.trim();
@@ -26,7 +55,7 @@ export function parseReceiptLines(rawText: string): string[] {
     if (seen.has(normalized)) continue;
     seen.add(normalized);
 
-    candidates.push(line);
+    candidates.push(splitNameAndPrice(line));
     if (candidates.length >= MAX_LINES) break;
   }
 

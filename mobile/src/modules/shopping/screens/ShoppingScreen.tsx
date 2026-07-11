@@ -2,7 +2,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
-import { IconCheck, IconShoppingCartOff, IconTrash } from '@tabler/icons-react-native';
+import { IconCheck, IconPlus, IconShoppingCartOff, IconTrash } from '@tabler/icons-react-native';
 import { useHomeStore } from '../../../store/useHomeStore';
 import { Button } from '../../../ui/Button';
 import { EmptyState } from '../../../ui/EmptyState';
@@ -12,10 +12,15 @@ import { fontSize, radius, spacing, typography, type ThemeColors } from '../../.
 import { useTheme } from '../../../theme/ThemeContext';
 import { useShoppingItemsQuery, SHOPPING_ITEMS_QUERY_KEY } from '../hooks/useShoppingItemsQuery';
 import {
+  SHOPPING_SUGGESTIONS_QUERY_KEY,
+  useShoppingSuggestionsQuery,
+} from '../hooks/useShoppingSuggestionsQuery';
+import {
   addShoppingItem,
   deleteShoppingItem,
   toggleShoppingItemCheck,
   type ShoppingItem,
+  type ShoppingSuggestion,
 } from '../services/shoppingApi';
 
 function ShoppingScreenSkeleton({ styles }: { styles: ReturnType<typeof createStyles> }) {
@@ -74,6 +79,42 @@ function ShoppingRow({
   );
 }
 
+function SuggestionRow({
+  suggestion,
+  styles,
+  onAdd,
+  isAdding,
+}: {
+  suggestion: ShoppingSuggestion;
+  styles: ReturnType<typeof createStyles>;
+  onAdd: () => void;
+  isAdding: boolean;
+}) {
+  const { t } = useTranslation();
+  const { colors } = useTheme();
+
+  return (
+    <View style={styles.suggestionRow}>
+      <View style={styles.suggestionInfo}>
+        <Text style={styles.suggestionName}>{suggestion.name}</Text>
+        <Text style={styles.suggestionMeta}>
+          {t('shopping.suggestions.overdueBy', { count: suggestion.daysSinceLastConsumed })}
+        </Text>
+      </View>
+      <Pressable
+        testID={`shopping-suggestion-add-${suggestion.normalizedName}`}
+        onPress={onAdd}
+        disabled={isAdding}
+        accessibilityLabel={t('shopping.suggestions.addA11y', { name: suggestion.name })}
+        hitSlop={8}
+        style={styles.suggestionAddButton}
+      >
+        <IconPlus color={colors.primaryDark} size={18} />
+      </Pressable>
+    </View>
+  );
+}
+
 export function ShoppingScreen() {
   const { t } = useTranslation();
   const { colors } = useTheme();
@@ -81,9 +122,11 @@ export function ShoppingScreen() {
   const homeId = useHomeStore((state) => state.selectedHomeId) as string;
   const queryClient = useQueryClient();
   const { data: items, isLoading, isError, refetch, isRefetching } = useShoppingItemsQuery();
+  const { data: suggestions } = useShoppingSuggestionsQuery();
 
   const [name, setName] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [addingSuggestions, setAddingSuggestions] = useState<Set<string>>(new Set());
 
   const invalidate = () => queryClient.invalidateQueries({ queryKey: [SHOPPING_ITEMS_QUERY_KEY] });
 
@@ -98,6 +141,27 @@ export function ShoppingScreen() {
       await invalidate();
     } finally {
       setIsSubmitting(false);
+    }
+  };
+
+  const handleAddSuggestion = async (suggestion: ShoppingSuggestion) => {
+    setAddingSuggestions((current) => new Set(current).add(suggestion.normalizedName));
+    try {
+      await addShoppingItem(homeId, {
+        name: suggestion.name,
+        category: suggestion.category ?? undefined,
+        unit: suggestion.unit ?? undefined,
+      });
+      await Promise.all([
+        invalidate(),
+        queryClient.invalidateQueries({ queryKey: [SHOPPING_SUGGESTIONS_QUERY_KEY] }),
+      ]);
+    } finally {
+      setAddingSuggestions((current) => {
+        const next = new Set(current);
+        next.delete(suggestion.normalizedName);
+        return next;
+      });
     }
   };
 
@@ -137,7 +201,23 @@ export function ShoppingScreen() {
       refreshing={isRefetching}
       onRefresh={refetch}
       ListHeaderComponent={
-        <View style={styles.addRow}>
+        <>
+          {suggestions && suggestions.length > 0 ? (
+            <View style={styles.suggestionsSection}>
+              <Text style={styles.suggestionsTitle}>{t('shopping.suggestions.title')}</Text>
+              {suggestions.map((suggestion) => (
+                <SuggestionRow
+                  key={suggestion.normalizedName}
+                  suggestion={suggestion}
+                  styles={styles}
+                  onAdd={() => handleAddSuggestion(suggestion)}
+                  isAdding={addingSuggestions.has(suggestion.normalizedName)}
+                />
+              ))}
+            </View>
+          ) : null}
+
+          <View style={styles.addRow}>
           <View style={styles.addInput}>
             <TextField
               testID="shopping-add-input"
@@ -155,7 +235,8 @@ export function ShoppingScreen() {
             onPress={handleAdd}
             loading={isSubmitting}
           />
-        </View>
+          </View>
+        </>
       }
       ListEmptyComponent={<EmptyState icon={IconShoppingCartOff} title={t('shopping.emptyList')} />}
       renderItem={({ item }) => (
@@ -217,6 +298,46 @@ function createStyles(colors: ThemeColors) {
     rowTextChecked: {
       color: colors.textMuted,
       textDecorationLine: 'line-through',
+    },
+    suggestionsSection: {
+      paddingHorizontal: spacing.lg,
+      paddingTop: spacing.lg,
+      gap: spacing.sm,
+    },
+    suggestionsTitle: {
+      fontSize: fontSize.bodyMd,
+      fontFamily: typography.heading.fontFamily,
+      fontWeight: typography.heading.fontWeight,
+      color: colors.textPrimary,
+    },
+    suggestionRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      backgroundColor: colors.primaryTint,
+      borderRadius: radius.md,
+      paddingVertical: spacing.sm,
+      paddingHorizontal: spacing.md,
+    },
+    suggestionInfo: { flex: 1, gap: 2 },
+    suggestionName: {
+      fontSize: fontSize.bodyMd,
+      fontFamily: typography.bodyMedium.fontFamily,
+      fontWeight: typography.bodyMedium.fontWeight,
+      color: colors.textPrimary,
+    },
+    suggestionMeta: {
+      fontSize: fontSize.bodySm,
+      fontFamily: typography.caption.fontFamily,
+      color: colors.textSecondary,
+    },
+    suggestionAddButton: {
+      width: 32,
+      height: 32,
+      borderRadius: radius.pill,
+      backgroundColor: colors.surface,
+      alignItems: 'center',
+      justifyContent: 'center',
     },
   });
 }

@@ -106,6 +106,52 @@ describe('ReceiptScanScreen', () => {
     expect(mockNavigation.goBack).toHaveBeenCalled();
   });
 
+  it('extracts a detected price and includes it when creating the item', async () => {
+    (captureImage as jest.Mock).mockResolvedValue('file://receipt.jpg');
+    (TextRecognition.recognize as jest.Mock).mockResolvedValue({
+      text: 'Süt Tam Yağlı 1L        45,90',
+      blocks: [],
+    });
+    (createItem as jest.Mock).mockResolvedValue({ id: 'new-item' });
+
+    renderScreen();
+    fireEvent.press(screen.getByTestId('receipt-scan-capture-button'));
+    await screen.findByDisplayValue('Süt Tam Yağlı 1L');
+
+    expect(screen.getByDisplayValue('45.9')).toBeTruthy();
+
+    fireEvent.press(screen.getByTestId('receipt-scan-location-chip-loc-pantry'));
+    fireEvent.press(screen.getByTestId('receipt-scan-submit'));
+
+    await waitFor(() =>
+      expect(createItem).toHaveBeenCalledWith(
+        'home-1',
+        expect.objectContaining({ name: 'Süt Tam Yağlı 1L', price: 45.9 }),
+      ),
+    );
+  });
+
+  it('lets the user edit a detected price before saving', async () => {
+    (captureImage as jest.Mock).mockResolvedValue('file://receipt.jpg');
+    (TextRecognition.recognize as jest.Mock).mockResolvedValue({
+      text: 'Ekmek',
+      blocks: [],
+    });
+    (createItem as jest.Mock).mockResolvedValue({ id: 'new-item' });
+
+    renderScreen();
+    fireEvent.press(screen.getByTestId('receipt-scan-capture-button'));
+    await screen.findByDisplayValue('Ekmek');
+
+    fireEvent.changeText(screen.getByTestId('receipt-scan-item-price-0'), '12.5');
+    fireEvent.press(screen.getByTestId('receipt-scan-location-chip-loc-pantry'));
+    fireEvent.press(screen.getByTestId('receipt-scan-submit'));
+
+    await waitFor(() =>
+      expect(createItem).toHaveBeenCalledWith('home-1', expect.objectContaining({ price: 12.5 })),
+    );
+  });
+
   it('shows an error toast when every item fails to save', async () => {
     (captureImage as jest.Mock).mockResolvedValue('file://receipt.jpg');
     (TextRecognition.recognize as jest.Mock).mockResolvedValue({ text: 'Süt Tam Yağlı 1L', blocks: [] });

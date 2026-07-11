@@ -2,7 +2,11 @@ import mongoose from 'mongoose';
 import { MongoMemoryServer } from 'mongodb-memory-server';
 import * as authService from './authService';
 import * as homeService from './homeService';
+import * as locationService from './locationService';
+import * as inventoryService from './inventoryService';
 import * as shoppingService from './shoppingService';
+import { AuditLog } from '../models/AuditLog';
+import { InventoryItem } from '../models/InventoryItem';
 
 let mongo: MongoMemoryServer;
 
@@ -30,7 +34,31 @@ async function setupHome() {
     password: 'Min8Chars!',
   });
   const { home } = await homeService.createHome(user.id, { name: 'Test Home' });
-  return { userId: user.id, homeId: home.id };
+  const locations = await locationService.listLocations(home.id);
+  const fridge = locations.find((l) => l.type === 'fridge')!;
+  return { userId: user.id, homeId: home.id, fridgeId: fridge.id };
+}
+
+function daysFromNow(days: number): Date {
+  const date = new Date();
+  date.setDate(date.getDate() + days);
+  return date;
+}
+
+async function logConsumed(homeId: string, userId: string, itemId: string, createdAt: Date) {
+  await AuditLog.create({
+    homeId,
+    itemId,
+    userId,
+    action: 'consumed',
+    previousStatus: 'active',
+    newStatus: 'consumed',
+    createdAt,
+  });
+  // A real "consumed" audit log always corresponds to the item's status
+  // having actually flipped away from active (see inventoryActionService) —
+  // otherwise it'd still count as in-stock and get excluded from suggestions.
+  await InventoryItem.findByIdAndUpdate(itemId, { status: 'consumed' });
 }
 
 describe('shoppingService', () => {
@@ -100,6 +128,103 @@ describe('shoppingService', () => {
 
     await expect(shoppingService.toggleCheck(homeB, item.id)).rejects.toMatchObject({
       code: 'SHOPPING_ITEM_NOT_FOUND',
+    });
+  });
+
+  describe('getShoppingSuggestions', () => {
+    it('suggests an item that is overdue based on its average consumption interval', async () => {
+      const { homeId, userId, fridgeId } = await setupHome();
+      const item = await inventoryService.createItem(homeId, userId, {
+        name: 'Süt',
+        locationId: fridgeId,
+        category: 'Dairy',
+        quantity: 1,
+        unit: 'liter',
+      });
+      // Consumed every ~4 days historically, last consumed 6 days ago -> overdue.
+      await logConsumed(homeId, userId, item.id, daysFromNow(-10));
+      await logConsumed(homeId, userId, item.id, daysFromNow(-6));
+
+      const suggestions = await shoppingService.getShoppingSuggestions(homeId);
+
+      expect(suggestions).toHaveLength(1);
+      expect(suggestions[0]).toMatchObject({ name: 'Süt', category: 'Dairy', avgIntervalDays: 4 });
+    });
+
+    it('does not suggest an item with fewer than two consumption events', async () => {
+      const { homeId, userId, fridgeId } = await setupHome();
+      const item = await inventoryService.createItem(homeId, userId, {
+        name: 'Süt',
+        locationId: fridgeId,
+        category: 'Dairy',
+        quantity: 1,
+        unit: 'liter',
+      });
+      await logConsumed(homeId, userId, item.id, daysFromNow(-10));
+
+      const suggestions = await shoppingService.getShoppingSuggestions(homeId);
+
+      expect(suggestions).toHaveLength(0);
+    });
+
+    it('does not suggest an item that is not overdue yet', async () => {
+      const { homeId, userId, fridgeId } = await setupHome();
+      const item = await inventoryService.createItem(homeId, userId, {
+        name: 'Süt',
+        locationId: fridgeId,
+        category: 'Dairy',
+        quantity: 1,
+        unit: 'liter',
+      });
+      // Consumed every ~10 days, last consumed only 1 day ago -> not due yet.
+      await logConsumed(homeId, userId, item.id, daysFromNow(-11));
+      await logConsumed(homeId, userId, item.id, daysFromNow(-1));
+
+      const suggestions = await shoppingService.getShoppingSuggestions(homeId);
+
+      expect(suggestions).toHaveLength(0);
+    });
+
+    it('excludes items that already have active stock', async () => {
+      const { homeId, userId, fridgeId } = await setupHome();
+      const item = await inventoryService.createItem(homeId, userId, {
+        name: 'Süt',
+        locationId: fridgeId,
+        category: 'Dairy',
+        quantity: 1,
+        unit: 'liter',
+      });
+      await logConsumed(homeId, userId, item.id, daysFromNow(-10));
+      await logConsumed(homeId, userId, item.id, daysFromNow(-6));
+      await inventoryService.createItem(homeId, userId, {
+        name: 'Süt',
+        locationId: fridgeId,
+        category: 'Dairy',
+        quantity: 1,
+        unit: 'liter',
+      });
+
+      const suggestions = await shoppingService.getShoppingSuggestions(homeId);
+
+      expect(suggestions).toHaveLength(0);
+    });
+
+    it('excludes items already pending on the shopping list', async () => {
+      const { homeId, userId, fridgeId } = await setupHome();
+      const item = await inventoryService.createItem(homeId, userId, {
+        name: 'Süt',
+        locationId: fridgeId,
+        category: 'Dairy',
+        quantity: 1,
+        unit: 'liter',
+      });
+      await logConsumed(homeId, userId, item.id, daysFromNow(-10));
+      await logConsumed(homeId, userId, item.id, daysFromNow(-6));
+      await shoppingService.addShoppingItem(homeId, userId, { name: 'Süt' });
+
+      const suggestions = await shoppingService.getShoppingSuggestions(homeId);
+
+      expect(suggestions).toHaveLength(0);
     });
   });
 });

@@ -79,7 +79,9 @@
       "medicines": "Medicinas",
       "assets": "Bienes",
       "paidThisMonth": "Pagado este mes",
-      "unpaidTotal": "Facturas pendientes"
+      "unpaidTotal": "Facturas pendientes",
+      "wasteValue": "Desperdiciado este mes",
+      "wasteCount": "Artículos descartados"
     },
     "upcomingTitle": "Próximos artículos",
     "emptyUpcoming": "No hay artículos con fecha de caducidad próxima.",
@@ -148,7 +150,9 @@
       "barcodeNotFoundMessage": "No se pudo reconocer un código de barras en la foto, inténtalo de nuevo o introdúcelo manualmente.",
       "expiryNotFoundTitle": "Fecha no encontrada",
       "expiryNotFoundMessage": "No se pudo reconocer una fecha de caducidad en la foto, puedes introducirla manualmente.",
-      "scanErrorMessage": "Ocurrió un error al escanear, inténtalo de nuevo."
+      "scanErrorMessage": "Ocurrió un error al escanear, inténtalo de nuevo.",
+      "priceLabel": "Precio (opcional)",
+      "pricePlaceholder": "ej. 45.90"
     },
     "quickAdd": {
       "scanBarcodeButton": "Escanear código de barras",
@@ -180,7 +184,8 @@
       "itemsLabel": "Artículos detectados ({{count}})",
       "submitButton": "Añadir {{count}} artículos",
       "errorSaveAll": "No se pudo guardar ningún artículo, inténtalo de nuevo.",
-      "successMessage": "{{count}} artículos añadidos."
+      "successMessage": "{{count}} artículos añadidos.",
+      "itemPriceA11y": "Precio"
     },
     "identifyPhotoButton": "Identificar por foto",
     "identifyPhoto": {
@@ -193,7 +198,13 @@
     "addButton": "Añadir",
     "errorLoad": "No se pudo cargar la lista de la compra.",
     "emptyList": "La lista de la compra está vacía.",
-    "deleteA11y": "Eliminar {{name}}"
+    "deleteA11y": "Eliminar {{name}}",
+    "suggestions": {
+      "title": "Sugerencias para tu lista",
+      "overdueBy_one": "Atrasado {{count}} día",
+      "overdueBy_other": "Atrasado {{count}} días",
+      "addA11y": "Añadir {{name}}"
+    }
   },
   "family": {
     "inviteButton": "Invitar",

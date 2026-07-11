@@ -122,6 +122,42 @@ describe('ItemFormScreen', () => {
     );
   });
 
+  it('includes the entered price in the submit payload', async () => {
+    (createItem as jest.Mock).mockResolvedValue({ id: 'new-item' });
+
+    renderScreen();
+
+    await screen.findByTestId('location-chip-loc-fridge');
+    fireEvent.changeText(screen.getByPlaceholderText('e.g. Milk'), 'Yoğurt');
+    fireEvent.press(screen.getByTestId('location-chip-loc-fridge'));
+    fireEvent.press(screen.getByTestId('category-chip-Dairy'));
+    fireEvent.press(screen.getByTestId('unit-chip-piece'));
+    fireEvent.changeText(screen.getByTestId('item-price-input'), '45.90');
+    fireEvent.press(screen.getByTestId('item-form-submit'));
+
+    await waitFor(() =>
+      expect(createItem).toHaveBeenCalledWith('home-1', expect.objectContaining({ price: 45.9 })),
+    );
+  });
+
+  it('prefills the price field with the existing item price in edit mode', async () => {
+    (getItem as jest.Mock).mockResolvedValue({
+      id: 'item-1',
+      name: 'Süt',
+      category: 'Dairy',
+      quantity: 1,
+      unit: 'liter',
+      locationId: 'loc-fridge',
+      expiryDate: null,
+      price: 32.5,
+    });
+    (updateItem as jest.Mock).mockResolvedValue({ id: 'item-1' });
+
+    renderScreen({ itemId: 'item-1' });
+
+    expect(await screen.findByDisplayValue('32.5')).toBeTruthy();
+  });
+
   it('fills the barcode field after a successful scan', async () => {
     (scanBarcodeFromCamera as jest.Mock).mockResolvedValue({
       status: 'found',

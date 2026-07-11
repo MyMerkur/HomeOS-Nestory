@@ -20,7 +20,7 @@ import { createItem } from '../services/pantryApi';
 import { parseReceiptLines } from '../services/receiptParser';
 import type { PantryStackScreenProps } from '../../../app/navigation/types';
 
-type ReceiptItemDraft = { id: string; name: string; included: boolean };
+type ReceiptItemDraft = { id: string; name: string; price?: number; included: boolean };
 
 export function ReceiptScanScreen({ navigation }: PantryStackScreenProps<'ReceiptScan'>) {
   const { t } = useTranslation();
@@ -53,7 +53,9 @@ export function ReceiptScanScreen({ navigation }: PantryStackScreenProps<'Receip
         return;
       }
 
-      setDrafts(lines.map((name, index) => ({ id: String(index), name, included: true })));
+      setDrafts(
+        lines.map((line, index) => ({ id: String(index), name: line.name, price: line.price, included: true })),
+      );
     } catch {
       showToast({ message: t('pantry.receiptScan.scanErrorMessage'), variant: 'error' });
     } finally {
@@ -71,6 +73,11 @@ export function ReceiptScanScreen({ navigation }: PantryStackScreenProps<'Receip
     setDrafts((current) => current.map((draft) => (draft.id === id ? { ...draft, name } : draft)));
   };
 
+  const updatePrice = (id: string, text: string) => {
+    const price = text === '' ? undefined : Number(text);
+    setDrafts((current) => current.map((draft) => (draft.id === id ? { ...draft, price } : draft)));
+  };
+
   const handleSubmit = async () => {
     if (!locationId) return;
     const toCreate = drafts.filter((draft) => draft.included && draft.name.trim().length > 0);
@@ -85,6 +92,7 @@ export function ReceiptScanScreen({ navigation }: PantryStackScreenProps<'Receip
           category: 'Other',
           unit: 'piece',
           quantity: 1,
+          price: draft.price,
         }),
       ),
     );
@@ -144,14 +152,30 @@ export function ReceiptScanScreen({ navigation }: PantryStackScreenProps<'Receip
               >
                 {draft.included ? <IconCheck color={colors.surface} size={16} /> : null}
               </Pressable>
-              <TextField
-                testID={`receipt-scan-item-name-${draft.id}`}
-                label={t('pantry.receiptScan.itemNameA11y')}
-                hideLabel
-                value={draft.name}
-                onChangeText={(name) => updateName(draft.id, name)}
-                editable={draft.included}
-              />
+              <View style={styles.itemFields}>
+                <View style={styles.itemNameField}>
+                  <TextField
+                    testID={`receipt-scan-item-name-${draft.id}`}
+                    label={t('pantry.receiptScan.itemNameA11y')}
+                    hideLabel
+                    value={draft.name}
+                    onChangeText={(name) => updateName(draft.id, name)}
+                    editable={draft.included}
+                  />
+                </View>
+                <View style={styles.itemPriceField}>
+                  <TextField
+                    testID={`receipt-scan-item-price-${draft.id}`}
+                    label={t('pantry.receiptScan.itemPriceA11y')}
+                    hideLabel
+                    placeholder={t('pantry.itemForm.pricePlaceholder')}
+                    keyboardType="numeric"
+                    value={draft.price === undefined ? '' : String(draft.price)}
+                    onChangeText={(text) => updatePrice(draft.id, text)}
+                    editable={draft.included}
+                  />
+                </View>
+              </View>
             </Card>
           ))}
 
@@ -180,6 +204,9 @@ function createStyles(colors: ThemeColors) {
     },
     chipsRow: { flexDirection: 'row', flexWrap: 'wrap', gap: spacing.sm },
     itemCard: { flexDirection: 'row', alignItems: 'center', gap: spacing.sm },
+    itemFields: { flex: 1, flexDirection: 'row', gap: spacing.sm },
+    itemNameField: { flex: 2 },
+    itemPriceField: { flex: 1 },
     checkbox: {
       width: 24,
       height: 24,

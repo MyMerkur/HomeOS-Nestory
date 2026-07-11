@@ -79,7 +79,9 @@
       "medicines": "Médicaments",
       "assets": "Biens",
       "paidThisMonth": "Payé ce mois-ci",
-      "unpaidTotal": "Factures impayées"
+      "unpaidTotal": "Factures impayées",
+      "wasteValue": "Gaspillé ce mois-ci",
+      "wasteCount": "Articles jetés"
     },
     "upcomingTitle": "Articles à venir",
     "emptyUpcoming": "Aucun article avec une date de péremption proche.",
@@ -148,7 +150,9 @@
       "barcodeNotFoundMessage": "Impossible de reconnaître un code-barres sur la photo, réessayez ou saisissez-le manuellement.",
       "expiryNotFoundTitle": "Date introuvable",
       "expiryNotFoundMessage": "Impossible de reconnaître une date de péremption sur la photo, vous pouvez la saisir manuellement.",
-      "scanErrorMessage": "Une erreur est survenue pendant la numérisation, réessaie."
+      "scanErrorMessage": "Une erreur est survenue pendant la numérisation, réessaie.",
+      "priceLabel": "Prix (facultatif)",
+      "pricePlaceholder": "ex. 45.90"
     },
     "quickAdd": {
       "scanBarcodeButton": "Scanner le code-barres",
@@ -180,7 +184,8 @@
       "itemsLabel": "Articles détectés ({{count}})",
       "submitButton": "Ajouter {{count}} articles",
       "errorSaveAll": "Aucun article n'a pu être enregistré, réessayez.",
-      "successMessage": "{{count}} articles ajoutés."
+      "successMessage": "{{count}} articles ajoutés.",
+      "itemPriceA11y": "Prix"
     },
     "identifyPhotoButton": "Identifier par photo",
     "identifyPhoto": {
@@ -193,7 +198,13 @@
     "addButton": "Ajouter",
     "errorLoad": "Impossible de charger la liste de courses.",
     "emptyList": "La liste de courses est vide.",
-    "deleteA11y": "Supprimer {{name}}"
+    "deleteA11y": "Supprimer {{name}}",
+    "suggestions": {
+      "title": "Suggestions pour votre liste",
+      "overdueBy_one": "En retard de {{count}} jour",
+      "overdueBy_other": "En retard de {{count}} jours",
+      "addA11y": "Ajouter {{name}}"
+    }
   },
   "family": {
     "inviteButton": "Inviter",

@@ -75,6 +75,7 @@ export function ItemFormScreen({ navigation, route }: PantryStackScreenProps<'It
       quantity: 1,
       unit: initialUnit,
       barcode: initialBarcode,
+      price: undefined,
       doseTimes: [],
     },
   });
@@ -95,6 +96,7 @@ export function ItemFormScreen({ navigation, route }: PantryStackScreenProps<'It
         unit: existingItem.unit,
         expiryDate: existingItem.expiryDate ? new Date(existingItem.expiryDate) : undefined,
         barcode: existingItem.barcode ?? undefined,
+        price: existingItem.price ?? undefined,
         doseAmount: existingItem.doseAmount ?? undefined,
         doseTimes: existingItem.doseTimes ?? [],
       });
@@ -179,6 +181,7 @@ export function ItemFormScreen({ navigation, route }: PantryStackScreenProps<'It
         unit: values.unit,
         expiryDate: values.expiryDate?.toISOString(),
         barcode: values.barcode,
+        price: values.price,
         doseAmount: values.doseAmount,
         doseTimes: values.doseTimes,
       };
@@ -303,6 +306,23 @@ export function ItemFormScreen({ navigation, route }: PantryStackScreenProps<'It
             onChangeText={(text) => onChange(text === '' ? undefined : Number(text))}
             onBlur={onBlur}
             error={errors.quantity?.message}
+          />
+        )}
+      />
+
+      <Controller
+        control={control}
+        name="price"
+        render={({ field: { onChange, onBlur, value } }) => (
+          <TextField
+            testID="item-price-input"
+            label={t('pantry.itemForm.priceLabel')}
+            placeholder={t('pantry.itemForm.pricePlaceholder')}
+            keyboardType="numeric"
+            value={value === undefined ? '' : String(value)}
+            onChangeText={(text) => onChange(text === '' ? undefined : Number(text))}
+            onBlur={onBlur}
+            error={errors.price?.message}
           />
         )}
       />

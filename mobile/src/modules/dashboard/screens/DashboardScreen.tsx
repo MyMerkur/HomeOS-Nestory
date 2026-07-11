@@ -20,6 +20,7 @@ import { SummaryCard } from '../../../ui/SummaryCard';
 import { fontSize, spacing, typography, type ThemeColors } from '../../../theme/theme';
 import { useTheme } from '../../../theme/ThemeContext';
 import { useDashboardQuery } from '../hooks/useDashboardQuery';
+import { syncWidgetData } from '../../../services/widgetSync';
 import type { DashboardStackScreenProps } from '../../../app/navigation/types';
 
 function DashboardSkeleton({ styles }: { styles: ReturnType<typeof createStyles> }) {
@@ -32,6 +33,11 @@ function DashboardSkeleton({ styles }: { styles: ReturnType<typeof createStyles>
       </View>
       <View style={styles.summaryRow}>
         {[0, 1, 2].map((key) => (
+          <Skeleton key={key} height={72} style={styles.summarySkeleton} />
+        ))}
+      </View>
+      <View style={styles.summaryRow}>
+        {[0, 1].map((key) => (
           <Skeleton key={key} height={72} style={styles.summarySkeleton} />
         ))}
       </View>
@@ -68,6 +74,14 @@ export function DashboardScreen({ navigation }: DashboardStackScreenProps<'Dashb
   const styles = useMemo(() => createStyles(colors), [colors]);
   const { data, isLoading, isError, refetch, isRefetching } = useDashboardQuery();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+
+  useEffect(() => {
+    if (!data) return;
+    syncWidgetData({
+      expiringToday: data.expiringToday,
+      upcomingItems: data.upcomingItems.map((item) => ({ name: item.name })),
+    });
+  }, [data]);
 
   const renderHeaderLeft = useCallback(
     () => <MenuButton onPress={() => setIsMenuOpen(true)} colors={colors} />,
@@ -163,6 +177,19 @@ export function DashboardScreen({ navigation }: DashboardStackScreenProps<'Dashb
                 value={`${data.spending.unpaidTotal.toLocaleString(i18n.language)} ₺`}
                 caption={t('dashboard.summary.unpaidTotal')}
                 tint="warning"
+              />
+            </View>
+
+            <View style={styles.summaryRow}>
+              <SummaryCard
+                value={`${data.waste.totalValue.toLocaleString(i18n.language)} ₺`}
+                caption={t('dashboard.summary.wasteValue')}
+                tint="danger"
+              />
+              <SummaryCard
+                value={data.waste.itemCount}
+                caption={t('dashboard.summary.wasteCount')}
+                tint="danger"
               />
             </View>
 

@@ -10,40 +10,87 @@
 		0C80B921A6F3F58F76C31292 /* libPods-NestoryMobile.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 5DCACB8F33CDC322A6C60F78 /* libPods-NestoryMobile.a */; };
 		0CEF47ABC4344BFFBA9A21A9 /* Inter-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = CEF1288019F9425CB1B37681 /* Inter-Medium.ttf */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
+		1AA69E7A1047D319C01CB772 /* NestoryWidgetBundle.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3B44DBB76B181A5D30D19FD3 /* NestoryWidgetBundle.swift */; };
+		25A36B5CE2FE0652D7A79A67 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 2B3C411016E51D59DE0C4D39 /* Foundation.framework */; };
 		3CE391171F6C4373893A24EB /* Baloo2-SemiBold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 858A47FAD55E4709BDD19D5E /* Baloo2-SemiBold.ttf */; };
+		5A5B3143338896009794ADE5 /* NestoryWidgetModule.m in Sources */ = {isa = PBXBuildFile; fileRef = 1F5E7502D0C130DED0610004 /* NestoryWidgetModule.m */; };
 		6D53D4E071EF4EB7924B8665 /* Inter-Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = DF836DE145784C06BFFF8D9B /* Inter-Regular.ttf */; };
 		761780ED2CA45674006654EE /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 761780EC2CA45674006654EE /* AppDelegate.swift */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		86A8360C0CEE03EFA5A4F02F /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3A1CC09A544A876A143A3B5C /* GoogleService-Info.plist */; };
+		9983CE0886C6B4FC68CC0126 /* NestoryWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 02BC793D7A7D490A4834BFBA /* NestoryWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeaderOnCopy, ); }; };
 		AADF4820ED286853EFBB6AC1 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */; };
+		BB2403FF9F7751274A5BA428 /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7DD35CA87C52A88D469F2334 /* WidgetKit.framework */; };
+		E0B1B3B611E829E80D8EDEE4 /* NestoryWidgetModule.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6544EE85362934E3BDEA2942 /* NestoryWidgetModule.swift */; };
 		EC271F21095F42A89E35E0B9 /* Baloo2-Bold.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 844C55AE87B44B898E045C6A /* Baloo2-Bold.ttf */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXContainerItemProxy section */
+		F3B8ADF4FB5D9957793F3DBE /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 83CBB9F71A601CBA00E9B192 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8362652A39C73E6C8CBF1406;
+			remoteInfo = NestoryWidgetExtension;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		287D0D11464C28681AF69CF4 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				9983CE0886C6B4FC68CC0126 /* NestoryWidgetExtension.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
+		02BC793D7A7D490A4834BFBA /* NestoryWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = NestoryWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07F961A680F5B00A75B9A /* NestoryMobile.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NestoryMobile.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = NestoryMobile/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = NestoryMobile/Info.plist; sourceTree = "<group>"; };
 		13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = PrivacyInfo.xcprivacy; path = NestoryMobile/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		1F5E7502D0C130DED0610004 /* NestoryWidgetModule.m */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.c.objc; path = NestoryMobile/NestoryWidgetModule.m; sourceTree = "<group>"; };
+		2B3C411016E51D59DE0C4D39 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
 		3A1CC09A544A876A143A3B5C /* GoogleService-Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = "NestoryMobile/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		3B4392A12AC88292D35C810B /* Pods-NestoryMobile.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NestoryMobile.debug.xcconfig"; path = "Target Support Files/Pods-NestoryMobile/Pods-NestoryMobile.debug.xcconfig"; sourceTree = "<group>"; };
+		3B44DBB76B181A5D30D19FD3 /* NestoryWidgetBundle.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = NestoryWidgetBundle.swift; sourceTree = "<group>"; };
 		5709B34CF0A7D63546082F79 /* Pods-NestoryMobile.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NestoryMobile.release.xcconfig"; path = "Target Support Files/Pods-NestoryMobile/Pods-NestoryMobile.release.xcconfig"; sourceTree = "<group>"; };
 		5DCACB8F33CDC322A6C60F78 /* libPods-NestoryMobile.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-NestoryMobile.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		6544EE85362934E3BDEA2942 /* NestoryWidgetModule.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = NestoryWidgetModule.swift; path = NestoryMobile/NestoryWidgetModule.swift; sourceTree = "<group>"; };
 		761780EC2CA45674006654EE /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = AppDelegate.swift; path = NestoryMobile/AppDelegate.swift; sourceTree = "<group>"; };
+		7DD35CA87C52A88D469F2334 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = NestoryMobile/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		844C55AE87B44B898E045C6A /* Baloo2-Bold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Baloo2-Bold.ttf"; path = "../assets/fonts/Baloo2-Bold.ttf"; sourceTree = "<group>"; };
 		858A47FAD55E4709BDD19D5E /* Baloo2-SemiBold.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Baloo2-SemiBold.ttf"; path = "../assets/fonts/Baloo2-SemiBold.ttf"; sourceTree = "<group>"; };
 		92FF62B42789F84C90972631 /* NestoryMobile.entitlements */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.entitlements; path = NestoryMobile/NestoryMobile.entitlements; sourceTree = "<group>"; };
+		C1617663E6EA4D4D97494E44 /* Info.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		CDD5821A7A04F38DA4311519 /* NestoryWidgetExtension.entitlements */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.entitlements; path = NestoryWidgetExtension.entitlements; sourceTree = "<group>"; };
 		CEF1288019F9425CB1B37681 /* Inter-Medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-Medium.ttf"; path = "../assets/fonts/Inter-Medium.ttf"; sourceTree = "<group>"; };
 		DF836DE145784C06BFFF8D9B /* Inter-Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = undefined; includeInIndex = 0; lastKnownFileType = unknown; name = "Inter-Regular.ttf"; path = "../assets/fonts/Inter-Regular.ttf"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		095FBA3A6B1344C6EB3DA332 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				25A36B5CE2FE0652D7A79A67 /* Foundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		13B07F8C1A680F5B00A75B9A /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 				0C80B921A6F3F58F76C31292 /* libPods-NestoryMobile.a in Frameworks */,
+				BB2403FF9F7751274A5BA428 /* WidgetKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -60,6 +107,8 @@
 				13B07FB81A68108700A75B9A /* PrivacyInfo.xcprivacy */,
 				3A1CC09A544A876A143A3B5C /* GoogleService-Info.plist */,
 				92FF62B42789F84C90972631 /* NestoryMobile.entitlements */,
+				1F5E7502D0C130DED0610004 /* NestoryWidgetModule.m */,
+				6544EE85362934E3BDEA2942 /* NestoryWidgetModule.swift */,
 			);
 			name = NestoryMobile;
 			sourceTree = "<group>";
@@ -69,6 +118,8 @@
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				5DCACB8F33CDC322A6C60F78 /* libPods-NestoryMobile.a */,
+				7DD35CA87C52A88D469F2334 /* WidgetKit.framework */,
+				AD8F2D521C5A948BF58562E2 /* iOS */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -89,6 +140,7 @@
 				2D16E6871FA4F8E400B85C8A /* Frameworks */,
 				BBD78D7AC51CEA395F1C20DB /* Pods */,
 				DD8B2BE76B8E47279CE3EA5E /* Resources */,
+				B5D2CE13B2D45A8E525E560E /* NestoryWidgetExtension */,
 			);
 			indentWidth = 2;
 			sourceTree = "<group>";
@@ -99,8 +151,28 @@
 			isa = PBXGroup;
 			children = (
 				13B07F961A680F5B00A75B9A /* NestoryMobile.app */,
+				02BC793D7A7D490A4834BFBA /* NestoryWidgetExtension.appex */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		AD8F2D521C5A948BF58562E2 /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				2B3C411016E51D59DE0C4D39 /* Foundation.framework */,
+			);
+			name = iOS;
+			sourceTree = "<group>";
+		};
+		B5D2CE13B2D45A8E525E560E /* NestoryWidgetExtension */ = {
+			isa = PBXGroup;
+			children = (
+				3B44DBB76B181A5D30D19FD3 /* NestoryWidgetBundle.swift */,
+				C1617663E6EA4D4D97494E44 /* Info.plist */,
+				CDD5821A7A04F38DA4311519 /* NestoryWidgetExtension.entitlements */,
+			);
+			name = NestoryWidgetExtension;
+			path = NestoryWidgetExtension;
 			sourceTree = "<group>";
 		};
 		BBD78D7AC51CEA395F1C20DB /* Pods */ = {
@@ -133,6 +205,7 @@
 			buildPhases = (
 				C38B50BA6285516D6DCD4F65 /* [CP] Check Pods Manifest.lock */,
 				13B07F871A680F5B00A75B9A /* Sources */,
+				287D0D11464C28681AF69CF4 /* Embed Foundation Extensions */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
@@ -144,11 +217,29 @@
 			buildRules = (
 			);
 			dependencies = (
+				4AE24BA3FE2782F5BC2E974E /* PBXTargetDependency */,
 			);
 			name = NestoryMobile;
 			productName = NestoryMobile;
 			productReference = 13B07F961A680F5B00A75B9A /* NestoryMobile.app */;
 			productType = "com.apple.product-type.application";
+		};
+		8362652A39C73E6C8CBF1406 /* NestoryWidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F146D88FC0BA4EAF00AE4D26 /* Build configuration list for PBXNativeTarget "NestoryWidgetExtension" */;
+			buildPhases = (
+				FB978A410145D7ECC33A680D /* Sources */,
+				095FBA3A6B1344C6EB3DA332 /* Frameworks */,
+				99F8D971258A79B222936698 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = NestoryWidgetExtension;
+			productName = NestoryWidgetExtension;
+			productReference = 02BC793D7A7D490A4834BFBA /* NestoryWidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -160,6 +251,18 @@
 				TargetAttributes = {
 					13B07F861A680F5B00A75B9A = {
 						LastSwiftMigration = 1120;
+						SystemCapabilities = {
+							com.apple.SecurityApplicationGroups = {
+								enabled = 1;
+							};
+						};
+					};
+					8362652A39C73E6C8CBF1406 = {
+						SystemCapabilities = {
+							com.apple.SecurityApplicationGroups = {
+								enabled = 1;
+							};
+						};
 					};
 				};
 			};
@@ -177,6 +280,7 @@
 			projectRoot = "";
 			targets = (
 				13B07F861A680F5B00A75B9A /* NestoryMobile */,
+				8362652A39C73E6C8CBF1406 /* NestoryWidgetExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -194,6 +298,13 @@
 				3CE391171F6C4373893A24EB /* Baloo2-SemiBold.ttf in Resources */,
 				6D53D4E071EF4EB7924B8665 /* Inter-Regular.ttf in Resources */,
 				86A8360C0CEE03EFA5A4F02F /* GoogleService-Info.plist in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		99F8D971258A79B222936698 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -307,10 +418,29 @@
 			buildActionMask = 2147483647;
 			files = (
 				761780ED2CA45674006654EE /* AppDelegate.swift in Sources */,
+				5A5B3143338896009794ADE5 /* NestoryWidgetModule.m in Sources */,
+				E0B1B3B611E829E80D8EDEE4 /* NestoryWidgetModule.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FB978A410145D7ECC33A680D /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				1AA69E7A1047D319C01CB772 /* NestoryWidgetBundle.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		4AE24BA3FE2782F5BC2E974E /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = NestoryWidgetExtension;
+			target = 8362652A39C73E6C8CBF1406 /* NestoryWidgetExtension */;
+			targetProxy = F3B8ADF4FB5D9957793F3DBE /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		13B07F941A680F5B00A75B9A /* Debug */ = {
@@ -533,6 +663,49 @@
 			};
 			name = Release;
 		};
+		90FF5A6B4B44E1AEF9EF625A /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_ENTITLEMENTS = NestoryWidgetExtension/NestoryWidgetExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 3;
+				DEVELOPMENT_TEAM = MC8NQAB7BL;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = NestoryWidgetExtension/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.nestoryhomekit.app.NestoryWidgetExtension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		B32D7FE34E971CF22D2CF8CE /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CLANG_ENABLE_OBJC_WEAK = NO;
+				CODE_SIGN_ENTITLEMENTS = NestoryWidgetExtension/NestoryWidgetExtension.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 3;
+				DEVELOPMENT_TEAM = MC8NQAB7BL;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = NestoryWidgetExtension/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.nestoryhomekit.app.NestoryWidgetExtension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -550,6 +723,15 @@
 			buildConfigurations = (
 				83CBBA201A601CBA00E9B192 /* Debug */,
 				83CBBA211A601CBA00E9B192 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		F146D88FC0BA4EAF00AE4D26 /* Build configuration list for PBXNativeTarget "NestoryWidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				B32D7FE34E971CF22D2CF8CE /* Release */,
+				90FF5A6B4B44E1AEF9EF625A /* Debug */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

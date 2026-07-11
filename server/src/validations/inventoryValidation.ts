@@ -12,6 +12,7 @@ export const createItemSchema = z.object({
   purchaseDate: z.coerce.date().optional(),
   barcode: z.string().trim().optional(),
   brand: z.string().trim().optional(),
+  price: z.number().nonnegative().optional(),
   notes: z.string().trim().max(500).optional(),
   imageUrl: z.string().trim().optional(),
   reminderDaysBefore: z.array(z.number().int().min(0)).optional(),

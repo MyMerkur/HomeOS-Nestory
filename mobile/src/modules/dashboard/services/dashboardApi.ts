@@ -11,6 +11,7 @@ export type DashboardSummary = {
   assetCount: number;
   upcomingItems: InventoryItem[];
   spending: { paidThisMonth: number; unpaidTotal: number };
+  waste: { totalValue: number; itemCount: number };
 };
 
 type ApiEnvelope<T> = { success: boolean; data: T; message: string };

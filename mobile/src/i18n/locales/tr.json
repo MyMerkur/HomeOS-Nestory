@@ -79,7 +79,9 @@
       "medicines": "İlaç",
       "assets": "Varlık",
       "paidThisMonth": "Bu ay ödenen",
-      "unpaidTotal": "Bekleyen fatura"
+      "unpaidTotal": "Bekleyen fatura",
+      "wasteValue": "Bu ay israf",
+      "wasteCount": "Atılan ürün"
     },
     "upcomingTitle": "Yaklaşan ürünler",
     "emptyUpcoming": "Yaklaşan SKT'si olan ürün yok.",
@@ -148,7 +150,9 @@
       "barcodeNotFoundMessage": "Fotoğrafta bir barkod tanınamadı, tekrar dene veya elle gir.",
       "expiryNotFoundTitle": "Tarih bulunamadı",
       "expiryNotFoundMessage": "Fotoğrafta bir SKT tarihi tanınamadı, elle girebilirsin.",
-      "scanErrorMessage": "Tarama sırasında bir sorun oluştu, tekrar dene."
+      "scanErrorMessage": "Tarama sırasında bir sorun oluştu, tekrar dene.",
+      "priceLabel": "Fiyat (opsiyonel)",
+      "pricePlaceholder": "örn. 45.90"
     },
     "quickAdd": {
       "scanBarcodeButton": "Barkodu Tara",
@@ -180,7 +184,8 @@
       "itemsLabel": "Tespit edilen ürünler ({{count}})",
       "submitButton": "{{count}} ürünü ekle",
       "errorSaveAll": "Hiçbir ürün kaydedilemedi, tekrar deneyin.",
-      "successMessage": "{{count}} ürün eklendi."
+      "successMessage": "{{count}} ürün eklendi.",
+      "itemPriceA11y": "Fiyat"
     },
     "identifyPhotoButton": "Fotoğrafla Tanı",
     "identifyPhoto": {
@@ -193,7 +198,13 @@
     "addButton": "Ekle",
     "errorLoad": "Alışveriş listesi yüklenemedi.",
     "emptyList": "Alışveriş listesi boş.",
-    "deleteA11y": "{{name}} sil"
+    "deleteA11y": "{{name}} sil",
+    "suggestions": {
+      "title": "Listen için öneriler",
+      "overdueBy_one": "{{count}} gündür gecikti",
+      "overdueBy_other": "{{count}} gündür gecikti",
+      "addA11y": "{{name}} ekle"
+    }
   },
   "family": {
     "inviteButton": "Davet Et",

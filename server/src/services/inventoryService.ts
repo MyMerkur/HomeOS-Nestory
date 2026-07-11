@@ -17,6 +17,7 @@ export type ItemSummary = {
   purchaseDate: Date | null;
   brand: string | null;
   barcode: string | null;
+  price: number | null;
   status: string;
   notes: string | null;
   imageUrl: string | null;
@@ -39,6 +40,7 @@ export function toSummary(item: InventoryItemDocument & { _id: unknown }): ItemS
     purchaseDate: item.purchaseDate ?? null,
     brand: item.brand ?? null,
     barcode: item.barcode ?? null,
+    price: item.price ?? null,
     status: item.status,
     notes: item.notes ?? null,
     imageUrl: item.imageUrl ?? null,
@@ -77,6 +79,7 @@ export async function createItem(
     purchaseDate: input.purchaseDate,
     barcode: input.barcode,
     brand: input.brand,
+    price: input.price,
     notes: input.notes,
     imageUrl: input.imageUrl,
     reminderDaysBefore: input.reminderDaysBefore,
@@ -126,6 +129,7 @@ export async function updateItem(
   if (input.purchaseDate !== undefined) item.purchaseDate = input.purchaseDate;
   if (input.barcode !== undefined) item.barcode = input.barcode;
   if (input.brand !== undefined) item.brand = input.brand;
+  if (input.price !== undefined) item.price = input.price;
   if (input.notes !== undefined) item.notes = input.notes;
   if (input.imageUrl !== undefined) item.imageUrl = input.imageUrl;
   if (input.reminderDaysBefore !== undefined) item.reminderDaysBefore = input.reminderDaysBefore;

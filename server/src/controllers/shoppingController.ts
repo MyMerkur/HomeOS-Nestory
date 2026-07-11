@@ -12,6 +12,11 @@ export async function listShoppingItemsHandler(req: Request, res: Response) {
   sendSuccess(res, { items }, 'Shopping items fetched successfully');
 }
 
+export async function getShoppingSuggestionsHandler(req: Request, res: Response) {
+  const suggestions = await shoppingService.getShoppingSuggestions(req.params.homeId);
+  sendSuccess(res, { suggestions }, 'Shopping suggestions fetched successfully');
+}
+
 export async function addShoppingItemHandler(req: Request, res: Response) {
   const item = await shoppingService.addShoppingItem(
     req.params.homeId,

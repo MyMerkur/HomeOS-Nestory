@@ -2,6 +2,7 @@ import { Types } from 'mongoose';
 import { InventoryItem } from '../models/InventoryItem';
 import { Asset } from '../models/Asset';
 import { Bill } from '../models/Bill';
+import { AuditLog } from '../models/AuditLog';
 import { toSummary, type ItemSummary } from './inventoryService';
 
 type DashboardSummary = {
@@ -14,6 +15,7 @@ type DashboardSummary = {
   assetCount: number;
   upcomingItems: ItemSummary[];
   spending: { paidThisMonth: number; unpaidTotal: number };
+  waste: { totalValue: number; itemCount: number };
 };
 
 function endOfDay(daysFromNow: number): Date {
@@ -41,6 +43,29 @@ async function sumBillAmounts(match: Record<string, unknown>): Promise<number> {
   return result?.total ?? 0;
 }
 
+// Reads from AuditLog (not InventoryItem.updatedAt) because that's the only
+// reliable "when was this actually discarded" timestamp — updatedAt gets
+// bumped by any later edit to the same (still-existing) item document.
+async function sumWastedValue(
+  homeObjectId: Types.ObjectId,
+  from: Date,
+  to: Date,
+): Promise<{ totalValue: number; itemCount: number }> {
+  const [result] = await AuditLog.aggregate<{ totalValue: number; itemCount: number }>([
+    { $match: { homeId: homeObjectId, action: 'discarded', createdAt: { $gte: from, $lt: to } } },
+    { $lookup: { from: 'inventoryitems', localField: 'itemId', foreignField: '_id', as: 'item' } },
+    { $unwind: '$item' },
+    {
+      $group: {
+        _id: null,
+        totalValue: { $sum: { $ifNull: ['$item.price', 0] } },
+        itemCount: { $sum: 1 },
+      },
+    },
+  ]);
+  return { totalValue: result?.totalValue ?? 0, itemCount: result?.itemCount ?? 0 };
+}
+
 export async function getDashboard(homeId: string): Promise<DashboardSummary> {
   const activeFilter = { homeId, status: 'active' };
 
@@ -56,6 +81,7 @@ export async function getDashboard(homeId: string): Promise<DashboardSummary> {
     upcomingItems,
     paidThisMonth,
     unpaidTotal,
+    waste,
   ] = await Promise.all([
     InventoryItem.countDocuments({
       ...activeFilter,
@@ -81,6 +107,7 @@ export async function getDashboard(homeId: string): Promise<DashboardSummary> {
       paidAt: { $gte: startOfCurrentMonth(), $lt: startOfNextMonth() },
     }),
     sumBillAmounts({ homeId: homeObjectId, status: 'unpaid' }),
+    sumWastedValue(homeObjectId, startOfCurrentMonth(), startOfNextMonth()),
   ]);
 
   return {
@@ -93,5 +120,6 @@ export async function getDashboard(homeId: string): Promise<DashboardSummary> {
     assetCount,
     upcomingItems: upcomingItems.map(toSummary),
     spending: { paidThisMonth, unpaidTotal },
+    waste,
   };
 }

@@ -126,4 +126,11 @@ dependencies {
     } else {
         implementation jscFlavor
     }
+
+    // Home screen widget (see NestoryWidget.kt / NestoryWidgetModule.kt).
+    implementation "androidx.glance:glance-appwidget:1.1.1"
+    // Forces work-runtime-ktx to the same version glance-appwidget pulls in
+    // for plain work-runtime — otherwise a stale transitive work-runtime-ktx
+    // (from another dependency) duplicates classes already in the newer jar.
+    implementation "androidx.work:work-runtime-ktx:2.8.0"
 }

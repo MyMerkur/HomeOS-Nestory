@@ -1589,8 +1589,162 @@ yakalaması gerekiyor.
 - **Consequences**: Kullanıcı kendi Gemini API anahtarını verdi, yerel
   `.env`'e eklendi (git'e commit edilmiyor, `.gitignore`'da) ve gerçek
   bir domates fotoğrafıyla uçtan uca test edildi — doğru şekilde
-  "Domates" / "Vegetable" olarak tanındı. **VPS `.env`'ine henüz
-  eklenmedi** — production'da özellik aktif olması için VPS'e SSH ile
-  bağlanıp `GEMINI_API_KEY` eklenmesi ve `pm2 restart nestory-api`
-  gerekiyor. Server 133/133, mobile 247/247 test yeşil; i18n 8 dilde
-  383/383 anahtar paritesi korundu.
+  "Domates" / "Vegetable" olarak tanındı. Aynı gün VPS production
+  `.env`'ine de eklenip `pm2 restart nestory-api --update-env` ile
+  devreye alındı — özellik hem yerelde hem production'da aktif.
+  Server 133/133, mobile 247/247 test yeşil; i18n 8 dilde 383/383
+  anahtar paritesi korundu.
+
+## İsraf raporu + akıllı alışveriş önerisi
+
+- **Context**: Kullanıcı "projede başka ne eksik" diye sordu; önerilen
+  6 fikirden ilk 3'ünü (israf raporu, akıllı alışveriş önerisi, ana
+  ekran widget'ı) uygulamaya karar verdi. İlk ikisi tamamen mevcut
+  RN+Node yığınında yapılabilir; widget native bir Xcode/Android
+  Studio hedefi gerektirdiği için ayrı ele alındı (aşağıya bakın).
+- **Veri modeli keşfi** (uygulamaya başlamadan önce): `InventoryItem`'da
+  hiç fiyat alanı yoktu. Tüketim/atma geçmişi `AuditLog` koleksiyonunda
+  (`action: 'consumed'|'discarded'`, `createdAt` ile) tutuluyor —
+  `InventoryItem.updatedAt` bu amaçla güvenilmez çünkü ürün silinmeden
+  her düzenlemede güncelleniyor. `'expired'` status enum'da tanımlı
+  ama **hiçbir yerde hiç set edilmiyor** (otomatik SKT-geçti geçişi
+  yok) — dashboard'daki "bugün/3 gün/hafta" sayaçları status'e değil
+  doğrudan `expiryDate` aralığına bakıyor zaten.
+- **İsraf raporu decision**:
+  - `InventoryItem`'a opsiyonel `price` alanı eklendi (model + Zod
+    validation + servis + mobil form + tipler).
+  - `dashboardService.ts`'e `waste: {totalValue, itemCount}` eklendi —
+    `AuditLog` (`action:'discarded'`, bu ay) `$lookup` ile
+    `InventoryItem.price`'a bağlanıp toplanıyor. Fiyatsız ürünler
+    (mevcut/eski kayıtlar) `$sum` içinde otomatik 0 sayılıyor —
+    geriye dönük veri kaybı yaşanmıyor, sadece o kayıtlar toplama
+    dahil olmuyor.
+  - Fiş-OCR akışı (`receiptParser.ts`) genişletildi: artık her satırdan
+    sondaki fiyatı da (`45,90`, `1.234,56`, `45.90 TL` gibi Türkçe/
+    nokta ondalık formatları) ayrıştırıp `{name, price?}` döndürüyor.
+    `ReceiptScanScreen`'de her taslak satırına düzenlenebilir bir
+    fiyat alanı eklendi — kullanıcı kaydetmeden önce düzeltebiliyor.
+  - Dashboard'a "Bu ay israf" (₺) + "Atılan ürün" (adet) kartları
+    eklendi, `danger` tint (kırmızı) ile — israf istenmeyen bir sayı
+    olduğu için diğer "iyi haber" kartlarından görsel olarak ayrıştı.
+- **Akıllı alışveriş önerisi decision**:
+  - Yeni `shoppingService.getShoppingSuggestions(homeId)`:
+    `AuditLog` (`action:'consumed'`) kayıtlarını `InventoryItem`'a
+    join'leyip `normalizedName`'e göre gruplar, her grup için
+    ardışık tüketim tarihleri arasındaki **ortalama günü** hesaplar
+    (en az 2 geçmiş tüketim olayı şartıyla — güvenilir bir örüntü
+    için minimum eşik). "Son tüketimden bu yana geçen gün ≥ ortalama
+    aralık" ise ürün gecikmiş sayılır ve önerilir.
+  - Hâlâ aktif stokta olan ya da zaten alışveriş listesinde bekleyen
+    ürünler öneri listesinden hariç tutuluyor (gereksiz tekrar
+    önerisi olmasın diye).
+  - Yeni endpoint: `GET /homes/:homeId/shopping/suggestions`.
+  - Alışveriş ekranına, listenin üstünde "Listen için öneriler"
+    bölümü eklendi — her öneri kartında kaç gün gecikmiş olduğu ve
+    tek dokunuşla listeye ekleme butonu var. Eklenince hem alışveriş
+    listesi hem öneri sorgusu invalidate ediliyor (eklenen ürün
+    "zaten listede" filtresine takılıp öneriden düşsün diye).
+  - **Bilinen sınırlama**: `AuditLog`'da yalnızca `itemId`/`createdAt`
+    tutulduğu için test verisi hazırlarken (birebir aynı ürünü birden
+    fazla kez "tüketilmiş" göstermek için) doğrudan `AuditLog.create()`
+    + `InventoryItem` status'ünü elle `consumed`'a çekmek gerekti —
+    gerçek akışta bu zaten `inventoryActionService.consumeItem()`
+    çağrısıyla birlikte otomatik oluyor, test yardımcı fonksiyonu bu
+    gerçekliği taklit edecek şekilde düzeltildi (ilk yazımda item
+    'active' kalınca "zaten stokta var" filtresi öneriyi yanlışlıkla
+    eledi — kodun kendisi doğruydu, test verisi eksikti).
+- **Consequences**: Server 140/140, mobile 258/258 test yeşil; tsc/lint
+  temiz her iki tarafta. Dashboard'daki israf kartı gerçek production
+  API'sinden test edildi (demo hesapta 0 ₺/0 ürün — henüz atılmış
+  ürün olmadığı için beklenen sonuç). Fiyat alanı ve öneri özelliği
+  geriye dönük uyumlu — eski kayıtlarda fiyat yok, hiçbir şeyi
+  bozmuyor, sadece yeni girilen verilerle zamanla zenginleşiyor.
+  Henüz commit/deploy edilmedi.
+
+## Ana ekran widget'ı (iOS WidgetKit + Android Glance)
+
+- **Context**: Üçüncü fikir — kullanıcı riski kabul edip hem iOS hem
+  Android widget'ını denememizi istedi. Android tarafı normal RN proje
+  dosyalarına ekleme yapmakla çözülüyor (düşük risk); iOS tarafı yeni
+  bir Xcode **Widget Extension hedefi** gerektiriyor — bu, projede
+  daha önce yaşanan pbxproj kırılganlığından (icon/signing sorunları)
+  çok daha büyük bir risk taşıyordu çünkü Xcode'un GUI "New Target"
+  sihirbazının otomatik yaptığı çok sayıda dosya/imzalama bağlantısını
+  elle (script ile) taklit etmek gerekiyordu.
+- **Mimari karar (her iki platform ortak)**: Widget'ın kendi ağ/auth
+  erişimi yok — sadece ana uygulama her dashboard yüklemesinde native
+  bir köprü modülüne (`writeSnapshot`) son özet veriyi (`expiringToday`
+  + ilk 3 yaklaşan ürün adı) yazıyor, widget bu son "anlık görüntü"yü
+  paylaşılan depodan okuyor. Bu, widget'ın kendi başına auth/network
+  mantığı taşımasını gerektirmeyen, düşük riskli bir MVP tasarımı —
+  veri en fazla "son uygulama açılışı" kadar güncel.
+- **Android (Glance)**: `androidx.glance:glance-appwidget:1.1.1` eklendi.
+  `NestoryWidgetModule.kt` (native modül, `SharedPreferences`'a yazıp
+  `GlanceAppWidget.updateAll()` tetikliyor) + `NestoryWidget.kt`
+  (Compose/Glance UI) + `NestoryWidgetReceiver.kt` + manifest kaydı.
+  **Bug**: `glance-appwidget` transitive olarak `work-runtime:2.8.0`
+  çekiyor, ama başka bir bağımlılık (muhtemelen notifee/Firebase)
+  `work-runtime-ktx:2.7.1` çekiyordu — ikisi `checkDebugDuplicateClasses`
+  hatası veriyordu (aynı sınıflar iki farklı sürümde). Çözüm:
+  `work-runtime-ktx:2.8.0`'ı açıkça eklemek (aynı sürüme yakınsatmak).
+  **Bug**: Glance'ta `TextStyle`/`background` düz `Color` değil
+  `ColorProvider` bekliyor — ilk yazımda derleme hatası verdi, sarmalayıp
+  düzeltildi. `assembleDebug` başarıyla derlendi; bu ortamda kurulu bir
+  emülatör olmadığı için widget'ın gerçek ekranda render edildiği görsel
+  olarak doğrulanamadı — sadece derleme/paketleme seviyesinde doğrulandı.
+- **iOS (WidgetKit)**: Yeni hedef Xcode GUI yerine `xcodeproj` Ruby
+  gem'i (CocoaPods'un temel kütüphanesi, elle pbxproj metin düzenlemesinden
+  çok daha güvenilir) ile script'le eklendi. Karşılaşılan ve çözülen
+  hatalar (sırasıyla):
+  1. `PRODUCT_NAME` build setting'i unutulmuştu → boş isimli `.appex`
+     üretip "Multiple commands produce" çakışmasına yol açtı.
+  2. `WidgetCenter` **Objective-C'den erişilemez** (WidgetKit.h'de hiç
+     tanımlı değil, sadece Swift modülünde var) — ana uygulamanın native
+     köprü modülü önce ObjC yazılmıştı, `AppDelegate.swift`'in zaten
+     Swift olduğu görülüp standart RN "Swift sınıf + ince ObjC
+     `RCT_EXTERN_MODULE` köprüsü" desenine çevrildi.
+  3. Yeni "Embed Foundation Extensions" copy-files fazı hedefin build
+     phase listesinin sonuna eklenince, RNFB'nin çıktısı deklare
+     edilmemiş Crashlytics script fazıyla sahte bir **bağımlılık
+     döngüsü** oluştu — fazı Sources'tan hemen sonraya (script
+     fazlarından önceye) taşımak çözdü.
+  4. Widget'ın Info.plist'inde `CFBundleIdentifier` eksikti (fiziksel
+     plist + `GENERATE_INFOPLIST_FILE=NO` kullanılınca bu anahtar
+     otomatik eklenmiyor) → "Embedded binary's bundle identifier is
+     not prefixed..." hatası. Eksik standart anahtarlar eklendi.
+  5. **En kritik bug**: App Group entitlement'ı hem ana hedefe hem
+     widget'a doğru yazılmasına rağmen, derlenen binary'de tamamen boş
+     çıkıyordu (`codesign -d --entitlements` → `<dict/>`). Kök neden:
+     Xcode'un otomatik imzalaması, entitlements dosyasının içeriğini
+     doğrudan gömmüyor — hangi capability'lerin Apple'ın sunucularına
+     kayıtlı olduğuna göre kendi entitlement setini **yeniden üretiyor**.
+     Bunun için hem `PBXProject.attributes.TargetAttributes.<hedef>.
+     SystemCapabilities` işaretinin var olması hem de build'in
+     `-allowProvisioningUpdates` bayrağıyla (Apple sunucularıyla
+     konuşup App Group'u App ID'ye ekleyip yeni bir provisioning
+     profili indirebilmesi için) çalıştırılması gerekiyor. Düz
+     `xcodebuild build` (bayraksız) bunu yapmıyor. Ayrıca simülatör
+     (`Debug-iphonesimulator`) build'leri entitlement'ları **hiçbir
+     zaman gömmüyor** (mevcut `aps-environment` bile boştu) — bu
+     normal simülatör davranışı, gerçek doğrulama için cihaz/arşiv
+     build'i gerekiyor.
+  - **Doğrulama**: `-allowProvisioningUpdates` ile alınan bir arşivde
+    hem ana uygulamanın hem widget extension'ın binary'sinde
+    `com.apple.security.application-groups: [group.com.nestoryhomekit.app]`
+    doğru şekilde göründüğü `codesign -d --entitlements` ile teyit
+    edildi. Ayrıca hem `NestoryWidgetExtension` şeması tek başına hem
+    `NestoryMobile` şeması (widget gömülü) simülatör hedefi için
+    `BUILD SUCCEEDED`, ve tam uygulama simülatörde çökmeden açılıp
+    dashboard verisini gösterdi (native modül çağrısı hata vermedi).
+- **Consequences**: Widget'ın gerçek ekranda görünmesi (springboard'a
+  eklenmesi) bu oturumda test edilmedi — hem çünkü simülatörde
+  entitlement doğrulaması gerektiriyor (yalnızca cihaz/TestFlight'ta
+  tam çalışır) hem de UI otomasyonuyla springboard'a widget eklemek
+  koordinat-tıklama riski taşıyor (bu oturumda daha önce kaçınılan bir
+  risk). Bir sonraki TestFlight yüklemesinde kullanıcının cihazında
+  gerçek widget ekleme deneyimi elle doğrulanmalı. `PRODUCT_BUNDLE_
+  IDENTIFIER` widget için `com.nestoryhomekit.app.NestoryWidgetExtension`
+  — App Store Connect'te bu yeni bundle ID'nin de kaydedilmesi/
+  onaylanması gerekebilir (otomatik imzalama genelde bunu ilk arşiv/
+  yüklemede kendi hallediyor, ama takip edilmeli). Server tarafı
+  değişmedi. Mobile 263/263, server 140/140 test yeşil.

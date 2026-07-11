@@ -4,6 +4,7 @@ import { ShoppingScreen } from './ShoppingScreen';
 import {
   addShoppingItem,
   deleteShoppingItem,
+  getShoppingSuggestions,
   listShoppingItems,
   toggleShoppingItemCheck,
 } from '../services/shoppingApi';
@@ -53,6 +54,7 @@ describe('ShoppingScreen', () => {
     jest.clearAllMocks();
     useHomeStore.setState({ selectedHomeId: 'home-1' });
     (listShoppingItems as jest.Mock).mockResolvedValue(mockItems);
+    (getShoppingSuggestions as jest.Mock).mockResolvedValue([]);
   });
 
   it('shows pending and checked items', async () => {
@@ -102,5 +104,41 @@ describe('ShoppingScreen', () => {
     fireEvent(screen.getByTestId('shopping-list'), 'refresh');
 
     await waitFor(() => expect(listShoppingItems).toHaveBeenCalledTimes(2));
+  });
+
+  it('shows no suggestions section when there are none', async () => {
+    renderScreen();
+    await screen.findByText('Süt');
+
+    expect(screen.queryByText('Suggested for your list')).toBeNull();
+  });
+
+  it('shows suggested items and adds one to the list', async () => {
+    (getShoppingSuggestions as jest.Mock).mockResolvedValue([
+      {
+        normalizedName: 'sut',
+        name: 'Süt',
+        category: 'Dairy',
+        unit: 'liter',
+        avgIntervalDays: 4,
+        daysSinceLastConsumed: 6,
+      },
+    ]);
+    (addShoppingItem as jest.Mock).mockResolvedValue({ id: 'item-3' });
+
+    renderScreen();
+    await screen.findByText('Suggested for your list');
+
+    expect(screen.getByText('6 days overdue')).toBeTruthy();
+
+    fireEvent.press(screen.getByTestId('shopping-suggestion-add-sut'));
+
+    await waitFor(() =>
+      expect(addShoppingItem).toHaveBeenCalledWith('home-1', {
+        name: 'Süt',
+        category: 'Dairy',
+        unit: 'liter',
+      }),
+    );
   });
 });

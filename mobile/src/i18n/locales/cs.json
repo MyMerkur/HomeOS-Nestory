@@ -79,7 +79,9 @@
       "medicines": "Léky",
       "assets": "Majetek",
       "paidThisMonth": "Zaplaceno tento měsíc",
-      "unpaidTotal": "Nezaplacené účty"
+      "unpaidTotal": "Nezaplacené účty",
+      "wasteValue": "Znehodnoceno tento měsíc",
+      "wasteCount": "Vyřazené položky"
     },
     "upcomingTitle": "Blížící se položky",
     "emptyUpcoming": "Žádné položky s blížícím se datem spotřeby.",
@@ -148,7 +150,9 @@
       "barcodeNotFoundMessage": "Na fotografii se nepodařilo rozpoznat čárový kód, zkuste to znovu nebo jej zadejte ručně.",
       "expiryNotFoundTitle": "Datum nenalezeno",
       "expiryNotFoundMessage": "Na fotografii se nepodařilo rozpoznat datum spotřeby, můžete jej zadat ručně.",
-      "scanErrorMessage": "Při skenování došlo k chybě, zkus to znovu."
+      "scanErrorMessage": "Při skenování došlo k chybě, zkus to znovu.",
+      "priceLabel": "Cena (volitelné)",
+      "pricePlaceholder": "např. 45.90"
     },
     "quickAdd": {
       "scanBarcodeButton": "Naskenovat čárový kód",
@@ -180,7 +184,8 @@
       "itemsLabel": "Rozpoznané položky ({{count}})",
       "submitButton": "Přidat {{count}} položek",
       "errorSaveAll": "Nepodařilo se uložit žádnou položku, zkuste to znovu.",
-      "successMessage": "Přidáno {{count}} položek."
+      "successMessage": "Přidáno {{count}} položek.",
+      "itemPriceA11y": "Cena"
     },
     "identifyPhotoButton": "Rozpoznat podle fotky",
     "identifyPhoto": {
@@ -193,7 +198,13 @@
     "addButton": "Přidat",
     "errorLoad": "Nákupní seznam se nepodařilo načíst.",
     "emptyList": "Nákupní seznam je prázdný.",
-    "deleteA11y": "Smazat {{name}}"
+    "deleteA11y": "Smazat {{name}}",
+    "suggestions": {
+      "title": "Návrhy pro váš seznam",
+      "overdueBy_one": "{{count}} den po termínu",
+      "overdueBy_other": "{{count}} dní po termínu",
+      "addA11y": "Přidat {{name}}"
+    }
   },
   "family": {
     "inviteButton": "Pozvat",

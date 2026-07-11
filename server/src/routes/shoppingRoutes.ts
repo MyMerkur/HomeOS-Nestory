@@ -2,6 +2,7 @@ import { Router } from 'express';
 import {
   addShoppingItemHandler,
   deleteShoppingItemHandler,
+  getShoppingSuggestionsHandler,
   listShoppingItemsHandler,
   toggleCheckHandler,
   updateShoppingItemHandler,
@@ -24,6 +25,13 @@ router.get(
   requireHomeMembership('viewer'),
   validateQuery(listShoppingItemsQuerySchema),
   catchAsync(listShoppingItemsHandler),
+);
+
+router.get(
+  '/suggestions',
+  validateParams(homeIdParamSchema),
+  requireHomeMembership('viewer'),
+  catchAsync(getShoppingSuggestionsHandler),
 );
 
 router.post(

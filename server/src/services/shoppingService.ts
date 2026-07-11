@@ -1,5 +1,8 @@
+import { Types } from 'mongoose';
 import { ShoppingItem, type ShoppingItemDocument } from '../models/ShoppingItem';
 import { ShoppingList } from '../models/ShoppingList';
+import { InventoryItem } from '../models/InventoryItem';
+import { AuditLog } from '../models/AuditLog';
 import { AppError } from '../middlewares/errorHandler';
 import { normalizeName } from '../utils/normalize';
 import type {
@@ -118,4 +121,95 @@ export async function toggleCheck(homeId: string, itemId: string): Promise<Shopp
 export async function deleteShoppingItem(homeId: string, itemId: string): Promise<void> {
   const item = await findItemOrThrow(homeId, itemId);
   await item.deleteOne();
+}
+
+export type ShoppingSuggestion = {
+  normalizedName: string;
+  name: string;
+  category: string | null;
+  unit: string | null;
+  avgIntervalDays: number;
+  daysSinceLastConsumed: number;
+};
+
+const MS_PER_DAY = 24 * 60 * 60 * 1000;
+const MAX_SUGGESTIONS = 10;
+// Need at least this many past "consumed" events to trust a recurring pattern.
+const MIN_CONSUMPTION_EVENTS = 2;
+
+type ConsumptionGroup = {
+  _id: string;
+  name: string;
+  category: string | null;
+  unit: string | null;
+  timestamps: Date[];
+};
+
+// Suggests re-adding items the home has a recurring, overdue consumption
+// pattern for — e.g. milk consumed roughly every 5 days, 6 days since the
+// last one. Excludes anything already in active stock or already on the list.
+export async function getShoppingSuggestions(homeId: string): Promise<ShoppingSuggestion[]> {
+  const homeObjectId = new Types.ObjectId(homeId);
+
+  const groups = await AuditLog.aggregate<ConsumptionGroup>([
+    { $match: { homeId: homeObjectId, action: 'consumed' } },
+    { $lookup: { from: 'inventoryitems', localField: 'itemId', foreignField: '_id', as: 'item' } },
+    { $unwind: '$item' },
+    {
+      $group: {
+        _id: '$item.normalizedName',
+        name: { $last: '$item.name' },
+        category: { $last: '$item.category' },
+        unit: { $last: '$item.unit' },
+        timestamps: { $push: '$createdAt' },
+      },
+    },
+  ]);
+
+  const now = Date.now();
+  const candidates: ShoppingSuggestion[] = [];
+
+  for (const group of groups) {
+    const sorted = group.timestamps.map((timestamp) => new Date(timestamp).getTime()).sort((a, b) => a - b);
+    if (sorted.length < MIN_CONSUMPTION_EVENTS) continue;
+
+    const diffs: number[] = [];
+    for (let i = 1; i < sorted.length; i++) diffs.push(sorted[i] - sorted[i - 1]);
+    const avgIntervalMs = diffs.reduce((sum, diff) => sum + diff, 0) / diffs.length;
+
+    const lastConsumedMs = sorted[sorted.length - 1];
+    if (now < lastConsumedMs + avgIntervalMs) continue;
+
+    candidates.push({
+      normalizedName: group._id,
+      name: group.name,
+      category: group.category ?? null,
+      unit: group.unit ?? null,
+      avgIntervalDays: Math.round(avgIntervalMs / MS_PER_DAY),
+      daysSinceLastConsumed: Math.round((now - lastConsumedMs) / MS_PER_DAY),
+    });
+  }
+
+  if (candidates.length === 0) return [];
+
+  const normalizedNames = candidates.map((candidate) => candidate.normalizedName);
+
+  const [activeStock, pendingShoppingItems] = await Promise.all([
+    InventoryItem.find({ homeId, status: 'active', normalizedName: { $in: normalizedNames } }).select(
+      'normalizedName',
+    ),
+    ShoppingItem.find({ homeId, status: 'pending', normalizedName: { $in: normalizedNames } }).select(
+      'normalizedName',
+    ),
+  ]);
+
+  const alreadyCovered = new Set([
+    ...activeStock.map((item) => item.normalizedName),
+    ...pendingShoppingItems.map((item) => item.normalizedName),
+  ]);
+
+  return candidates
+    .filter((candidate) => !alreadyCovered.has(candidate.normalizedName))
+    .sort((a, b) => b.daysSinceLastConsumed - a.daysSinceLastConsumed)
+    .slice(0, MAX_SUGGESTIONS);
 }

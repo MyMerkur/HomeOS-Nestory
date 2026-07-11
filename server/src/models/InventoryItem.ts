@@ -15,6 +15,7 @@ const inventoryItemSchema = new Schema(
     purchaseDate: { type: Date },
     barcode: { type: String },
     brand: { type: String },
+    price: { type: Number, min: 0 },
     status: { type: String, enum: INVENTORY_ITEM_STATUSES, default: 'active', index: true },
     notes: { type: String, maxlength: 500 },
     imageUrl: { type: String },

@@ -79,7 +79,9 @@
       "medicines": "Medikamente",
       "assets": "Gegenstände",
       "paidThisMonth": "Diesen Monat bezahlt",
-      "unpaidTotal": "Offene Rechnungen"
+      "unpaidTotal": "Offene Rechnungen",
+      "wasteValue": "Verschwendet diesen Monat",
+      "wasteCount": "Entsorgte Artikel"
     },
     "upcomingTitle": "Bald ablaufende Artikel",
     "emptyUpcoming": "Keine Artikel mit bevorstehendem Ablaufdatum.",
@@ -148,7 +150,9 @@
       "barcodeNotFoundMessage": "Auf dem Foto konnte kein Barcode erkannt werden. Versuchen Sie es erneut oder geben Sie ihn manuell ein.",
       "expiryNotFoundTitle": "Datum nicht gefunden",
       "expiryNotFoundMessage": "Auf dem Foto konnte kein Ablaufdatum erkannt werden, Sie können es manuell eingeben.",
-      "scanErrorMessage": "Beim Scannen ist ein Fehler aufgetreten, versuche es erneut."
+      "scanErrorMessage": "Beim Scannen ist ein Fehler aufgetreten, versuche es erneut.",
+      "priceLabel": "Preis (optional)",
+      "pricePlaceholder": "z. B. 45.90"
     },
     "quickAdd": {
       "scanBarcodeButton": "Barcode scannen",
@@ -180,7 +184,8 @@
       "itemsLabel": "Erkannte Artikel ({{count}})",
       "submitButton": "{{count}} Artikel hinzufügen",
       "errorSaveAll": "Es konnten keine Artikel gespeichert werden, versuchen Sie es erneut.",
-      "successMessage": "{{count}} Artikel hinzugefügt."
+      "successMessage": "{{count}} Artikel hinzugefügt.",
+      "itemPriceA11y": "Preis"
     },
     "identifyPhotoButton": "Foto erkennen",
     "identifyPhoto": {
@@ -193,7 +198,13 @@
     "addButton": "Hinzufügen",
     "errorLoad": "Einkaufsliste konnte nicht geladen werden.",
     "emptyList": "Die Einkaufsliste ist leer.",
-    "deleteA11y": "{{name}} löschen"
+    "deleteA11y": "{{name}} löschen",
+    "suggestions": {
+      "title": "Vorschläge für deine Liste",
+      "overdueBy_one": "Seit {{count}} Tag überfällig",
+      "overdueBy_other": "Seit {{count}} Tagen überfällig",
+      "addA11y": "{{name}} hinzufügen"
+    }
   },
   "family": {
     "inviteButton": "Einladen",

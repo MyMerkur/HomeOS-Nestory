@@ -11,6 +11,7 @@ export function makeItemFormSchema(t: TFunction) {
     unit: z.enum(UNITS, { message: t('validation.unitRequired') }),
     expiryDate: z.date().optional(),
     barcode: z.string().trim().optional(),
+    price: z.number().nonnegative().optional(),
     doseAmount: z.number().positive().optional(),
     doseTimes: z.array(z.string()).optional(),
   });

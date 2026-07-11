@@ -79,7 +79,9 @@
       "medicines": "Remédios",
       "assets": "Bens",
       "paidThisMonth": "Pago este mês",
-      "unpaidTotal": "Faturas por pagar"
+      "unpaidTotal": "Faturas por pagar",
+      "wasteValue": "Desperdiçado este mês",
+      "wasteCount": "Itens descartados"
     },
     "upcomingTitle": "Itens a expirar em breve",
     "emptyUpcoming": "Sem itens com data de validade próxima.",
@@ -148,7 +150,9 @@
       "barcodeNotFoundMessage": "Não foi possível reconhecer um código de barras na foto, tente novamente ou introduza-o manualmente.",
       "expiryNotFoundTitle": "Data não encontrada",
       "expiryNotFoundMessage": "Não foi possível reconhecer uma data de validade na foto, pode introduzi-la manualmente.",
-      "scanErrorMessage": "Ocorreu um erro ao escanear, tenta novamente."
+      "scanErrorMessage": "Ocorreu um erro ao escanear, tenta novamente.",
+      "priceLabel": "Preço (opcional)",
+      "pricePlaceholder": "ex. 45.90"
     },
     "quickAdd": {
       "scanBarcodeButton": "Digitalizar código de barras",
@@ -180,7 +184,8 @@
       "itemsLabel": "Itens detetados ({{count}})",
       "submitButton": "Adicionar {{count}} itens",
       "errorSaveAll": "Não foi possível guardar nenhum item, tente novamente.",
-      "successMessage": "{{count}} itens adicionados."
+      "successMessage": "{{count}} itens adicionados.",
+      "itemPriceA11y": "Preço"
     },
     "identifyPhotoButton": "Identificar por foto",
     "identifyPhoto": {
@@ -193,7 +198,13 @@
     "addButton": "Adicionar",
     "errorLoad": "Não foi possível carregar a lista de compras.",
     "emptyList": "A lista de compras está vazia.",
-    "deleteA11y": "Eliminar {{name}}"
+    "deleteA11y": "Eliminar {{name}}",
+    "suggestions": {
+      "title": "Sugestões para sua lista",
+      "overdueBy_one": "Atrasado {{count}} dia",
+      "overdueBy_other": "Atrasado {{count}} dias",
+      "addA11y": "Adicionar {{name}}"
+    }
   },
   "family": {
     "inviteButton": "Convidar",

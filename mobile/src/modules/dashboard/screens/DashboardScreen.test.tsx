@@ -52,6 +52,7 @@ const mockDashboard = {
   medicineCount: 5,
   assetCount: 6,
   spending: { paidThisMonth: 250, unpaidTotal: 90 },
+  waste: { totalValue: 120, itemCount: 4 },
   upcomingItems: [
     {
       id: 'item-1',
@@ -111,6 +112,8 @@ describe('DashboardScreen', () => {
     expect(screen.getByText('6')).toBeTruthy();
     expect(screen.getByText('250 ₺')).toBeTruthy();
     expect(screen.getByText('90 ₺')).toBeTruthy();
+    expect(screen.getByText('120 ₺')).toBeTruthy();
+    expect(screen.getByText('4')).toBeTruthy();
   });
 
   it('refetches when the list is pulled to refresh', async () => {

@@ -79,7 +79,9 @@
       "medicines": "Medicines",
       "assets": "Assets",
       "paidThisMonth": "Paid this month",
-      "unpaidTotal": "Unpaid bills"
+      "unpaidTotal": "Unpaid bills",
+      "wasteValue": "Wasted this month",
+      "wasteCount": "Discarded items"
     },
     "upcomingTitle": "Upcoming items",
     "emptyUpcoming": "No items with an upcoming expiry date.",
@@ -148,7 +150,9 @@
       "barcodeNotFoundMessage": "Couldn't recognize a barcode in the photo, try again or enter it manually.",
       "expiryNotFoundTitle": "Date not found",
       "expiryNotFoundMessage": "Couldn't recognize an expiry date in the photo, you can enter it manually.",
-      "scanErrorMessage": "Something went wrong while scanning, try again."
+      "scanErrorMessage": "Something went wrong while scanning, try again.",
+      "priceLabel": "Price (optional)",
+      "pricePlaceholder": "e.g. 45.90"
     },
     "quickAdd": {
       "scanBarcodeButton": "Scan barcode",
@@ -180,7 +184,8 @@
       "itemsLabel": "Detected items ({{count}})",
       "submitButton": "Add {{count}} items",
       "errorSaveAll": "Couldn't save any of the items, try again.",
-      "successMessage": "{{count}} items added."
+      "successMessage": "{{count}} items added.",
+      "itemPriceA11y": "Price"
     },
     "identifyPhotoButton": "Identify by Photo",
     "identifyPhoto": {
@@ -193,7 +198,13 @@
     "addButton": "Add",
     "errorLoad": "Couldn't load shopping list.",
     "emptyList": "Shopping list is empty.",
-    "deleteA11y": "Delete {{name}}"
+    "deleteA11y": "Delete {{name}}",
+    "suggestions": {
+      "title": "Suggested for your list",
+      "overdueBy_one": "{{count}} day overdue",
+      "overdueBy_other": "{{count}} days overdue",
+      "addA11y": "Add {{name}}"
+    }
   },
   "family": {
     "inviteButton": "Invite",

@@ -187,4 +187,50 @@ describe('dashboardService', () => {
 
     expect(dashboard.spending).toEqual({ paidThisMonth: 0, unpaidTotal: 0 });
   });
+
+  it('sums the price of items discarded this month', async () => {
+    const { homeId, userId, fridgeId } = await setupHome();
+
+    const pricey = await inventoryService.createItem(homeId, userId, {
+      name: 'Pahalı Peynir',
+      locationId: fridgeId,
+      category: 'Dairy',
+      quantity: 1,
+      unit: 'piece',
+      price: 150,
+    });
+    await inventoryActionService.discardItem(homeId, userId, pricey.id);
+
+    const noPrice = await inventoryService.createItem(homeId, userId, {
+      name: 'Fiyatsız Ürün',
+      locationId: fridgeId,
+      category: 'Other',
+      quantity: 1,
+      unit: 'piece',
+    });
+    await inventoryActionService.discardItem(homeId, userId, noPrice.id);
+
+    // Consumed (not discarded) — should not count as waste.
+    const consumed = await inventoryService.createItem(homeId, userId, {
+      name: 'Tüketilen Ürün',
+      locationId: fridgeId,
+      category: 'Other',
+      quantity: 1,
+      unit: 'piece',
+      price: 999,
+    });
+    await inventoryActionService.consumeItem(homeId, userId, consumed.id);
+
+    const dashboard = await dashboardService.getDashboard(homeId);
+
+    expect(dashboard.waste).toEqual({ totalValue: 150, itemCount: 2 });
+  });
+
+  it('reports zero waste when nothing has been discarded', async () => {
+    const { homeId } = await setupHome();
+
+    const dashboard = await dashboardService.getDashboard(homeId);
+
+    expect(dashboard.waste).toEqual({ totalValue: 0, itemCount: 0 });
+  });
 });

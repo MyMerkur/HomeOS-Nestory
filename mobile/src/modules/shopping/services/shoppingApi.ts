@@ -66,3 +66,19 @@ export async function toggleShoppingItemCheck(homeId: string, itemId: string): P
 export async function deleteShoppingItem(homeId: string, itemId: string): Promise<void> {
   await apiClient.delete(`/homes/${homeId}/shopping/items/${itemId}`);
 }
+
+export type ShoppingSuggestion = {
+  normalizedName: string;
+  name: string;
+  category: Category | null;
+  unit: Unit | null;
+  avgIntervalDays: number;
+  daysSinceLastConsumed: number;
+};
+
+export async function getShoppingSuggestions(homeId: string): Promise<ShoppingSuggestion[]> {
+  const { data } = await apiClient.get<ApiEnvelope<{ suggestions: ShoppingSuggestion[] }>>(
+    `/homes/${homeId}/shopping/suggestions`,
+  );
+  return data.data.suggestions;
+}

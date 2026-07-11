@@ -43,6 +43,7 @@ function buildItem(overrides: Partial<InventoryItem>): InventoryItem {
     purchaseDate: null,
     brand: null,
     barcode: null,
+    price: null,
     status: 'active',
     notes: null,
     imageUrl: null,
