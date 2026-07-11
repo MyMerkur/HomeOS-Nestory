@@ -51,6 +51,7 @@ Nestory-Web/.next/
 Nestory-Web/out/
 Nestory-Web/next-env.d.ts
 Nestory-Web/*.tsbuildinfo
+Nestory-Web/deploy/config.sh
 
 # Docker volumes / backups
 backups/

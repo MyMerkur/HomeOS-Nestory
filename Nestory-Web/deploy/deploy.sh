@@ -1,14 +1,17 @@
 #!/usr/bin/env bash
-# Builds Nestory-Web and deploys the static export to the VPS
-# (nestoryhomekit.com, CyberPanel/OpenLiteSpeed, linux user nesto5570).
+# Builds Nestory-Web and deploys the static export to the VPS.
+# Connection details live in deploy/config.sh (gitignored, not in the repo)
+# — see deploy/config.sh.example for the expected variables.
 set -euo pipefail
 
-VPS_HOST="root@72.62.76.12"
-VPS_KEY="$HOME/.ssh/nestory_vps_deploy"
-REMOTE_ROOT="/home/nestoryhomekit.com/public_html"
-SITE_USER="nesto5570"
-
 cd "$(dirname "$0")/.."
+
+if [ ! -f deploy/config.sh ]; then
+  echo "Missing deploy/config.sh — copy deploy/config.sh.example and fill in real values." >&2
+  exit 1
+fi
+# shellcheck source=/dev/null
+source deploy/config.sh
 
 npm run build
 

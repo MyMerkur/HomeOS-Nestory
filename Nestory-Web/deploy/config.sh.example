@@ -1,0 +1,5 @@
+## Copy to deploy/config.sh (gitignored) and fill in real values.
+VPS_HOST="user@your-vps-host"
+VPS_KEY="$HOME/.ssh/your_deploy_key"
+REMOTE_ROOT="/home/example.com/public_html"
+SITE_USER="site-linux-user"
