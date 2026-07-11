@@ -46,6 +46,12 @@ mobile/ios/NestoryMobile/GoogleService-Info.plist
 Firebase İlgili Dosyalar/
 *.p8
 
+# Next.js (Nestory-Web)
+Nestory-Web/.next/
+Nestory-Web/out/
+Nestory-Web/next-env.d.ts
+Nestory-Web/*.tsbuildinfo
+
 # Docker volumes / backups
 backups/
 mongo-data/
