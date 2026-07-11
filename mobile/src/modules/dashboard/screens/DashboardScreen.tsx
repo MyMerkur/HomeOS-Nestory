@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
 import {
   IconAward,
@@ -58,9 +58,8 @@ function MenuButton({ onPress, colors }: { onPress: () => void; colors: ThemeCol
 }
 
 const menuButtonStyle = {
-  paddingHorizontal: spacing.lg,
-  paddingTop: spacing.md,
-  paddingBottom: spacing.xs,
+  paddingLeft: spacing.lg,
+  paddingRight: spacing.sm,
 };
 
 export function DashboardScreen({ navigation }: DashboardStackScreenProps<'Dashboard'>) {
@@ -70,7 +69,14 @@ export function DashboardScreen({ navigation }: DashboardStackScreenProps<'Dashb
   const { data, isLoading, isError, refetch, isRefetching } = useDashboardQuery();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const topBar = <MenuButton onPress={() => setIsMenuOpen(true)} colors={colors} />;
+  const renderHeaderLeft = useCallback(
+    () => <MenuButton onPress={() => setIsMenuOpen(true)} colors={colors} />,
+    [colors],
+  );
+
+  useEffect(() => {
+    navigation.setOptions({ headerLeft: renderHeaderLeft });
+  }, [navigation, renderHeaderLeft]);
 
   const menuItems = [
     { testID: 'go-to-badges', label: t('dashboard.shortcuts.badges'), icon: IconAward, onPress: () => navigation.navigate('Badges') },
@@ -88,7 +94,6 @@ export function DashboardScreen({ navigation }: DashboardStackScreenProps<'Dashb
   if (isLoading) {
     return (
       <>
-        {topBar}
         <DashboardSkeleton styles={styles} />
         {menu}
       </>
@@ -98,7 +103,6 @@ export function DashboardScreen({ navigation }: DashboardStackScreenProps<'Dashb
   if (isError || !data) {
     return (
       <>
-        {topBar}
         <View style={styles.centered}>
           <Text style={styles.error}>{t('dashboard.errorLoad')}</Text>
           <Button label={t('common.retry')} onPress={() => refetch()} variant="outline" />
@@ -110,7 +114,6 @@ export function DashboardScreen({ navigation }: DashboardStackScreenProps<'Dashb
 
   return (
     <>
-      {topBar}
       <FlatList
         testID="dashboard-list"
         style={styles.container}

@@ -1,3 +1,4 @@
+import { useMemo, useState } from 'react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react-native';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
@@ -9,10 +10,38 @@ import type { DashboardStackScreenProps } from '../../../app/navigation/types';
 
 jest.mock('../services/dashboardApi');
 
+const navigateMock = jest.fn();
+const setOptionsMock = jest.fn();
 const mockNavigation = {
-  navigate: jest.fn(),
-  setOptions: jest.fn(),
+  navigate: navigateMock,
+  setOptions: setOptionsMock,
 } as unknown as DashboardStackScreenProps<'Dashboard'>['navigation'];
+
+// The real navigator renders `headerLeft` into the native header; here there
+// is no navigator, so this harness captures it via `setOptions` and renders
+// it itself, keeping the menu button reachable by testID in tests.
+function DashboardScreenWithHeader() {
+  const [HeaderLeft, setHeaderLeft] = useState<(() => React.ReactElement) | null>(null);
+  const navigation = useMemo(
+    () =>
+      ({
+        ...mockNavigation,
+        setOptions: (options: { headerLeft?: () => React.ReactElement }) => {
+          setOptionsMock(options);
+          const headerLeft = options.headerLeft;
+          if (headerLeft) setHeaderLeft(() => headerLeft);
+        },
+      }) as unknown as DashboardStackScreenProps<'Dashboard'>['navigation'],
+    [],
+  );
+
+  return (
+    <>
+      {HeaderLeft ? <HeaderLeft /> : null}
+      <DashboardScreen navigation={navigation} route={{} as never} />
+    </>
+  );
+}
 
 const mockDashboard = {
   expiringToday: 1,
@@ -55,7 +84,7 @@ function renderScreen() {
     >
       <ThemeProvider>
         <QueryClientProvider client={queryClient}>
-          <DashboardScreen navigation={mockNavigation} route={{} as never} />
+          <DashboardScreenWithHeader />
         </QueryClientProvider>
       </ThemeProvider>
     </SafeAreaProvider>,
