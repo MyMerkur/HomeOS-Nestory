@@ -8,7 +8,7 @@ const OG_LOCALE: Record<Locale, string> = {
   cs: "cs_CZ",
 };
 
-type RouteKey = "home" | "support" | "privacy" | "terms";
+type RouteKey = keyof (typeof routes)["tr"];
 
 export function buildMetadata({
   locale,

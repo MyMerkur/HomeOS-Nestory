@@ -193,4 +193,24 @@ export const tr: Dictionary = {
     body: "Bu uygulamayı kullanarak, onu yalnızca evinizin kiler, alışveriş, fatura, varlık ve ilgili bilgilerini yönetme amacına uygun şekilde kullanmayı kabul edersiniz. Uygulama tıbbi veya mali tavsiye vermez — ilaç ve fatura modülleri yalnızca hatırlatma ve kayıt amacılıdır. Son kullanma tarihi ve barkod tarama sonuçları bilgilendirme amaçlıdır; gıda güvenliğiyle ilgili nihai karar kullanıcıya aittir. Uygulama olduğu gibi, hiçbir garanti verilmeksizin sunulmaktadır ve aktif geliştirme aşamasındadır, bu nedenle özellikler değişebilir.",
     contact: "Sorularınız için support@nestoryhomekit.com adresiyle iletişime geçebilirsiniz.",
   },
+  accountDeletion: {
+    title: "Hesap Silme",
+    intro:
+      "Nestory hesabınızı ve hesabınıza bağlı verileri kalıcı olarak silmek isterseniz, bu işlemi uygulama içinden birkaç adımda tamamlayabilirsiniz.",
+    stepsTitle: "Nasıl silinir",
+    steps: [
+      "Nestory uygulamasını açın ve Ayarlar sekmesine gidin.",
+      "\"Tehlikeli Alan\" bölümüne inin ve \"Hesabı Sil\" seçeneğine dokunun.",
+      "Kimliğinizi doğrulamak için mevcut şifrenizi girin ve işlemi onaylayın.",
+      "Onayladıktan sonra hesabınız ve aşağıda belirtilen veriler kalıcı olarak silinir; bu işlem geri alınamaz.",
+    ],
+    dataRemovedTitle: "Hangi veriler silinir",
+    dataRemoved:
+      "Hesabınız silindiğinde profil bilgileriniz (ad, e-posta, şifre), oturum ve push bildirim token'larınız kaldırılır. Sahibi olduğunuz evlere ait tüm veriler — kiler, alışveriş listesi, fatura, varlık ve ilaç kayıtları dahil — kalıcı olarak silinir. Başka birinin sahibi olduğu bir evin üyesiyseniz, yalnızca o evle bağlantınız kaldırılır; evin verileri etkilenmez.",
+    blockedTitle: "Ne zaman hemen silinmez",
+    blocked:
+      "Sahibi olduğunuz bir evde sizin dışınızda aktif üye varsa, hesap silme işlemi engellenir. Bu durumda önce ev sahipliğini başka bir üyeye devretmeniz veya diğer üyeleri evden çıkarmanız gerekir.",
+    contact:
+      "Uygulamayı kullanmadan hesap silme talebinde bulunmak veya sorularınız için privacy@nestoryhomekit.com adresiyle iletişime geçebilirsiniz.",
+  },
 };

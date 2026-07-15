@@ -95,4 +95,15 @@ export type Dictionary = {
     body: string;
     contact: string;
   };
+  accountDeletion: {
+    title: string;
+    intro: string;
+    stepsTitle: string;
+    steps: string[];
+    dataRemovedTitle: string;
+    dataRemoved: string;
+    blockedTitle: string;
+    blocked: string;
+    contact: string;
+  };
 };

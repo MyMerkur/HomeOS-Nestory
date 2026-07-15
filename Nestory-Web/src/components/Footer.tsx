@@ -43,6 +43,11 @@ export function Footer({ dict, locale }: { dict: Dictionary; locale: Locale }) {
                   {dict.terms.title}
                 </Link>
               </li>
+              <li>
+                <Link href={r.accountDeletion} className="hover:text-brand-green-dark">
+                  {dict.accountDeletion.title}
+                </Link>
+              </li>
             </ul>
           </div>
 

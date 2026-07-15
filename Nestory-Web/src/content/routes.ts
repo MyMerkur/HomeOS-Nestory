@@ -10,7 +10,7 @@ export const localeNames: Record<Locale, string> = {
   cs: "Čeština",
 };
 
-type RouteKey = "home" | "support" | "privacy" | "terms";
+type RouteKey = "home" | "support" | "privacy" | "terms" | "accountDeletion";
 
 // Next.js is configured with `trailingSlash: true` (static export), so every
 // route's canonical, final URL ends in a slash — these must match exactly,
@@ -22,18 +22,21 @@ export const routes: Record<Locale, Record<RouteKey, string>> = {
     support: "/destek/",
     privacy: "/privacy/",
     terms: "/terms/",
+    accountDeletion: "/hesap-silme/",
   },
   en: {
     home: "/en/",
     support: "/en/support/",
     privacy: "/en/privacy/",
     terms: "/en/terms/",
+    accountDeletion: "/en/account-deletion/",
   },
   cs: {
     home: "/cs/",
     support: "/cs/podpora/",
     privacy: "/cs/privacy/",
     terms: "/cs/terms/",
+    accountDeletion: "/cs/smazani-uctu/",
   },
 };
 

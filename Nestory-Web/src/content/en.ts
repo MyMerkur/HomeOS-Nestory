@@ -192,4 +192,24 @@ export const en: Dictionary = {
     body: "By using this app you agree to use it only for its intended purpose of managing your household's pantry, shopping, bills, assets, and related information. The app does not provide medical or financial advice — the medicine and bill modules are for reminders and record-keeping only. Expiry-date and barcode scanning results are informational; final food-safety decisions are yours. The app is provided as-is, without warranty of any kind, and is under active development, so features may change.",
     contact: "For questions, contact support@nestoryhomekit.com.",
   },
+  accountDeletion: {
+    title: "Account Deletion",
+    intro:
+      "If you'd like to permanently delete your Nestory account and the data linked to it, you can do so in a few steps from within the app.",
+    stepsTitle: "How to delete",
+    steps: [
+      "Open the Nestory app and go to the Settings tab.",
+      'Scroll to the "Danger Zone" section and tap "Delete Account".',
+      "Enter your current password to confirm your identity and confirm the action.",
+      "Once confirmed, your account and the data listed below are permanently deleted — this cannot be undone.",
+    ],
+    dataRemovedTitle: "What gets deleted",
+    dataRemoved:
+      "When your account is deleted, your profile information (name, email, password), session, and push notification tokens are removed. All data for homes you own — including pantry, shopping list, bill, asset, and medicine records — is permanently deleted. If you're a member of a home owned by someone else, only your link to that home is removed; the home's data is unaffected.",
+    blockedTitle: "When deletion isn't immediate",
+    blocked:
+      "If a home you own still has other active members, account deletion is blocked. In that case, you'll need to either transfer ownership to another member or remove the other members from the home first.",
+    contact:
+      "To request account deletion without using the app, or for any questions, contact privacy@nestoryhomekit.com.",
+  },
 };

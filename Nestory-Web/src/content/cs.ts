@@ -192,4 +192,24 @@ export const cs: Dictionary = {
     body: "Používáním této aplikace souhlasíte s tím, že ji budete používat pouze k zamýšlenému účelu správy spíže, nákupů, účtů, majetku a souvisejících informací vaší domácnosti. Aplikace neposkytuje lékařské ani finanční poradenství — moduly léků a účtů slouží pouze k připomenutí a evidenci. Výsledky skenování data spotřeby a čárových kódů mají informativní charakter; konečné rozhodnutí o bezpečnosti potravin je na vás. Aplikace je poskytována tak, jak je, bez jakékoli záruky, a je aktivně vyvíjena, takže se funkce mohou měnit.",
     contact: "S dotazy se obraťte na support@nestoryhomekit.com.",
   },
+  accountDeletion: {
+    title: "Smazání účtu",
+    intro:
+      "Pokud chcete trvale smazat svůj účet Nestory a data s ním spojená, můžete to udělat v několika krocích přímo v aplikaci.",
+    stepsTitle: "Jak smazat účet",
+    steps: [
+      "Otevřete aplikaci Nestory a přejděte do sekce Nastavení.",
+      "Přejděte do sekce \"Nebezpečná zóna\" a klepněte na \"Smazat účet\".",
+      "Zadejte své aktuální heslo pro ověření identity a potvrďte akci.",
+      "Po potvrzení budou váš účet a níže uvedená data trvale smazána — tuto akci nelze vrátit zpět.",
+    ],
+    dataRemovedTitle: "Jaká data se smažou",
+    dataRemoved:
+      "Při smazání účtu jsou odstraněny vaše profilové údaje (jméno, e-mail, heslo), přihlašovací relace a tokeny push notifikací. Veškerá data domácností, jejichž jste vlastníkem — včetně spíže, nákupního seznamu, účtů, majetku a záznamů o lécích — jsou trvale smazána. Pokud jste členem domácnosti vlastněné někým jiným, odstraní se pouze vaše propojení s touto domácností; data domácnosti zůstanou nedotčena.",
+    blockedTitle: "Kdy smazání není okamžité",
+    blocked:
+      "Pokud domácnost, jejímž jste vlastníkem, má i jiné aktivní členy, je smazání účtu zablokováno. V takovém případě je nejprve třeba převést vlastnictví na jiného člena nebo ostatní členy z domácnosti odebrat.",
+    contact:
+      "Chcete-li požádat o smazání účtu bez použití aplikace, nebo máte-li jakékoli dotazy, kontaktujte privacy@nestoryhomekit.com.",
+  },
 };
